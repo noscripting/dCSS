@@ -1,0 +1,1331 @@
+{
+  "noscripting": {
+    "arrays.css": {
+      "__compat": {
+        "description": "arrays.css, measured 2026-10-23",
+        "support": {},
+        "status": {
+          "experimental": true,
+          "standard_track": false,
+          "deprecated": false
+        }
+      },
+      "A1": {
+        "__compat": {
+          "description": "In an `.arrays-array` of `<i>` entries with `--arrays-n`, a reader `.arrays-at` with whole `--arrays-i`, in the port `<b class=\"arrays-out\">` or inside an entry, MUST give what is inside it `--arrays-value` equal to entry i, and entry i from the end for -i, in the frame the entries change, exact for",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": "≤26.4",
+              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+            },
+            "firefox": {
+              "version_added": "≤158"
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A2": {
+        "__compat": {
+          "description": "A reader with `--arrays-i` and `--arrays-j` MUST read the sum of entries i to j in either order, -1 meaning the last entry and i = j one entry, in the same frame, exact.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": "≤26.4",
+              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+            },
+            "firefox": {
+              "version_added": "≤158"
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A3": {
+        "__compat": {
+          "description": "`.arrays-array.arrays-packed` with `--arrays-tracks` MUST read track i, track -i counted back from `--arrays-length`, and ranges; without `--arrays-length`, -1 MUST be the last track.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": "≤26.4",
+              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+            },
+            "firefox": {
+              "version_added": "≤158"
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A4": {
+        "__compat": {
+          "description": "`--arrays-of: --x` on a reader or its array MUST count `--arrays-i` from the slot named `--x` and `--arrays-j` on from there over every slot; an array inside a reader MUST NOT inherit its outer `--arrays-of` unless it names its own.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": "≤26.4",
+              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+            },
+            "firefox": {
+              "version_added": "≤158"
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A5": {
+        "__compat": {
+          "description": "`.arrays-cycle` with `--arrays-tracks` MUST read entry i round the cycle, forwards past the last entry and backwards from -1, and a range across the end.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": "≤26.4",
+              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+            },
+            "firefox": {
+              "version_added": "≤158"
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A6": {
+        "__compat": {
+          "description": "`.arrays-array.arrays-xy` of entries with `--arrays-n` and `--arrays-m`, or packed with `--arrays-tracks` and `--arrays-tracks-y`, MUST give a reader `--arrays-value` and `--arrays-value-y` of entry i, `--arrays-r` picking another row, negative indices and a range of columns included, in the same fr",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": "≤26.4",
+              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+            },
+            "firefox": {
+              "version_added": "≤158"
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A7": {
+        "__compat": {
+          "description": "`.arrays-count` on an array MUST work the number of entries out from its last entry's place, so entries -1 to -40, the total and entry 35 of 40 entries read exact with no `--arrays-length`.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": "≤26.4",
+              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+            },
+            "firefox": {
+              "version_added": "≤158"
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A8": {
+        "__compat": {
+          "description": "Index 0, an index past the end or the start, a fractional index at either end of a range, and a range past the end MUST read `--arrays-value` 0 and `--arrays-ok` 0, empty counted arrays included; a valid read MUST give `--arrays-ok` 1.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": "≤26.4",
+              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+            },
+            "firefox": {
+              "version_added": "≤158"
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A9": {
+        "__compat": {
+          "description": "In an `.arrays-xy` read, an invalid column or row MUST zero `--arrays-value`, `--arrays-value-y` and `--arrays-ok` together, for entries, packed slots and empty arrays.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": "≤26.4",
+              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+            },
+            "firefox": {
+              "version_added": "≤158"
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A10": {
+        "__compat": {
+          "description": "An array without `.arrays-count` MUST read negative indices and ranges to -1 from `--arrays-length`; with no `--arrays-length` they MUST read 0 with `--arrays-ok` 0 while positive indices read their entries.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": "≤26.4",
+              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+            },
+            "firefox": {
+              "version_added": "≤158"
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A11": {
+        "__compat": {
+          "description": "A `<b class=\"arrays-window\">` with `--arrays-i` and `--arrays-span` in an array's port MUST number the entries for the readers inside it from its start: 1 its first, -1 its last, ranges, with the window moving every frame.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": "≤26.4",
+              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+            },
+            "firefox": {
+              "version_added": "≤158"
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A12": {
+        "__compat": {
+          "description": "An array inside a keyed map's reader, an `.arrays-xy` reader or a tile's where MUST read its own entries, keep its ranges, fraction checks and xy rows, and leave the outer read unchanged.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": "≤26.4",
+              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+            },
+            "firefox": {
+              "version_added": "≤158"
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A13": {
+        "__compat": {
+          "description": "The push, a read from the end and a place in a sort MUST give the same numbers inside `writing-mode: vertical-rl; direction: rtl` as in horizontal text.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": "≤26.4",
+              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+            },
+            "firefox": {
+              "version_added": "≤158"
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A14": {
+        "__compat": {
+          "description": "On an `.arrays-plain` array, a range read, a reader placed by its own `grid-column` and a scan reader placed by its own `grid-area` MUST read the same numbers as on an array without `.arrays-plain`.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": "≤26.4",
+              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+            },
+            "firefox": {
+              "version_added": "≤158"
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A15": {
+        "__compat": {
+          "description": "In `.arrays-bins`, a child with whole `--arrays-bin` MUST give what is inside it `--arrays-rank`, 1 for the first child in its bin in markup order, exact to 32, with a bin changing every frame.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": "≤26.4",
+              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+            },
+            "firefox": {
+              "version_added": "≤158"
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A16": {
+        "__compat": {
+          "description": "A `.arrays-count` in `.arrays-bins` MUST give `--arrays-count`, the number of bins in use, for bins up to the box's width in px.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": "≤26.4",
+              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+            },
+            "firefox": {
+              "version_added": "≤158"
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A17": {
+        "__compat": {
+          "description": "A `<b class=\"arrays-below\">` in a child of `.arrays-bins` MUST give `--arrays-below`, how many distinct bins in use lie below its bin, with or without an author's padding and border on the grid.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": "≤26.4",
+              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+            },
+            "firefox": {
+              "version_added": "≤158"
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A18": {
+        "__compat": {
+          "description": "`.arrays-bins.arrays-max` MUST give a reader with `--arrays-i` the largest `--arrays-n` in bin i, and a range the sum of those maxima, with entries at any depth under `.arrays-nest` wrappers.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": "≤26.4",
+              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+            },
+            "firefox": {
+              "version_added": "≤158"
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A19": {
+        "__compat": {
+          "description": "`.arrays-array.arrays-sort` of entries with whole `--arrays-key` MUST read its entries in key order, equal keys in markup order: the i-th smallest, -1 the largest, a range the sum of the smallest, with a key moving past the others every frame.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": "≤26.4",
+              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+            },
+            "firefox": {
+              "version_added": "≤158"
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A20": {
+        "__compat": {
+          "description": "A `.arrays-where` in an entry of `.arrays-sort` MUST give `--arrays-place`, 1 for the smallest key, equal keys in markup order.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": "≤26.4",
+              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+            },
+            "firefox": {
+              "version_added": "≤158"
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A21": {
+        "__compat": {
+          "description": "In `.arrays-sort`, an `.arrays-lo` probe with a key MUST give `--arrays-lower` (keys below it), an `.arrays-hi` probe `--arrays-upper` (keys up to it), and an `.arrays-between` in it `--arrays-frequency` and `--arrays-member`.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": "≤26.4",
+              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+            },
+            "firefox": {
+              "version_added": "≤158"
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A22": {
+        "__compat": {
+          "description": "`.arrays-map` of entries with whole `--arrays-key` and `--arrays-n` MUST give a reader with `--arrays-key` the largest number written at that key, for keys -9,000 to 9,999, in boxes of any width; an unused key, or one outside `--arrays-min-key` to `--arrays-max-key`, MUST read 0 with `--arrays-ok` 0",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": "≤26.4",
+              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+            },
+            "firefox": {
+              "version_added": "≤158"
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A23": {
+        "__compat": {
+          "description": "`.arrays-map.arrays-packed` MUST read a track list of values from `--arrays-min-key` on as keys, child entries beside it, duplicate keys as their largest, empty or invalid lists as no values, with keys and values moving between tracks in the same frame.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": "≤26.4",
+              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+            },
+            "firefox": {
+              "version_added": "≤158"
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A24": {
+        "__compat": {
+          "description": "A `.arrays-where` in an entry of a keyed map MUST read the entry's offset in the same frame, and an entry MUST NOT keep an anchor name while it holds no where.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": "≤26.4",
+              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+            },
+            "firefox": {
+              "version_added": "≤158"
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A25": {
+        "__compat": {
+          "description": "`.arrays-array.arrays-packed` with tracks `minmax(0, c)` MUST give slot k min(c k, L), L the level at which the slots fill the box's width, within 1/64 px.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": "≤26.4",
+              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+            },
+            "firefox": {
+              "version_added": "≤158"
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A26": {
+        "__compat": {
+          "description": "`.arrays-shares` MUST give child k max(floor k, weight k × L) from its `--arrays-n` and `--arrays-w`, L the level that fills the width, and a `.arrays-where` in a child the sum of the shares before it, within 1/32 px.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": "≤26.4",
+              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+            },
+            "firefox": {
+              "version_added": "≤158"
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A27": {
+        "__compat": {
+          "description": "`.arrays-pack` with `--arrays-columns` MUST give each child of `--arrays-w` columns the `--arrays-column` and `--arrays-row` where first fit puts it, rows from the top, in `order`-modified document order (css-grid-2 §8.5).",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": "≤26.4",
+              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+            },
+            "firefox": {
+              "version_added": "≤158"
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A28": {
+        "__compat": {
+          "description": "A `.arrays-where` in an entry of an array MUST give `--arrays-x`, the sum of the entries before it, and `--arrays-y` 0.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": "≤26.4",
+              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+            },
+            "firefox": {
+              "version_added": "≤158"
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A29": {
+        "__compat": {
+          "description": "`.arrays-tiles` with `--arrays-columns`, `--arrays-rows` and `--arrays-areas` MUST give a child at `grid-area: name` its area's `--arrays-x`, `--arrays-y`, `--arrays-width`, `--arrays-height` and `--arrays-fits` 1, and `--arrays-fits` 0 to every child when an area is not a rectangle.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": "≤26.4",
+              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+            },
+            "firefox": {
+              "version_added": "≤158"
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A30": {
+        "__compat": {
+          "description": "`.arrays-tiles.arrays-pack` MUST place each child of `--arrays-w` by `--arrays-h` tiles where first fit puts it, row by row, around the map's named areas and the children before it; a child past the map's rows or wider than the map MUST read `--arrays-fits` 0.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": "≤26.4",
+              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+            },
+            "firefox": {
+              "version_added": "≤158"
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A31": {
+        "__compat": {
+          "description": "`.arrays-push` MUST give each child `--arrays-x`, the larger of its `--arrays-target` and the end of the child before; `.arrays-push.arrays-end` with `--arrays-wall` MUST give the smaller of its target and the start of the child after less its width.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": "≤26.4",
+              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+            },
+            "firefox": {
+              "version_added": "≤158"
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A54": {
+        "__compat": {
+          "description": "`.arrays-push.arrays-nested`, its children nested in each other (each holding the next), MUST give the answers A31 gives, for targets and ends under 65,536 px; `.arrays-push.arrays-end.arrays-nested` likewise.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": "≤26.4",
+              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+            },
+            "firefox": {
+              "version_added": "≤158"
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A32": {
+        "__compat": {
+          "description": "`.arrays-groups` MUST give each child `--arrays-y`, the sum of `--arrays-n` over the earlier children of its `--arrays-bin`, and `--arrays-x`, its bin less 1.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": "≤26.4",
+              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+            },
+            "firefox": {
+              "version_added": "≤158"
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A33": {
+        "__compat": {
+          "description": "`.arrays-overlap` of children with `--arrays-i` (a start) and `--arrays-span` MUST give a `.arrays-count` the most intervals over one point, and each child's where `--arrays-y`, its lane by first fit from 0.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": "≤26.4",
+              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+            },
+            "firefox": {
+              "version_added": "≤158"
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A34": {
+        "__compat": {
+          "description": "`.arrays-lines` with `--arrays-columns` MUST give a `.arrays-count` the number of next-fit lines its children's `--arrays-n` take, and each child's where `--arrays-y`, its line from 0, and `--arrays-x`, the sum before it on its line.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": "≤26.4",
+              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+            },
+            "firefox": {
+              "version_added": "≤158"
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A35": {
+        "__compat": {
+          "description": "`.arrays-slide` with `--arrays-span` MUST give a reader with `--arrays-i` j the largest of the span entries ending at entry j.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": "≤26.4",
+              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+            },
+            "firefox": {
+              "version_added": "≤158"
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A36": {
+        "__compat": {
+          "description": "`.arrays-array.arrays-xy.arrays-cells` of entries with `--arrays-i`, `--arrays-r`, `--arrays-n` and `--arrays-m` MUST give a reader the widest entry of column i as `--arrays-value` and the tallest of row r as `--arrays-value-y`.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": "≤26.4",
+              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+            },
+            "firefox": {
+              "version_added": "≤158"
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A37": {
+        "__compat": {
+          "description": "`.arrays-range` of entries with `--arrays-key` and `--arrays-bit` (1 to 19) MUST give a query `.arrays-in` with `--arrays-from` and `--arrays-to` the bit mask of the entries whose key is in [from, to] less `--arrays-not`, and `--arrays-top1` to `--arrays-top6`, its six highest bits.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": "≤26.4",
+              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+            },
+            "firefox": {
+              "version_added": "≤158"
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A38": {
+        "__compat": {
+          "description": "`.arrays-sum` MUST add its children and `.arrays-largest` take the largest, leaves with `--arrays-n` and whole arrays as children, at any depth, read at the root or inside; a negative leaf MUST make every node above it read `--arrays-ok` 0.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": "≤26.4",
+              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+            },
+            "firefox": {
+              "version_added": false,
+              "notes": "FAIL: Firefox lays out in 1/60 px, so leaves in eighths read up to 0.03 off (ENGINES.md)"
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A39": {
+        "__compat": {
+          "description": "`.arrays-cap` MUST give min(E, c) of its formula E with c moving, of a sum or of a leaf; a negative leaf in it MUST read 0 with `--arrays-ok` 0.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": "≤26.4",
+              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+            },
+            "firefox": {
+              "version_added": "≤158"
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A40": {
+        "__compat": {
+          "description": "`.arrays-times` MUST give f × E as a height, f written and moving, counted in an `.arrays-stack` and read inside it.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": "≤26.4",
+              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+            },
+            "firefox": {
+              "version_added": "≤158"
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A41": {
+        "__compat": {
+          "description": "`.arrays-calc` boxes MUST give a product, a min and their sum of two named formulas through `anchor-size()`, in the same frame.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": "≤26.4",
+              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+            },
+            "firefox": {
+              "version_added": false,
+              "notes": "FAIL: `anchor-size()` keeps the anchors' first sizes (QUIRKS Q3); in a container as wide as its content, check 69, it passes"
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A42": {
+        "__compat": {
+          "description": "`<b class=\"arrays-hop\">` MUST give a row the sum of the columns it spans (two hops in one row the larger), and `<b class=\"arrays-hop-y\">` a column the sum of the rows it spans, read by `.arrays-at-y` and `.arrays-at-x`.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": "≤26.4",
+              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+            },
+            "firefox": {
+              "version_added": "≤158"
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A43": {
+        "__compat": {
+          "description": "`.arrays-text` MUST give the sum and the largest line of counters in `arrays-tally`, f(k) of the shared tables (k, round(k^2 / 1000), round(sqrt(1000 k)) for k 0 to 999), a scan and a table's running totals, exact.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": "≤26.4",
+              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+            },
+            "firefox": {
+              "version_added": "≤158"
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A44": {
+        "__compat": {
+          "description": "The text operators MUST give, from pair texts and counter styles, min, max, a sum of products, |a - b|, a > b, a × b by `letter-spacing`, floor(a / b) by a tab, sign and relu, exact.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": "≤26.4",
+              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+            },
+            "firefox": {
+              "version_added": "≤158"
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A45": {
+        "__compat": {
+          "description": "A `.arrays-collapse` of signed margins, `.arrays-zoom` factors in a sum, an `.arrays-baseline` row, `.arrays-columns` with `--arrays-parts` and `.arrays-flex` shares MUST give their laid-out results within 1/64 px.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": "≤26.4",
+              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+            },
+            "firefox": {
+              "version_added": "≤158"
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A46": {
+        "__compat": {
+          "description": "Collapses MUST nest: two laid-out widths in one collapse (W1 / 2 - W2), three levels of `.arrays-scope`, the results counted in an `.arrays-stack` and an `.arrays-tallest` with no reader between.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": "≤26.4",
+              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+            },
+            "firefox": {
+              "version_added": "≤158"
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A47": {
+        "__compat": {
+          "description": "A collapse as a row of a grid MUST turn into a column through `.arrays-hop-y`, and a second collapse over that column MUST subtract a third width, read by the row, the column and their readers.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": "≤26.4",
+              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+            },
+            "firefox": {
+              "version_added": false,
+              "notes": "FAIL: the row the second collapse makes is read a frame late (QUIRKS Q5): 20 for 19; the collapse's own reader is on time"
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A48": {
+        "__compat": {
+          "description": "`<div class=\"arrays-minus\">A<b>B</b></div>` MUST be max(0, A - B) wide for widths A and B under 2^20 px: alone, as min and |a - b|, two deep, and inside a collapse, an `.arrays-least` and an `.arrays-scale`.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": "≤26.4",
+              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+            },
+            "firefox": {
+              "version_added": "≤158"
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A49": {
+        "__compat": {
+          "description": "`.arrays-turn` with `--arrays-tick` changed whenever an input under it changes MUST lay a height on as a width: under `.arrays-largest`, in an `.arrays-least` slot, as a subtrahend and in a stack, with inputs moving every frame.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": "≤26.4",
+              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+            },
+            "firefox": {
+              "version_added": "≤158"
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A50": {
+        "__compat": {
+          "description": "`.arrays-rom` with `.arrays-sq` or `.arrays-sqrt` and `--arrays-k` from 0 to 999 MUST give its child `--arrays-value` round(k^2 / 1000) or round(sqrt(1000 k)), and `.arrays-rom2` the five pair tables for a and b from 0 to 31, at style time with no layout.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": "≤26.4",
+              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+            },
+            "firefox": {
+              "version_added": "≤158"
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A53": {
+        "__compat": {
+          "description": "Results of separate computations, each an `.arrays-array` as wide as its total and named by `anchor-name`, MUST place their marks in sorted order in the same frame when each mark's `top` sums, over the others, `clamp(0, (anchor-size(--other width) - anchor-size(--own width)) / 1px * 2 + t, 1)` (t 1 ",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": "≤26.4",
+              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+            },
+            "firefox": {
+              "version_added": "≤158"
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A55": {
+        "__compat": {
+          "description": "`.arrays-ranked` with `--arrays-bins` G up to 16 (32 with `arrays-wide`) MUST place bar k at its group's total of `--arrays-n` (`.arrays-max`: its largest), as many `--arrays-band`s down as groups beat it, largest or smallest first, ties to the lower bin; an item's `<b>` on its group's bar after the",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": "≤26.4",
+              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+            },
+            "firefox": {
+              "version_added": "≤158"
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A56": {
+        "__compat": {
+          "description": "`.arrays-piles` MUST place each item at the sum of the heights before it in its group; `.arrays-starts` MUST place group k's marker at the sum of `--arrays-n` over earlier groups; a `.list`'s `.arrays-size` MUST read its width and height.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": "≤26.4",
+              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+            },
+            "firefox": {
+              "version_added": "≤158"
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A57": {
+        "__compat": {
+          "description": "`.arrays-ranked.arrays-copy` with `--arrays-copy-width` and `.arrays-ranks > b > .arrays-segments` holding G `.arrays-group` and the items again MUST place each segment as A55 does, for up to 16 groups.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": "≤26.4",
+              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+            },
+            "firefox": {
+              "version_added": "≤158"
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A51": {
+        "__compat": {
+          "description": "A loop (`.loop`, `.loop-flow`, `.loop-in`, `.loop-cell`, `.loop-core`) MUST have noscripting.css on the page; its cells, read through `[data-store-read]` and `[data-store-read-3]` naming them by `--store-of`, MUST settle on the iteration's fixed point: a 12-cell power iteration's vector and eigenval",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": "≤26.4",
+              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+            },
+            "firefox": {
+              "version_added": false,
+              "notes": "PRECONDITION_FAILED: no view timelines, which noscripting.css's store needs"
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A52": {
+        "__compat": {
+          "description": "A `<table class=\"sheet\">` on noscripting.css's board MUST show every cell and fold equal to the sheet's own model as written and after each change to its inputs.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": "≤26.4",
+              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+            },
+            "firefox": {
+              "version_added": false,
+              "notes": "PRECONDITION_FAILED: no view timelines, which noscripting.css's store needs"
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      }
+    }
+  }
+}
