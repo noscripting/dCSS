@@ -38,7 +38,41 @@ The full contract, with each requirement's result in each engine, is [SPEC.md](S
 - A grid inside a reader's `<u>` reads its own entries, so one computation feeds the next in the same frame. Values flow down only: results of several entries reach another grid's entries a frame later, through dcss-store.css's store.
 - Moving numbers belong on the entries. A number that changes above a grid and is inherited through it restyles every reader, used or not.
 - Every name the sheet owns starts with `arrays-`. Internal numbers are `--arrays-p-*`; the anchor names are `--arrays-where`, `--arrays-lo` and `--arrays-hi`.
+- The d3 ports (DCSS, below) take d3's words: classes `dcss-*`, inputs in d3's own argument words (`--value`, `--start`, `--stop`, `--count`), results under `--dcss-*` (`--dcss-sum`, `--dcss-tick`). The results are not registered, so they keep any value a page gives them elsewhere.
 - Every grid resets its padding, border, `writing-mode` and `direction`.
+
+### DCSS: d3 as HTML
+
+A d3 call is an element; its data is a list; the answer is the list's own layout, or a number in the element after it.
+
+```html
+<figure class="dcss-sum">
+  <ul><li style="--value: 12">Apples</li> <li style="--value: 40">Pears</li> <li style="--value: 30">Plums</li></ul>
+  <output></output>                  <!-- prints 82 -->
+  <figcaption>Fruit sold</figcaption>
+</figure>
+```
+
+- The class is d3's name, `dcss-` and the export in kebab case, on the `<figure>`, never on the list. Its arguments are numbers in custom properties on it, in d3's words (`--start`, `--stop`, `--count`).
+- The data is the `<ul>` or `<ol>` inside it, a datum an `<li>` saying its number as `--value` (`--key`, a whole number from 1, where d3 groups); nested lists for a hierarchy. A datum without one is an error, never its parent's value.
+- Where d3's answer is a layout, the `<li>`s are laid out at it, in source order; nothing is read back. A reduction's list is drawn one px a unit: draw inside it, or hide it.
+- Where it is a number, it lands in the element after the list: an empty `<output>` prints it, and everything inside that element reads it as `var(--dcss-*)`. An `<output>` holds text only, so an axis or another call goes in a `<div>` there instead.
+- Results reach inward only, in the same frame through `var()`; printed digits trail a moving number by a frame in Chrome. Beside each result, `--dcss-ready` (0 until it is read) and `--dcss-err` (0, or why not).
+- Numbers are px: whole to 2^24, fractions to 1/64, a total under 33 million, 6 significant digits through `var()`, 0 or more.
+- The sheet owns the display and size of the figure, its list, its items and the element after the list, and the empty `<output>`'s `::after`; the rest is the page's.
+
+### Axes
+
+d3's axis, as a list: `.dcss-axis-bottom` (or `-top`, `-left`, `-right`) with d3.ticks's `--start`, `--stop` and `--count` (10 if not set), and an `<li>` a tick. It draws as d3.axisBottom(scaleLinear([start, stop])).ticks(count) does, at the list's width (left and right: its height), labels in d3's tickFormat. 16 `<li>`s hold any 10-tick axis.
+
+```html
+<ol class="dcss-axis-bottom" style="--start: 0; --stop: 87; --count: 10">
+  <li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li>
+  <li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li>
+</ol>
+```
+
+Each `<li>` gets `--dcss-tick`, its value, and `--dcss-tick-at`, its place from 0 to 1; the list gets `--dcss-tick-step`, `--dcss-tick-increment` and `--dcss-tick-count`. `.dcss-ticks` is the same list without the drawing (a grid: `.grid > li { left: calc(var(--dcss-tick-at) * 100%) }`); `.dcss-nice` with the same three gets `--dcss-nice-start` and `--dcss-nice-stop`. Set the range on an ancestor to share it, in a rule when state changes it (`.chart:has(#zoom:checked) { --stop: 870 }`): an inline style beats any rule.
 
 ### Outputs
 
@@ -329,11 +363,11 @@ Same frame: yes, with two entries moving every frame. Exact. Cost: Chrome 5.2, W
 
 Same frame: yes, a floor and the width moving. To 1/32 px. Cost: Chrome 10.5 an entry, WebKit 13.4.
 
-#### d3-array's ticks, tickIncrement, tickStep and nice: a range's ticks as d3 picks them
+#### d3's axis and d3-array's ticks, tickIncrement, tickStep and nice: a range's ticks as d3 picks them, drawn and labelled as d3.axisBottom draws them
 
-`.arrays-ticks` with `--arrays-start`, `--arrays-stop`, `--arrays-count` gets `--arrays-tick-increment`, `--arrays-tick-step` and `--arrays-tick-n`; its k-th child `<i>` gets `--arrays-tick` and `--arrays-tick-on` (1 for k < n). `.arrays-nice` with the same three gets `--arrays-nice-start` and `--arrays-nice-stop`.
+`.dcss-axis-bottom` (`-top`, `-left`, `-right`) or `.dcss-ticks` (not drawn) with `--start`, `--stop`, `--count`, an `<li>` a tick: each `<li>` gets `--dcss-tick` and `--dcss-tick-at`, the list `--dcss-tick-step`, `--dcss-tick-increment`, `--dcss-tick-count`. `.dcss-nice` with the same three gets `--dcss-nice-start` and `--dcss-nice-stop`.
 
-Same frame: yes: calc(), no layout. Equal to d3's answer on all 254 calls d3-array's tests make with finite numbers (`d3-check.mjs`). Cost: Chrome 0.32 ms an .arrays-ticks of 12 ticks, 0.78 an .arrays-nice, WebKit 0.50 and 1.47 ms.
+Same frame: yes: calc(), no layout. Equal to d3's answer on all 254 calls d3-array's tests make with finite numbers (`d3-check.mjs`); places within 1/32 px of d3's axis and labels the same pixels as d3's text (`probes/axis/check.mjs`). Cost: Chrome 0.42 ms a .dcss-ticks of 16, 1.17 a drawn axis, 0.84 a .dcss-nice, WebKit 0.74, 1.62 and 1.51 ms.
 
 <!-- /primitives -->
 

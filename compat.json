@@ -1280,7 +1280,30 @@
       },
       "A58": {
         "__compat": {
-          "description": "`.arrays-ticks` with `--arrays-start`, `--arrays-stop` and `--arrays-count` MUST give `--arrays-tick-increment` and `--arrays-tick-step` equal to d3-array 3.2.4's tickIncrement and tickStep, `--arrays-tick-n` its ticks' length, and its k-th child `--arrays-tick` the k-th tick (`--arrays-tick-on` 1 f",
+          "description": "`.dcss-ticks` (or `.dcss-axis-*`) with `--start`, `--stop` and `--count` MUST give `--dcss-tick-increment` and `--dcss-tick-step` equal to d3-array 3.2.4's tickIncrement and tickStep, as many `<li>`s shown as its ticks (the rest `display: none`), and its k-th `<li>` `--dcss-tick` the k-th tick; `.dc",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": "≤26.4",
+              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+            },
+            "firefox": {
+              "version_added": "≤158"
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A59": {
+        "__compat": {
+          "description": "`.dcss-axis-bottom`, `-top`, `-left` and `-right` MUST place each tick where d3-axis 3 places it for scaleLinear([start, stop]) over the list's width (left and right: [height, 0]), and label it as that scale's tickFormat(count) does.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
