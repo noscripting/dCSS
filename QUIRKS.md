@@ -1,6 +1,6 @@
-# arrays.css: QUIRKS
+# styles-arrays.css: QUIRKS
 
-The engine bugs arrays.css meets when it computes with layout, and what the sheet does about each.
+The engine bugs styles-arrays.css meets when it computes with layout, and what the sheet does about each.
 
 Measured 2026-10-22, headless: Chrome 155.0.8059.86, WebKit 26.4, Firefox 158.0.
 

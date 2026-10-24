@@ -1,10 +1,10 @@
-# arrays.css: tutorial
+# styles-arrays.css: tutorial
 
 You build a leaderboard that keeps its players in score order by itself, and moves a player up the moment their score passes another's.
 
 ## Before you start
 
-You need Chrome, Safari or Firefox, and `arrays.css` from this folder saved next to a new file, `leaderboard.html`. Open that file in the browser after each step and reload it to see the change. No server and no script are needed.
+You need Chrome, Safari or Firefox, and `styles-arrays.css` from this folder saved next to a new file, `leaderboard.html`. Open that file in the browser after each step and reload it to see the change. No server and no script are needed.
 
 ## 1. Sort the players by score
 
@@ -16,7 +16,7 @@ Each entry holds a `.arrays-where`, and the inner `<u>` of it is the row you see
 <!doctype html>
 <meta charset="utf-8">
 <title>Leaderboard</title>
-<link rel="stylesheet" href="arrays.css">
+<link rel="stylesheet" href="styles-arrays.css">
 <style>
   body { margin: 24px; font: 16px/1.4 system-ui, sans-serif; }
   .board { position: relative; width: 360px; height: 128px; }
@@ -83,7 +83,7 @@ Then replace Edsger's `style="--score: 130"` with `class="climber"`. The whole p
 <!doctype html>
 <meta charset="utf-8">
 <title>Leaderboard</title>
-<link rel="stylesheet" href="arrays.css">
+<link rel="stylesheet" href="styles-arrays.css">
 <style>
   @property --score { syntax: '<number>'; inherits: true; initial-value: 0; }
   @keyframes climb { from { --score: 120; } to { --score: 460; } }
