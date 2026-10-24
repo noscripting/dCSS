@@ -1,15 +1,15 @@
-# styles-array.css
+# dcss-array.css
 
-Computation in a stylesheet. Arrays of numbers laid out by CSS Grid: read by index, summed over ranges, ranked in bins, sorted, searched, packed and looked up by key, with every result in the same frame as its inputs and no script. Also formulas over laid-out sizes, lookup tables in fonts, and loops and spreadsheets on styles-store.css. Checked frame by frame against a model. Works in Chrome and Safari.
+Computation in a stylesheet. Arrays of numbers laid out by CSS Grid: read by index, summed over ranges, ranked in bins, sorted, searched, packed and looked up by key, with every result in the same frame as its inputs and no script. Also formulas over laid-out sizes, lookup tables in fonts, and loops and spreadsheets on dcss-store.css. Checked frame by frame against a model. Works in Chrome and Safari.
 
 Visit [noscript.ing](https://noscript.ing) for demos.
 
 ## Installation
 
-Download `styles-array.css` and link it. Numbers go in as `--arrays-n` on `<i>` entries; a reader, `<b class="arrays-at">`, picks one by `--arrays-i`, and the `<u>` inside it gets the result as `--arrays-value`:
+Download `dcss-array.css` and link it. Numbers go in as `--arrays-n` on `<i>` entries; a reader, `<b class="arrays-at">`, picks one by `--arrays-i`, and the `<u>` inside it gets the result as `--arrays-value`:
 
 ```html
-<link rel="stylesheet" href="styles-array.css">
+<link rel="stylesheet" href="dcss-array.css">
 <style>.arrays-at u::after { counter-reset: v var(--arrays-value); content: counter(v); }</style>
 
 <div class="arrays-array arrays-count">
@@ -22,7 +22,7 @@ Download `styles-array.css` and link it. Numbers go in as `--arrays-n` on `<i>` 
 
 The page shows 40, entry 2. With `--arrays-i: 1; --arrays-j: -1` the reader shows the sum, 82; with `--arrays-i: -1`, the last entry, 30. Change any `--arrays-n`, by a rule, a transition or an animation, and the reader follows in the same frame.
 
-Text reads (`.arrays-text`, below) use fonts embedded in the sheet. To have them right from the first frame, copy the `<link rel="preload">` lines of `arrays-preload.html` into the page's `<head>`. Loops and sheets also need [styles-store.css](https://noscript.ing) on the page.
+Text reads (`.arrays-text`, below) use fonts embedded in the sheet. To have them right from the first frame, copy the `<link rel="preload">` lines of `arrays-preload.html` into the page's `<head>`. Loops and sheets also need [dcss-store.css](https://noscript.ing) on the page.
 
 ## Reference
 
@@ -33,7 +33,7 @@ The full contract, with each requirement's result in each engine, is [SPEC.md](S
 - A grid is one computation. Its children are the entries, `<i>`, the inputs. Its readers, `<b class="arrays-at"><u></u></b>`, are the outputs: each reads the nearest grid around it.
 - A reader sits in the port, `<b class="arrays-out">`, the grid's first child, or inside an entry. In a grid with no child entries (a packed array, a cycle), it is a child of the grid.
 - The results land on the `<u>` inside a reader, by inheritance. That `<u>` is the author's: put content there. Entries, readers and the port are machinery, and content put in them can move what they read.
-- A grid inside a reader's `<u>` reads its own entries, so one computation feeds the next in the same frame. Values flow down only: results of several entries reach another grid's entries a frame later, through styles-store.css's store.
+- A grid inside a reader's `<u>` reads its own entries, so one computation feeds the next in the same frame. Values flow down only: results of several entries reach another grid's entries a frame later, through dcss-store.css's store.
 - Moving numbers belong on the entries. A number that changes above a grid and is inherited through it restyles every reader, used or not.
 - Every name the sheet owns starts with `arrays-`. Internal numbers are `--arrays-p-*`; the anchor names are `--arrays-where`, `--arrays-lo` and `--arrays-hi`.
 - Every grid resets its padding, border, `writing-mode` and `direction`.
@@ -413,7 +413,7 @@ A number can be a CSS counter printed in a font whose glyphs draw nothing and ar
 
 ### Loops and sheets
 
-These run on styles-store.css's stored cells (`[data-store]`), read by `[data-store-read]` and `[data-store-read-3]` readers that name the cells by `--store-of`.
+These run on dcss-store.css's stored cells (`[data-store]`), read by `[data-store-read]` and `[data-store-read-3]` readers that name the cells by `--store-of`.
 
 A loop is a while loop written by hand. Its cells are the items of one flow, which is also the loop's one shared reader, and one more cell under the flow keeps the clock and the total:
 
@@ -511,14 +511,14 @@ Each primitive above gives its cost. For formulas, an update forced:
 ## Demos
 
 - `demo.html`: every primitive, live.
-- `sheets/`: a loan, a gradebook, an invoice and a plate, as spreadsheets on styles-store.css.
-- `ports/`: Observable Plot's test plots drawn on styles-array.css, each over Plot's own snapshot.
+- `sheets/`: a loan, a gradebook, an invoice and a plate, as spreadsheets on dcss-store.css.
+- `ports/`: Observable Plot's test plots drawn on dcss-array.css, each over Plot's own snapshot.
 - `coverage/coverage.html`: the Array API standard's functions in CSS, checked against NumPy.
 - `chain-rows.html`: a for loop laid out as table rows, the board inlined.
 
 ## Build
 
-- `node libraries/arrays/build.mjs` writes `styles-array.css`, `arrays-preload.html` and this file's primitives (from `primitives.mjs`). It refuses a property registered twice with different types.
+- `node libraries/arrays/build.mjs` writes `dcss-array.css`, `arrays-preload.html` and this file's primitives (from `primitives.mjs`). It refuses a property registered twice with different types.
 - `node libraries/arrays/check.mjs` checks every primitive frame by frame against a model over 60 frames, the numbers moving, in Chrome and WebKit (`ENGINES=Firefox` runs Firefox). `CHECKS=61,62` runs only those checks; `MUTATE=1` lists the reads whose model barely moves.
 - `node libraries/arrays/quirks/run.mjs` runs QUIRKS.md's reftests in the three engines. `node libraries/arrays/sheets/check.mjs loan`, `node libraries/arrays/pipeline/check.mjs` and `node libraries/arrays/probes/compile-check.mjs` check the sheets, the compiled programs and `formula.mjs`.
 - `node libraries/arrays/probes/engines.mjs &` keeps one headless Chrome and one WebKit running for the checks to connect to; `node libraries/arrays/probes/engines.mjs stop` ends them.

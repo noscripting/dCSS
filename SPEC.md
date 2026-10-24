@@ -1,6 +1,6 @@
-# styles-array.css: SPEC
+# dcss-array.css: SPEC
 
-styles-array.css computes with CSS layout: indexed reads, sums, ranks, sorts, keyed maps, packing and formulas over numbers written in custom properties, with no script at run time.
+dcss-array.css computes with CSS layout: indexed reads, sums, ranks, sorts, keyed maps, packing and formulas over numbers written in custom properties, with no script at run time.
 
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in BCP 14 [RFC2119] [RFC8174] when, and only when, they appear in all capitals, as shown here.
 
@@ -20,7 +20,7 @@ Conformance: Chrome 57/57, WebKit 57/57, Firefox 52/57.
 | CSS Flexible Box Layout Module Level 1 | Editor's Draft, 2026-05-08 | `.arrays-flex`: shares with weights, floors and caps (§9.7) |
 | CSS Counter Styles Level 3 | Editor's Draft, 2026-10-08 | `arrays-tally`, `arrays-table` and the text operators |
 | CSS Fonts Module Level 4 | Editor's Draft, 2026-10-16 | the lookup fonts and the ROM fonts' variation axes |
-| styles-store.css | store 4f37d4eb | the stored cells and readers the loops and sheets run on |
+| dcss-store.css | store 4f37d4eb | the stored cells and readers the loops and sheets run on |
 
 ## 2. Requirements
 
@@ -170,10 +170,10 @@ Conformance: Chrome 57/57, WebKit 57/57, Firefox 52/57.
 
 ### On the board
 
-- **A51** A loop (`.loop`, `.loop-flow`, `.loop-in`, `.loop-cell`, `.loop-core`) MUST have styles-store.css on the page;
+- **A51** A loop (`.loop`, `.loop-flow`, `.loop-in`, `.loop-cell`, `.loop-core`) MUST have dcss-store.css on the page;
   its cells, read through `[data-store-read]` and `[data-store-read-3]` naming them by `--store-of`, MUST settle on the
   iteration's fixed point: a 12-cell power iteration's vector and eigenvalue equal NumPy's, as a flow and as a table row.
-- **A52** A `<table class="sheet">` on styles-store.css's board MUST show every cell and fold equal to the sheet's own
+- **A52** A `<table class="sheet">` on dcss-store.css's board MUST show every cell and fold equal to the sheet's own
   model as written and after each change to its inputs.
 
 ## 3. Implementation report
@@ -235,12 +235,12 @@ Conformance: Chrome 57/57, WebKit 57/57, Firefox 52/57.
 | A55 | pipeline/check.mjs FORMS=sheet: the 8 sorted group programs and the 3 ranked albums (24 rows) of examples.mjs | PASS | PASS | PASS |
 | A56 | pipeline/check.mjs FORMS=sheet: ex-board-heights, ex-starts, ex-gallery-size | PASS | PASS | PASS |
 | A57 | pipeline/check.mjs pipeline/at-size.mjs F=sheet: 3 stacked bar programs at 1,300 items | PASS | PASS | PASS |
-| A51 | coverage/board.mjs: bd-power-12-loop-classes, bd-power-12-loop-table | PASS: 13 of 13 each, against NumPy | PASS: 13 of 13 each, against NumPy | PRECONDITION_FAILED: no view timelines, which styles-store.css's store needs |
-| A52 | sheets/check.mjs: loan | PASS: 50 of 50 cells as written and after 2 changes | PASS: 50 of 50 cells as written and after 2 changes | PRECONDITION_FAILED: no view timelines, which styles-store.css's store needs |
+| A51 | coverage/board.mjs: bd-power-12-loop-classes, bd-power-12-loop-table | PASS: 13 of 13 each, against NumPy | PASS: 13 of 13 each, against NumPy | PRECONDITION_FAILED: no view timelines, which dcss-store.css's store needs |
+| A52 | sheets/check.mjs: loan | PASS: 50 of 50 cells as written and after 2 changes | PASS: 50 of 50 cells as written and after 2 changes | PRECONDITION_FAILED: no view timelines, which dcss-store.css's store needs |
 
 ## 4. Not covered
 
-- Loops between grids (`.loop-flow`, `.loop-in`, `[data-store-read]`, `--store-of`) without styles-store.css or store.css on the page: their cells are the board's stored numbers.
+- Loops between grids (`.loop-flow`, `.loop-in`, `[data-store-read]`, `--store-of`) without dcss-store.css or store.css on the page: their cells are the board's stored numbers.
 - Entries of any tag but `<i>`, and readers of any tag but `<b>`.
 - Ranks past 32 in one bin (rank 33 reads 1), and bins in use counted past the box's width in px.
 - A count of bins in use in `.arrays-bins.arrays-max`, whose 32 bins are an auto-repeat that takes no `max-content`.

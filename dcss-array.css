@@ -1,4 +1,4 @@
-/* styles-array.css: computation in CSS layout, no script.
+/* dcss-array.css: computation in CSS layout, no script.
 
    The idea. A grid's tracks are an array: layout sizes each track from the boxes in it, and sums, maxima, sorts and
    packings fall out of the track sizing and placement algorithms (css-grid-2 8.5, 12). A reader is a box laid over
@@ -1182,7 +1182,7 @@
 .arrays-text > u > u { display: block; --arrays-value: calc(100cqw / 1px); text-decoration: none; }
 .arrays-array > i.arrays-text, .arrays-bins.arrays-max > i.arrays-text, .arrays-map > i.arrays-text, .arrays-sum > i.arrays-text, .arrays-largest > i.arrays-text, .arrays-scale > i.arrays-text, .arrays-times > i.arrays-text, .arrays-cap > b > i.arrays-text { width: max-content; }
 /* Lists. A list is plain CSS: order sorts it, its width wraps it, grid-column
-   groups it. styles-array.css adds the two things CSS cannot say:
+   groups it. dcss-array.css adds the two things CSS cannot say:
      <div class="pager" style="height: 480px; --page: 2">        page 2: the pager's height is one page
        <div class="list" style="width: 300px">
          <div style="--if: 0; order: 512">...</div>             --if: 0 drops the item (v-if): it takes no space
@@ -1229,7 +1229,7 @@
 .arrays-starts > * { flex: none; height: 0; margin: 0; padding: 0; border: 0; }
 .arrays-starts > b { width: 0; order: calc(2 * sibling-index() - 2); }
 .arrays-starts > i { width: calc(max(0, var(--arrays-n)) * 1px); order: calc(2 * max(1, var(--arrays-bin)) - 1); }
-/* Loops (README "Loops and sheets"): a while loop on styles-store.css's board cells, written by hand. The cells are the
+/* Loops (README "Loops and sheets"): a while loop on dcss-store.css's board cells, written by hand. The cells are the
    items of one flow, which is also the loop's one shared reader; one more cell under the flow keeps the clock and the
    total. A page writes its cells, its neighbours' names, and its step as a rule:
      <div class="loop power">
@@ -1279,7 +1279,7 @@ table.loop { border-collapse: collapse; border-spacing: 0; } table.loop td { pad
   --store-next: calc(var(--loop-win) * round(100cqw / 1px) + (1 - var(--loop-win)) * var(--store-value));
   --store-next-y: calc(var(--store-y) + 1 - var(--loop-done)); }
 
-/* Sheets (README "Loops and sheets"): a <table class="sheet"> whose cells compute on styles-store.css's board, as a
+/* Sheets (README "Loops and sheets"): a <table class="sheet"> whose cells compute on dcss-store.css's board, as a
    spreadsheet does. A cell is a stored number with a name; a formula is a rule on a class, written once a column (fill
    down); a reader around a cell names what it reads ([data-store-read] one name, [data-store-read-3] up to three), and
    inside it they are --in-a, --in-b, --in-c (a reader inside
