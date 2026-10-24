@@ -1,4 +1,4 @@
-/* styles-arrays.css: computation in CSS layout, no script.
+/* styles-array.css: computation in CSS layout, no script.
 
    The idea. A grid's tracks are an array: layout sizes each track from the boxes in it, and sums, maxima, sorts and
    packings fall out of the track sizing and placement algorithms (css-grid-2 8.5, 12). A reader is a box laid over
@@ -1182,7 +1182,7 @@
 .arrays-text > u > u { display: block; --arrays-value: calc(100cqw / 1px); text-decoration: none; }
 .arrays-array > i.arrays-text, .arrays-bins.arrays-max > i.arrays-text, .arrays-map > i.arrays-text, .arrays-sum > i.arrays-text, .arrays-largest > i.arrays-text, .arrays-scale > i.arrays-text, .arrays-times > i.arrays-text, .arrays-cap > b > i.arrays-text { width: max-content; }
 /* Lists. A list is plain CSS: order sorts it, its width wraps it, grid-column
-   groups it. styles-arrays.css adds the two things CSS cannot say:
+   groups it. styles-array.css adds the two things CSS cannot say:
      <div class="pager" style="height: 480px; --page: 2">        page 2: the pager's height is one page
        <div class="list" style="width: 300px">
          <div style="--if: 0; order: 512">...</div>             --if: 0 drops the item (v-if): it takes no space

@@ -1,4 +1,4 @@
-# styles-arrays.css
+# styles-array.css
 
 Computation in a stylesheet. Arrays of numbers laid out by CSS Grid: read by index, summed over ranges, ranked in bins, sorted, searched, packed and looked up by key, with every result in the same frame as its inputs and no script. Also formulas over laid-out sizes, lookup tables in fonts, and loops and spreadsheets on styles-store.css. Checked frame by frame against a model. Works in Chrome and Safari.
 
@@ -6,10 +6,10 @@ Visit [noscript.ing](https://noscript.ing) for demos.
 
 ## Installation
 
-Download `styles-arrays.css` and link it. Numbers go in as `--arrays-n` on `<i>` entries; a reader, `<b class="arrays-at">`, picks one by `--arrays-i`, and the `<u>` inside it gets the result as `--arrays-value`:
+Download `styles-array.css` and link it. Numbers go in as `--arrays-n` on `<i>` entries; a reader, `<b class="arrays-at">`, picks one by `--arrays-i`, and the `<u>` inside it gets the result as `--arrays-value`:
 
 ```html
-<link rel="stylesheet" href="styles-arrays.css">
+<link rel="stylesheet" href="styles-array.css">
 <style>.arrays-at u::after { counter-reset: v var(--arrays-value); content: counter(v); }</style>
 
 <div class="arrays-array arrays-count">
@@ -512,13 +512,13 @@ Each primitive above gives its cost. For formulas, an update forced:
 
 - `demo.html`: every primitive, live.
 - `sheets/`: a loan, a gradebook, an invoice and a plate, as spreadsheets on styles-store.css.
-- `ports/`: Observable Plot's test plots drawn on styles-arrays.css, each over Plot's own snapshot.
+- `ports/`: Observable Plot's test plots drawn on styles-array.css, each over Plot's own snapshot.
 - `coverage/coverage.html`: the Array API standard's functions in CSS, checked against NumPy.
 - `chain-rows.html`: a for loop laid out as table rows, the board inlined.
 
 ## Build
 
-- `node libraries/arrays/build.mjs` writes `styles-arrays.css`, `arrays-preload.html` and this file's primitives (from `primitives.mjs`). It refuses a property registered twice with different types.
+- `node libraries/arrays/build.mjs` writes `styles-array.css`, `arrays-preload.html` and this file's primitives (from `primitives.mjs`). It refuses a property registered twice with different types.
 - `node libraries/arrays/check.mjs` checks every primitive frame by frame against a model over 60 frames, the numbers moving, in Chrome and WebKit (`ENGINES=Firefox` runs Firefox). `CHECKS=61,62` runs only those checks; `MUTATE=1` lists the reads whose model barely moves.
 - `node libraries/arrays/quirks/run.mjs` runs QUIRKS.md's reftests in the three engines. `node libraries/arrays/sheets/check.mjs loan`, `node libraries/arrays/pipeline/check.mjs` and `node libraries/arrays/probes/compile-check.mjs` check the sheets, the compiled programs and `formula.mjs`.
 - `node libraries/arrays/probes/engines.mjs &` keeps one headless Chrome and one WebKit running for the checks to connect to; `node libraries/arrays/probes/engines.mjs stop` ends them.

@@ -1,8 +1,8 @@
 {
   "noscripting": {
-    "styles-arrays.css": {
+    "styles-array.css": {
       "__compat": {
-        "description": "styles-arrays.css, measured 2026-10-23",
+        "description": "styles-array.css, measured 2026-10-23",
         "support": {},
         "status": {
           "experimental": true,

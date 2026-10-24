@@ -1,6 +1,6 @@
-# styles-arrays.css: SPEC
+# styles-array.css: SPEC
 
-styles-arrays.css computes with CSS layout: indexed reads, sums, ranks, sorts, keyed maps, packing and formulas over numbers written in custom properties, with no script at run time.
+styles-array.css computes with CSS layout: indexed reads, sums, ranks, sorts, keyed maps, packing and formulas over numbers written in custom properties, with no script at run time.
 
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in BCP 14 [RFC2119] [RFC8174] when, and only when, they appear in all capitals, as shown here.
 
@@ -240,7 +240,7 @@ Conformance: Chrome 57/57, WebKit 57/57, Firefox 52/57.
 
 ## 4. Not covered
 
-- Loops between grids (`.loop-flow`, `.loop-in`, `[data-store-read]`, `--store-of`) without styles-store.css or styles-store.css on the page: their cells are the board's stored numbers.
+- Loops between grids (`.loop-flow`, `.loop-in`, `[data-store-read]`, `--store-of`) without styles-store.css or store.css on the page: their cells are the board's stored numbers.
 - Entries of any tag but `<i>`, and readers of any tag but `<b>`.
 - Ranks past 32 in one bin (rank 33 reads 1), and bins in use counted past the box's width in px.
 - A count of bins in use in `.arrays-bins.arrays-max`, whose 32 bins are an auto-repeat that takes no `max-content`.
