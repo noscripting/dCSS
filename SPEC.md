@@ -5,7 +5,7 @@ dcss-array.css computes with CSS layout: indexed reads, sums, ranks, sorts, keye
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in BCP 14 [RFC2119] [RFC8174] when, and only when, they appear in all capitals, as shown here.
 
 Measured 2026-10-23, headless: Chrome 155.0.8059.86, WebKit 26.4, Firefox 158.0.
-Conformance: Chrome 57/57, WebKit 57/57, Firefox 52/57.
+Conformance: Chrome 58/58, WebKit 58/58, Firefox 53/58.
 
 ## 1. Follows
 
@@ -167,6 +167,10 @@ Conformance: Chrome 57/57, WebKit 57/57, Firefox 52/57.
   width and height.
 - **A57** `.arrays-ranked.arrays-copy` with `--arrays-copy-width` and `.arrays-ranks > b > .arrays-segments` holding G
   `.arrays-group` and the items again MUST place each segment as A55 does, for up to 16 groups.
+- **A58** `.arrays-ticks` with `--arrays-start`, `--arrays-stop` and `--arrays-count` MUST give `--arrays-tick-increment`
+  and `--arrays-tick-step` equal to d3-array 3.2.4's tickIncrement and tickStep, `--arrays-tick-n` its ticks' length, and
+  its k-th child `--arrays-tick` the k-th tick (`--arrays-tick-on` 1 for k < n); `.arrays-nice` with the same three MUST
+  give `--arrays-nice-start` and `--arrays-nice-stop` equal to nice's; for finite start, stop and count.
 
 ### On the board
 
@@ -235,6 +239,7 @@ Conformance: Chrome 57/57, WebKit 57/57, Firefox 52/57.
 | A55 | pipeline/check.mjs FORMS=sheet: the 8 sorted group programs and the 3 ranked albums (24 rows) of examples.mjs | PASS | PASS | PASS |
 | A56 | pipeline/check.mjs FORMS=sheet: ex-board-heights, ex-starts, ex-gallery-size | PASS | PASS | PASS |
 | A57 | pipeline/check.mjs pipeline/at-size.mjs F=sheet: 3 stacked bar programs at 1,300 items | PASS | PASS | PASS |
+| A58 | d3-check.mjs: every call d3-array's tests record with finite numbers (ticks 112, tickIncrement 30, tickStep 92, nice 20) | PASS: 254 of 254 | PASS: 254 of 254 | PASS: 254 of 254 |
 | A51 | coverage/board.mjs: bd-power-12-loop-classes, bd-power-12-loop-table | PASS: 13 of 13 each, against NumPy | PASS: 13 of 13 each, against NumPy | PRECONDITION_FAILED: no view timelines, which dcss-store.css's store needs |
 | A52 | sheets/check.mjs: loan | PASS: 50 of 50 cells as written and after 2 changes | PASS: 50 of 50 cells as written and after 2 changes | PRECONDITION_FAILED: no view timelines, which dcss-store.css's store needs |
 

@@ -329,6 +329,12 @@ Same frame: yes, with two entries moving every frame. Exact. Cost: Chrome 5.2, W
 
 Same frame: yes, a floor and the width moving. To 1/32 px. Cost: Chrome 10.5 an entry, WebKit 13.4.
 
+#### d3-array's ticks, tickIncrement, tickStep and nice: a range's ticks as d3 picks them
+
+`.arrays-ticks` with `--arrays-start`, `--arrays-stop`, `--arrays-count` gets `--arrays-tick-increment`, `--arrays-tick-step` and `--arrays-tick-n`; its k-th child `<i>` gets `--arrays-tick` and `--arrays-tick-on` (1 for k < n). `.arrays-nice` with the same three gets `--arrays-nice-start` and `--arrays-nice-stop`.
+
+Same frame: yes: calc(), no layout. Equal to d3's answer on all 254 calls d3-array's tests make with finite numbers (`d3-check.mjs`). Cost: Chrome 0.32 ms an .arrays-ticks of 12 ticks, 0.78 an .arrays-nice, WebKit 0.50 and 1.47 ms.
+
 <!-- /primitives -->
 
 ### Packed maps

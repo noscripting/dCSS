@@ -1278,6 +1278,29 @@
           }
         }
       },
+      "A58": {
+        "__compat": {
+          "description": "`.arrays-ticks` with `--arrays-start`, `--arrays-stop` and `--arrays-count` MUST give `--arrays-tick-increment` and `--arrays-tick-step` equal to d3-array 3.2.4's tickIncrement and tickStep, `--arrays-tick-n` its ticks' length, and its k-th child `--arrays-tick` the k-th tick (`--arrays-tick-on` 1 f",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": "≤26.4",
+              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+            },
+            "firefox": {
+              "version_added": "≤158"
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
       "A51": {
         "__compat": {
           "description": "A loop (`.loop`, `.loop-flow`, `.loop-in`, `.loop-cell`, `.loop-core`) MUST have dcss-store.css on the page; its cells, read through `[data-store-read]` and `[data-store-read-3]` naming them by `--store-of`, MUST settle on the iteration's fixed point: a 12-cell power iteration's vector and eigenval",
