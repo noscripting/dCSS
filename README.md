@@ -2,6 +2,8 @@
 
 Computation in a stylesheet. Arrays of numbers laid out by CSS Grid: read by index, summed over ranges, ranked in bins, sorted, searched, packed and looked up by key, with every result in the same frame as its inputs and no script. Also formulas over laid-out sizes, lookup tables in fonts, and loops and spreadsheets on dcss-store.css. Checked frame by frame against a model. Works in Chrome and Safari.
 
+Part of DCSS, Data-Driven CSS: stylesheets that do the data work d3 does in JavaScript. dcss-array does d3-array's job: sums, sorts, bins and search. With [dcss-store](https://github.com/noscripting/dcss-store), [dcss-loop](https://github.com/noscripting/dcss-loop) and [dcss-unround](https://github.com/noscripting/dcss-unround).
+
 Visit [noscript.ing](https://noscript.ing) for demos.
 
 ## Installation
