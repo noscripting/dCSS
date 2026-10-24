@@ -2,7 +2,7 @@
   "noscripting": {
     "dcss-array.css": {
       "__compat": {
-        "description": "dcss-array.css, measured 2026-10-23",
+        "description": "dcss-array.css, measured 2026-10-24",
         "support": {},
         "status": {
           "experimental": true,
@@ -1304,6 +1304,53 @@
       "A59": {
         "__compat": {
           "description": "`.dcss-axis-bottom`, `-top`, `-left` and `-right` MUST place each tick where d3-axis 3 places it for scaleLinear([start, stop]) over the list's width (left and right: [height, 0]), and label it as that scale's tickFormat(count) does.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": "≤26.4",
+              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+            },
+            "firefox": {
+              "version_added": "≤158"
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A60": {
+        "__compat": {
+          "description": "`.dcss-sum`, `-count`, `-mean`, `-min`, `-max` and `-extent` over `<li>`s with `--value` MUST give the element after the list `--dcss-<name>` (extent: `--dcss-min`, `--dcss-max`) equal to d3-array 3.2.4's, skipping values not 0 or more, `--dcss-err` 1 if one was skipped, 2 for d3's undefined; an emp",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": "≤26.4",
+              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+            },
+            "firefox": {
+              "version_added": false,
+              "notes": "FAIL: 154 of 154 d3 calls, but 190 of 420 seeded reads: layout snaps to 1/60 px, so 64ths and the skipped items' 1/64 px marks are lost"
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A61": {
+        "__compat": {
+          "description": "`.dcss-treemap-slice`, `-dice`, `-slice-dice` and `.dcss-partition` over nested `<li>`s with `--value` MUST lay each `<li>` within 2/64 px a level of the rectangle d3-hierarchy 3's treemap() with that tile, or partition(), gives its node over the figure's box.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {

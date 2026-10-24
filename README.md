@@ -61,6 +61,34 @@ A d3 call is an element; its data is a list; the answer is the list's own layout
 - Numbers are px: whole to 2^24, fractions to 1/64, a total under 33 million, 6 significant digits through `var()`, 0 or more.
 - The sheet owns the display and size of the figure, its list, its items and the element after the list, and the empty `<output>`'s `::after`; the rest is the page's.
 
+### Reductions
+
+`.dcss-sum`, `.dcss-count`, `.dcss-mean`, `.dcss-min`, `.dcss-max`, `.dcss-extent` and `.dcss-length` (the list's length, items skipped included), each a figure as above. The element after the list gets `--dcss-sum` (and so on; an extent `--dcss-min` and `--dcss-max`), and an empty `<output>` prints it as d3.format(",") does, to 6 decimals, a line above the list (an extent as `3–125`). An item whose `--value` is not a number of 0 or more is skipped, as d3 skips it, and `--dcss-err` is 1; a mean, min, max or extent of no items is d3's undefined, `--dcss-err` 2; in error the `<output>` prints nothing.
+
+```html
+<figure class="dcss-extent">
+  <ul><li style="--value: 12"></li> <li style="--value: 40"></li> <li style="--value: 3"></li></ul>
+  <output></output>                  <!-- prints 3–40 -->
+</figure>
+```
+
+The list is drawn as it computes: a sum as a staircase as wide as the sum and as tall as the count, a min or max as boxes stacked as wide as the largest and 1 + 2 x (max - min) px tall. The figure clips the width; give it a height and `overflow: clip` to hide the rest. A value is taken to 1/64; in Chrome a list past 262,144 px (2^18) reads without its 64ths, past 2^24 without whole px (ENGINES.md); up to 63 skipped items are counted. `probes/dcss/index.html` shows each, changed by two checkboxes.
+
+### Hierarchies
+
+`.dcss-treemap-slice`, `.dcss-treemap-dice`, `.dcss-treemap-slice-dice` and `.dcss-partition`: a figure of the size the page gives it, holding a nested list, each `<li>` a node with d3's node.value as `--value` (an inner node's is its subtree's sum, as hierarchy.sum() leaves it). Every `<li>` is laid out at its node's rectangle, as d3.treemap().tile(d3.treemapSliceDice) or d3.partition() places it over the figure; draw on the `<li>`s. A partition keeps the top band for the root, as d3 does: wrap the list in one `<li>` to draw it.
+
+```html
+<figure class="dcss-treemap-slice-dice" style="width: 640px; height: 320px">
+  <ul>
+    <li style="--value: 50">Citrus <ul><li style="--value: 30">Orange</li> <li style="--value: 20">Lemon</li></ul></li>
+    <li style="--value: 40">Apples</li>
+  </ul>
+</figure>
+```
+
+Each line of siblings is a flex line growing by value, so a box is within 2/64 px a level of d3's (WebKit drifts past 200 siblings: 0.29 px at 1,000); a partition takes 12 levels. `probes/dcss/hierarchy.html` shows a treemap and a partition, changed by a checkbox.
+
 ### Axes
 
 d3's axis, as a list: `.dcss-axis-bottom` (or `-top`, `-left`, `-right`) with d3.ticks's `--start`, `--stop` and `--count` (10 if not set), and an `<li>` a tick. It draws as d3.axisBottom(scaleLinear([start, stop])).ticks(count) does, at the list's width (left and right: its height), labels in d3's tickFormat. 16 `<li>`s hold any 10-tick axis.

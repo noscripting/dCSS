@@ -4,8 +4,8 @@ dcss-array.css computes with CSS layout: indexed reads, sums, ranks, sorts, keye
 
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in BCP 14 [RFC2119] [RFC8174] when, and only when, they appear in all capitals, as shown here.
 
-Measured 2026-10-23, headless: Chrome 155.0.8059.86, WebKit 26.4, Firefox 158.0.
-Conformance: Chrome 59/59, WebKit 59/59, Firefox 54/59.
+Measured 2026-10-24, headless: Chrome 155.0.8059.86, WebKit 26.4, Firefox 158.0.
+Conformance: Chrome 61/61, WebKit 61/61, Firefox 55/61.
 
 ## 1. Follows
 
@@ -174,6 +174,13 @@ Conformance: Chrome 59/59, WebKit 59/59, Firefox 54/59.
 - **A59** `.dcss-axis-bottom`, `-top`, `-left` and `-right` MUST place each tick where d3-axis 3 places it for
   scaleLinear([start, stop]) over the list's width (left and right: [height, 0]), and label it as that scale's
   tickFormat(count) does.
+- **A60** `.dcss-sum`, `-count`, `-mean`, `-min`, `-max` and `-extent` over `<li>`s with `--value` MUST give the
+  element after the list `--dcss-<name>` (extent: `--dcss-min`, `--dcss-max`) equal to d3-array 3.2.4's, skipping values
+  not 0 or more, `--dcss-err` 1 if one was skipped, 2 for d3's undefined; an empty `<output>` MUST print it as
+  format(",") does, to 6 decimals.
+- **A61** `.dcss-treemap-slice`, `-dice`, `-slice-dice` and `.dcss-partition` over nested `<li>`s with `--value` MUST lay
+  each `<li>` within 2/64 px a level of the rectangle d3-hierarchy 3's treemap() with that tile, or partition(), gives
+  its node over the figure's box.
 
 ### On the board
 
@@ -244,6 +251,8 @@ Conformance: Chrome 59/59, WebKit 59/59, Firefox 54/59.
 | A57 | pipeline/check.mjs pipeline/at-size.mjs F=sheet: 3 stacked bar programs at 1,300 items | PASS | PASS | PASS |
 | A58 | d3-check.mjs: every call d3-array's tests record with finite numbers (ticks 112, tickIncrement 30, tickStep 92, nice 20) | PASS: 254 of 254 | PASS: 254 of 254 | PASS: 254 of 254 |
 | A59 | probes/axis/check.mjs: 9 axes and 2 zoomed by :has(), places within 1/32 px, labels as printed against d3's text, pixel for pixel | PASS: 11 of 11, the same pixels | PASS: 11 of 11, the same pixels | PASS: 11 of 11, the same pixels |
+| A60 | d3-check.mjs: every call d3-array's tests record on arrays of numbers, numeric text and what d3 skips (sum 38, count 4, mean 32, min 28, max 28, extent 24); probes/dcss/reduce-check.mjs: 60 seeded lists to 3,000 items, 420 reads, and 60 changes | PASS: 154 of 154; 372 of 420, the 48 others past 2^18 px (ENGINES.md), 240 of 240 moving | PASS: 154 of 154; 420 of 420, 240 of 240 moving | FAIL: 154 of 154 d3 calls, but 190 of 420 seeded reads: layout snaps to 1/60 px, so 64ths and the skipped items' 1/64 px marks are lost |
+| A61 | probes/dcss/hierarchy-check.mjs: the 6 tile calls d3-hierarchy's tests record, at their 2 decimals; 30 seeded treemaps and 12 partitions, every node | PASS: 6 of 6, 42 of 42 (worst 0.86/64 px a level) | PASS: 6 of 6, 42 of 42 (worst 1.39/64) | PASS: 6 of 6, 42 of 42 (worst 0.94/64) |
 | A51 | coverage/board.mjs: bd-power-12-loop-classes, bd-power-12-loop-table | PASS: 13 of 13 each, against NumPy | PASS: 13 of 13 each, against NumPy | PRECONDITION_FAILED: no view timelines, which dcss-store.css's store needs |
 | A52 | sheets/check.mjs: loan | PASS: 50 of 50 cells as written and after 2 changes | PASS: 50 of 50 cells as written and after 2 changes | PRECONDITION_FAILED: no view timelines, which dcss-store.css's store needs |
 
