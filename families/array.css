@@ -14,7 +14,7 @@
 @property --arrays-dcss-err { syntax: '<integer>'; inherits: true; initial-value: 0; }
 @property --arrays-dcss-room { syntax: '<length>'; inherits: true; initial-value: 0px; }
 @counter-style arrays-dcss-dash { system: additive; additive-symbols: 1 "\2013", 0 ""; }
-:is(.dcss-sum, .dcss-count, .dcss-length, .dcss-mean, .dcss-min, .dcss-max, .dcss-extent) { --arrays-dcss-room: 1lh; overflow: clip visible; display: grid; grid-template-columns: max-content 1fr; align-content: start; justify-items: stretch; align-items: stretch; }
+:is(.dcss-sum, .dcss-count, .dcss-length, .dcss-mean, .dcss-min, .dcss-max, .dcss-extent) { --arrays-dcss-room: 1lh; overflow-x: clip; display: grid; grid-template-columns: max-content 1fr; align-content: start; justify-items: stretch; align-items: stretch; }
 :is(.dcss-sum, .dcss-count, .dcss-length, .dcss-mean, .dcss-min, .dcss-max, .dcss-extent) > * { grid-column: 1 / -1; }
 :is(.dcss-sum, .dcss-count, .dcss-length, .dcss-mean, .dcss-min, .dcss-max, .dcss-extent) > :is(ul, ol) { grid-area: 1 / 1; display: grid; justify-content: start; align-content: start; gap: 0; margin: 0; padding: 0; border: 0; list-style: none; }
 :is(.dcss-sum, .dcss-count, .dcss-length, .dcss-mean, .dcss-min, .dcss-max, .dcss-extent) > :is(ul, ol) + * { grid-area: 1 / 1; display: block; container-type: size; min-width: 0; min-height: 0; margin: 0; padding: 0; border: 0; }
@@ -633,7 +633,7 @@ figure.dcss-share > :is(ol, ul) > li > .arrays-share-read > .arrays-share-result
 @property --arrays-index-empty-error { syntax: '<integer>'; inherits: true; initial-value: 0; }
 @property --arrays-index-ready { syntax: '<integer>'; inherits: true; initial-value: 0; }
 @property --arrays-index-err { syntax: '<integer>'; inherits: true; initial-value: 0; }
-:is(.dcss-min-index, .dcss-max-index, .dcss-least-index, .dcss-greatest-index, .dcss-least, .dcss-greatest) { --arrays-index-list-error: 0; --arrays-index-empty-error: 0; display: grid; grid-template-columns: max-content minmax(0, 1fr); align-content: start; align-items: stretch; justify-items: stretch; overflow: clip visible; }
+:is(.dcss-min-index, .dcss-max-index, .dcss-least-index, .dcss-greatest-index, .dcss-least, .dcss-greatest) { --arrays-index-list-error: 0; --arrays-index-empty-error: 0; display: grid; grid-template-columns: max-content minmax(0, 1fr); align-content: start; align-items: stretch; justify-items: stretch; overflow-x: clip; }
 :is(.dcss-least, .dcss-greatest) { --arrays-index-empty-error: 2; }
 :is(.dcss-min-index, .dcss-max-index, .dcss-least-index, .dcss-greatest-index, .dcss-least, .dcss-greatest) > * { grid-column: 1 / -1; }
 :is(.dcss-min-index, .dcss-max-index, .dcss-least-index, .dcss-greatest-index, .dcss-least, .dcss-greatest) > :is(ol, ul) { grid-area: 1 / 1; display: grid; justify-content: start; align-content: start; gap: 0; margin: 0; padding: 0; border: 0; list-style: none; }

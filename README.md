@@ -75,16 +75,16 @@ It is for pages where script can't run or isn't wanted (Markdown and CMS output,
 
 ```html
 <figure class="dcss-sum">
-  <ul><li style="--value: 12">Apples</li> <li style="--value: 40">Pears</li> <li style="--value: 30">Plums</li></ul>
+  <ul><li style="--value: 12"></li> <li style="--value: 40"></li> <li style="--value: 30"></li></ul>
   <output></output>                  <!-- prints 82 -->
-  <figcaption>Fruit sold</figcaption>
+  <figcaption>Fruit sold: apples 12, pears 40, plums 30</figcaption>
 </figure>
 ```
 
 - The class is d3's name, `dcss-` and the export in kebab case, on the `<figure>`, never on the list. Its arguments are numbers in custom properties on it, in d3's words (`--start`, `--stop`, `--count`).
 - The data is the `<ul>` or `<ol>` inside it, a datum an `<li>` saying its number as `--value` (`--key`, a whole number from 1, where d3 groups); nested lists for a hierarchy. A datum without one is an error, never its parent's value.
-- `--value` is style, which a screen reader never hears: where the number matters, say it in the text too (`Apples, 12`).
-- Where d3's answer is a layout, the `<li>`s are laid out at it, in source order; nothing is read back. A reduction's list is drawn one px a unit: draw inside it, or hide it.
+- `--value` is style, which a screen reader never hears: where the number matters, say it in text outside the list too (a caption or a table, as above).
+- Where d3's answer is a layout, the `<li>`s are laid out at it, in source order; nothing is read back. A reduction's list is drawn one px a unit, so leave its items empty: text in them spills over the result. To hide the drawing, give the figure a height and `overflow: clip`; never shrink or hide the list itself, since its size is the answer (an extent whose list is `height: 0` reads the wrong minimum and sets `--dcss-err: 2`).
 - Where it is a number, the element after the list is its size container. The number is read on that container's direct children and pseudo-elements, then inherited inward as `var(--dcss-*)`. An empty `<output>` prints it through its pseudo-element. To compose another call, use a `<div>` after the list and put that call inside it; the container itself does not receive the number.
 - A call's `--value` is its own: the calls inside it don't inherit it (each sets its own; one with none has no answer, so a reader's `var()` fallback applies). Settings (`--domain-0`, `--precision`, `--start` …) do inherit, so a shared one can be set on an ancestor, and a `--value` on a plain element is shared by the calls inside it.
 - Results reach inward only, in the same frame through `var()`; printed digits trail a moving number by a frame in Chrome. Beside each result, `--dcss-ready` (0 until it is read) and `--dcss-err` (0, or why not).
@@ -102,7 +102,7 @@ It is for pages where script can't run or isn't wanted (Markdown and CMS output,
 </figure>
 ```
 
-The list is drawn as it computes. A sum is a staircase as wide as the sum and as tall as the count; a min or max is boxes stacked as wide as the largest and 1 + 2 x (max - min) px tall. The figure clips the width; give it a height and `overflow: clip` to hide the rest. A value is taken to 1/64; in Chrome a list past 262,144 px (2^18) reads without its 64ths, past 2^24 without whole px (ENGINES.md); up to 63 skipped items are counted. `probes/dcss/index.html` shows each, changed by two checkboxes.
+The list is drawn as it computes. A sum is a staircase as wide as the sum and as tall as the count; a min or max is boxes stacked as wide as the largest and 1 + 2 x (max - min) px tall. The figure clips the width; give it a height and `overflow: clip` to hide the rest (any selector works: the sheet sets only `overflow-x`). A value is taken to 1/64; in Chrome a list past 262,144 px (2^18) reads without its 64ths, past 2^24 without whole px (ENGINES.md); up to 63 skipped items are counted. `probes/dcss/index.html` shows each, changed by two checkboxes.
 
 ### Numeric comparisons and extrema
 
@@ -176,9 +176,9 @@ The outputs print `30.0%` and `70.0%`. On `.arrays-share-result` and its descend
 
 The bounded contract accepts 1–64 nonnegative finite values, each a multiple of 1/64 and at most 4,095. A positive total gives ready 1 and error 0, including a zero-valued item whose share is 0. An all-zero total gives error 2. A missing, NaN, negative, off-grid or out-of-range value, or more than 64 items, gives error 1 throughout the call. Error 1 takes precedence over a zero total. Errors publish CSS NaN instead of a usable share or total, and dependent generated text is suppressed. A nested call reads its own list.
 
-This combines the living document's [sum, proportional share and broadcast techniques](../../examples/layoutcompute/README.md) with the same descendant readback used by the other calls. It is a composition of d3's sum and division, so it does not add a new d3 export or increase recorded-call coverage.
+This combines the living document's sum, proportional share and broadcast techniques with the same descendant readback used by the other calls. It is a composition of d3's sum and division, so it does not add a new d3 export or increase recorded-call coverage.
 
-[The share example](probes/dcss/share/demo.html) reuses each fraction for percent text and a width. `probes/dcss/share/check.mjs` checks 17 control/data/recovery cases and mutation detection in Chrome and WebKit; `full-sheet-check.mjs` independently checks 36 states per engine against the rebuilt sheet, including nested calls, intervening size containers, label wrapping and upstream formatter errors. These establish correctness and placement within the declared bounds.
+The share example reuses each fraction for percent text and a width. `probes/dcss/share/check.mjs` checks 17 control/data/recovery cases and mutation detection in Chrome and WebKit; `full-sheet-check.mjs` independently checks 36 states per engine against the rebuilt sheet, including nested calls, intervening size containers, label wrapping and upstream formatter errors. These establish correctness and placement within the declared bounds.
 
 `probes/dcss/share/cost.mjs <absolute-worktree-path>` measures the complete list, labels, per-item numeric reuse and formatted percentages, including forced style/layout. Warm CSS-property update times on 2026-10-25, median / p95 milliseconds, 50 samples per cell:
 
@@ -201,9 +201,7 @@ Layout computes the sum, the scale consumes that number, and two leaf outputs co
 ```html
 <figure id="total" class="dcss-sum">
   <ul>
-    <li style="--value: 12">Apples, 12</li>
-    <li style="--value: 40">Pears, 40</li>
-    <li style="--value: 30">Plums, 30</li>
+    <li style="--value: 12"></li> <li style="--value: 40"></li> <li style="--value: 30"></li>
   </ul>
   <div>
     <div class="dcss-scale-linear"
@@ -252,7 +250,7 @@ Link `dcss-array.css`, `families/array.css` and `families/format.css`. The preci
 
 This prints `1,234.6`. The median remains available as `--dcss-median`; the precision remains available as `--dcss-precision-fixed`. `arrays-call-read` measures a track; its `arrays-call-result` child receives the number and restores the author's width. `arrays-call-input` snapshots upstream readiness and errors before a new call writes its own. Keep these wrappers outside leaf outputs so native form reset preserves them.
 
-[The hand-written proof](probes/dcss/static/precision.html) links the sheet directly and contains no script. `probes/dcss/static/check.mjs` checks its eight desktop/mobile/change/reset states against d3, plus error suppression and recovery. It also checks the bounded calls below, including all 147 recorded precision questions, plus 150 adjacent-boundary queries and live numeric/text range changes. `optimizer-check.mjs` passes the same authored form through the optional compiler and checks four native/reset states with zero added holders. These checks add no recorded-call coverage beyond the existing implementations. Measured compiler choices for authored cumulative sums are described below; other new holder costs remain unknown.
+The hand-written proof links the sheet directly and contains no script. `probes/dcss/static/check.mjs` checks its eight desktop/mobile/change/reset states against d3, plus error suppression and recovery. It also checks the bounded calls below, including all 147 recorded precision questions, plus 150 adjacent-boundary queries and live numeric/text range changes. `optimizer-check.mjs` passes the same authored form through the optional compiler and checks four native/reset states with zero added holders. These checks add no recorded-call coverage beyond the existing implementations. Measured compiler choices for authored cumulative sums are described below; other new holder costs remain unknown.
 
 | Call | Drop-in data and result |
 |---|---|
@@ -267,7 +265,7 @@ For an interpolated quantile or an even median, put an `arrays-order-upper` cont
 
 All three discrete scales take an explicit `--ranges` (default 2), from 1 to 17, and `--range-0` through `--range-16`. Threshold and quantize holders are `arrays-call-read > arrays-range-copy > arrays-call-result`. The result property is `--dcss-scale-threshold`, `--dcss-scale-quantize` or `--dcss-scale-quantile`; numeric and quoted text ranges are read through `var()`, without per-page rules. A bare output prints a quoted text range; use a formatter for numeric text. `--unknown` supplies the answer for a missing/NaN query. Threshold input ordering and identical repeated observation lists are author preconditions.
 
-A quantile scale uses three copies of its observation list: the outer figure counts observations at or below the query; inside its first result, `arrays-quantile-low` and then `arrays-quantile-high` each contain a list and reader/result pair. The high result contains `arrays-range-copy > arrays-call-result`. Only the gap containing the query needs interpolated threshold comparisons. [The check](probes/dcss/static/check.mjs) contains complete forms for all holder paths. The compiler can supply these structural details when desired.
+A quantile scale uses three copies of its observation list: the outer figure counts observations at or below the query; inside its first result, `arrays-quantile-low` and then `arrays-quantile-high` each contain a list and reader/result pair. The high result contains `arrays-range-copy > arrays-call-result`. Only the gap containing the query needs interpolated threshold comparisons. The check contains complete forms for all holder paths. The compiler can supply these structural details when desired.
 
 Invalid grid values flag error 1; an empty quantile or missing probability flags error 2 and publishes CSS NaN. Use an `arrays-call-input` wrapper between calls to propagate those errors and suppress dependent text. When repeating a function, set its next input on that wrapper, so it captures the previous result before the next call shadows the result name. Compiler-generated private names remain optional. Native controls select CSS-authored values; this does not read a typed input's live value.
 
@@ -304,7 +302,7 @@ Composition also accepts `measurement.plans`: named `{id, implementations, artif
 Count and mean use the existing runtime reduction in compiled fragments, with sum's bounded nonnegative input domain. Count publishes `0..n` integer bounds; mean publishes the datum interval with grid-ratio precision. Accessors, coercions and signed data remain outside this compiler subset. Stateful candidates require an explicit latency, capture, restart, reset, termination, readiness and invalidation contract, plus `allowStateful`; none is supplied by this migration.
 
 
-Font SI is an explicit experiment. Pass the existing `build('variable')` or `build('glyph')` result from `probes/si-rom/compile.mjs` as `fontRom`, set `allowExperimental: true`, `allowWrappers: true`, and request `implementations: { '#si': 'font-rom' }`. The optional lookup compiler is selected with `LOOKUP_COMPILER`, as described in the [font probe](probes/si-rom/README.md). The input moves to a generated span outside the leaf output; the leaf keeps its id, associations and visual declarations. The prototype's content font remains explicit through `--sirom-content-font`; arbitrary author layout/font behavior is not qualified. A font choice does not replace neighboring arithmetic formatters, and fonts are counted once across shared readers. Automatic compilation keeps the existing layout sum and arithmetic scale/formatters.
+Font SI is an explicit experiment. Pass the existing `build('variable')` or `build('glyph')` result from `probes/si-rom/compile.mjs` as `fontRom`, set `allowExperimental: true`, `allowWrappers: true`, and request `implementations: { '#si': 'font-rom' }`. The optional lookup compiler is selected with `LOOKUP_COMPILER`, as described in the font probe. The input moves to a generated span outside the leaf output; the leaf keeps its id, associations and visual declarations. The prototype's content font remains explicit through `--sirom-content-font`; arbitrary author layout/font behavior is not qualified. A font choice does not replace neighboring arithmetic formatters, and fonts are counted once across shared readers. Automatic compilation keeps the existing layout sum and arithmetic scale/formatters.
 
 `pipeline/contract-check.mjs` passes 144 build-time checks with `FONT_ROM=1` and the optional `MATHFONT_COMPILER` supplied. `probes/dcss/compiled-check.mjs` passes ten native-control/reset states for arithmetic, both original font encodings and shared mathfont readers in each of Chrome and WebKit. These include invalid inputs, exact numeric reuse and four d3 texts; every font implementation also passes three delayed/failed-load checks per engine. `pipeline/bytes.mjs` reports 320 existing pages and models unchanged. Firefox is not measured for compiled compositions.
 
@@ -601,7 +599,7 @@ For changing inputs, use a plain variable such as `--step: var(--resolution)` an
 
 `probes/dcss/precision/check.mjs` answers all 147 distinct recorded d3 questions exactly in Chrome and WebKit: fixed 10/10, prefix 129/129 and round 8/8. Each helper also passes 695 seeded/boundary cases and nine native input, formatting, numeric reuse, error and reset states per engine. `composition-check.mjs` checks seven nested outputs, including a layout quantile feeding precision and fixed text.
 
-`node probes/dcss/precision/demo.mjs` builds [a complete native form](out/precision-demo/index.html). Three radio choices change the observations; their layout median becomes a precision input, and its integer result becomes another output's format setting. The page shows the authored markup beside the working form, without a fixed figure height or runtime script. `CHECK=1` checks eight desktop/mobile/change/reset states in each engine, comparing all three printed results with d3 and checking ordinary flow and horizontal overflow.
+`node probes/dcss/precision/demo.mjs` builds a complete native form. Three radio choices change the observations; their layout median becomes a precision input, and its integer result becomes another output's format setting. The page shows the authored markup beside the working form, without a fixed figure height or runtime script. `CHECK=1` checks eight desktop/mobile/change/reset states in each engine, comparing all three printed results with d3 and checking ordinary flow and horizontal overflow.
 
 `probes/dcss/precision/cost.mjs` measures a complete native form with one shared precision helper, its printed digit count, formatted values and numeric reuse. Two fresh-page rounds give 50 measured updates per cell, after five warmups per round. At 30 formatted values, median / p95 milliseconds are:
 
@@ -829,6 +827,14 @@ d3.format's types `f`, `%` and `s` on one element, an `<output>` most often: `.d
 
 Fixed and percent round as d3 does, by toFixed: the exact value of the number, ties up, so 4.35 at one decimal is 4.3 (4.35 is a hair under it). The minus is d3's U+2212, hidden when a negative rounds to zero unless `--sign: 1`. With `$` a percentage has no `%`, as in d3. The number, times 10 to the precision, must be under 2^53 (16 digits in all); past it nothing prints and `--dcss-err` is 1. `--value` can be another call's answer, `var(--dcss-scale-linear)`, and keeps every digit on the way (an unregistered property is carried as its calc() text). The recorder retains 142 finite calls from d3-format's tests for these specifiers; 139 are within the supported bounds and three have magnitudes outside them. `probes/dcss/format/format-check.mjs` compares the printed text with d3, including seeded values, decimal halfway cases and SI prefix boundaries. Before the SI extension, a fixed-format number cost 0.29 ms (Chrome) and 0.43 ms (WebKit) with 30 changing together (`probes/dcss/format/format-cost.mjs`). The earlier measurement on gamut.fyi's 30 numbers under a slider was 0.33 and 1.2 ms (a frame 45 to 55 ms, 112 to 147 ms, 2026-10-24).
 
+Divide before formatting with `.dcss-scale-linear`, not `/` in `--value`: WebKit computes `calc(a / b)` as `a × (1 / b)`, one bit off, and a tie can then round the other way. `--value: calc(8347.5 / 100)` prints 83.48 in WebKit and 83.47 in Chrome and d3; a scale with `--domain-1: 100` and `--range-1: 1` divides exactly in both, as d3.scaleLinear does:
+
+```html
+<div class="dcss-scale-linear" style="--value: 8347.5; --domain-0: 0; --domain-1: 100; --range-0: 0; --range-1: 1">
+  <output class="dcss-format-fixed" style="--value: var(--dcss-scale-linear); --precision: 2"></output>   <!-- 83.47 -->
+</div>
+```
+
 SI chooses its prefix after rounding, so `.3s` changes 999.5 to `1.00k`. It uses the same digit printer and unround parts, with decimal-scaling error terms. Supported: 1–15 significant digits, zero or `1e-30 <= abs(value) < 1e31`. Below `1e-24`, d3 rounds a second time; the reduced precision must stay positive (`precision + floor(log10(abs(value))) + 24 > 0`). Beyond these limits it prints nothing and sets `--dcss-err: 1`. SI has no runtime script and does not invoke layout for this scalar arithmetic. Formatting prints text; the original number remains available to other CSS consumers. All 139 supported recorded calls, 1,567 seeded SI values, 944 prefix boundaries, 1,165 SI halfway cases and five rejected inputs pass in Chrome and WebKit. SI now compares the input with the exact decimal midpoint before the next decade to determine the exponent carry. It performs one full coefficient round, using d3's reduced precision below yocto. The four decimal-error table reads select integer pieces split at build time, stored in unround parts before the rounding calculations reuse them. A trace isolated repeated expansion of those table expressions as the main SI style cost. `probes/si-carry-check.mjs` checks that carry against d3-format's own decimal-parts helper at the midpoint and neighboring doubles, across all 15 supported precisions and decades -30 through 30: 5,364 cases per engine.
 
 The same `probes/dcss/format/format-cost.mjs 30` workload was run against the two-round sheet, one-round sheet, and then the stored-table version, each in fresh contexts, with `--precision: 3`, five warmups and 25 measured updates. The first two columns are a paired run; the last is the subsequent measurement after storing the table reads. Median forced style/layout milliseconds per update of 30 outputs:
@@ -842,7 +848,7 @@ The same `probes/dcss/format/format-cost.mjs 30` workload was run against the tw
 
 Splitting the table constants into integer pieces at build time removes another runtime conversion. A paired format-only measurement (`probes/si-rom/cost.mjs`, 30 outputs, precision 3, five warmups and 25 measured updates) reduced the median from 78.5 to 63.9 ms in Chrome and from 126 to 106 ms in WebKit. The markup remains one `<output>`, and the generated sheet is 753,201 bytes. All 7,359 formatter cases still pass, each written as exact binary values and as decimal strings, in both engines; all 5,364 carry cases also pass.
 
-The [font-table experiment](probes/si-rom/README.md) compares complete SI formatting through both font encodings with this arithmetic version. It keeps the font compiler optional and records exact reads, printed text, native controls, loading and reset behavior. Its readers stay outside a leaf `<output>`: WebKit removed readers nested inside an output when the form reset.
+The font-table experiment compares complete SI formatting through both font encodings with this arithmetic version. It keeps the font compiler optional and records exact reads, printed text, native controls, loading and reset behavior. Its readers stay outside a leaf `<output>`: WebKit removed readers nested inside an output when the form reset.
 
 The earlier two-round measurement was 330.6 ms in Chrome and 609 ms in WebKit for ordinary values (one SI output: 10.7 and 20 ms). These are update-cost measurements, not frame-rate or initial-load measurements. SI remains too expensive for smooth continuous updates at 30 changing outputs.
 
@@ -966,7 +972,18 @@ Set `--length` and each zero-based `--type-N`/`--value-N`. Type codes are 0 numb
 
 Strings use length 1–4 and ASCII character codes 0–127. Numeric strings are one or two unsigned digits, optionally preceded by one space. Strings with a character outside the possible numeric spelling are skipped; other unsupported number-shaped strings, including scientific and radix notation, are refused. Missing, fractional, malformed or overflowing transport sets `--dcss-err: 1`. A valid empty mean has no value while its call remains ready without an error.
 
-Cumulative calls require one direct `<ol class="arrays-aggregate-results">` with one `<li>` for each literal input slot. Each item exposes its own `--dcss-cumsum` or `--dcss-fcumsum` to descendants. Exact sums retain binary64 residuals and tie correction; the typed circuit is arithmetic and remains performance-unqualified until measured against an eligible alternative.
+A scalar result is read by any descendant of the call. Cumulative calls take one direct `<ol class="arrays-aggregate-results">` with one `<li>` for each literal input slot; each item exposes its own `--dcss-cumsum` or `--dcss-fcumsum` to descendants.
+
+```html
+<div class="dcss-fsum" style="--dcss-input-length: 3;
+     --dcss-input-0-type: 0; --dcss-input-0-value: 12;
+     --dcss-input-1-type: 0; --dcss-input-1-value: 40;
+     --dcss-input-2-type: 0; --dcss-input-2-value: 30">
+  <output style="counter-reset: total var(--dcss-fsum)"></output>   <!-- --dcss-fsum is 82 -->
+</div>
+```
+
+`data-dcss-backend="layout"` on a sum, count, mean or cumsum call computes it with grid tracks instead of arithmetic; that backend needs the reader tree `pilotMarkup(operation, {backend: 'layout'})` from `runtime.mjs` returns, its results on each `[data-pilot-consumer]` element. `probes/dcss/aggregate-family/authored-check.mjs` checks the hand-written forms above in Chrome and WebKit, directly and compiled. Exact sums retain binary64 residuals and tie correction; the typed circuit is arithmetic and remains performance-unqualified until measured against an eligible alternative.
 
 ### Typed order statistics
 
@@ -1060,7 +1077,7 @@ Fitting is qualified for finite, unclipped points and positive target dimensions
 
 `color-function-wave/check.mjs` checks the complete 53-question recorded RGB/RGBA string family across color, rgb, hsl, lab and hcl recipes, including null and transparent records. Constructor recipes consume actual parsed fields. Newer space-separated color syntax remains unsupported.
 
-[The coverage report](coverage/d3.html) retains unsupported recorded d3 calls in its broad denominator. The current total is 4,417/7,049 recorded calls (62.7%). The complete recorded extrema family adds 227 previously unsupported calls; all 385 of its original identities pass in runtime and compiler. The earlier color, date-parser and variance/deviation qualifications remain intact; older runtime-only results remain separate. Seeded tests and composed operations such as shares do not raise those scores.
+The coverage report retains unsupported recorded d3 calls in its broad denominator. The current total is 4,417/7,049 recorded calls (62.7%). The complete recorded extrema family adds 227 previously unsupported calls; all 385 of its original identities pass in runtime and compiler. The earlier color, date-parser and variance/deviation qualifications remain intact; older runtime-only results remain separate. Seeded tests and composed operations such as shares do not raise those scores.
 
 The easing check's 413/413 finite numeric cases use a different case set from the broad recorder, which also includes coercion and configured functions. `coverage/d3-accounting-check.mjs` verifies exact retained input/configuration/answer identities: 317 of 415 broad easing calls transfer from the saved proof, while 98 remain unreconciled. The qualified 413/413 numeric result is shown separately for each engine. This corrects the previous count-based estimate of 377/415; no saved browser results changed, and unreconciled calls are not reported as wrong answers.
 

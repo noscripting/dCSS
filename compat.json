@@ -1303,7 +1303,7 @@
       },
       "A58": {
         "__compat": {
-          "description": "`.dcss-ticks` (or `.dcss-axis-*`) with `--start`, `--stop` and `--count` MUST give `--dcss-tick-increment` and `--dcss-tick-step` equal to d3-array 3.2.4's tickIncrement and tickStep, as many `<li>`s shown as its ticks (the rest `display: none`), and its k-th `<li>` `--dcss-tick` the k-th tick; `.dc",
+          "description": "`.dcss-ticks` (or `.dcss-axis-*`) with `--start`, `--stop` and `--count` MUST give `--dcss-tick-increment` and `--dcss-tick-step` equal to d3-array 3.2.4's tickIncrement and tickStep, as many `<li>`s shown as its ticks (the rest `visibility: hidden` and out of flow), and its k-th `<li>` `--dcss-tick",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {

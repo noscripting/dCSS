@@ -104,11 +104,21 @@ Measured 2026-10-22, headless: Chrome 155.0.8059.86, WebKit 26.4, Firefox 158.0.
 - Workaround: validate the original input and transport it in two bounded integer parts. Saturate the transport before splitting: WebKit otherwise carries infinity into an unused product, making a width NaN. `probes/dcss/cumsum/authored-check.mjs` checks full-range grid values and native invalid suffixes on the uncompiled and both compiled paths.
 - Affects: A81, A82
 
+### Q11 Chrome: counter text stays empty on an item a style query shows again inside a container result
+
+- Feature: `container-queries`
+- Spec: [CSS Lists 3 §4](https://drafts.csswg.org/css-lists-3/#counter-functions), [CSS Conditional 5 §6.2](https://drafts.csswg.org/css-conditional-5/#style-container)
+- Engines: Chrome FAIL: ticks 100 to 600 compute but lay out 0 px wide, and an axis's labels beside them go blank · WebKit PASS · Firefox PASS
+- Repro: `quirks/cq-counter-unhidden.html`
+- Bug: none found
+- Workaround: ticks past the last one are `visibility: hidden; position: absolute`, never `display: none`, so their counters exist from the first layout (`ticks.mjs`). A page printing `--dcss-tick` with its own `counter()` needs nothing more.
+- Affects: A58
+
 ## Shared
 
 - `calc()` computes in doubles in Chrome and WebKit, in 32-bit floats in Firefox
-- A registered `<number>`
-- `mod()`
+- A registered `<number>` read through `var()` keeps 6 significant digits in Chrome and Firefox
+- `mod(A, B)` of a negative exact multiple of B is B in WebKit, not 0
 - `tan(atan2(L, 1px))` is wrong in WebKit
 - Firefox's `style()` never sees a value set by an animation
 - Firefox 158 has no view timelines by default

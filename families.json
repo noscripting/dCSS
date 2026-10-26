@@ -37,9 +37,9 @@
         "dcss-nice",
         "dcss-ticks"
       ],
-      "raw": 166862,
-      "gzip9": 12860,
-      "sha256": "d93f10bcf5e51cee22a0da0e9d64d8e38e9251d344e90bb437317fb764e33e45"
+      "raw": 172322,
+      "gzip9": 12967,
+      "sha256": "1743841bbed9602b731420d8aceaf610b30dd83ec43b3eae32dae7087109e2e0"
     },
     "array": {
       "file": "families/array.css",
@@ -81,9 +81,9 @@
         "dcss-sum",
         "dcss-variance"
       ],
-      "raw": 424953,
-      "gzip9": 26045,
-      "sha256": "3c403e59a15d3b4aacb2bc00b7a046e47453414ed580b6979713ae0d9598f768"
+      "raw": 424941,
+      "gzip9": 26044,
+      "sha256": "03955b326d06a3416dd5934594ffc72f6fdbc48e3896448e54ff2a7333620696"
     },
     "aggregate": {
       "file": "families/aggregate.css",
@@ -96,9 +96,9 @@
         "dcss-fcumsum",
         "dcss-fsum"
       ],
-      "raw": 4430618,
-      "gzip9": 177270,
-      "sha256": "cbac203ecbe02f9ae1c98a868b64da6d2fbd1bf3d60566248e48ab97945e9def"
+      "raw": 4225729,
+      "gzip9": 177876,
+      "sha256": "4f594928810d0204b0fc0da0f2335197fbddc965c8abd07eb4851d84d7a81560"
     },
     "order": {
       "file": "families/order.css",
@@ -179,9 +179,9 @@
         "dcss-ticks-log",
         "dcss-ticks-log-format"
       ],
-      "raw": 234146,
-      "gzip9": 17303,
-      "sha256": "dd9e4a4178c530f9c71369b96248c611368f970d08c1f844b7e4280837c2e310"
+      "raw": 244982,
+      "gzip9": 17461,
+      "sha256": "9a122a17f7f718ad46e956196b2014147e5f67f67085665e419793076fd6d8c3"
     },
     "ease": {
       "file": "families/ease.css",
@@ -1256,9 +1256,9 @@
           "latencyFrames": 0
         },
         "representations": {
-          "input": "scalar-custom-property",
-          "intermediate": "scalar-custom-property",
-          "result": "prepared"
+          "input": "raw-scalar-vector",
+          "intermediate": "typed-root-vector",
+          "result": "reader-number"
         },
         "contracts": {
           "input": "prepared",
@@ -1272,7 +1272,7 @@
           },
           "layout": {
             "status": "unimplemented",
-            "reason": "typed aggregate vectors have no layout implementation"
+            "reason": "exact binary64 reduction requires calc"
           }
         },
         "eligibility": {
@@ -1289,9 +1289,9 @@
           "latencyFrames": 0
         },
         "representations": {
-          "input": "scalar-custom-property",
-          "intermediate": "scalar-custom-property",
-          "result": "prepared"
+          "input": "raw-scalar-vector",
+          "intermediate": "typed-root-vector",
+          "result": "per-item-number"
         },
         "contracts": {
           "input": "prepared",
@@ -1305,7 +1305,7 @@
           },
           "layout": {
             "status": "unimplemented",
-            "reason": "typed aggregate vectors have no layout implementation"
+            "reason": "exact binary64 reduction requires calc"
           }
         },
         "eligibility": {
@@ -1322,9 +1322,9 @@
           "latencyFrames": 0
         },
         "representations": {
-          "input": "scalar-custom-property",
-          "intermediate": "scalar-custom-property",
-          "result": "prepared"
+          "input": "raw-scalar-vector",
+          "intermediate": "typed-root-vector",
+          "result": "reader-number"
         },
         "contracts": {
           "input": "prepared",
@@ -1337,8 +1337,8 @@
             "status": "available"
           },
           "layout": {
-            "status": "unimplemented",
-            "reason": "typed aggregate vectors have no layout implementation"
+            "status": "contextual",
+            "reason": "bounded typed-root layout lowering"
           }
         },
         "eligibility": {
@@ -1355,9 +1355,9 @@
           "latencyFrames": 0
         },
         "representations": {
-          "input": "scalar-custom-property",
-          "intermediate": "scalar-custom-property",
-          "result": "prepared"
+          "input": "raw-scalar-vector",
+          "intermediate": "typed-root-vector",
+          "result": "reader-number"
         },
         "contracts": {
           "input": "prepared",
@@ -1370,8 +1370,8 @@
             "status": "available"
           },
           "layout": {
-            "status": "unimplemented",
-            "reason": "typed aggregate vectors have no layout implementation"
+            "status": "contextual",
+            "reason": "bounded typed-root layout lowering"
           }
         },
         "eligibility": {
@@ -1388,9 +1388,9 @@
           "latencyFrames": 0
         },
         "representations": {
-          "input": "scalar-custom-property",
-          "intermediate": "scalar-custom-property",
-          "result": "prepared"
+          "input": "raw-scalar-vector",
+          "intermediate": "typed-root-vector",
+          "result": "reader-number"
         },
         "contracts": {
           "input": "prepared",
@@ -1403,8 +1403,8 @@
             "status": "available"
           },
           "layout": {
-            "status": "unimplemented",
-            "reason": "typed aggregate vectors have no layout implementation"
+            "status": "contextual",
+            "reason": "bounded typed-root layout lowering"
           }
         },
         "eligibility": {
@@ -1421,9 +1421,9 @@
           "latencyFrames": 0
         },
         "representations": {
-          "input": "scalar-custom-property",
-          "intermediate": "scalar-custom-property",
-          "result": "prepared"
+          "input": "raw-scalar-vector",
+          "intermediate": "typed-root-vector",
+          "result": "per-item-number"
         },
         "contracts": {
           "input": "prepared",
@@ -1436,8 +1436,8 @@
             "status": "available"
           },
           "layout": {
-            "status": "unimplemented",
-            "reason": "typed aggregate vectors have no layout implementation"
+            "status": "contextual",
+            "reason": "bounded typed-root layout lowering"
           }
         },
         "eligibility": {
