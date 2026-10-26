@@ -2593,6 +2593,78 @@
           }
         }
       },
+      "A113": {
+        "__compat": {
+          "description": "Qualified typed extrema MUST retain 385 original identities and 389 source contexts in both branches, comparing raw values with source-owned recipes within ten slots and three ASCII characters. CSS MUST preserve lexical/numeric semantics, source indices and reusable typed/object fields. Valid native",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": "≤26.4",
+              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+            },
+            "firefox": {
+              "version_added": null,
+              "notes": "NOTRUN: typed extrema family"
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A114": {
+        "__compat": {
+          "description": "Typed sum/count/mean/cumsum/fsum/fcumsum MUST match 217 original identities across 219 contexts in both branches. Twenty-slot transport MUST refuse malformed inputs and unsupported numeric spellings; exact sums MUST preserve residuals and ties. Native changes, reset, empty mean and descendant numeri",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": "≤26.4",
+              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+            },
+            "firefox": {
+              "version_added": null,
+              "notes": "NOTRUN: typed aggregates"
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A115": {
+        "__compat": {
+          "description": "Typed order statistics MUST match all 156 original identities across 158 contexts in runtime and compiler. Raw input validation, typed probability, result absence, source-index ties, native reset, capacity refusal and descendant reuse MUST pass in both engines. Mode MUST preserve the accessor result",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": "≤26.4",
+              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+            },
+            "firefox": {
+              "version_added": null,
+              "notes": "NOTRUN: typed order family"
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
       "A51": {
         "__compat": {
           "description": "A loop (`.loop`, `.loop-flow`, `.loop-in`, `.loop-cell`, `.loop-core`) MUST have dcss-store.css on the page; its cells, read through `[data-store-read]` and `[data-store-read-3]` naming them by `--store-of`, MUST settle on the iteration's fixed point: a 12-cell power iteration's vector and eigenval",

@@ -5,7 +5,7 @@ dcss-array.css computes with CSS layout: indexed reads, sums, ranks, sorts, keye
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in BCP 14 [RFC2119] [RFC8174] when, and only when, they appear in all capitals, as shown here.
 
 Measured 2026-10-25, headless: Chrome 155.0.8059.86, WebKit 26.4, Firefox 158.0.
-Conformance: Chrome 112/112, WebKit 112/112, Firefox 57/112.
+Conformance: Chrome 115/115, WebKit 115/115, Firefox 57/115.
 Additional paired cases measured 2026-10-26 in Chrome/WebKit; the Firefox report is unchanged.
 
 Stylesheet packaging: `dcss-array.css` is the shared core. DCSS calls require their
@@ -306,6 +306,12 @@ for selection or computation. Packaging does not expand any function's bounds.
 
 - **A112** Qualified color constructors MUST preserve all source-owned typed, numeric-string, parsed CSS-color and object routes through both branches. The parser MUST accept bounded legacy RGB/HSL, names and hex while preserving native null/NaN fields. Components MUST remain reusable; formatting and methods are excluded.
 
+- **A113** Qualified typed extrema MUST retain 385 original identities and 389 source contexts in both branches, comparing raw values with source-owned recipes within ten slots and three ASCII characters. CSS MUST preserve lexical/numeric semantics, source indices and reusable typed/object fields. Valid native absence MUST remain distinct from malformed input, and invalid or nonnumeric numeric fields MUST remain absent.
+
+- **A114** Typed sum/count/mean/cumsum/fsum/fcumsum MUST match 217 original identities across 219 contexts in both branches. Twenty-slot transport MUST refuse malformed inputs and unsupported numeric spellings; exact sums MUST preserve residuals and ties. Native changes, reset, empty mean and descendant numeric/width reuse MUST pass, including live count changes and independent prefix results; correctness MUST NOT imply performance qualification.
+
+- **A115** Typed order statistics MUST match all 156 original identities across 158 contexts in runtime and compiler. Raw input validation, typed probability, result absence, source-index ties, native reset, capacity refusal and descendant reuse MUST pass in both engines. Mode MUST preserve the accessor result type; correctness MUST NOT imply performance qualification.
+
 ### On the board
 
 - **A51** A loop (`.loop`, `.loop-flow`, `.loop-in`, `.loop-cell`, `.loop-core`) MUST have dcss-store.css on the page;
@@ -313,6 +319,8 @@ for selection or computation. Packaging does not expand any function's bounds.
   iteration's fixed point: a 12-cell power iteration's vector and eigenvalue equal NumPy's, as a flow and as a table row.
 - **A52** A `<table class="sheet">` on dcss-store.css's board MUST show every cell and fold equal to the sheet's own
   model as written and after each change to its inputs.
+
+
 
 
 ## 3. Implementation report
@@ -407,7 +415,7 @@ for selection or computation. Packaging does not expand any function's bounds.
 | A88 | probes/dcss/color/check.mjs: original components/opacity, native/reset, missing nested inputs and wrong-answer guard | PASS: rgb 30/67, hsl 40/94, lab 11/43, hcl 14/61, lch 4/6, gray 4/4 | PASS: the same | NOTRUN: numeric color constructors |
 | A89 | probes/dcss/bisector/check.mjs: source-owned raw calls and hashes, sorted slice, valid/invalid bounds, missing query, native/reset, nested and container reuse | PASS: 98/153 original calls; numeric presence, bound errors, 64-item boundary and overflow guards | PASS: the same | NOTRUN: numeric bisectors |
 | A90 | probes/dcss/log-label/check.mjs: disjoint original log labels, retained formatter questions, precision/trim boundaries, native/reset, errors and wrong-text detection | PASS: 106 additional log labels; 139 retained format questions; 210 precision/trim cases; 17 native/error states | PASS: the same | NOTRUN: general labels |
-| A91 | probes/dcss/paired-check.mjs; compiler-paired/check.mjs; compiler contract checks: both branches use the same original oracle fixtures, shared CSS math and source manifests | PASS: 2,365/2,365 original questions across 61 exports in both branches; 25 share/field/flow/input-node states per branch; 135 contract and 38 per-item checks | PASS: the same | NOTRUN: new compiler branch qualification |
+| A91 | probes/dcss/paired-check.mjs; compiler-paired/check.mjs; compiler contract checks: both branches use the same original oracle fixtures, shared CSS math and source manifests | PASS: 2,672/2,672 original questions across 65 exports in both branches; 25 share/field/flow/input-node states per branch; 135 contract and 38 per-item checks | PASS: the same | NOTRUN: new compiler branch qualification |
 | A92 | probes/dcss/range-wave/check.mjs; selection.mjs: exact original identities, grid boundaries, native reset, nested scopes, capacity and mutation guard | PASS: 41/76 original calls in both branches | PASS: the same | NOTRUN: numeric ranges |
 | A93 | probes/dcss/utc-wave/check.mjs; cases.mjs; edges.mjs: source answers match recorded identities; exact timestamp differences, truncation, bounds, native reset, nesting and reusable results | PASS: utcDay 59/62, unixDay 59/62, utcHour 40/41, utcMinute 18/19 and timeSecond 19/20 in both branches | PASS: the same | NOTRUN: fixed UTC intervals |
 | A94 | probes/dcss/week-wave/check.mjs and edges.mjs: original identities, weekday alignment, negative modulo, exact counts, bounds, ties, native reset, nesting and reuse | PASS: 155/155 original calls across seven exports in both branches | PASS: the same | NOTRUN: UTC weekdays |
@@ -429,13 +437,24 @@ for selection or computation. Packaging does not expand any function's bounds.
 | A110 | probes/dcss/date-parse-family/check.mjs: all original parser identities and factory contexts, complete raw ASCII, native nulls, mutation/reset, refusal and numeric reuse | PASS: 192/192 originals across 226 source contexts; 24 raw ASCII, 38 static English formats, civil years 100..9999 and epoch years -9999..19999 | PASS: the same, with explicit America/Los_Angeles local time | NOTRUN: complete date parser family |
 | A111 | probes/dcss/variance-family/check.mjs: exact source-owned raw values and accessor recipes, undefined context, native undefined, reuse and guards | PASS: variance 30/30 and deviation 29/29; CSS Welford, 16 slots, no input clamp, 1e-9 tolerance | PASS: the same | NOTRUN: variance and deviation |
 | A112 | probes/dcss/color-family/check.mjs: source-owned typed, numeric-string, parser and object routes; null/NaN, reset, reuse and refusal guards | PASS: 351/351 constructor originals through both branches; independent field presence and 1e-6 differences, native null/NaN and reset/reuse guards | PASS: the same | NOTRUN: complete color constructor family |
+| A113 | probes/dcss/extrema-family/check.mjs and guards.mjs: native source replay, complete typed values/object fields, exact numbers, bounds/missing, checkbox/reset and reuse | PASS: 385/385 originals across 389 contexts in both branches; 18 additional states | PASS: the same | NOTRUN: typed extrema family |
+| A114 | probes/dcss/aggregate-family/check.mjs, guards.mjs, prefix-guards.mjs and probes/architecture/aggregate-count-controls.mjs: all six aggregates, residual/tie vectors, malformed/missing inputs, native reset and descendant consumers | PASS: 217/217 originals across 219 contexts in runtime and compiler; one-ULP negatives, empty mean, live count and per-prefix numeric/width reuse | PASS: the same | NOTRUN: typed aggregates |
+| A115 | probes/dcss/order-family/check.mjs and probes/architecture/order-controls.mjs: complete original contexts, exact values/types, raw probability and vector guards, live capacity/reset and missing/restored inputs | PASS: 156/156 identities across 158 contexts in runtime and compiler; downstream numeric/width reuse and compiled field readiness | PASS: the same | NOTRUN: typed order family |
 | A51 | coverage/board.mjs: bd-power-12-loop-classes, bd-power-12-loop-table | PASS: 13 of 13 each, against NumPy | PASS: 13 of 13 each, against NumPy | PRECONDITION_FAILED: no view timelines, which dcss-store.css's store needs |
 | A52 | sheets/check.mjs: loan | PASS: 50 of 50 cells as written and after 2 changes | PASS: 50 of 50 cells as written and after 2 changes | PRECONDITION_FAILED: no view timelines, which dcss-store.css's store needs |
 
 
+### Architecture qualification (26 October 2026)
+
+The shared registry and measured policy are covered by `pipeline/architecture-check.mjs`, `contract-check.mjs`, `measured-check.mjs`, `scan-contract-check.mjs` and `evidence-check.mjs`. Synthetic costs in these checks are policy tests, never browser performance results. Whole-plan records bind source, artifact, input bounds and actual output addresses. Qualification covers both required mutation patterns and both engines; stateful latency cannot silently replace same-update behavior.
+
+`probes/architecture/baseline.json` retains the 48-row pilot: 24 measured rows and 24 unsupported baselines. Its small n=8 single-run timings qualify no backend change. `implementation.json` records every sheet's before/after bytes; `default-migration.json` accounts for the 35 old literal backend declarations. Date parsing preserves A110's verified behavior with shared private state declarations and same-element multi-parser refusal. It saves 3,540,193 raw bytes and 117,171 gzip9 bytes; no update-speed claim follows.
+
+The new count/mean compiler subset matches 5 of the 45 original recorded calls in both branches and both engines, with mutation, missing-input refusal, restoration and downstream numeric/width reuse (`count-mean-original-check.mjs`). The remaining 40 source calls are explicitly outside this subset. This adds no headline coverage count. The saved A91 paired proof remains historical when its source manifest differs; the report preserves its 2,672 cases with that qualification instead of presenting it as fresh evidence.
+
 ## 4. Not covered
 
-- Compiled HTML compositions beyond A69's sum/two-stop-scale/fixed-percent-SI chain, A72–A73/A76's discrete scales, A74–A75's grid quantiles, A78's precision helpers and A91–A112's paired calls; dynamic scalar settings beyond bounded precision, live DOM rewiring, arbitrary font-wrapper layout, or a measured three-way cost model.
+- Compiled HTML compositions beyond A69's sum/two-stop-scale/fixed-percent-SI chain, A72–A73/A76's discrete scales, A74–A75's grid quantiles, A78's precision helpers and A91–A115's paired calls; dynamic scalar settings beyond bounded precision, live DOM rewiring, arbitrary font-wrapper layout, or a measured three-way cost model.
 
 - Quantiles outside A74's grid bounds; invalid-observation filtering, coercion, accessors, signed-zero identity, dynamic probability and index-returning quantile variants.
 - d3.format's types outside f, %, s and A90's bounded general decimal notation; fill, align, width and zero; SI outside A67's bounds; trim outside SI, log labels or bounded general notation; nonfinite inputs. Linear/pow fixed-prefix SI labels remain unported.

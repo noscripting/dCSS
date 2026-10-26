@@ -106,9 +106,9 @@ Measured 2026-10-22, headless: Chrome 155.0.8059.86, WebKit 26.4, Firefox 158.0.
 
 ## Shared
 
-- ENGINES.md: `calc()` computes in doubles in Chrome and WebKit, in 32-bit floats in Firefox
-- ENGINES.md: A registered `<number>`
-- ENGINES.md: `mod()`
-- ENGINES.md: `tan(atan2(L, 1px))` is wrong in WebKit
-- ENGINES.md: Firefox's `style()` never sees a value set by an animation
-- ENGINES.md: Firefox 158 has no view timelines by default
+- `calc()` computes in doubles in Chrome and WebKit, in 32-bit floats in Firefox
+- A registered `<number>`
+- `mod()`
+- `tan(atan2(L, 1px))` is wrong in WebKit
+- Firefox's `style()` never sees a value set by an animation
+- Firefox 158 has no view timelines by default

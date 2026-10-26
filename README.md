@@ -295,7 +295,14 @@ Each stage records its input and result locations, number or text output, precis
 
 The public `--dcss-ready` and `--dcss-err` at a scalar or formatted result include upstream status. A leaf's generated text is hidden while any dependency is unavailable or erroneous. The original numeric properties remain available for other descendants. Rendering digits does not create an HTML input value or a submitted form field.
 
-`contract.resources` counts emitted elements, layout readers/containers, font readers, distinct font faces and embedded font bytes. Glyph-font reads count as both font reads and layout reads. Two SI font outputs use 40 readers but share ten fonts. `cost.features(result).instances` exposes these counts separately from the older rule counts. The legacy fitted model returns no prediction for a composition; its cost is `null`. `pipeline/contract.mjs` only compares supplied complete-fragment measurements for the same workload with both engines present. An automatic replacement must be no slower in either engine and faster in at least one; equal or incomparable measurements retain the current choice. The default itself must have a matching measurement. Unknown cost never means zero, and this composition has no measured cost model yet.
+`contract.resources` counts emitted elements, layout readers/containers, font readers, distinct font faces and embedded font bytes. Glyph-font reads count as both font reads and layout reads. Two SI font outputs use 40 readers but share ten fonts. `cost.features(result).instances` exposes these counts separately from the older rule counts. The legacy fitted model returns no prediction for a composition; its cost is `null`. `pipeline/contract.mjs` only compares supplied complete-fragment measurements for the same workload with both engines present. An automatic replacement must have no median or p95 regression in either engine for either one-item or all-item updates, and beat observed noise in at least one cell. Each cell needs at least two independent runs of 20 samples; equal, stale or incomparable evidence retains the current choice. The default itself must have a matching measurement. Unknown cost never means zero, and this composition has no measured cost model yet.
+
+`pipeline/registry.mjs` owns operation defaults and runtime family ownership. `form: 'auto'` and HTML composition use the same measured decision rule; fitted predictions only rank experiments. `pipeline/selection.mjs` exports `pipelineSource`, `pipelineArtifact` and `pipelineBinding`. For HTML, `pipeline/measured.mjs` exports their `composition*` equivalents. A cost record is built by `recordedCost(evidence)` in `pipeline/evidence.mjs`: protocol, browser versions, workload, binding, and independent `runs` for `patterns.one` and `patterns.all` in each engine. Bind each candidate to its own emitted artifact and actual consumers. Costs from one run remain performance-unqualified.
+
+Composition also accepts `measurement.plans`: named `{id, implementations, artifact, cost}` records for complete alternative plans. The `baseline` record has empty `implementations`; other records map authored scope selectors to implementation ids. Explicit caller choices cannot be overridden. The compiler compares the complete plan once, including readbacks and downstream consumers. `contract.representations` records typed results, field/item projections, layout/font conversions and resource counts. Pipeline flow stages preserve geometry until a numeric output is requested.
+
+Count and mean use the existing runtime reduction in compiled fragments, with sum's bounded nonnegative input domain. Count publishes `0..n` integer bounds; mean publishes the datum interval with grid-ratio precision. Accessors, coercions and signed data remain outside this compiler subset. Stateful candidates require an explicit latency, capture, restart, reset, termination, readiness and invalidation contract, plus `allowStateful`; none is supplied by this migration.
+
 
 Font SI is an explicit experiment. Pass the existing `build('variable')` or `build('glyph')` result from `probes/si-rom/compile.mjs` as `fontRom`, set `allowExperimental: true`, `allowWrappers: true`, and request `implementations: { '#si': 'font-rom' }`. The optional lookup compiler is selected with `LOOKUP_COMPILER`, as described in the [font probe](probes/si-rom/README.md). The input moves to a generated span outside the leaf output; the leaf keeps its id, associations and visual declarations. The prototype's content font remains explicit through `--sirom-content-font`; arbitrary author layout/font behavior is not qualified. A font choice does not replace neighboring arithmetic formatters, and fonts are counted once across shared readers. Automatic compilation keeps the existing layout sum and arithmetic scale/formatters.
 
@@ -457,18 +464,30 @@ Measured 2026-10-25 in Chrome 155.0.8059.86 and WebKit 26.4. Times are median / 
 | 64 | One | 22.7 / 26.9 | 34.6 / 39.0 | 34 / 36 | 38 / 41 |
 | 64 | All | 23.4 / 27.4 | 45.4 / 51.7 | 34 / 35 | 36 / 39 |
 
-Arithmetic qualifies for all six measured sources/update patterns. At 64 items both paths retain 471 author elements; shared layout has 65 readers and arithmetic has zero. The 24 saved fresh-page records replay without a browser. These comparisons concern per-item numeric readback and formatting; they do not replace the defaults for other collection operations.
+These historical measurements favor arithmetic in all six source/update combinations. They predate the current evidence contract. At 64 items both paths retain 471 author elements; shared layout has 65 readers and arithmetic has zero. These comparisons concern per-item numeric readback and formatting; they do not replace the defaults for other collection operations.
 
-For each complete two-engine workload, the probe writes an ignored `out/authored-cumsum-cost/<N>-<pattern>-measurement.json`. Pass that matching result to the compiler:
+The current `probes/architecture/cumsum-authored-64.json` receipt qualifies the 64-item compiler workload with two independent runs per engine and both mutation patterns. Worst-pattern median / p95 is 25.3 / 34.7 ms arithmetic versus 48.1 / 54.3 ms layout in Chrome, and 36.5 / 41 ms versus 41 / 49 ms in WebKit. `probes/architecture/qualification.mjs` checks its protocol and emitted artifact before reporting it as current. This is one compiler workload; the runtime delivery and the other pilot exports still require their own qualification.
+
+Pass the matching complete-plan evidence to the compiler:
 
 ```js
-const measurement = JSON.parse(readFileSync('out/authored-cumsum-cost/64-all-measurement.json'));
+const {source, candidates} = JSON.parse(readFileSync('probes/architecture/cumsum-authored-64.json'));
+const measurement = {
+  source,
+  workload: candidates.calc.workload,
+  plans: [
+    {id:'baseline', implementations:{}, artifact:candidates.layout.evidence.binding.artifact, cost:candidates.layout},
+    {id:'arithmetic', implementations:{'#scan':'calc'}, artifact:candidates.calc.evidence.binding.artifact, cost:candidates.calc}
+  ]
+};
 const result = compileComposition(html, { css, inputs, measurement });
 ```
 
-The option reuses the existing candidate cost contract: `scope: 'complete'`, `workload`, Chrome/WebKit `ms` and `p95`. It varies one named stage while the rest of the complete page stays fixed. Source, CSS, bounds or emitted-code changes invalidate the measurement. The selector changes the backend only when neither engine's median nor p95 regresses and at least one improves; ties or missing comparable baseline costs retain the existing choice. Explicit implementation requests remain explicit. `contract.cost` records the selected whole-workload cost once, rather than adding it to the other calls' costs. Measurements apply to the recorded browser versions and machine; no general size rule is inferred.
+The option uses the candidate cost contract: `scope: 'complete'`, `workload`, Chrome/WebKit `ms` and `p95`, and bound evidence with at least two independent runs of 20 samples for each engine and mutation pattern. Source, CSS, bounds, consumers, protocol or emitted-code changes invalidate the evidence. The selector requires an improvement beyond measured noise and no median or p95 regression in either engine; ties or missing comparable costs retain the existing choice. Explicit implementation requests remain explicit. `contract.cost` records the complete workload once. Measurements apply to the recorded browser versions and machine; no general size rule is inferred.
 
 `pipeline/measured-check.mjs` checks 24 source/artifact/selection cases, including stale measurements, changed CSS/bounds, missing engines, regressions, ties and explicit choices. The benchmark's saved comparison records the measured selection for each exact source and update pattern.
+
+`sum`, `count` and `mean` also expose an explicit arithmetic candidate when every list item binds `--value` to an ordinary datum variable supplied on the call or an ancestor. Bindings stay fixed; native controls may change those datum variables. The existing 1–63 item, nonnegative 1/64-grid bounds apply. Arithmetic preserves the list's diagonal positions and result-container geometry, computes reusable numbers without container readback, and retains missing/out-of-range errors. Layout remains the default until matching measurements select otherwise. `pipeline/reduction-check.mjs` checks both candidates against d3 and each other's geometry in Chrome and WebKit, including numeric/width reuse and native reset.
 
 ### Compile a quantile scale
 
@@ -851,7 +870,7 @@ const page = compileComposition(authoredHTML, {css: authorCSS});
 
 Color channels have separate result bounds and readiness. Every share and total has its own item address. Collection inputs are checked where each datum is evaluated; a scalar on an item can supply that item's value. Collection kernels retain their own missing-value rules, including extrema skipping NaN.
 
-`node probes/dcss/paired-check.mjs` runs the same 2,365 newly ported original d3 questions through both branches in Chrome and WebKit. Complete source-matched proofs are reused; changed inputs are checked again. The same checkers retain numeric-presence, native/reset, nested/container and wrong-answer guards. `compiler-paired/check.mjs` adds 25 share, field, flow and input-node states per branch and engine. Manifests remain JSON-serializable and identify actual emitted DOM locations.
+`node probes/dcss/paired-check.mjs` runs the same 2,672 original d3 questions through both branches in Chrome and WebKit. Complete source-matched proofs are reused; changed inputs are checked again. The same checkers retain numeric-presence, native/reset, nested/container and wrong-answer guards. `compiler-paired/check.mjs` adds 25 share, field, flow and input-node states per branch and engine. Manifests remain JSON-serializable and identify actual emitted DOM locations.
 
 The report shows compiler qualification beside runtime coverage. These are two branches of each feature; a question counts once. The paired result covers 61 exports and does not imply that every older runtime-only case has a compiler proof. General formatting also retains its 139 fixed/percent/SI and 210 precision/trim regression questions through compilation.
 
@@ -939,6 +958,72 @@ For default tick labels, put an `<output class="dcss-format-fixed dcss-identity-
 
 Set `--length` and each zero-based `--type-N`/`--value-N`. Type codes are 0 number, 1 null, 2 undefined, 3 NaN, 4 string and 5 object. `--accessor` defaults to 0 (identity); 1 reads `.value` through `--field-type-N`/`--field-value-N`, 2 uses the one-based index, and 3 returns undefined. Identity and field access accept only numeric or nullish values; arbitrary string conversion and callback code are unsupported.
 
+### Typed aggregates
+
+`families/aggregate.css` supplies `.dcss-aggregate-sum`, `.dcss-aggregate-count`, `.dcss-aggregate-mean`, `.dcss-aggregate-cumsum`, `.dcss-fsum` and `.dcss-fcumsum`. They take raw typed values on the call element and expose `--dcss-<operation>` to descendants in both runtime and compiler delivery. Existing list-based `.dcss-sum`, `.dcss-count`, `.dcss-mean` and `.dcss-cumsum` retain their layout contracts.
+
+`--dcss-input-length` is an integer 0–20; `--dcss-accessor` is an integer 0–4. Each `--dcss-input-N-type` and field type is an integer 0–5: 0 number, 1 null, 2 undefined, 3 NaN, 4 string and 5 object. Numeric types require an actual finite `--dcss-input-N-value` (or field value) within ±Number.MAX_VALUE/64. There is no caller-supplied presence flag. Accessor 0 uses the datum, 1 reads `.value`, 2 returns the one-based index, 3 returns undefined, and 4 uses the recorded count accessor's numeric field. Arbitrary callback code is unsupported.
+
+Strings use length 1–4 and ASCII character codes 0–127. Numeric strings are one or two unsigned digits, optionally preceded by one space. Strings with a character outside the possible numeric spelling are skipped; other unsupported number-shaped strings, including scientific and radix notation, are refused. Missing, fractional, malformed or overflowing transport sets `--dcss-err: 1`. A valid empty mean has no value while its call remains ready without an error.
+
+Cumulative calls require one direct `<ol class="arrays-aggregate-results">` with one `<li>` for each literal input slot. Each item exposes its own `--dcss-cumsum` or `--dcss-fcumsum` to descendants. Exact sums retain binary64 residuals and tie correction; the typed circuit is arithmetic and remains performance-unqualified until measured against an eligible alternative.
+
+### Typed order statistics
+
+`families/order.css` supplies `.dcss-order-median`, `.dcss-order-quantile`, `.dcss-order-quantile-sorted`, `.dcss-order-median-index`, `.dcss-order-quantile-index` and `.dcss-order-mode`. Runtime and compiler use the same typed circuit. Existing list-based median and quantile calls retain their layout implementations.
+
+Set `--length` to an integer 0–16 (0–8 for index operations). Each zero-based slot has `--type-N`: 0 finite number, 1 null, 2 undefined, 3 NaN, 4 ASCII string or 5 object. Numbers require `--value-N`; strings use `--length-N` and `--char-xNxJ` character codes. Strings have at most 16 characters; numeric coercion supports unsigned digits. Accessor 0 reads the datum, 1 reads `.value` using `--field-type-N` and `--field-value-N`, 2 returns the one-based index, and 3 returns undefined. Arbitrary callbacks are unsupported.
+
+Quantile calls require a raw `--order-p-type`: 0 finite number supplied as `--order-p-number`, 1 null, 2 undefined, 3 NaN, or 4 a nonnumeric ASCII string of 1–4 characters supplied with `--order-p-length` and `--order-p-char-J`. Null computes probability zero and ignores any numeric payload. Number-shaped strings are refused. Median and mode ignore probability inputs; nested calls root their own inputs. Missing, malformed, fractional metadata and out-of-capacity vectors report `--dcss-err:1`.
+
+Results are `--dcss-order-<operation>` with hyphenated names; mode publishes `--dcss-order-mode-value`, `--dcss-order-type`, string length and character fields. `--dcss-ready` describes input validity, while `--dcss-order-present` describes result availability. Valid empty index calls return the present sentinel −1. Valid empty value calls have no result. Compiler records preserve these separate statuses for descendant consumers. This arithmetic implementation is correct only within its declared contract and remains performance-unqualified.
+
+### Typed extrema and comparison
+
+`families/extrema.css` supplies `min`, `max`, `extent`, `minIndex`, `maxIndex`,
+`least`, `greatest`, `leastIndex`, `greatestIndex`, `scan`, `ascending` and
+`descending` under `.dcss-extrema-<name>`. The same calls work directly and through
+`compileComposition`. All 385 recorded identities, including 389 source contexts,
+are checked in both branches in Chrome and WebKit.
+
+```html
+<link rel="stylesheet" href="dcss-array.css">
+<link rel="stylesheet" href="families/extrema.css">
+<figure class="dcss-extrema-min"
+  style="--extrema-size:2; --extrema-0-type:0; --extrema-0-number:5;
+         --extrema-1-type:0; --extrema-1-number:2">
+  <div style="width:calc(var(--dcss-extrema-number) * 10px)"></div>
+</figure>
+```
+
+The input has 0–10 slots. A slot's `--extrema-i-type` is 0 for a finite number,
+1 for ASCII text, 2 for null, 3 for undefined, 4 for NaN, or 5 for an object.
+Numbers use `--extrema-i-number`; text uses `--extrema-i-length` and `-c0`, `-c1`,
+`-c2`, with at most three ASCII characters. Two strings compare lexically; mixed
+string/number comparisons cover empty text and unsigned strings of up to three
+decimal digits; other numeric spellings are outside this contract. Numeric data is transported in exact
+binary limbs rather than rounded registered numbers.
+
+`--extrema-mode` selects the source-owned recipe: 0 natural order, 1 `.value`,
+2 callback index plus one, 3 undefined context, 4 identity, 5 `.name`, 6 `.v`,
+7 numeric subtraction, or 8 subtraction of `.value` fields. `--extrema-direction:1`
+reverses the least/greatest comparator. Scalar comparison uses two slots.
+The selected object's comparison field uses `--extrema-i-field-*`; its preserved
+`name`, `value`, `v` and `index` payloads use `--extrema-i-object-<key>-*` with the
+same typed encoding. Absent object fields are explicitly type 3. Arbitrary
+callbacks, locale-sensitive name comparison beyond lowercase ASCII, signed-zero
+identity, longer strings and larger vectors are unsupported.
+
+Results expose `--dcss-extrema-type`, `-number`, `-length`, `-c0` through `-c2`,
+and `-index`. Object results also retain `-object-<key>-*`; extent supplies
+`-min-*` and `-max-*`. `--dcss-ready:1; --dcss-err:0` means the call is valid.
+`--dcss-extrema-field-ready:0` retains native undefined/NaN without making it an
+input error. Read type and payload only when field-ready is 1: absence means NaN
+for scalar comparisons and undefined for value or scan results. Numeric fields are absent for nonnumeric results; the compiler
+keeps their individual readiness. Missing inputs and malformed bounds report an
+error. Tests include exact large/subnormal/decimal values, nested missing inputs,
+a native checkbox, form reset and a descendant using the actual result.
+
 ### Seeded LCG sequences and further Pacific intervals
 
 `.dcss-random-lcg` takes a finite `--seed` from 0 inclusive to 1 exclusive. A direct `<ol>` or `<ul>` contains 1–199 authored `<li>` sample slots. Slot 1 is the first draw; slot 2 is the second, and so on. CSS evaluates d3-random 3.0.1's 32-bit LCG from the live seed using universal affine jump coefficients. JavaScript emits the coefficients independently of seed values. The sequence is addressed by authored position; automatic state advancement, unseeded draws and integer seed coercion are outside this contract.
@@ -975,7 +1060,7 @@ Fitting is qualified for finite, unclipped points and positive target dimensions
 
 `color-function-wave/check.mjs` checks the complete 53-question recorded RGB/RGBA string family across color, rgb, hsl, lab and hcl recipes, including null and transparent records. Constructor recipes consume actual parsed fields. Newer space-separated color syntax remains unsupported.
 
-[The coverage report](coverage/d3.html) retains unsupported recorded d3 calls in its broad denominator. The current total is 4,190/7,049 recorded calls (59.4%), including 291 newly qualified calls from the completed color, date-parser and variance/deviation families. Their 602 original questions pass in both runtime and compiler; older runtime-only results remain separate. Seeded tests and composed operations such as shares do not raise those scores.
+[The coverage report](coverage/d3.html) retains unsupported recorded d3 calls in its broad denominator. The current total is 4,417/7,049 recorded calls (62.7%). The complete recorded extrema family adds 227 previously unsupported calls; all 385 of its original identities pass in runtime and compiler. The earlier color, date-parser and variance/deviation qualifications remain intact; older runtime-only results remain separate. Seeded tests and composed operations such as shares do not raise those scores.
 
 The easing check's 413/413 finite numeric cases use a different case set from the broad recorder, which also includes coercion and configured functions. `coverage/d3-accounting-check.mjs` verifies exact retained input/configuration/answer identities: 317 of 415 broad easing calls transfer from the saved proof, while 98 remain unreconciled. The qualified 413/413 numeric result is shown separately for each engine. This corrects the previous count-based estimate of 377/415; no saved browser results changed, and unreconciled calls are not reported as wrong answers.
 
