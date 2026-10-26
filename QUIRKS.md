@@ -56,15 +56,53 @@ Measured 2026-10-22, headless: Chrome 155.0.8059.86, WebKit 26.4, Firefox 158.0.
 
 ### Q6 Chrome, WebKit: a percentage of a box millions of px wide is off by a fraction of a px
 
-- Feature: `css-values` percentages
+- Feature: none
 - Spec: [CSS Values 4 §4.5](https://drafts.csswg.org/css-values-4/#percentages)
 - Engines: Chrome FAIL: 100.125 px for 100 · WebKit FAIL: 100.125 px for 100 · Firefox PASS
-- Repro: `quirks/percent-of-huge.html` (`left: 100%` of a box 1,867,630 px wide)
+- Repro: `quirks/percent-of-huge.html`
 - Bug: none found
-- Workaround: the stacked bars' second copy, which sits at the far corner of a size container whose size is the ranks'
-  code (up to 2^24 px), is placed by `right: 0; bottom: 0` and its own width and height as negative margins, with no
-  percentage; it read 1/8 px off from 800 items before (`pipeline/at-size.mjs`)
+- Workaround: the stacked bars' second copy, which sits at the far corner of a size container whose size is the ranks' code (up to 2^24 px), is placed by `right: 0; bottom: 0` and its own width and height as negative margins, with no percentage; it read 1/8 px off from 800 items before (`pipeline/at-size.mjs`)
 - Affects: A55, A57
+
+### Q7 Chrome: one large quantize comparison expression is rejected
+
+- Feature: none
+- Spec: CSS Values 4 arithmetic; no general parser limit measured.
+- Engines: Chrome FAIL: rejects the flat 56,771-character expression · WebKit PASS: accepts it · Firefox NOTRUN
+- Repro: `out/discrete-expression/index.html`
+- Bug: none found
+- Workaround: `probes/dcss/discrete/expression-check.mjs` verifies seven registered partial counts, at most 9,091 characters each. The 100-boundary query returns 33 in both engines; full range replay through 1,025 buckets passes.
+- Affects: A73
+
+### Q8 Chrome, WebKit: inline-size containment interrupts nested prefix subgrids
+
+- Feature: `subgrid`
+- Spec: CSS Grid 2 track inheritance; measured interaction, no spec-conformance claim.
+- Engines: Chrome FAIL: 175 px at every nested level · WebKit FAIL: the same · Firefox NOTRUN
+- Repro: `out/cumsum-foundation/subgrid.html`
+- Bug: none found
+- Workaround: explicit inherited templates give correct nested prefixes and flow. Stored arithmetic is faster in the measured 64-output compiler workload. `probes/dcss/cumsum/foundation-check.mjs` retains the failing alternative; the static scan uses a separate source subgrid and simple read containers.
+- Affects: A80
+
+### Q9 Chrome, WebKit: symbolic sibling-index division changes rounding
+
+- Feature: `sibling-index`
+- Spec: CSS Values 4 arithmetic; measured difference from IEEE division.
+- Engines: Chrome FAIL: direct sibling-index 3/17 differs from IEEE · WebKit FAIL: the same · Firefox NOTRUN
+- Repro: `out/static/division.html`
+- Bug: none found
+- Workaround: capture the index as a registered integer, then use the existing engine-specific cssDiv helper. `probes/dcss/static/division-check.mjs` checks all 16 divisions exactly; `static/check.mjs` checks boundary neighbours through the complete sheet. Plain registered-number division still differs in WebKit.
+- Affects: A81
+
+### Q10 Chrome: a registered number rounds valid grid inputs
+
+- Feature: `registered-custom-properties`
+- Spec: CSS Properties and Values 1; registered-number transport measured against exact input values.
+- Engines: Chrome FAIL: -9.046875 reads as -9.04688 and fails the grid check · WebKit PASS · Firefox NOTRUN
+- Repro: `out/authored-cumsum/Chrome-8-raw.html`
+- Bug: none found
+- Workaround: validate the original input and transport it in two bounded integer parts. Saturate the transport before splitting: WebKit otherwise carries infinity into an unused product, making a width NaN. `probes/dcss/cumsum/authored-check.mjs` checks full-range grid values and native invalid suffixes on the uncompiled and both compiled paths.
+- Affects: A81, A82
 
 ## Shared
 

@@ -4,8 +4,15 @@ dcss-array.css computes with CSS layout: indexed reads, sums, ranks, sorts, keye
 
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in BCP 14 [RFC2119] [RFC8174] when, and only when, they appear in all capitals, as shown here.
 
-Measured 2026-10-24, headless: Chrome 155.0.8059.86, WebKit 26.4, Firefox 158.0.
-Conformance: Chrome 61/61, WebKit 61/61, Firefox 55/61.
+Measured 2026-10-25, headless: Chrome 155.0.8059.86, WebKit 26.4, Firefox 158.0.
+Conformance: Chrome 112/112, WebKit 112/112, Firefox 57/112.
+Additional paired cases measured 2026-10-26 in Chrome/WebKit; the Firefox report is unchanged.
+
+Stylesheet packaging: `dcss-array.css` is the shared core. DCSS calls require their
+family files from `families.json`, in manifest order. `runtime.mjs` computes the
+same selection for plain HTML links and composition compilation. `dcss-array-all.css`
+is an explicit entry for loading every family. No browser JavaScript is required
+for selection or computation. Packaging does not expand any function's bounds.
 
 ## 1. Follows
 
@@ -153,6 +160,10 @@ Conformance: Chrome 61/61, WebKit 61/61, Firefox 55/61.
   `--arrays-value` round(k^2 / 1000) or round(sqrt(1000 k)), and `.arrays-rom2` the five pair tables for a and b from
   0 to 31, at style time with no layout.
 
+- **A66** Both compiler entries MUST share one formula operation and layout cover, preserving standalone grammar and
+  options. Means and extents of 1–300 whole values in 0–1000 MUST match the reference within 0.01. Existing recipes
+  outside the cover's supported grammar or bounds MUST retain their previous lowering.
+
 ### Across computations
 
 - **A53** Results of separate computations, each an `.arrays-array` as wide as its total and named by `anchor-name`,
@@ -178,9 +189,122 @@ Conformance: Chrome 61/61, WebKit 61/61, Firefox 55/61.
   element after the list `--dcss-<name>` (extent: `--dcss-min`, `--dcss-max`) equal to d3-array 3.2.4's, skipping values
   not 0 or more, `--dcss-err` 1 if one was skipped, 2 for d3's undefined; an empty `<output>` MUST print it as
   format(",") does, to 6 decimals.
-- **A61** `.dcss-treemap-slice`, `-dice`, `-slice-dice` and `.dcss-partition` over nested `<li>`s with `--value` MUST lay
-  each `<li>` within 2/64 px a level of the rectangle d3-hierarchy 3's treemap() with that tile, or partition(), gives
-  its node over the figure's box.
+- **A61** `.dcss-treemap-slice`, `-dice` and `.dcss-partition` over nested `<li>`s, leaves with `--value` (totals 64 to
+  50,000), and `-slice-dice` with every node's MUST lay each `<li>` within 2/64 px a level of its node's rectangle in
+  d3-hierarchy 3's treemap() with that tile, or partition(), over the figure's box.
+- **A62** `.dcss-scale-linear`, `.dcss-scale-pow` (`--exponent`), `.dcss-scale-sqrt` and `.dcss-scale-log` with `--domain-k`, `--range-k`
+  (k 0 to 7, `--stops` of them), `--clamp`, `--round` and `--value` MUST give `--dcss-scale-<name>` and
+  `--dcss-scale-<name>-invert` equal to d3-scale 4.0.2's scale(value) and invert(value); for the linear, pow and sqrt scales `.dcss-ticks`, `.dcss-nice` and
+  `.dcss-format-*` over the domain's ends MUST give its ticks(count), nice(count) and tickFormat(count, specifier)(x)
+  for specifiers of type f or %; for finite numbers.
+- **A63** `.dcss-ease-<name>`, for each of d3-ease 3.0.1's exports in kebab case, with `--value` t and d3's parameters
+  (`--exponent`, `--overshoot`, `--amplitude`, `--period`) MUST give `--dcss-ease-<name>` within 1e-6 of d3's.
+- **A64** `.dcss-format-fixed` and `.dcss-format-percent` with `--value`, `--precision`, `--comma`, `--sign` and
+  `--symbol` MUST print in their `::after` the text d3-format 3.1.2's format prints for that specifier (type f or %,
+  sign - or +, symbol none or $), where |value| x 10^precision is under 2^53; past it `--dcss-err` MUST be 1.
+- **A65** `.dcss-ticks-log` and `.dcss-nice-log` with `--start`, `--stop`, `--count` and `--base` MUST give the ticks
+  and the nice domain of d3-scale 4.0.2's scaleLog over that domain, of one sign; a `.dcss-ticks-log-format` inside a
+  `.dcss-ticks-log` MUST print what its tickFormat(count, specifier)(value) prints, for specifiers A64 or A67 prints.
+
+- **A67** `.dcss-format-si` MUST print d3-format's type s (sign -/+, optional $, comma, trim) for 1–15
+  significant digits, zero or 1e-30 <= |value| < 1e31. Below 1e-24, precision + floor(log10(|value|)) + 24 MUST
+  be positive. Outside these bounds `--dcss-err` MUST be 1 and nothing print.
+
+- **A68** `.dcss-bisect-left/right` (`.dcss-bisect` aliases right) MUST match d3-array's insertion index for up to
+  1,024 sorted whole-number keys within ±2^24, finite query `--value`, and whole bounds 0 <= lo <= hi <= length.
+  The result MUST reach reader descendants in the same frame. Invalid searched keys or missing query MUST flag an error
+  and suppress the empty output.
+
+### Compiled HTML composition
+
+- **A69** `compileComposition(html, options)` MUST reject unavailable numeric bindings and preserve downward sum/scale/format connections. Its sum accepts 1–63 nonnegative items on declared steps that are multiples of 1/64, with maximum total below 2^18; scalar settings are literal except A78's bounded precision bindings. Its contract MUST distinguish numeric and text results and name their locations.
+- **A70** Contracts MUST name calc/layout/font ROM, count readers/shared fonts and keep unknown cost null. Selection MUST use matching complete-fragment measurements including the default, improving at least one metric without worsening either engine's median or supplied p95. Experimental fonts MUST require opt-in and permission to wrap leaf outputs.
+- **A71** Compiled scalar and text results MUST propagate upstream readiness and errors through `--dcss-ready` and `--dcss-err`, hiding generated text until ready and error-free. Native form reset MUST preserve computation elements. Delayed or failed fonts MUST leave dependent output unready while independent arithmetic outputs remain ready.
+
+- **A72** Compiled `.dcss-scale-threshold` MUST select d3's numeric/text range from 0–1,024 sorted numeric thresholds within ±2^24, agreeing under literal calc/layout lowerings. Missing queries MUST return unknown or error 2; invalid active layout keys MUST flag error 1. Result styles MUST NOT alter computation, while descendant numeric reuse, native changes and reset MUST remain correct.
+
+- **A73** Compiled `.dcss-scale-quantize` MUST match d3’s range value for ascending literal endpoints within ±2^24, zero or magnitudes at least 2^-1006, and 1–1,025 supported numeric/text ranges. Calc and layout MUST preserve d3’s boundary operation order and missing-query behavior. Numeric results MUST preserve descendant reuse, authored result widths, native changes and reset.
+
+- **A74** Compiled quantile/median MUST match d3 within declared 1/64-grid bounds and static probability. Scalar ranks MUST support 64 values, layout 1,024; indexed reads require cumulative width below 2^18. Lowerings MUST preserve author nodes, output position, exact reuse, formatting and reset, flagging invalid data as error 1 and empty inputs or missing probability as error 2.
+
+- **A75** Compiled `.dcss-quantile-sorted` MUST match d3's source-position R-7 interpolation within A74's bounds, supporting 1,024 values with direct scalar reads. Indexed layout MUST preserve source order within its cumulative-width bound. Both MUST preserve descendant numeric reuse, native changes, formatting, error meanings and reset.
+
+- **A76** Compiled `.dcss-scale-quantile` MUST match d3 on declared 1/64-grid data with 0–17 supported ranges. Layout MUST share each captured order statistic within its cumulative-width bound; scalar ranks MUST support 64 values. Both MUST preserve descendant reuse, authored styles, native changes, formatting, unknown queries and reset, flagging invalid data as error 1 and empty ranges as error 2.
+
+- **A77** Quantile-scale queries bound on the result div instead of the figure MUST preserve d3 results, readiness, errors, formatting and reset while publishing their actual input scope. Scoped query updates MUST leave the data computation upstream; complete costs MUST be measured in both engines.
+
+- **A78** Compiled precisionFixed/Prefix/Round MUST match d3 within declared bounds, nonzero step magnitudes 1e-30 to below 1e31, and target magnitudes below 1e31. Integer results MUST support downward reuse and bounded formatter precision. Native controls, reset and errors MUST preserve author elements; undefined answers MUST publish CSS NaN with error 2 and suppress dependent text.
+
+- **A79** Quantile, median, source-position quantile and quantile-scale results MUST retain their author's available width and natural flow height without requiring an explicit figure height. Literal and dynamic data, captions and following content MUST remain correctly placed in both engines. Contracts MUST count the width and validation reads needed to preserve that behavior.
+
+### Per-item and drop-in composition
+
+- **A80** Compiled cumsum MUST publish 0–128 scoped per-item endpoints with bounds and status in version-two contracts. Within declared 1/64-grid prefix bounds below 2^18, both qualified lowerings MUST match d3, preserve scalar reuse and native reset, and skip missing/NaN values. Invalid inputs MUST invalidate their prefix and later results while preserving earlier results.
+
+- **A81** The sheet MUST expose bounded discrete scales, quantiles, cumsum and precision helpers without compilation, with authored holders and 17 property-based range values. Quantize MUST derive thresholds from sibling-index. A hand-written median → precisionFixed → format-fixed chain MUST match d3 across eight native/reset/viewport states, preserve flow and errors, and remain valid through optional compilation.
+
+- **A82** Authored cumsum holders MUST support arithmetic and shared-grid layout without adding or reparenting author elements, preserving exact per-item results, errors, text and reset. Complete-workload measurements MUST bind source, styling, bounds and emitted artifacts. Selection MUST retain the existing choice unless neither engine's median nor p95 regresses; stale measurements MUST be rejected, and unknown costs MUST remain null.
+
+- **A83** An experimental four-input fold adapter MUST preserve d3 min, downstream math/text, status, native reset and authored structure. Layout-derived or chained inputs MUST be refused; pending or failed fonts MUST leave consumers unready without blocking independent arithmetic. Complete comparisons MUST include live encoding and generated helpers, retaining existing defaults unless both engines qualify an improvement.
+
+- **A84** `.dcss-share` MUST publish totals exactly and per-item fractions within 1e-9 of d3 sum/division on descendant result holders for 1–64 finite nonnegative 1/64-grid values at most 4,095. Invalid data MUST set error 1, zero totals error 2. Formatting, native changes/reset, nested calls, intervening containers and natural row flow MUST preserve results and errors.
+
+- **A85** `.dcss-ascending` and `.dcss-descending` MUST publish d3's -1/0/1 result for their own finite numeric `--a`/`--b` within ±2^24. Missing/NaN arguments MUST publish CSS NaN with error 2; out-of-bound finite arguments MUST give error 1. Native changes/reset and nested argument isolation MUST preserve results.
+
+- **A86** Finite numeric identity map/invert calls admitted by `scale-extra/check.mjs` MUST match their original d3 returns exactly, independently of domain/range configuration. Proof MUST distinguish NaN from numeric answers and preserve native reset and descendant reuse. Getters, ticks and coercions remain unsupported.
+
+- **A87** Over 0–64 signed 1/64-grid observations within ±1024, numeric minIndex/maxIndex and default leastIndex/greatestIndex MUST return d3's first winning source position; least/greatest MUST return its value. Nullish/NaN MUST be skipped; empty lists MUST return index -1 or CSS NaN/error 2. Invalid grid/bounds/count MUST give error 1; native reset and nested reuse MUST preserve results.
+
+- **A88** Direct finite numeric rgb/hsl/lab/hcl/lch/gray constructors within ±2^24 MUST preserve d3's coordinates and opacity without clamping, defaulting opacity to 1. Missing/non-numeric coordinates MUST give ready 0/error 1; valid sibling components MUST remain available. Native reset and nested argument isolation MUST preserve results.
+
+- **A89** Numeric boxed-value bisector left/right over 0–64 integer keys within ±2^24 MUST match d3 on ascending search slices. Optional integer bounds MUST satisfy 0 ≤ lo ≤ hi ≤ length; invalid searched keys/bounds MUST hide results with error 1, missing queries with error 2. Raw callback ownership, reset and nested/container reuse MUST be checked.
+
+- **A90** General formatting with 1–15 significant digits MUST print d3's text when the rounded decimal exponent lies from -6 through precision minus 1. Exponential results and missing/NaN inputs MUST suppress text with error 1. Log filtering, trimming, native reset, nesting and the retained fixed/percent/SI printer MUST preserve results.
+
+
+- **A91** Each newly added call MUST qualify through direct runtime and compiled output against the same original d3 questions. Compilation MUST preserve authored nodes, reachable field/item result addresses, bounds, readiness, errors and native reset. Serializable contracts MUST name emitted DOM locations; both-branch qualification MUST remain source-bound and MUST NOT add a second coverage count.
+
+- **A92** Numeric ranges MUST compute active item values on the 1/64 grid within ±1024 using authored output slots. Runtime and compiler MUST preserve per-item result addresses and exact values. Zero steps, off-grid or wider inputs, more than 64 results and insufficient slots MUST set an error; unused slots MUST have readiness 0.
+
+- **A93** Fixed UTC day, hour, minute and second calls MUST compute floor, ceil, round, offset and count within ±8×10¹² epoch milliseconds, truncating fractional milliseconds toward zero. Offset steps MUST round down and round ties MUST choose the upper interval. Invalid inputs or wider timestamp results MUST hide the number and set error 1.
+
+- **A94** UTC weekday intervals MUST compute floor, ceil, round, offset and count within ±8×10¹⁵ epoch milliseconds, aligned to Sunday through Saturday. Negative epochs, midpoint ties, truncation and native reset MUST preserve results in both branches. Invalid inputs or wider timestamp results MUST hide the number and set error 1.
+
+- **A95** Gregorian UTC month/year calls MUST compute floor, ceil, round, offset and count within ±8×10¹³ epoch milliseconds. Leap/century rules, first-century dates and Date setter overflow MUST match d3; round ties MUST choose the upper interval. Year periods 1–10,000 MUST support floor/ceil/round/offset; count requires period 1, and unsupported or wider results MUST error.
+
+- **A96** Five-circle packing MUST match d3's front-chain placement and enclosing-circle translation within 1e-6 for numeric radii 0.25–32. Its fifteen coordinate/radius fields MUST remain reusable at the call and descendants through both branches. Invalid or missing radii MUST hide fields with error 1; native changes and reset MUST recompute.
+
+- **A97** Numeric color-object copies and conversions MUST match constructor components within 1e-6, preserving opacity, field addresses and source configuration. RGB conversions use 0–255, HSL conversion S/L use 0–1, and other coordinates remain within ±1024. Independent fields MUST remain reusable when others are missing; overlapping original proof identities MUST be refused.
+
+- **A98** Pacific local day/month calls with integer epoch inputs MUST compute numeric floor, ceil, round, offset and count under the explicit America/Los_Angeles 2007–2037 rule. Exact transition boundaries, spring-gap forward disambiguation and autumn-fold earlier disambiguation MUST match d3. Inputs and timestamp outputs outside the documented epoch bounds MUST error; result/status addresses MUST survive compilation.
+
+- **A99** Numeric date text supplied as a complete ASCII code vector MUST be parsed in CSS, including digit, delimiter and length validation. Qualified UTC numeric formats and explicit-zone forms MUST match d3's exact epoch; invalid, missing or fractional codes MUST hide the result with an error. Both branches MUST retain changing input and downstream numeric reuse.
+
+- **A100** Qualified Arabic `$,.2f` locale formatting MUST compute changing values in CSS and preserve static currency affixes. Both branches MUST match rendered native text and report unsupported inputs/magnitudes. Repeated factory contexts MUST NOT inflate the recorder's frozen raw-call identities.
+
+- **A101** Qualified numeric ISO/week/quarter ASCII forms MUST compute the same exact epochs as d3 through both branches. Local forms MUST use the explicit 1990–2037 Pacific rules, including the last Sunday of October before 2007. Invalid ISO week zero, syntax/length errors and missing fields MUST hide results; changing valid fields and reset MUST recompute.
+
+- **A102** The complete named-color dictionary and qualified hex ASCII forms MUST produce finite reusable RGBA fields in CSS. Active character codes MUST be unrounded integers. Unsupported syntax and zero-alpha hex MUST error; string-constructor compositions MUST consume actual parsed fields through compilation.
+
+- **A103** Identity-scale ticks MUST expose the complete array length and every active item within the qualified bounds and authored capacity. Default labels MUST compute precision from live domain/count inputs and match rendered d3 text. Both branches MUST preserve item/status addresses, integer summary fields, changing input/reset and downstream reuse; malformed summary metadata MUST be refused.
+
+- **A104** Explicitly seeded LCG sequences MUST compute exact 16-bit state limbs for every authored slot, with honest fractional precision and compiler addresses. Every source-owned invocation sharing a recorder identity MUST pass before that identity counts once. Invalid seeds or excess capacity MUST hide results; mutation, reset and downstream reuse MUST survive both branches.
+
+- **A105** Qualified Pacific local hour/minute calls MUST match d3's epoch floor, ceil, round and elapsed offset semantics within the documented input/result bounds. Offset steps MUST be finite and rounded down within ±10000. Invalid/missing inputs MUST hide results and publish error status in both branches.
+
+- **A106** Pacific weekday calls MUST compute floor, ceil, round, offset and count from integer epochs within years −9999 through 19999, using captured IANA history and recurring future Pacific rules. Offset steps MUST round down within ±1000; historical timezone-minute truncation, gap/fold disambiguation, exact result/status addresses, native reset and downstream reuse MUST match d3 in both branches.
+
+- **A107** Qualified English date formatting MUST compute text from live integer epochs within years −9999 through 19999. Every frozen call MUST pass every source-owned configuration, including ISO weeks/years, epoch text, padding, names and Pacific historical offsets. Numeric fields MUST remain independently addressed and reusable through compilation; invalid inputs MUST hide text and publish an error.
+
+- **A108** Qualified geographic points, inverses, distance and scalar configuration getters MUST preserve every frozen source configuration through both branches. Numeric results MUST have independent presence/status checks and meet the documented bounds and tolerances. Null clipping extents MUST retain absent corners and rectangles MUST expose four corners; native reset, nested missing inputs and downstream reuse MUST preserve results.
+
+- **A109** Qualified legacy RGB/RGBA ASCII vectors MUST compute record, null and nonpositive-alpha NaN results in CSS through both branches. Parsed fields and kind MUST retain distinct addresses and readiness. Missing/fractional codes or unsupported numeric bounds MUST publish errors; native input/reset, nested vector isolation, constructor reuse and wrong-result detection MUST be checked without dropping null/NaN originals.
+
+- **A110** Qualified date parsing MUST retain every original UTC/local identity and each source-owned factory context through both branches. The vector MUST be at most 24 ASCII characters; 38 fixed English formats, civil years 100..9999, epoch years −9999..19999 and explicit America/Los_Angeles time MUST remain bounded. Native nulls, invalid input, mutation/reset and reusable numeric output MUST match d3.
+
+- **A111** Qualified variance and deviation MUST retain the exact source-owned raw values and accessor recipes through both branches. CSS Welford state MUST use at most 16 slots, MUST NOT clamp inputs, and MUST leave the result absent where d3 returns `undefined` for fewer than two valid observations. Finite answers MUST match within 1e-9 and remain reusable.
+
+- **A112** Qualified color constructors MUST preserve all source-owned typed, numeric-string, parsed CSS-color and object routes through both branches. The parser MUST accept bounded legacy RGB/HSL, names and hex while preserving native null/NaN fields. Components MUST remain reusable; formatting and methods are excluded.
 
 ### On the board
 
@@ -189,6 +313,7 @@ Conformance: Chrome 61/61, WebKit 61/61, Firefox 55/61.
   iteration's fixed point: a 12-cell power iteration's vector and eigenvalue equal NumPy's, as a flow and as a table row.
 - **A52** A `<table class="sheet">` on dcss-store.css's board MUST show every cell and fold equal to the sheet's own
   model as written and after each change to its inputs.
+
 
 ## 3. Implementation report
 
@@ -245,6 +370,7 @@ Conformance: Chrome 61/61, WebKit 61/61, Firefox 55/61.
 | A48 | probes/algos/minus.mjs: 8 cases | PASS: 3,840 of 3,840 reads | PASS: 3,840 of 3,840 reads | PASS: 3,840 of 3,840 reads |
 | A49 | probes/novel/live-turn/tick-traps.mjs: 6 cases | PASS: 2,880 of 2,880 reads | PASS: 2,880 of 2,880 reads | PASS: 2,880 of 2,880 reads |
 | A50 | probes/rom-api-check.mjs: entries, moving; probes/rom2-api-check.mjs: entries, moving | PASS: 2,000, 3,000, 5,120 and 4,500 reads | PASS: 2,000, 3,000, 5,120 and 4,500 reads | PASS: 2,000, 3,000, 5,120 and 4,500 reads |
+| A66 | pipeline/formula-check.mjs: both entry paths, mean, extent, filters, state, per-item edits, empty inputs and compatibility paths; inline, shared, sheet, calc and auto where supported | PASS: 94 pages, 598 answers | PASS: 94 pages, 598 answers | PASS: 94 pages, 598 answers |
 | A53 | probes/anchor-sort-check.mjs: 4, 16 and 32 totals | PASS: 120 of 120 frames, 70 reorders | PASS: 120 of 120 frames, 73 reorders | PASS: 120 of 120 frames, 70 reorders |
 | A55 | pipeline/check.mjs FORMS=sheet: the 8 sorted group programs and the 3 ranked albums (24 rows) of examples.mjs | PASS | PASS | PASS |
 | A56 | pipeline/check.mjs FORMS=sheet: ex-board-heights, ex-starts, ex-gallery-size | PASS | PASS | PASS |
@@ -252,12 +378,67 @@ Conformance: Chrome 61/61, WebKit 61/61, Firefox 55/61.
 | A58 | d3-check.mjs: every call d3-array's tests record with finite numbers (ticks 112, tickIncrement 30, tickStep 92, nice 20) | PASS: 254 of 254 | PASS: 254 of 254 | PASS: 254 of 254 |
 | A59 | probes/axis/check.mjs: 9 axes and 2 zoomed by :has(), places within 1/32 px, labels as printed against d3's text, pixel for pixel | PASS: 11 of 11, the same pixels | PASS: 11 of 11, the same pixels | PASS: 11 of 11, the same pixels |
 | A60 | d3-check.mjs: every call d3-array's tests record on arrays of numbers, numeric text and what d3 skips (sum 38, count 4, mean 32, min 28, max 28, extent 24); probes/dcss/reduce-check.mjs: 60 seeded lists to 3,000 items, 420 reads, and 60 changes | PASS: 154 of 154; 372 of 420, the 48 others past 2^18 px (ENGINES.md), 240 of 240 moving | PASS: 154 of 154; 420 of 420, 240 of 240 moving | FAIL: 154 of 154 d3 calls, but 190 of 420 seeded reads: layout snaps to 1/60 px, so 64ths and the skipped items' 1/64 px marks are lost |
-| A61 | probes/dcss/hierarchy-check.mjs: the 6 tile calls d3-hierarchy's tests record, at their 2 decimals; 30 seeded treemaps and 12 partitions, every node | PASS: 6 of 6, 42 of 42 (worst 0.86/64 px a level) | PASS: 6 of 6, 42 of 42 (worst 1.39/64) | PASS: 6 of 6, 42 of 42 (worst 0.94/64) |
+| A61 | probes/dcss/hierarchy-check.mjs: the 6 tile calls d3-hierarchy's tests record, at their 2 decimals; 35 seeded trees with the leaves' values only (slice-dice: every node's), 3 with totals to 50,000 | PASS: 6 of 6, 38 of 38 (worst 0.80/64 px a level) | PASS: 6 of 6, 38 of 38 (worst 1.53/64) | PASS: 6 of 6, 38 of 38 (worst 0.94/64) |
+| A62 | probes/dcss/scale/scale-check.mjs: every question d3-scale's linear, pow, sqrt and log tests ask a scale, with its state (map, invert, ticks, nice, tickFormat), the ones CSS can take compared exactly; 3,000 seeded linear, 1,500 pow and 1,485 log scales | PASS: linear 170 of 214, pow 147 of 187, sqrt 2 of 2, log 548 of 709 (the rest not numbers or not printed by format); 3,000 of 3,000; 1,499 of 1,500 (one under 2 x 2^-52); 1,485 of 1,485 | PASS: linear 170 of 214, pow 147 of 187, sqrt 2 of 2, log 548 of 709; 3,000 of 3,000; 1,500 of 1,500; 1,485 of 1,485 | FAIL: pow 145 of 187 and log 544 of 709; calc() in single precision |
+| A63 | probes/dcss/ease/ease-check.mjs: the 413 calls d3-ease's tests make and 5,665 on a grid of t, default and seeded parameters | PASS: 413 of 413, 5,665 of 5,665 (all within 1e-12) | PASS: 413 of 413, 5,665 of 5,665 (all within 1e-12) | PASS: 413 of 413, 5,665 of 5,665 |
+| A64 | probes/dcss/format/format-check.mjs: the 30 calls in scope d3-format's tests make, 2,939 seeded and 600 ties, the printed text compared (Chrome: its accessibility tree; WebKit and Firefox: pixels) | PASS: 30 of 30, 2,939 of 2,939, 600 of 600 | PASS: 30 of 30, 2,939 of 2,939, 600 of 600 | FAIL: 30 of 30, 2,011 of 2,939, 441 of 600: calc() in single precision |
+| A65 | probes/dcss/scale/scale-check.mjs: every ticks, nice and tickFormat question d3-scale's log tests ask, each value compared exactly; 599 seeded ticks, 300 nice, 600 labels | PASS: ticks 38 of 38, nice 10 of 10, labels 453 of 453 (the 7 through 0 and 134 labels in types format does not print not taken); seeded 1,481 of 1,499 (12 base-e tick sets and 6 nice a last bit off: exp(-10) is not V8's Math.exp(-10)) | PASS: the same | FAIL: ticks 34 of 38; nice 10 of 10; labels 453 of 453 |
+| A67 | probes/dcss/format/format-check.mjs and probes/si-carry-check.mjs: one coefficient round with decimal-tail integer pieces split at build time; 5,364 decimal-midpoint carry cases; SI printed text, 109 supported recorded calls, 1,567 seeded, 944 prefix boundaries, 1,165 decimal ties; 5 rejected inputs | PASS: all; also 30 existing f/% calls, 2,939 seeded and 600 ties; all 5,364 carry cases | PASS: all, including 5,364 carry cases | NOTRUN: optimized SI; previous implementation failed in single precision |
+| A68 | probes/dcss/bisect-check.mjs; probes/dcss/discrete/inherited-check.mjs: recorded calls, 515 seeded cases per side, native changes, printing, nested readers and invalid inputs | PASS: 25/42 left and 25/37 right; 1,030 seeded; 28 live/reader checks plus four nested missing-query states | PASS: the same | FAIL: all 50 supported recorded calls; 1,023 of 1,030 seeded and 27 of 28 live/reader checks (single-precision arithmetic) |
+| A69 | pipeline/contract-check.mjs; probes/dcss/compiled-check.mjs: native values, exact sum/scale, four d3 texts, invalid bindings | PASS: 144 build checks with optional mathfont; 10/10 states per implementation | PASS: same build checks; 10/10 states per implementation | NOTRUN: compiled composition |
+| A70 | pipeline/contract-check.mjs; probes/dcss/composition-cost.mjs and composition-cost-summary.mjs: reader counts, matching complete workloads, per-engine selection and authored semantic structure; pipeline/bytes.mjs | PASS: 144 build checks; six paired workloads retain arithmetic; twelve semantic projections; 320 prior pages/models unchanged in the earlier refactor | PASS: same build checks; same workload choices | NOTRUN: compiled composition |
+| A71 | probes/dcss/compiled-check.mjs: invalid values, native reset; variable/glyph pending, delivered and failed fonts | PASS: 10/10 states each; 3/3 guards per font encoding | PASS: 10/10 states each; 3/3 guards per font encoding | NOTRUN: compiled composition |
+| A72 | probes/dcss/discrete/check.mjs, inherited-check.mjs and presentation-check.mjs: recorded range values, both lowerings, native controls, result widths and fixed formatting | PASS: 11/24 recorded questions; 67/67 added per lowering; 8/8 native states; 8/8 nested query states; 18/18 width/query/reset states | PASS: the same | NOTRUN: compiled threshold scale |
+| A73 | probes/dcss/discrete/check.mjs, expression-check.mjs, inherited-check.mjs and presentation-check.mjs: full quantize values, adjacent doubles, large expressions, result widths and native controls | PASS: 33/65 recorded questions; 103/103 added per lowering; 8/8 native and 8/8 nested query states; 18/18 width/query/reset states; seven partial counts parse | PASS: the same | NOTRUN: compiled quantize scale |
+| A74 | probes/dcss/quantile/check.mjs and cost.mjs: recorded calls, exact grid readback, scalar ranks, indexed reads, native controls, rendered text and complete composition costs | PASS: quantile 25/43, median 6/47; 120 seeded layout, 112 scalar and 70 indexed each; 8/8 native states per lowering/operation; 64-value normal-flow layout composition 4.9 ms median | PASS: the same, normal-flow layout composition 6 ms median | NOTRUN: compiled quantile and median |
+| A75 | probes/dcss/quantile/check.mjs: recorded source-position calls, seeded data, scalar/indexed reads, native controls and rendered text | PASS: 4/4 recorded, 120 scalar and 70 indexed seeded; 8/8 native states per lowering | PASS: the same | NOTRUN: compiled source-position quantiles |
+| A76 | probes/dcss/quantile-scale/check.mjs and cost.mjs: recorded maps, adjacent boundary doubles, shared ranks, native controls, rendered text and full composition | PASS: 39/74 recorded, 365 layout and 359 scalar added; 9/9 native states per lowering | PASS: the same | NOTRUN: compiled quantile scale |
+| A77 | probes/dcss/quantile-scale/check.mjs and cost.mjs with QUERY_SCOPE=result: result-container binding, exact maps, native changes/reset, text and full costs | PASS: the same recorded/added cases and 9/9 native states; 64-value, four-range scalar query median 0.4 ms | PASS: the same, 1 ms scalar query median | NOTRUN: result-container query |
+| A78 | probes/dcss/precision/check.mjs, exponent-check.mjs, composition-check.mjs and cost.mjs: recorded helpers, adjacent doubles, typed precision, native controls/reset, numeric reuse, errors, layout composition and complete costs | PASS: fixed 10/10, prefix 129/129, round 8/8; 695 added and 9/9 native states each; 364 exponent cases, 7/7 nested outputs; 30-value median 9.8–9.9 ms | PASS: the same; 30-value median 14 ms | NOTRUN: compiled precision helpers |
+| A79 | probes/dcss/quantile/flow-check.mjs: four operations, all qualified lowerings, literal/dynamic data, captions and following content, 240/640 px widths, no fixed figure height | PASS: 40/40 natural-flow cases, exact width and height | PASS: 40/40 natural-flow cases, exact width and height | NOTRUN: compiled natural flow |
+| A80 | pipeline/scan-contract-check.mjs; probes/dcss/cumsum/check.mjs: per-item endpoint legality, exact prefixes, reuse, missing values, error isolation, native controls/reset | PASS: 38 contract checks; 11/42 recorded calls; 60 scalar and 59 layout added cases; 13/13 states per lowering | PASS: the same | NOTRUN: per-item composition |
+| A81 | probes/dcss/static/check.mjs and optimizer-check.mjs: shared sheet, bounded calls, d3 precision questions, hand-written three-call native/viewport/reset proof, errors and unchanged authored holders | PASS: 387/387 direct-sheet cases, 150 boundary queries; 147/147 precision questions included; 8/8 authored states; 4/4 optionally compiled states | PASS: the same | NOTRUN: bounded drop-in composition |
+| A82 | pipeline/measured-check.mjs; probes/dcss/cumsum/authored-check.mjs and authored-cost.mjs: identical markup, native data/errors/reset, exact transport, source/artifact binding and complete update workloads | PASS: 24 selection checks; 72 native cases and 24 full-range prefix checks; 24 fresh-page records; arithmetic qualifies for six complete workloads; author DOM retained | PASS: the same | NOTRUN: measured authored composition |
+| A83 | probes/fold-rom/live-check.mjs and live-cost.mjs with MATHFONT_FOLD: live integer sources, d3 minimum/scale/precision/text, reset/flow/projection, pending/failed fonts and complete comparison | PASS: 20 native states per backend, 4,096 live minimum pairs, 3 font guards; 8 saved timing records and 400 timed outputs checked; arithmetic retained | PASS: the same | NOTRUN: complete fold composition |
+| A84 | probes/dcss/share/check.mjs; full-sheet-check.mjs: d3 sum/fractions, native/reset, labels, nested scope, bounded errors, formatter propagation and mutation detection | PASS: 17 focused cases and 36 independent full-sheet states; 64-item near-bound totals; wrong-share/error mutations detected | PASS: the same | NOTRUN: bounded share call |
+| A85 | probes/dcss/compare/check.mjs: original identities, numeric/missing/NaN, native/reset and wrong-answer detection | PASS: 9/14 ascending and 9/14 descending; native/reset/nested/mutation guards | PASS: the same | NOTRUN: comparison calls |
+| A86 | probes/dcss/scale-extra/check.mjs: original numeric map/invert calls, configuration independence, native changes/reset, finite presence and reuse | PASS: identity 11/86 exact; native/reset/status/reuse guards | PASS: the same | NOTRUN: identity scale |
+| A87 | probes/dcss/index-extrema/check.mjs: original calls, endpoint/ties, native/reset, NaN/errors, source-index mutation and nested reuse | PASS: minIndex 13/46, maxIndex 13/46, leastIndex 9/26, greatestIndex 9/26, least 8/26, greatest 8/26; 50 additional states | PASS: the same | NOTRUN: index extrema |
+| A88 | probes/dcss/color/check.mjs: original components/opacity, native/reset, missing nested inputs and wrong-answer guard | PASS: rgb 30/67, hsl 40/94, lab 11/43, hcl 14/61, lch 4/6, gray 4/4 | PASS: the same | NOTRUN: numeric color constructors |
+| A89 | probes/dcss/bisector/check.mjs: source-owned raw calls and hashes, sorted slice, valid/invalid bounds, missing query, native/reset, nested and container reuse | PASS: 98/153 original calls; numeric presence, bound errors, 64-item boundary and overflow guards | PASS: the same | NOTRUN: numeric bisectors |
+| A90 | probes/dcss/log-label/check.mjs: disjoint original log labels, retained formatter questions, precision/trim boundaries, native/reset, errors and wrong-text detection | PASS: 106 additional log labels; 139 retained format questions; 210 precision/trim cases; 17 native/error states | PASS: the same | NOTRUN: general labels |
+| A91 | probes/dcss/paired-check.mjs; compiler-paired/check.mjs; compiler contract checks: both branches use the same original oracle fixtures, shared CSS math and source manifests | PASS: 2,365/2,365 original questions across 61 exports in both branches; 25 share/field/flow/input-node states per branch; 135 contract and 38 per-item checks | PASS: the same | NOTRUN: new compiler branch qualification |
+| A92 | probes/dcss/range-wave/check.mjs; selection.mjs: exact original identities, grid boundaries, native reset, nested scopes, capacity and mutation guard | PASS: 41/76 original calls in both branches | PASS: the same | NOTRUN: numeric ranges |
+| A93 | probes/dcss/utc-wave/check.mjs; cases.mjs; edges.mjs: source answers match recorded identities; exact timestamp differences, truncation, bounds, native reset, nesting and reusable results | PASS: utcDay 59/62, unixDay 59/62, utcHour 40/41, utcMinute 18/19 and timeSecond 19/20 in both branches | PASS: the same | NOTRUN: fixed UTC intervals |
+| A94 | probes/dcss/week-wave/check.mjs and edges.mjs: original identities, weekday alignment, negative modulo, exact counts, bounds, ties, native reset, nesting and reuse | PASS: 155/155 original calls across seven exports in both branches | PASS: the same | NOTRUN: UTC weekdays |
+| A95 | probes/dcss/calendar-wave/check.mjs and cases.mjs: source-owned year periods, exact calendar results, leap/century rules, first-century dates, overflow, bounds, native reset and reuse | PASS: month 51/52, year 25/27 original calls in both branches | PASS: the same | NOTRUN: Gregorian UTC |
+| A96 | probes/dcss/pack-five/check.mjs: source-owned five-circle cases, full coordinate/radius record, extra tuples, native/reset, invalid radii, reuse and wrong-number detection | PASS: 200/203 original calls in both branches; 15 extra tuples | PASS: the same | NOTRUN: five-circle packing |
+| A97 | probes/dcss/color-convert/check.mjs; coverage/d3-paired-accounting-check.mjs: disjoint object calls, raw numerical differences, native/reset, partial/nested fields and reuse | PASS: +27 original calls in both branches; six accounting groups | PASS: the same | NOTRUN: numeric object conversion |
+| A98 | probes/dcss/local-calendar/check.mjs: exact raw epochs, original identities, DST boundary offsets, gaps/folds, bounds, native/reset and downstream reuse | PASS: day 64/77, month 62/64 in both branches; 248 transition states across 31 years | PASS: the same | NOTRUN: Pacific local intervals |
+| A99 | probes/dcss/date-parse/check.mjs: source-owned formats, complete live character vector, exact timestamps, missing/fractional/length errors, native/reset and reuse | PASS: UTC 23/79, explicit-zone local 11/113 in both branches | PASS: the same | NOTRUN: numeric date text |
+| A100 | probes/dcss/locale-format/check.mjs: source-owned Arabic factories, native rendered text, changing input/reset, invalid/missing/magnitude errors and wrong-output guard | PASS: 2/99 raw identities; 22 locale contexts in both branches | PASS: the same | NOTRUN: locale formatting |
+| A101 | probes/dcss/parse-calendar/check.mjs: source-owned ISO/week/quarter formats, exact epochs, late-October boundary, syntax errors, valid native changes/reset and reuse | PASS: +21 UTC and +42 local original questions in both branches | PASS: the same | NOTRUN: calendar text |
+| A102 | probes/dcss/color-strings/check.mjs: full dictionary data, original names/hex, composed constructors, unrecorded inputs, raw character guards, missing/nested fields and reuse | PASS: 31 original questions in both branches; zero-alpha refusal | PASS: the same | NOTRUN: color text |
+| A103 | probes/dcss/identity-next/check.mjs: source-owned complete arrays, rendered labels, dynamic precision, capacity, item/summary contracts, native changes/reset and reuse | PASS: 11 arrays and 51 labels in both branches; up to 512 authored slots | PASS: the same | NOTRUN: identity ticks/labels |
+| A104 | probes/dcss/lcg-wave/check.mjs: exact source ownership, both state limbs, raw fraction, native seed/reset, capacity, nested missing, field reuse and wrong-output guard | PASS: 200/200 originals, 311 source contexts in both branches | PASS: the same | NOTRUN: LCG sequence |
+| A105 | probes/dcss/local-interval-wave/check.mjs: exact original epochs, native/reset, offset bounds, hidden invalid results and nested missing | PASS: hour 40/41, minute 18/19 in both branches | PASS: the same | NOTRUN: local fixed intervals |
+| A106 | probes/dcss/local-week-wave/check.mjs and local-week-ops/check.mjs: whole frozen weekday family, exact historical epochs/counts, DST/negative/future cases, native/reset, missing/nested and actual output reuse | PASS: 155/155 originals across seven exports in both branches; 371 additional states and retained floor boundary proof | PASS: the same | NOTRUN: Pacific weekdays |
+| A107 | probes/dcss/date-format-wave/check.mjs and ownership.mjs: every exact source-owned configuration, native text pixels, numeric-field reuse, native/reset, bounds/missing/nested and wrong-text guards | PASS: 107/107 originals in all 276 source-owned contexts through both branches | PASS: the same | NOTRUN: date formatting |
+| A108 | probes/dcss/geo-point/check.mjs and guard.mjs: complete frozen numeric configurations, independent presence/status, nullable rectangle corners, native/reset, nested missing and output reuse | PASS: 93/93 originals in 299 contexts from raw inputs; point1e-6, distance1e-12 and explicit MultiPoint fit0.001 tolerances | PASS: the same | NOTRUN: geographic points |
+| A109 | probes/dcss/color-function-wave/check.mjs: whole RGB/RGBA string family, null/NaN fields, raw ASCII, native/reset, lexical bounds, missing/nested and constructor reuse | PASS: 53/53 recorded RGB/RGBA strings through both branches, including native null and alpha<=0 NaN fields | PASS: the same | NOTRUN: functional color strings |
+| A110 | probes/dcss/date-parse-family/check.mjs: all original parser identities and factory contexts, complete raw ASCII, native nulls, mutation/reset, refusal and numeric reuse | PASS: 192/192 originals across 226 source contexts; 24 raw ASCII, 38 static English formats, civil years 100..9999 and epoch years -9999..19999 | PASS: the same, with explicit America/Los_Angeles local time | NOTRUN: complete date parser family |
+| A111 | probes/dcss/variance-family/check.mjs: exact source-owned raw values and accessor recipes, undefined context, native undefined, reuse and guards | PASS: variance 30/30 and deviation 29/29; CSS Welford, 16 slots, no input clamp, 1e-9 tolerance | PASS: the same | NOTRUN: variance and deviation |
+| A112 | probes/dcss/color-family/check.mjs: source-owned typed, numeric-string, parser and object routes; null/NaN, reset, reuse and refusal guards | PASS: 351/351 constructor originals through both branches; independent field presence and 1e-6 differences, native null/NaN and reset/reuse guards | PASS: the same | NOTRUN: complete color constructor family |
 | A51 | coverage/board.mjs: bd-power-12-loop-classes, bd-power-12-loop-table | PASS: 13 of 13 each, against NumPy | PASS: 13 of 13 each, against NumPy | PRECONDITION_FAILED: no view timelines, which dcss-store.css's store needs |
 | A52 | sheets/check.mjs: loan | PASS: 50 of 50 cells as written and after 2 changes | PASS: 50 of 50 cells as written and after 2 changes | PRECONDITION_FAILED: no view timelines, which dcss-store.css's store needs |
 
+
 ## 4. Not covered
 
+- Compiled HTML compositions beyond A69's sum/two-stop-scale/fixed-percent-SI chain, A72–A73/A76's discrete scales, A74–A75's grid quantiles, A78's precision helpers and A91–A112's paired calls; dynamic scalar settings beyond bounded precision, live DOM rewiring, arbitrary font-wrapper layout, or a measured three-way cost model.
+
+- Quantiles outside A74's grid bounds; invalid-observation filtering, coercion, accessors, signed-zero identity, dynamic probability and index-returning quantile variants.
+- d3.format's types outside f, %, s and A90's bounded general decimal notation; fill, align, width and zero; SI outside A67's bounds; trim outside SI, log labels or bounded general notation; nonfinite inputs. Linear/pow fixed-prefix SI labels remain unported.
 - Loops between grids (`.loop-flow`, `.loop-in`, `[data-store-read]`, `--store-of`) without dcss-store.css or store.css on the page: their cells are the board's stored numbers.
 - Entries of any tag but `<i>`, and readers of any tag but `<b>`.
 - Ranks past 32 in one bin (rank 33 reads 1), and bins in use counted past the box's width in px.
