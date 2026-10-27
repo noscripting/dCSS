@@ -1,119 +1,156 @@
 # dcss-array.css: tutorial
 
-You build a leaderboard that keeps its players in score order by itself, and moves a player up the moment their score passes another's.
+You build a sales summary for six months: the total, the monthly average, the best month and an axis across the range, all worked out by the stylesheet, and a switch between two years that updates every number.
 
 ## Before you start
 
-You need Chrome, Safari or Firefox, and `dcss-array.css` from this folder saved next to a new file, `leaderboard.html`. Open that file in the browser after each step and reload it to see the change. No server and no script are needed.
+You need Chrome or Safari, and from this folder `dcss-array.css` and the `families` folder, saved next to a new file, `sales.html`. Open that file in the browser after each step and reload it to see the change. No script is involved at any point.
 
-## 1. Sort the players by score
+## 1. Total and average
 
-A `.arrays-sort` grid orders its entries, the `<i>` elements inside it, by the whole number each one sets as `--arrays-key`, smallest first. To put the highest score first, the key is 1000 minus the score.
+Each calculation is an element whose class is d3's function name. `.dcss-sum` goes on a `<figure>`; the `<ul>` inside it is the data, one `<li>` per value, each saying its number as `--value`. The browser lays that list out, and the layout is the answer. Elements in the `<div>` after the list read it as `--dcss-sum`, and also `--dcss-mean` and `--dcss-count`, since one sum gives all three.
 
-Each entry holds a `.arrays-where`, and the inner `<u>` of it is the row you see. That `<u>` gets `--arrays-place`, the entry's place in the sort: 1 for the smallest key. The row uses it to stand at its place, 32 px a place. The players are written in no particular order:
-
-```html
-<!doctype html>
-<meta charset="utf-8">
-<title>Leaderboard</title>
-<link rel="stylesheet" href="dcss-array.css">
-<style>
-  body { margin: 24px; font: 16px/1.4 system-ui, sans-serif; }
-  .board { position: relative; width: 360px; height: 128px; }
-  .board i { --arrays-key: calc(1000 - round(var(--score))); }
-  .row { position: absolute; top: calc((var(--arrays-place) - 1) * 32px); left: 0;
-    width: 360px; height: 28px; display: flex; align-items: center; gap: 8px; }
-</style>
-
-<div class="board">
-  <div class="arrays-sort">
-    <i style="--score: 310"><b class="arrays-where"><u><u class="row"><span>Grace</span></u></u></b></i>
-    <i style="--score: 250"><b class="arrays-where"><u><u class="row"><span>Alan</span></u></u></b></i>
-    <i style="--score: 400"><b class="arrays-where"><u><u class="row"><span>Ada</span></u></u></b></i>
-    <i style="--score: 130"><b class="arrays-where"><u><u class="row"><span>Edsger</span></u></u></b></i>
-  </div>
-</div>
-```
-
-You see four names from the highest score down: Ada, Grace, Alan, Edsger. The entries themselves draw nothing; everything you see is inside the rows.
-
-## 2. Show each place and score
-
-Counters print numbers. Add these rules to the `<style>`: each row starts a counter at its place and one at its score, and prints them before and after the name.
-
-```css
-  .row { counter-reset: place var(--arrays-place) score round(var(--score)); }
-  .row::before { content: counter(place); width: 1em; }
-  .row span { width: 4em; }
-  .row::after { content: counter(score); }
-```
-
-You see a numbered list: 1 Ada 400, 2 Grace 310, 3 Alan 250, 4 Edsger 130.
-
-## 3. Draw the bars
-
-A bar is a box as wide as the score. Put `<b class="bar"></b>` after each name, inside the row:
-
-```html
-    <i style="--score: 310"><b class="arrays-where"><u><u class="row"><span>Grace</span><b class="bar"></b></u></u></b></i>
-```
-
-and give it a size and a color:
-
-```css
-  .bar { height: 20px; width: calc(var(--score) * 0.4px); background: #4a7bd0; }
-```
-
-You see a bar chart, longest bar on top, each score printed at the end of its bar.
-
-## 4. Let a score change
-
-Register `--score` as a number, so that it can be animated, and give Edsger a score that climbs from 120 to 460 and back. Add these rules, and a transition so a row glides to its new place:
-
-```css
-  @property --score { syntax: '<number>'; inherits: true; initial-value: 0; }
-  @keyframes climb { from { --score: 120; } to { --score: 460; } }
-  .row { transition: top 0.4s; }
-  .climber { animation: climb 4s ease-in-out infinite alternate; }
-```
-
-Then replace Edsger's `style="--score: 130"` with `class="climber"`. The whole page is now:
+The months' numbers are set once, on `.sales`, so later steps can reuse them. `.dcss-format-fixed` prints a number the way d3.format does, with `--precision` decimals. The figure is one line tall and clips the rest: the list itself is drawn one pixel per unit, which you don't want to see. `aria-hidden` keeps a screen reader from announcing that drawing as six empty list items.
 
 ```html
 <!doctype html>
 <meta charset="utf-8">
-<title>Leaderboard</title>
+<title>Sales</title>
 <link rel="stylesheet" href="dcss-array.css">
+<link rel="stylesheet" href="families/array.css">
+<link rel="stylesheet" href="families/format.css">
 <style>
-  @property --score { syntax: '<number>'; inherits: true; initial-value: 0; }
-  @keyframes climb { from { --score: 120; } to { --score: 460; } }
   body { margin: 24px; font: 16px/1.4 system-ui, sans-serif; }
-  .board { position: relative; width: 360px; height: 128px; }
-  .board i { --arrays-key: calc(1000 - round(var(--score))); }
-  .row { position: absolute; top: calc((var(--arrays-place) - 1) * 32px); left: 0;
-    width: 360px; height: 28px; display: flex; align-items: center; gap: 8px; }
-  .row { counter-reset: place var(--arrays-place) score round(var(--score)); }
-  .row::before { content: counter(place); width: 1em; }
-  .row span { width: 4em; }
-  .row::after { content: counter(score); }
-  .bar { height: 20px; width: calc(var(--score) * 0.4px); background: #4a7bd0; }
-  .row { transition: top 0.4s; }
-  .climber { animation: climb 4s ease-in-out infinite alternate; }
+  .sales { --jan: 120; --feb: 95; --mar: 140; --apr: 80; --may: 160; --jun: 110; }
+  figure { margin: 0; height: 1lh; overflow: clip; }
 </style>
 
-<div class="board">
-  <div class="arrays-sort">
-    <i style="--score: 310"><b class="arrays-where"><u><u class="row"><span>Grace</span><b class="bar"></b></u></u></b></i>
-    <i style="--score: 250"><b class="arrays-where"><u><u class="row"><span>Alan</span><b class="bar"></b></u></u></b></i>
-    <i style="--score: 400"><b class="arrays-where"><u><u class="row"><span>Ada</span><b class="bar"></b></u></u></b></i>
-    <i class="climber"><b class="arrays-where"><u><u class="row"><span>Edsger</span><b class="bar"></b></u></u></b></i>
-  </div>
-</div>
+<section class="sales">
+  <figure class="dcss-sum">
+    <ul aria-hidden="true">
+      <li style="--value: var(--jan)"></li> <li style="--value: var(--feb)"></li> <li style="--value: var(--mar)"></li>
+      <li style="--value: var(--apr)"></li> <li style="--value: var(--may)"></li> <li style="--value: var(--jun)"></li>
+    </ul>
+    <div>
+      Total <output class="dcss-format-fixed" style="--value: var(--dcss-sum); --precision: 0"></output>,
+      average <output class="dcss-format-fixed" style="--value: var(--dcss-mean); --precision: 1"></output> a month
+    </div>
+  </figure>
+</section>
 ```
 
-You see Edsger's bar grow. As his score passes 250, 310 and 400, he moves up one place at a time and the others step down, until he leads with 460; then he falls back to last. The places change in the same frame as the score, and no script runs.
+You see "Total 705, average 117.5 a month".
+
+## 2. The best month
+
+`.dcss-max-index` takes the same list and gives the position of its largest value, counting from 0: May is 4. A `@counter-style` with the month names turns that position into a word. Add these two rules to the `<style>`:
+
+```css
+@counter-style month { system: fixed 0; symbols: Jan Feb Mar Apr May Jun; }
+.month::after { counter-reset: m var(--dcss-max-index); content: counter(m, month); }
+```
+
+And this figure after the first one, inside `.sales`:
+
+```html
+  <figure class="dcss-max-index">
+    <ul aria-hidden="true">
+      <li style="--value: var(--jan)"></li> <li style="--value: var(--feb)"></li> <li style="--value: var(--mar)"></li>
+      <li style="--value: var(--apr)"></li> <li style="--value: var(--may)"></li> <li style="--value: var(--jun)"></li>
+    </ul>
+    <div>Best month: <output class="month"></output></div>
+  </figure>
+```
+
+You see a second line, "Best month: May".
+
+## 3. An axis across the range
+
+Three calls nest here, each reading the one around it. `.dcss-extent` gives the smallest and largest values as `--dcss-min` and `--dcss-max`. Inside it, `.dcss-nice` rounds that range out to whole steps, as d3's `nice` does. Inside that, `.dcss-axis-bottom` draws an axis over the rounded range, a tick and a label per `<li>`; give it more `<li>`s than ticks and the spare ones stay hidden.
+
+Link `families/ticks.css` after the other two families, add `.axis { height: 40px; margin-top: 8px; }` to the `<style>`, and add this figure:
+
+```html
+  <figure class="dcss-extent axis">
+    <ul aria-hidden="true">
+      <li style="--value: var(--jan)"></li> <li style="--value: var(--feb)"></li> <li style="--value: var(--mar)"></li>
+      <li style="--value: var(--apr)"></li> <li style="--value: var(--may)"></li> <li style="--value: var(--jun)"></li>
+    </ul>
+    <div>
+      <div class="dcss-nice" style="--start: var(--dcss-min); --stop: var(--dcss-max); --count: 5">
+        <ol class="dcss-axis-bottom" style="--start: var(--dcss-nice-start); --stop: var(--dcss-nice-stop); --count: 5; width: 300px; margin-left: 16px">
+          <li></li> <li></li> <li></li> <li></li> <li></li> <li></li> <li></li> <li></li>
+        </ol>
+      </div>
+    </div>
+  </figure>
+```
+
+You see an axis from 80 to 160 with a label every 20. The left margin keeps the first label inside the figure, which clips anything past its edges.
+
+## 4. Switch the year
+
+The numbers are custom properties, so a selector can change them. Two radio buttons and one `:has()` rule give a second year, and every result follows it: no script, nothing to wire up. Here is the whole page:
+
+```html
+<!doctype html>
+<meta charset="utf-8">
+<title>Sales</title>
+<link rel="stylesheet" href="dcss-array.css">
+<link rel="stylesheet" href="families/array.css">
+<link rel="stylesheet" href="families/format.css">
+<link rel="stylesheet" href="families/ticks.css">
+<style>
+  body { margin: 24px; font: 16px/1.4 system-ui, sans-serif; }
+  .sales { --jan: 120; --feb: 95; --mar: 140; --apr: 80; --may: 160; --jun: 110; }
+  .sales:has(#y2026:checked) { --jan: 130; --feb: 145; --mar: 90; --apr: 175; --may: 160; --jun: 120; }
+  figure { margin: 0; height: 1lh; overflow: clip; }
+  @counter-style month { system: fixed 0; symbols: Jan Feb Mar Apr May Jun; }
+  .axis { height: 40px; margin-top: 8px; }
+  .month::after { counter-reset: m var(--dcss-max-index); content: counter(m, month); }
+</style>
+
+<section class="sales">
+  <p>
+    <label><input type="radio" name="year" id="y2025" checked> 2025</label>
+    <label><input type="radio" name="year" id="y2026"> 2026</label>
+  </p>
+  <figure class="dcss-sum">
+    <ul aria-hidden="true">
+      <li style="--value: var(--jan)"></li> <li style="--value: var(--feb)"></li> <li style="--value: var(--mar)"></li>
+      <li style="--value: var(--apr)"></li> <li style="--value: var(--may)"></li> <li style="--value: var(--jun)"></li>
+    </ul>
+    <div>
+      Total <output class="dcss-format-fixed" style="--value: var(--dcss-sum); --precision: 0"></output>,
+      average <output class="dcss-format-fixed" style="--value: var(--dcss-mean); --precision: 1"></output> a month
+    </div>
+  </figure>
+  <figure class="dcss-max-index">
+    <ul aria-hidden="true">
+      <li style="--value: var(--jan)"></li> <li style="--value: var(--feb)"></li> <li style="--value: var(--mar)"></li>
+      <li style="--value: var(--apr)"></li> <li style="--value: var(--may)"></li> <li style="--value: var(--jun)"></li>
+    </ul>
+    <div>Best month: <output class="month"></output></div>
+  </figure>
+  <figure class="dcss-extent axis">
+    <ul aria-hidden="true">
+      <li style="--value: var(--jan)"></li> <li style="--value: var(--feb)"></li> <li style="--value: var(--mar)"></li>
+      <li style="--value: var(--apr)"></li> <li style="--value: var(--may)"></li> <li style="--value: var(--jun)"></li>
+    </ul>
+    <div>
+      <div class="dcss-nice" style="--start: var(--dcss-min); --stop: var(--dcss-max); --count: 5">
+        <ol class="dcss-axis-bottom" style="--start: var(--dcss-nice-start); --stop: var(--dcss-nice-stop); --count: 5; width: 300px; margin-left: 16px">
+          <li></li> <li></li> <li></li> <li></li> <li></li> <li></li> <li></li> <li></li>
+        </ol>
+      </div>
+    </div>
+  </figure>
+</section>
+```
+
+Pick 2026 and the page shows "Total 820, average 136.7 a month", "Best month: Apr" and an axis from 80 to 180. Pick 2025 again and the first numbers come back.
 
 ## Next
 
-- The README's [Reference](README.md#reference) lists every primitive: indexed reads, sums, bins, keyed maps, packing, formulas and text.
-- [SPEC.md](SPEC.md) states what each one guarantees and its result in Chrome, WebKit and Firefox.
+- [README.md](README.md), section Reference: every call, family by family, with the file each lives in.
+- [SPEC.md](SPEC.md): what each call is required to do, and its result in each browser.

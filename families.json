@@ -81,9 +81,9 @@
         "dcss-sum",
         "dcss-variance"
       ],
-      "raw": 424941,
-      "gzip9": 26044,
-      "sha256": "03955b326d06a3416dd5934594ffc72f6fdbc48e3896448e54ff2a7333620696"
+      "raw": 426696,
+      "gzip9": 26205,
+      "sha256": "6909f7c6e1572b9f2296ecc6dc4fb94ec268cad61cabb2fac20d4adf6520e4ba"
     },
     "aggregate": {
       "file": "families/aggregate.css",
@@ -96,9 +96,9 @@
         "dcss-fcumsum",
         "dcss-fsum"
       ],
-      "raw": 4225729,
-      "gzip9": 177876,
-      "sha256": "4f594928810d0204b0fc0da0f2335197fbddc965c8abd07eb4851d84d7a81560"
+      "raw": 6277925,
+      "gzip9": 299743,
+      "sha256": "46e747024e408212a0d329265807c83ced96edb454f489de1ec4096e6d122b00"
     },
     "order": {
       "file": "families/order.css",
@@ -260,9 +260,9 @@
         "dcss-parse-color-function",
         "dcss-rgb"
       ],
-      "raw": 29138721,
-      "gzip9": 578944,
-      "sha256": "0b44ccd33009142c79d8305ccc773e83a0b93fe5110d5e37291a83a590cf490d"
+      "raw": 18057237,
+      "gzip9": 504562,
+      "sha256": "fc8bae86451d2deabca045024cc509fe48af7b2373fedd74767decab4ba4e6a3"
     },
     "date-parse": {
       "file": "families/date-parse.css",
@@ -369,9 +369,9 @@
         "dcss-utc-parse-s",
         "dcss-utc-parse-us"
       ],
-      "raw": 13246814,
-      "gzip9": 610268,
-      "sha256": "7769475e8a78d98325f3a8c71e2b59aef236bd12643fe719dcf7299876252221"
+      "raw": 11553692,
+      "gzip9": 608659,
+      "sha256": "4485159a6a8fab01b7969f14ef15f422eaa1c5cceb2dee2ec9977683c6c5a23e"
     },
     "time": {
       "file": "families/time.css",
