@@ -163,9 +163,9 @@
         "dcss-scale-pow",
         "dcss-scale-sqrt"
       ],
-      "raw": 86059,
-      "gzip9": 5814,
-      "sha256": "d04b95468e8c1bfde5d9435eb00c1360ba45d69c048c0d07e5bfa2b44cf07aa4"
+      "raw": 88574,
+      "gzip9": 6289,
+      "sha256": "bc955aaed73be79e9525c09834371576c73c6a9d106d619498f5e72499a81bcd"
     },
     "format": {
       "file": "families/format.css",

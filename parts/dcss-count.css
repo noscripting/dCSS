@@ -3,6 +3,11 @@
    SPDX-FileCopyrightText: 2026 noscript.ing contributors */
 @property --dcss-ready { syntax: '<integer>'; inherits: true; initial-value: 0; }
 @property --dcss-err { syntax: '<integer>'; inherits: true; initial-value: 0; }
+@counter-style arrays-tick-int { system: extends decimal; range: 0 infinite; fallback: arrays-tick-none; }
+@counter-style arrays-tick-pad3 { system: extends decimal; pad: 3 "0"; range: 0 infinite; fallback: arrays-tick-none; }
+@counter-style arrays-tick-comma { system: additive; additive-symbols: 1 ",", 0 ""; }
+@counter-style arrays-tick-dot { system: additive; additive-symbols: 1 ".", 0 ""; }
+@counter-style arrays-tick-none { system: fixed -1; symbols: "" ""; }
 /* DCSS reductions: d3.sum, count, mean, min, max, extent and the list's length, in a figure (reduce.mjs). */
 @property --arrays-dcss-v { syntax: '<number>'; inherits: false; initial-value: 0; }
 @property --arrays-dcss-has { syntax: '<number>'; inherits: false; initial-value: 0; }

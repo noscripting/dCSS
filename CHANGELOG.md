@@ -8,9 +8,9 @@ All notable changes to dcss-array.css are written here. The format follows [Keep
 
 - One file per public class in `parts/` (`parts/dcss-median.css`), each its family's rules cut to that call, usable without `dcss-array.css`.
 - One set of typed input names, `--length`, `--type-N` and `--value-N`, on order, aggregate and extrema calls; each family's own names still work.
-- CSS functions where the browser has `@function`: every easing (`--dcss-ease-cubic-in-out(t)`) and the two-stop linear scale (`--dcss-scale-linear(x, d0, d1, r0, r1)`).
+- CSS functions where the browser has `@function`: every easing (`--dcss-ease-cubic-in-out(t)`) and two-stop linear, pow, sqrt and log scales (`--dcss-scale-linear(x, d0, d1, r0, r1)`).
 - ISO date formats in the date parsers: `%Y-%m-%d`, `%Y-%m-%dT%H:%M:%SZ` and `%Y-%m-%dT%H:%M:%S.%LZ`.
-- License headers (SPDX) on every sheet.
+- License headers (SPDX) on every sheet; `package.json` for npm.
 
 ### Changed
 
@@ -21,4 +21,6 @@ All notable changes to dcss-array.css are written here. The format follows [Keep
 
 - medianIndex and quantileIndex return d3's index on ties and at p 0 and 1.
 - An order call published other operations' results under their names.
+- Pow and sqrt scales gave no value in WebKit (their answers passed WebKit's 65,535-token `var()` limit); log scales gave NaN in every engine for scales of fewer than 8 stops. Linear, pow and sqrt now equal d3 exactly; log is within 256 × 2^-52.
+- Parts printed garbage for text without `dcss-array.css` (the axes and the reductions' default output); they carry the counter styles they print with.
 - Fixed, percent and SI formats printed 0 for a missing or NaN value; they print nothing and set `--dcss-err: 1`.

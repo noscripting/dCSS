@@ -10,12 +10,11 @@ Visit [noscript.ing](https://noscript.ing) for demos.
 
 ## Installation
 
-Download `dcss-array.css` and the `families/` folder. Link the core and the families that hold the calls: `families/array.css` for reductions, `families/format.css` for printing numbers:
+Each call is a file of its own in `parts/`, named after its class. Link one for each class the page uses; nothing else is needed. Here a sum (which also gives the mean) and a number format, 8 KB gzipped together:
 
 ```html
-<link rel="stylesheet" href="dcss-array.css">
-<link rel="stylesheet" href="families/array.css">
-<link rel="stylesheet" href="families/format.css">
+<link rel="stylesheet" href="parts/dcss-sum.css">
+<link rel="stylesheet" href="parts/dcss-format-fixed.css">
 
 <figure class="dcss-sum" style="height: 1lh; overflow: clip">
   <ul><li style="--value: 120"></li> <li style="--value: 95"></li> <li style="--value: 140"></li></ul>
@@ -26,24 +25,24 @@ Download `dcss-array.css` and the `families/` folder. Link the core and the fami
 </figure>
 ```
 
-The class is d3's function. The list is the data, one `--value` per item, and anything inside the `<div>` after it reads the results: `--dcss-sum`, `--dcss-mean`, `--dcss-count`. `.dcss-format-fixed` prints a number as d3.format does. Change a `--value` with a rule, a `:has()` or an animation, and the outputs follow. [DCSS: d3 as HTML](#dcss-d3-as-html) has the rules every call shares, and the sections after it each family's calls.
+A page that uses many calls of one family can link `dcss-array.css` and that family's file instead (`families/array.css` for these two calls' family); [Only the calls a page uses](#only-the-calls-a-page-uses) compares the sizes. The class is d3's function. The list is the data, one `--value` per item, and anything inside the `<div>` after it reads the results: `--dcss-sum`, `--dcss-mean`, `--dcss-count`. `.dcss-format-fixed` prints a number as d3.format does. Change a `--value` with a rule, a `:has()` or an animation, and the outputs follow. [DCSS: d3 as HTML](#dcss-d3-as-html) has the rules every call shares, and the sections after it each family's calls.
 
 Each family is its own file, so a page loads only the calls it uses. Sizes are the file and its gzip; load is the median of three cold loads beside the core in WebKit 26.4 (2026-10-26). Chrome loads any one of them in 40 ms or less.
 
 | File in `families/` | Calls | Size, gzip | Load in WebKit |
 |---|---|---:|---:|
-| `array.css` | sum, count, mean, min, max, extent, length; ascending, descending; min/max/least/greatest index; bisect, bisector; cumsum, median, quantile, share, range, deviation; precision helpers | 426 KB, 26 KB | 24 ms |
+| `array.css` | sum, count, mean, min, max, extent, length; ascending, descending; min/max/least/greatest index; bisect, bisector; cumsum, median, quantile, share, range, deviation; precision helpers | 427 KB, 26 KB | 24 ms |
 | `ticks.css` | ticks, nice, axes | 172 KB, 13 KB | 19 ms |
-| `format.css` | format f, %, s and general; log ticks and labels; Arabic locale | 245 KB, 17 KB | 16 ms |
-| `scale.css` | linear, pow, sqrt, log, band, identity | 85 KB, 6 KB | 12 ms |
-| `ease.css` | every d3-ease function | 19 KB, 2 KB | 11 ms |
+| `format.css` | format f, %, s and general; log ticks and labels; Arabic locale | 246 KB, 18 KB | 16 ms |
+| `scale.css` | linear, pow, sqrt, log, band, identity | 90 KB, 6 KB | 12 ms |
+| `ease.css` | every d3-ease function | 37 KB, 2 KB | 11 ms |
 | `hierarchy.css` | treemaps (slice, dice, slice-dice), partition, five-circle pack | 2.7 MB, 158 KB | 59 ms |
-| `aggregate.css` | typed sum, count, mean, cumsum, fsum, fcumsum | 4.0 MB, 222 KB | 76 ms |
+| `aggregate.css` | typed sum, count, mean, cumsum, fsum, fcumsum | 4.0 MB, 223 KB | 76 ms |
 | `order.css` | typed median, quantile, quantileSorted, their indexes, mode | 1.8 MB, 82 KB | 42 ms |
-| `extrema.css` | typed min, max, extent, least, greatest, their indexes, scan, ascending, descending | 956 KB, 40 KB | 27 ms |
+| `extrema.css` | typed min, max, extent, least, greatest, their indexes, scan, ascending, descending | 957 KB, 40 KB | 27 ms |
 | `color.css` | rgb, hsl, lab, hcl, lch, gray, cubehelix; conversions | 3.1 MB, 142 KB | 59 ms |
 | `color-text.css` | parsing CSS color text: names, hex, rgb() and hsl() strings | 3.7 MB, 155 KB | 75 ms |
-| `date-parse.css` | utcParse, 41 formats; calendar fields | 1.0 MB, 41 KB | 32 ms |
+| `date-parse.css` | utcParse, 41 formats; calendar fields | 1.0 MB, 42 KB | 32 ms |
 | `date-parse-local.css` | timeParse in Pacific time, the same formats | 1.1 MB, 54 KB | 30 ms |
 | `time.css` | UTC and local intervals: day, week, month, year, hour, minute | 1.6 MB, 90 KB | 37 ms |
 | `date-format.css` | timeFormat and utcFormat, 41 formats | 88 KB, 7 KB | 12 ms |
@@ -63,20 +62,20 @@ A part is its family's own rules cut to one class, and each part's rules match i
 
 | Family | Parts | A part | The family |
 |---|---:|---:|---:|
-| `array.css` | 35 | 4.3 KB (3.5–16) | 26 KB |
-| `ticks.css` | 8 | 2.6 KB | 13 KB |
-| `format.css` | 9 | 3.0 KB | 17 KB |
-| `scale.css` | 6 | 1.7 KB | 5.6 KB |
-| `ease.css` | 38 | 0.2 KB | 1.5 KB |
-| `color.css` | 22 | 5.0 KB (0.7–104) | 142 KB |
-| `date-parse.css`, `date-parse-local.css` | 106 | 8.4 KB | 41, 54 KB |
-| `time.css` | 118 | 0.5 KB (to 16) | 90 KB |
-| `date-format.css` | 82 | 5.7 KB | 7.3 KB |
-| `geo.css` | 22 | 1.4 KB (to 30) | 76 KB |
-| `aggregate.css` | 6 | 45 KB (to 157) | 222 KB |
-| `order.css` | 6 | 46 KB | 82 KB |
-| `extrema.css` | 12 | 35 KB | 40 KB |
-| `color-text.css` | 3 | 113 KB | 155 KB |
+| `array.css` | 35 | 4.4 KB (3.6–16) | 26 KB |
+| `ticks.css` | 8 | 2.9 KB (0.5–8.4) | 13 KB |
+| `format.css` | 9 | 3.3 KB (1.0–12) | 18 KB |
+| `scale.css` | 6 | 2.1 KB (0.5–2.6) | 6.2 KB |
+| `ease.css` | 38 | 0.4 KB | 2.1 KB |
+| `color.css` | 22 | 5.1 KB (0.8–104) | 142 KB |
+| `date-parse.css`, `date-parse-local.css` | 106 | 8.6 KB (0.5–20) | 42, 54 KB |
+| `time.css` | 118 | 0.7 KB (0.5–16) | 90 KB |
+| `date-format.css` | 82 | 5.9 KB | 7.5 KB |
+| `geo.css` | 22 | 1.6 KB (0.5–30) | 76 KB |
+| `aggregate.css` | 6 | 46 KB (44–158) | 223 KB |
+| `order.css` | 6 | 47 KB | 82 KB |
+| `extrema.css` | 12 | 36 KB | 40 KB |
+| `color-text.css` | 3 | 113 KB (12–141) | 155 KB |
 
 The typed families gain least: their shared circuit is most of each part, and each part carries its own copy. For two or more calls from `aggregate.css`, `order.css`, `extrema.css` or `color-text.css` on one page, link that family instead: three order parts are 3.8 MB, the family 1.8 MB. Parts and families mix on one page.
 
@@ -131,6 +130,8 @@ Text reads (`.arrays-text`, below) use fonts embedded in the sheet. To have them
 
 ## Reference
 
+Calls by family: [Array](#array-familiesarraycss), [Ticks](#ticks-familiestickscss), [Format](#format-familiesformatcss), [Scale](#scale-familiesscalecss), [Ease](#ease-familieseasecss), [Hierarchy](#hierarchy-familieshierarchycss), [Aggregate](#aggregate-familiesaggregatecss), [Order](#order-familiesordercss), [Extrema](#extrema-familiesextremacss), [Color](#color-familiescolorcss), [Date parse](#date-parse-familiesdate-parsecss), [Time](#time-familiestimecss), [Date format](#date-format-familiesdate-formatcss), [Geo](#geo-familiesgeocss), [Random](#random-familiesrandomcss). The rest: [Markup](#markup), [DCSS: d3 as HTML](#dcss-d3-as-html), [Outputs](#outputs), [Primitives](#primitives), [Packed maps](#packed-maps), [Formulas](#formulas), [Text](#text), [Loops and sheets](#loops-and-sheets), [Recipes](#recipes), [Limits](#limits).
+
 The full contract, with each requirement's result in each engine, is [SPEC.md](SPEC.md).
 
 ### Markup
@@ -158,10 +159,7 @@ For reductions such as `.dcss-sum`, load:
 <link rel="stylesheet" href="families/array.css">
 ```
 
-The core is 308,019 bytes (75,914 at gzip level 9). Core plus the array family is
-732,973 bytes as a combined source. The previous all-family file was 53,262,190
-bytes. Color and date parsing remain the largest optional families; this split
-changes what a page loads, not the size of their implementations.
+The core is 308,142 bytes (76,001 at gzip level 9), and the array family 427,100 (26,341). Color text and the typed aggregates remain the largest optional families.
 
 
 
@@ -187,7 +185,7 @@ It is for pages where script can't run or isn't wanted (Markdown and CMS output,
 - Results reach inward only, in the same frame through `var()`; printed digits trail a moving number by a frame in Chrome. Beside each result, `--dcss-ready` (0 until it is read) and `--dcss-err` (0, or why not).
 - To use two results together, nest one call inside the other. Where both publish the same name, copy the outer one to a name of your own on an element between them: `--first: var(--dcss-date-parse)`.
 - Numbers are px: whole to 2^24, fractions to 1/64, a total under 33 million, 6 significant digits through `var()`, 0 or more. Give money in whole cents and divide for printing with `.dcss-scale-linear` (see Format): 19.99 is not a multiple of 1/64. A median or quantile takes whole cents up to 8,257,535; a min or max index takes them divided by 64 (Array, index calls).
-- A figure is as wide as its container; where it would shrink to fit its content (a flex item, an inline-block) it is 12em, not the width of its drawing. The element after the list keeps its text on one line. A call nested in another's result needs its own height and `overflow: clip`.
+- A figure is as wide as its container; where it would shrink to fit its content (a flex item, an inline-block) it is 12em, not the width of its drawing. The element after the list keeps its text on one line, and starts as wide as the drawing: align text inside it to the start, since `text-align: right` moves a printed number to the drawing's far end. A call nested in another's result needs its own height and `overflow: clip`.
 - The sheet owns the display and size of the figure, its list, its items and the element after the list, and the empty `<output>`'s `::after`; the rest is the page's.
 
 #### When a call can't answer
@@ -281,7 +279,7 @@ Of d3's recorded calls, these answer 9 of 14 for each comparison, 13 of 46 for m
 
 #### Bisect and bisectors
 
-`.dcss-bisect-left` and `.dcss-bisect-right` return d3's zero-based insertion index. `.dcss-bisect` aliases the right variant. The figure's `--value` is the query; lists of up to 1,024 items hold sorted whole-number keys within ±2^24. Optional `--lo` and `--hi` restrict the search to `[lo, hi)` (defaults 0 and the list length); use whole bounds with `0 <= lo <= hi <= length`.
+`.dcss-bisect-left` and `.dcss-bisect-right` return d3's zero-based insertion index. `.dcss-bisect` aliases the right variant. The figure's `--value` is the query; lists of up to 1,024 items hold sorted whole-number keys within ±2^24. Optional `--lo` and `--hi` restrict the search to `[lo, hi)` (defaults 0 and the list length); use whole bounds with `0 <= lo <= hi <= length`. A bisect figure draws nothing and is one line tall, its answer in it: give it no height or `overflow`, unlike a reduction's figure.
 
 ```html
 <figure class="dcss-bisect-left" style="--value: 2">
@@ -503,7 +501,7 @@ It answers 41 of d3's 76 recorded range calls.
 
 #### Ticks, nice and axes
 
-d3's axis, as a list: `.dcss-axis-bottom` (or `-top`, `-left`, `-right`) with d3.ticks's `--start`, `--stop` and `--count` (10 if not set), and an `<li>` a tick. It draws as d3.axisBottom(scaleLinear([start, stop])).ticks(count) does, at the list's width (left and right: its height), labels in d3's tickFormat. 16 `<li>`s hold any 10-tick axis; the `<li>`s past the last tick are hidden for up to 64 ticks.
+d3's axis, as a list: `.dcss-axis-bottom` (or `-top`, `-left`, `-right`) with d3.ticks's `--start`, `--stop` and `--count` (10 if not set), and an `<li>` a tick. It draws as d3.axisBottom(scaleLinear([start, stop])).ticks(count) does, at the list's width (left and right: its height), labels in d3's tickFormat. 16 `<li>`s hold any 10-tick axis; the `<li>`s past the last tick are hidden for up to 64 ticks. The axis sets d3's `font: 10px sans-serif`, so an `em` length on it or inside it is 10 px; size it in px or `rem`.
 
 ```html
 <ol class="dcss-axis-bottom" style="--start: 0; --stop: 87; --count: 10">
@@ -599,7 +597,7 @@ It answers 22 recorded calls from d3-format's locale tests.
 </div>
 ```
 
-A polylinear scale takes up to 8 stops, `--domain-0` to `--domain-7` and `--range-0` to `--range-7`, with `--stops` (2 if not set); `--round: 1` is d3's rangeRound. `.dcss-scale-pow` (with `--exponent`, 1 if not set) and `.dcss-scale-sqrt` are d3.scalePow and scaleSqrt, the same inputs, answers `--dcss-scale-pow` and `--dcss-scale-sqrt` (and `-invert`). `.dcss-scale-log` is d3.scaleLog's map and invert, answers `--dcss-scale-log` and `-invert`; a negative domain works as in d3. Its ticks, nice and labels are in `families/format.css` (Log ticks and labels).
+A polylinear scale takes up to 8 stops, `--domain-0` to `--domain-7` and `--range-0` to `--range-7`, with `--stops` (2 if not set); `--round: 1` is d3's rangeRound. `.dcss-scale-pow` (with `--exponent`, 1 if not set) and `.dcss-scale-sqrt` are d3.scalePow and scaleSqrt, the same inputs, answers `--dcss-scale-pow` and `--dcss-scale-sqrt` (and `-invert`). `.dcss-scale-log` is d3.scaleLog's map and invert, answers `--dcss-scale-log` and `-invert`; a negative domain works as in d3. Linear, pow and sqrt equal d3 exactly; a log scale is within 256 × 2^-52 of d3's answer, since each engine's `log()` and `exp()` differ from JavaScript's in the last bits. Its ticks, nice and labels are in `families/format.css` (Log ticks and labels).
 
 A linear, pow or sqrt scale's ticks, nice and tickFormat are the calls of `families/ticks.css` on its domain's two ends: `.dcss-ticks` with `--start` and `--stop`, and `.dcss-nice`. Its tickFormat is a `.dcss-format-fixed` whose `--precision` is the list's `--dcss-tick-precision` (d3's precisionFixed of the tick step; for `%`, 2 less).
 
@@ -631,7 +629,7 @@ Each bar is within 1/32 px of d3's in x, width, y and height, and the axis's tic
 The child is 12px wide. A finite result has ready 1 and error 0; a missing/NaN query has ready 0 and error 1. Getters and string/object coercions are unsupported. For its ticks and tick labels, use `.dcss-identity-ticks` in `families/ticks.css`. It answers 11 of d3's 86 recorded identity-scale calls.
 
 
-Where the browser has `@function` (Chrome), a two-stop linear scale is also a function, `--dcss-scale-linear(x, d0, d1, r0, r1)`, with clamp and round (0 or 1) after: `--dcss-scale-linear(21, 0, 100, 32, 212)` is 69.8. Write a plain value first for browsers without `@function`, as for the easings. It equals the class within 1e-12 in Chrome 155.
+Where the browser has `@function` (Chrome), a two-stop linear scale is also a function, `--dcss-scale-linear(x, d0, d1, r0, r1)`, with clamp and round (0 or 1) after: `--dcss-scale-linear(21, 0, 100, 32, 212)` is 69.8. Guard a call that uses `var()` with `@supports at-rule(@function)`, as for the easings. Pow, sqrt and log scales are functions too: `--dcss-scale-pow(x, d0, d1, r0, r1, exponent)`, `--dcss-scale-sqrt(...)` and `--dcss-scale-log(...)`, with the same clamp and round after. It equals the class within 1e-12 in Chrome 155.
 ### Ease: families/ease.css
 
 Every easing d3-ease exports, as `.dcss-ease-<name>` on any element: `quad-in`, `quad-out`, `quad-in-out`, and the same for `cubic`, `poly`, `sin`, `exp`, `circle`, `bounce`, `back` and `elastic`, plus `linear`; the short names (`.dcss-ease-quad`, `.dcss-ease-bounce`, …) are d3's aliases. `--value` is t; the answer is `--dcss-ease-<name>`. d3's parameters are properties: `--exponent` (poly, 3), `--overshoot` (back, 1.70158), `--amplitude` and `--period` (elastic, 1 and 0.3).
@@ -644,10 +642,11 @@ Every easing d3-ease exports, as `.dcss-ease-<name>` on any element: `quad-in`, 
 
 Every call d3-ease's own tests make (413), and every function over a grid of t, is within 1e-12 of d3 in Chrome and WebKit.
 
-Where the browser has `@function` (Chrome), every easing is also a CSS function, `--dcss-ease-<name>(t)`, with the class's optional inputs after t in the order above: `--dcss-ease-poly-in(0.5, 2)` is 0.25. A browser without `@function` drops a declaration that calls one, so write a plain value first:
+Where the browser has `@function` (Chrome), every easing is also a CSS function, `--dcss-ease-<name>(t)`, with the class's optional inputs after t in the order above: `--dcss-ease-poly-in(0.5, 2)` is 0.25. A browser without `@function` drops a declaration that calls one with plain numbers, so write a plain value first. A call with `var()` among its arguments passes that first check and fails later, so WebKit 26.4 and Firefox 158 lose the plain value too: put such calls inside `@supports at-rule(@function)`.
 
 ```css
-.bar { width: 50%; width: calc(--dcss-ease-cubic-in-out(0.25) * 100%); }
+.bar { width: 50%; }
+@supports at-rule(@function) { .bar { width: calc(--dcss-ease-cubic-in-out(var(--progress)) * 100%); } }
 ```
 
 Each function equals its class within 1e-12 in Chrome 155. WebKit 26.4 and Firefox 158 don't parse `@function`; the classes work everywhere.

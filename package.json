@@ -7,7 +7,17 @@
     "type": "git",
     "url": "git+https://github.com/noscripting/dcss-array.git"
   },
-  "keywords": ["css", "d3", "d3-array", "data", "statistics", "scale", "format", "no-javascript", "css-grid"],
+  "keywords": [
+    "css",
+    "d3",
+    "d3-array",
+    "data",
+    "statistics",
+    "scale",
+    "format",
+    "no-javascript",
+    "css-grid"
+  ],
   "main": "dcss-array.css",
   "style": "dcss-array.css",
   "exports": {
@@ -31,7 +41,6 @@
     "QUIRKS.md",
     "CHANGELOG.md",
     "LICENSE",
-    "LICENSE-THIRD-PARTY",
     "compat.json"
   ]
 }
