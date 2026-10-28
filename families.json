@@ -2,9 +2,9 @@
   "version": 1,
   "core": {
     "file": "dcss-array.css",
-    "raw": 308148,
-    "gzip9": 76002,
-    "sha256": "f56dabbe267198c3b37100c092a63ce09bcebe417af9a9288084a50767b3d7d9"
+    "raw": 299216,
+    "gzip9": 75910,
+    "sha256": "a14dd665e50f9f09820c9147894fdd7739e69c7cf5c03baf5369f94a8d7217a4"
   },
   "order": [
     "ticks",
@@ -39,9 +39,9 @@
         "dcss-nice",
         "dcss-ticks"
       ],
-      "raw": 172449,
-      "gzip9": 13073,
-      "sha256": "840524450ea4c4bcd27d7c1a0b5687124051c69a95c1e661520a847f6961b8e3"
+      "raw": 167063,
+      "gzip9": 13010,
+      "sha256": "93a8ba8f335f4b019ada7ac5c1ab7d67c9e6f0608ae5909e32e3ad19adf5593e"
     },
     "array": {
       "file": "families/array.css",
@@ -83,9 +83,9 @@
         "dcss-sum",
         "dcss-variance"
       ],
-      "raw": 427100,
-      "gzip9": 26341,
-      "sha256": "ad26099279c5cb30c4fa64c08e6ca7cafe400c2603338d86b06133ba22baea5b"
+      "raw": 413662,
+      "gzip9": 26201,
+      "sha256": "93fb5975f01697ade2be2b0cbfc0d3fa03bab6ad15a6c92836a62a277dffa0d4"
     },
     "aggregate": {
       "file": "families/aggregate.css",
@@ -98,9 +98,9 @@
         "dcss-fcumsum",
         "dcss-fsum"
       ],
-      "raw": 3953101,
-      "gzip9": 222993,
-      "sha256": "54d18bc80ced205edb2a5962e374b7e1c840d3706ffa55991b31f8046eef6226"
+      "raw": 3797637,
+      "gzip9": 221467,
+      "sha256": "6f320b2462c4dbb36c6b70c80e559a7b184e29d4675df45d044a78642aaa0146"
     },
     "order": {
       "file": "families/order.css",
@@ -113,9 +113,9 @@
         "dcss-order-quantile-index",
         "dcss-order-quantile-sorted"
       ],
-      "raw": 1843058,
-      "gzip9": 81829,
-      "sha256": "cd1113af33d6de9d40857a8ba7bdb7441d7ff033b1585138b73348fbd58efb37"
+      "raw": 1793932,
+      "gzip9": 81533,
+      "sha256": "98ecdd613664e7bf9ddbc9f80258ef259b5370de054ece4204b1a000f57148a7"
     },
     "extrema": {
       "file": "families/extrema.css",
@@ -134,9 +134,9 @@
         "dcss-extrema-minIndex",
         "dcss-extrema-scan"
       ],
-      "raw": 957400,
-      "gzip9": 40451,
-      "sha256": "0c7c5cb3b49909b33be548ab91707664650af5b78fc69eaea99f243fbfc074dc"
+      "raw": 936738,
+      "gzip9": 40329,
+      "sha256": "6d94a8fc7c14412bdb9565a1944038801e8f344c8a8f5d0eae895ec21d16c0d6"
     },
     "hierarchy": {
       "file": "families/hierarchy.css",
@@ -148,9 +148,9 @@
         "dcss-treemap-slice",
         "dcss-treemap-slice-dice"
       ],
-      "raw": 2670176,
-      "gzip9": 158303,
-      "sha256": "a74ec6799bee9eee650f5c1aea880433981f333d37576de91d3dac2393f89770"
+      "raw": 2550226,
+      "gzip9": 158497,
+      "sha256": "62b3ac4c4b614b6ab6de3cf91fd115085823a40b00b89ee177c0d2fe327a70e9"
     },
     "scale": {
       "file": "families/scale.css",
@@ -163,9 +163,9 @@
         "dcss-scale-pow",
         "dcss-scale-sqrt"
       ],
-      "raw": 88574,
-      "gzip9": 6289,
-      "sha256": "bc955aaed73be79e9525c09834371576c73c6a9d106d619498f5e72499a81bcd"
+      "raw": 86616,
+      "gzip9": 6249,
+      "sha256": "79dcabad1fab4c5065b8b0541c49d2e380c4eb60cf420af06104eed581fdd9a8"
     },
     "format": {
       "file": "families/format.css",
@@ -181,9 +181,9 @@
         "dcss-ticks-log",
         "dcss-ticks-log-format"
       ],
-      "raw": 245504,
-      "gzip9": 17724,
-      "sha256": "046aaa3bf6959790c99b89ebfec8238f6d142c57d80c423b785ef7da0e4b7803"
+      "raw": 235124,
+      "gzip9": 17625,
+      "sha256": "c144d3aafef49ff2da2a4d824fc04119c48d900d18509649424da1a5c932d762"
     },
     "ease": {
       "file": "families/ease.css",
@@ -259,9 +259,9 @@
         "dcss-lch",
         "dcss-rgb"
       ],
-      "raw": 3119050,
-      "gzip9": 142409,
-      "sha256": "6142bb29679e13e5643d3b3218924c6fbc50a1158fadf821659873c94b95df8d"
+      "raw": 3008400,
+      "gzip9": 141590,
+      "sha256": "f178a459e30ea78a8a85ad1a87429ed230aff10daabb4d7570d40bfbeb6217ec"
     },
     "color-text": {
       "file": "families/color-text.css",
@@ -271,9 +271,9 @@
         "dcss-parse-color-complete",
         "dcss-parse-color-function"
       ],
-      "raw": 3662955,
-      "gzip9": 155055,
-      "sha256": "488972f786a51b0cee723546df6f6f84bf8bba2003830a01d96e26dc9eeacf54"
+      "raw": 3518037,
+      "gzip9": 153887,
+      "sha256": "5ac3b27e8d4049f8ed23f3452c6fbbf65ba509622334b902b3b1ac8449123923"
     },
     "date-parse": {
       "file": "families/date-parse.css",
@@ -386,9 +386,9 @@
         "dcss-utc-parse-s",
         "dcss-utc-parse-us"
       ],
-      "raw": 1027824,
-      "gzip9": 41536,
-      "sha256": "9bc961874d7d9949d0b3ce92ae859d334484ec631118f9d5566238ece67b4843"
+      "raw": 1001337,
+      "gzip9": 41226,
+      "sha256": "f0a1674fbf128067a02dbcebffa336186cb83595727f281f51d8e05415771095"
     },
     "date-parse-local": {
       "file": "families/date-parse-local.css",
@@ -477,9 +477,9 @@
         "dcss-local-date-parse-8",
         "dcss-local-date-parse-9"
       ],
-      "raw": 1085151,
-      "gzip9": 53939,
-      "sha256": "1804b60f89ea791241aecce736f711de5f070f0b65d2be414e1266160bb9508b"
+      "raw": 1050287,
+      "gzip9": 53406,
+      "sha256": "844345328b0994cdb7a21f206bcc7fad657afa85bb96df7b097c693d6395bd64"
     },
     "time": {
       "file": "families/time.css",
@@ -604,9 +604,9 @@
         "dcss-utc-year-offset",
         "dcss-utc-year-round"
       ],
-      "raw": 1618203,
-      "gzip9": 90021,
-      "sha256": "104734f6d075d405ca2a4bf29d538e25e14c1a997f38298d7d62f6e4b3e686d7"
+      "raw": 1562731,
+      "gzip9": 89465,
+      "sha256": "d9f626004708722f582163519b577cffb2f1499045978b93127cf7d6c3235bd9"
     },
     "date-format": {
       "file": "families/date-format.css",
@@ -695,9 +695,9 @@
         "dcss-local-date-format-8",
         "dcss-local-date-format-9"
       ],
-      "raw": 88300,
-      "gzip9": 7457,
-      "sha256": "1f99c63531103c44504d430d655d794a1961e3514d4afdc7c9ec7741d084ff64"
+      "raw": 85214,
+      "gzip9": 7445,
+      "sha256": "6bad1c737c592bbcaa479cb46b22f9e01fdc633c889a6eefd27f49d78c0ecd60"
     },
     "geo": {
       "file": "families/geo.css",
@@ -726,9 +726,9 @@
         "dcss-geo-transverse-mercator-fit-extent",
         "dcss-geo-transverse-mercator-invert"
       ],
-      "raw": 1662107,
-      "gzip9": 75646,
-      "sha256": "5cd33b8157bac9f746c4c29ff093885ba74926d9703a41ccaaa414871b74e709"
+      "raw": 1605771,
+      "gzip9": 75328,
+      "sha256": "5740f54eadffc41d005cd8156e6ca8527805cd5f0bb6ee5924199f0e66e30c38"
     },
     "random": {
       "file": "families/random.css",
@@ -736,9 +736,9 @@
       "classes": [
         "dcss-random-lcg"
       ],
-      "raw": 60477,
-      "gzip9": 5306,
-      "sha256": "a5d3edcee875d81821bae5c1ede232c4108f917b8e0826f7a95aa7f0dd9a4cf2"
+      "raw": 57229,
+      "gzip9": 5337,
+      "sha256": "72cfac466a670c0067ae7e58de9b5cc8351a0b3d4a15a5359002950d1e9dd3a8"
     }
   },
   "owners": {

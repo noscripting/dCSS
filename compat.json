@@ -12,7 +12,7 @@
       },
       "A1": {
         "__compat": {
-          "description": "In an `.arrays-array` of `<i>` entries with `--arrays-n`, a reader `.arrays-at` with whole `--arrays-i`, in the port `<b class=\"arrays-out\">` or inside an entry, MUST give what is inside it `--arrays-value` equal to entry i, and entry i from the end for -i, in the frame the entries change, exact for",
+          "description": "In an `.dcss-array` of `<i>` entries with `--dcss-n`, a reader `.dcss-at` with whole `--dcss-i`, in the port `<b class=\"dcss-out\">` or inside an entry, MUST give what is inside it `--dcss-value` equal to entry i, and entry i from the end for -i, in the frame the entries change, exact for whole numbe",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -35,7 +35,7 @@
       },
       "A2": {
         "__compat": {
-          "description": "A reader with `--arrays-i` and `--arrays-j` MUST read the sum of entries i to j in either order, -1 meaning the last entry and i = j one entry, in the same frame, exact.",
+          "description": "A reader with `--dcss-i` and `--dcss-j` MUST read the sum of entries i to j in either order, -1 meaning the last entry and i = j one entry, in the same frame, exact.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -58,7 +58,7 @@
       },
       "A3": {
         "__compat": {
-          "description": "`.arrays-array.arrays-packed` with `--arrays-tracks` MUST read track i, track -i counted back from `--arrays-length`, and ranges; without `--arrays-length`, -1 MUST be the last track.",
+          "description": "`.dcss-array.dcss-packed` with `--dcss-tracks` MUST read track i, track -i counted back from `--dcss-array-length`, and ranges; without `--dcss-array-length`, -1 MUST be the last track.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -81,7 +81,7 @@
       },
       "A4": {
         "__compat": {
-          "description": "`--arrays-of: --x` on a reader or its array MUST count `--arrays-i` from the slot named `--x` and `--arrays-j` on from there over every slot; an array inside a reader MUST NOT inherit its outer `--arrays-of` unless it names its own.",
+          "description": "`--dcss-of: --x` on a reader or its array MUST count `--dcss-i` from the slot named `--x` and `--dcss-j` on from there over every slot; an array inside a reader MUST NOT inherit its outer `--dcss-of` unless it names its own.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -104,7 +104,7 @@
       },
       "A5": {
         "__compat": {
-          "description": "`.arrays-cycle` with `--arrays-tracks` MUST read entry i round the cycle, forwards past the last entry and backwards from -1, and a range across the end.",
+          "description": "`.dcss-cycle` with `--dcss-tracks` MUST read entry i round the cycle, forwards past the last entry and backwards from -1, and a range across the end.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -127,7 +127,7 @@
       },
       "A6": {
         "__compat": {
-          "description": "`.arrays-array.arrays-xy` of entries with `--arrays-n` and `--arrays-m`, or packed with `--arrays-tracks` and `--arrays-tracks-y`, MUST give a reader `--arrays-value` and `--arrays-value-y` of entry i, `--arrays-r` picking another row, negative indices and a range of columns included, in the same fr",
+          "description": "`.dcss-array.dcss-xy` of entries with `--dcss-n` and `--dcss-m`, or packed with `--dcss-tracks` and `--dcss-tracks-y`, MUST give a reader `--dcss-value` and `--dcss-value-y` of entry i, `--dcss-r` picking another row, negative indices and a range of columns included, in the same frame.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -150,7 +150,7 @@
       },
       "A7": {
         "__compat": {
-          "description": "`.arrays-count` on an array MUST work the number of entries out from its last entry's place, so entries -1 to -40, the total and entry 35 of 40 entries read exact with no `--arrays-length`.",
+          "description": "`.dcss-track-count` on an array MUST work the number of entries out from its last entry's place, so entries -1 to -40, the total and entry 35 of 40 entries read exact with no `--dcss-array-length`.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -173,7 +173,7 @@
       },
       "A8": {
         "__compat": {
-          "description": "Index 0, an index past the end or the start, a fractional index at either end of a range, and a range past the end MUST read `--arrays-value` 0 and `--arrays-ok` 0, empty counted arrays included; a valid read MUST give `--arrays-ok` 1.",
+          "description": "Index 0, an index past the end or the start, a fractional index at either end of a range, and a range past the end MUST read `--dcss-value` 0 and `--dcss-ok` 0, empty counted arrays included; a valid read MUST give `--dcss-ok` 1.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -196,7 +196,7 @@
       },
       "A9": {
         "__compat": {
-          "description": "In an `.arrays-xy` read, an invalid column or row MUST zero `--arrays-value`, `--arrays-value-y` and `--arrays-ok` together, for entries, packed slots and empty arrays.",
+          "description": "In an `.dcss-xy` read, an invalid column or row MUST zero `--dcss-value`, `--dcss-value-y` and `--dcss-ok` together, for entries, packed slots and empty arrays.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -219,7 +219,7 @@
       },
       "A10": {
         "__compat": {
-          "description": "An array without `.arrays-count` MUST read negative indices and ranges to -1 from `--arrays-length`; with no `--arrays-length` they MUST read 0 with `--arrays-ok` 0 while positive indices read their entries.",
+          "description": "An array without `.dcss-track-count` MUST read negative indices and ranges to -1 from `--dcss-array-length`; with no `--dcss-array-length` they MUST read 0 with `--dcss-ok` 0 while positive indices read their entries.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -242,7 +242,7 @@
       },
       "A11": {
         "__compat": {
-          "description": "A `<b class=\"arrays-window\">` with `--arrays-i` and `--arrays-span` in an array's port MUST number the entries for the readers inside it from its start: 1 its first, -1 its last, ranges, with the window moving every frame.",
+          "description": "A `<b class=\"dcss-window\">` with `--dcss-i` and `--dcss-span` in an array's port MUST number the entries for the readers inside it from its start: 1 its first, -1 its last, ranges, with the window moving every frame.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -265,7 +265,7 @@
       },
       "A12": {
         "__compat": {
-          "description": "An array inside a keyed map's reader, an `.arrays-xy` reader or a tile's where MUST read its own entries, keep its ranges, fraction checks and xy rows, and leave the outer read unchanged.",
+          "description": "An array inside a keyed map's reader, an `.dcss-xy` reader or a tile's where MUST read its own entries, keep its ranges, fraction checks and xy rows, and leave the outer read unchanged.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -311,7 +311,7 @@
       },
       "A14": {
         "__compat": {
-          "description": "On an `.arrays-plain` array, a range read, a reader placed by its own `grid-column` and a scan reader placed by its own `grid-area` MUST read the same numbers as on an array without `.arrays-plain`.",
+          "description": "On an `.dcss-plain` array, a range read, a reader placed by its own `grid-column` and a scan reader placed by its own `grid-area` MUST read the same numbers as on an array without `.dcss-plain`.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -334,7 +334,7 @@
       },
       "A15": {
         "__compat": {
-          "description": "In `.arrays-bins`, a child with whole `--arrays-bin` MUST give what is inside it `--arrays-rank`, 1 for the first child in its bin in markup order, exact to 32, with a bin changing every frame.",
+          "description": "In `.dcss-bins`, a child with whole `--dcss-bin` MUST give what is inside it `--dcss-rank`, 1 for the first child in its bin in markup order, exact to 32, with a bin changing every frame.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -357,7 +357,7 @@
       },
       "A16": {
         "__compat": {
-          "description": "A `.arrays-count` in `.arrays-bins` MUST give `--arrays-count`, the number of bins in use, for bins up to the box's width in px.",
+          "description": "A `.dcss-track-count` in `.dcss-bins` MUST give `--dcss-track-count`, the number of bins in use, for bins up to the box's width in px.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -380,7 +380,7 @@
       },
       "A17": {
         "__compat": {
-          "description": "A `<b class=\"arrays-below\">` in a child of `.arrays-bins` MUST give `--arrays-below`, how many distinct bins in use lie below its bin, with or without an author's padding and border on the grid.",
+          "description": "A `<b class=\"dcss-below\">` in a child of `.dcss-bins` MUST give `--dcss-below`, how many distinct bins in use lie below its bin, with or without an author's padding and border on the grid.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -403,7 +403,7 @@
       },
       "A18": {
         "__compat": {
-          "description": "`.arrays-bins.arrays-max` MUST give a reader with `--arrays-i` the largest `--arrays-n` in bin i, and a range the sum of those maxima, with entries at any depth under `.arrays-nest` wrappers.",
+          "description": "`.dcss-bins.dcss-bin-max` MUST give a reader with `--dcss-i` the largest `--dcss-n` in bin i, and a range the sum of those maxima, with entries at any depth under `.dcss-nest` wrappers.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -426,7 +426,7 @@
       },
       "A19": {
         "__compat": {
-          "description": "`.arrays-array.arrays-sort` of entries with whole `--arrays-key` MUST read its entries in key order, equal keys in markup order: the i-th smallest, -1 the largest, a range the sum of the smallest, with a key moving past the others every frame.",
+          "description": "`.dcss-array.dcss-sort` of entries with whole `--dcss-key` MUST read its entries in key order, equal keys in markup order: the i-th smallest, -1 the largest, a range the sum of the smallest, with a key moving past the others every frame.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -449,7 +449,7 @@
       },
       "A20": {
         "__compat": {
-          "description": "A `.arrays-where` in an entry of `.arrays-sort` MUST give `--arrays-place`, 1 for the smallest key, equal keys in markup order.",
+          "description": "A `.dcss-where` in an entry of `.dcss-sort` MUST give `--dcss-place`, 1 for the smallest key, equal keys in markup order.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -472,7 +472,7 @@
       },
       "A21": {
         "__compat": {
-          "description": "In `.arrays-sort`, an `.arrays-lo` probe with a key MUST give `--arrays-lower` (keys below it), an `.arrays-hi` probe `--arrays-upper` (keys up to it), and an `.arrays-between` in it `--arrays-frequency` and `--arrays-member`.",
+          "description": "In `.dcss-sort`, an `.dcss-lo` probe with a key MUST give `--dcss-lower` (keys below it), an `.dcss-hi` probe `--dcss-upper` (keys up to it), and an `.dcss-between` in it `--dcss-frequency` and `--dcss-member`.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -495,7 +495,7 @@
       },
       "A22": {
         "__compat": {
-          "description": "`.arrays-map` of entries with whole `--arrays-key` and `--arrays-n` MUST give a reader with `--arrays-key` the largest number written at that key, for keys -9,000 to 9,999, in boxes of any width; an unused key, or one outside `--arrays-min-key` to `--arrays-max-key`, MUST read 0 with `--arrays-ok` 0",
+          "description": "`.dcss-map` of entries with whole `--dcss-key` and `--dcss-n` MUST give a reader with `--dcss-key` the largest number written at that key, for keys -9,000 to 9,999, in boxes of any width; an unused key, or one outside `--dcss-min-key` to `--dcss-max-key`, MUST read 0 with `--dcss-ok` 0.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -518,7 +518,7 @@
       },
       "A23": {
         "__compat": {
-          "description": "`.arrays-map.arrays-packed` MUST read a track list of values from `--arrays-min-key` on as keys, child entries beside it, duplicate keys as their largest, empty or invalid lists as no values, with keys and values moving between tracks in the same frame.",
+          "description": "`.dcss-map.dcss-packed` MUST read a track list of values from `--dcss-min-key` on as keys, child entries beside it, duplicate keys as their largest, empty or invalid lists as no values, with keys and values moving between tracks in the same frame.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -541,7 +541,7 @@
       },
       "A24": {
         "__compat": {
-          "description": "A `.arrays-where` in an entry of a keyed map MUST read the entry's offset in the same frame, and an entry MUST NOT keep an anchor name while it holds no where.",
+          "description": "A `.dcss-where` in an entry of a keyed map MUST read the entry's offset in the same frame, and an entry MUST NOT keep an anchor name while it holds no where.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -564,7 +564,7 @@
       },
       "A25": {
         "__compat": {
-          "description": "`.arrays-array.arrays-packed` with tracks `minmax(0, c)` MUST give slot k min(c k, L), L the level at which the slots fill the box's width, within 1/64 px.",
+          "description": "`.dcss-array.dcss-packed` with tracks `minmax(0, c)` MUST give slot k min(c k, L), L the level at which the slots fill the box's width, within 1/64 px.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -587,7 +587,7 @@
       },
       "A26": {
         "__compat": {
-          "description": "`.arrays-shares` MUST give child k max(floor k, weight k × L) from its `--arrays-n` and `--arrays-w`, L the level that fills the width, and a `.arrays-where` in a child the sum of the shares before it, within 1/32 px.",
+          "description": "`.dcss-shares` MUST give child k max(floor k, weight k × L) from its `--dcss-n` and `--dcss-w`, L the level that fills the width, and a `.dcss-where` in a child the sum of the shares before it, within 1/32 px.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -610,7 +610,7 @@
       },
       "A27": {
         "__compat": {
-          "description": "`.arrays-pack` with `--arrays-columns` MUST give each child of `--arrays-w` columns the `--arrays-column` and `--arrays-row` where first fit puts it, rows from the top, in `order`-modified document order (css-grid-2 §8.5).",
+          "description": "`.dcss-pack` with `--dcss-columns` MUST give each child of `--dcss-w` columns the `--dcss-column` and `--dcss-row` where first fit puts it, rows from the top, in `order`-modified document order (css-grid-2 §8.5).",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -633,7 +633,7 @@
       },
       "A28": {
         "__compat": {
-          "description": "A `.arrays-where` in an entry of an array MUST give `--arrays-x`, the sum of the entries before it, and `--arrays-y` 0.",
+          "description": "A `.dcss-where` in an entry of an array MUST give `--dcss-x`, the sum of the entries before it, and `--dcss-y` 0.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -656,7 +656,7 @@
       },
       "A29": {
         "__compat": {
-          "description": "`.arrays-tiles` with `--arrays-columns`, `--arrays-rows` and `--arrays-areas` MUST give a child at `grid-area: name` its area's `--arrays-x`, `--arrays-y`, `--arrays-width`, `--arrays-height` and `--arrays-fits` 1, and `--arrays-fits` 0 to every child when an area is not a rectangle.",
+          "description": "`.dcss-tiles` with `--dcss-columns`, `--dcss-rows` and `--dcss-areas` MUST give a child at `grid-area: name` its area's `--dcss-x`, `--dcss-y`, `--dcss-width`, `--dcss-height` and `--dcss-fits` 1, and `--dcss-fits` 0 to every child when an area is not a rectangle.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -679,7 +679,7 @@
       },
       "A30": {
         "__compat": {
-          "description": "`.arrays-tiles.arrays-pack` MUST place each child of `--arrays-w` by `--arrays-h` tiles where first fit puts it, row by row, around the map's named areas and the children before it; a child past the map's rows or wider than the map MUST read `--arrays-fits` 0.",
+          "description": "`.dcss-tiles.dcss-pack` MUST place each child of `--dcss-w` by `--dcss-h` tiles where first fit puts it, row by row, around the map's named areas and the children before it; a child past the map's rows or wider than the map MUST read `--dcss-fits` 0.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -702,7 +702,7 @@
       },
       "A31": {
         "__compat": {
-          "description": "`.arrays-push` MUST give each child `--arrays-x`, the larger of its `--arrays-target` and the end of the child before; `.arrays-push.arrays-end` with `--arrays-wall` MUST give the smaller of its target and the start of the child after less its width.",
+          "description": "`.dcss-push` MUST give each child `--dcss-x`, the larger of its `--dcss-target` and the end of the child before; `.dcss-push.dcss-end` with `--dcss-wall` MUST give the smaller of its target and the start of the child after less its width.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -725,7 +725,7 @@
       },
       "A54": {
         "__compat": {
-          "description": "`.arrays-push.arrays-nested`, its children nested in each other (each holding the next), MUST give the answers A31 gives, for targets and ends under 65,536 px; `.arrays-push.arrays-end.arrays-nested` likewise.",
+          "description": "`.dcss-push.dcss-nested`, its children nested in each other (each holding the next), MUST give the answers A31 gives, for targets and ends under 65,536 px; `.dcss-push.dcss-end.dcss-nested` likewise.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -748,7 +748,7 @@
       },
       "A32": {
         "__compat": {
-          "description": "`.arrays-groups` MUST give each child `--arrays-y`, the sum of `--arrays-n` over the earlier children of its `--arrays-bin`, and `--arrays-x`, its bin less 1.",
+          "description": "`.dcss-groups` MUST give each child `--dcss-y`, the sum of `--dcss-n` over the earlier children of its `--dcss-bin`, and `--dcss-x`, its bin less 1.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -771,7 +771,7 @@
       },
       "A33": {
         "__compat": {
-          "description": "`.arrays-overlap` of children with `--arrays-i` (a start) and `--arrays-span` MUST give a `.arrays-count` the most intervals over one point, and each child's where `--arrays-y`, its lane by first fit from 0.",
+          "description": "`.dcss-overlap` of children with `--dcss-i` (a start) and `--dcss-span` MUST give a `.dcss-track-count` the most intervals over one point, and each child's where `--dcss-y`, its lane by first fit from 0.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -794,7 +794,7 @@
       },
       "A34": {
         "__compat": {
-          "description": "`.arrays-lines` with `--arrays-columns` MUST give a `.arrays-count` the number of next-fit lines its children's `--arrays-n` take, and each child's where `--arrays-y`, its line from 0, and `--arrays-x`, the sum before it on its line.",
+          "description": "`.dcss-lines` with `--dcss-columns` MUST give a `.dcss-track-count` the number of next-fit lines its children's `--dcss-n` take, and each child's where `--dcss-y`, its line from 0, and `--dcss-x`, the sum before it on its line.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -817,7 +817,7 @@
       },
       "A35": {
         "__compat": {
-          "description": "`.arrays-slide` with `--arrays-span` MUST give a reader with `--arrays-i` j the largest of the span entries ending at entry j.",
+          "description": "`.dcss-slide` with `--dcss-span` MUST give a reader with `--dcss-i` j the largest of the span entries ending at entry j.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -840,7 +840,7 @@
       },
       "A36": {
         "__compat": {
-          "description": "`.arrays-array.arrays-xy.arrays-cells` of entries with `--arrays-i`, `--arrays-r`, `--arrays-n` and `--arrays-m` MUST give a reader the widest entry of column i as `--arrays-value` and the tallest of row r as `--arrays-value-y`.",
+          "description": "`.dcss-array.dcss-xy.dcss-cells` of entries with `--dcss-i`, `--dcss-r`, `--dcss-n` and `--dcss-m` MUST give a reader the widest entry of column i as `--dcss-value` and the tallest of row r as `--dcss-value-y`.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -863,7 +863,7 @@
       },
       "A37": {
         "__compat": {
-          "description": "`.arrays-range` of entries with `--arrays-key` and `--arrays-bit` (1 to 19) MUST give a query `.arrays-in` with `--arrays-from` and `--arrays-to` the bit mask of the entries whose key is in [from, to] less `--arrays-not`, and `--arrays-top1` to `--arrays-top6`, its six highest bits.",
+          "description": "`.dcss-key-range` of entries with `--dcss-key` and `--dcss-bit` (1 to 19) MUST give a query `.dcss-in` with `--dcss-from` and `--dcss-to` the bit mask of the entries whose key is in [from, to] less `--dcss-not`, and `--dcss-top1` to `--dcss-top6`, its six highest bits.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -886,7 +886,7 @@
       },
       "A38": {
         "__compat": {
-          "description": "`.arrays-sum` MUST add its children and `.arrays-largest` take the largest, leaves with `--arrays-n` and whole arrays as children, at any depth, read at the root or inside; a negative leaf MUST make every node above it read `--arrays-ok` 0.",
+          "description": "`.dcss-width-sum` MUST add its children and `.dcss-largest` take the largest, leaves with `--dcss-n` and whole arrays as children, at any depth, read at the root or inside; a negative leaf MUST make every node above it read `--dcss-ok` 0.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -910,7 +910,7 @@
       },
       "A39": {
         "__compat": {
-          "description": "`.arrays-cap` MUST give min(E, c) of its formula E with c moving, of a sum or of a leaf; a negative leaf in it MUST read 0 with `--arrays-ok` 0.",
+          "description": "`.dcss-cap` MUST give min(E, c) of its formula E with c moving, of a sum or of a leaf; a negative leaf in it MUST read 0 with `--dcss-ok` 0.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -933,7 +933,7 @@
       },
       "A40": {
         "__compat": {
-          "description": "`.arrays-times` MUST give f × E as a height, f written and moving, counted in an `.arrays-stack` and read inside it.",
+          "description": "`.dcss-times` MUST give f × E as a height, f written and moving, counted in an `.dcss-stack` and read inside it.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -956,7 +956,7 @@
       },
       "A41": {
         "__compat": {
-          "description": "`.arrays-calc` boxes MUST give a product, a min and their sum of two named formulas through `anchor-size()`, in the same frame.",
+          "description": "`.dcss-calc` boxes MUST give a product, a min and their sum of two named formulas through `anchor-size()`, in the same frame.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -980,7 +980,7 @@
       },
       "A42": {
         "__compat": {
-          "description": "`<b class=\"arrays-hop\">` MUST give a row the sum of the columns it spans (two hops in one row the larger), and `<b class=\"arrays-hop-y\">` a column the sum of the rows it spans, read by `.arrays-at-y` and `.arrays-at-x`.",
+          "description": "`<b class=\"dcss-hop\">` MUST give a row the sum of the columns it spans (two hops in one row the larger), and `<b class=\"dcss-hop-y\">` a column the sum of the rows it spans, read by `.dcss-at-y` and `.dcss-at-x`.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -1003,7 +1003,7 @@
       },
       "A43": {
         "__compat": {
-          "description": "`.arrays-text` MUST give the sum and the largest line of counters in `arrays-tally`, f(k) of the shared tables (k, round(k^2 / 1000), round(sqrt(1000 k)) for k 0 to 999), a scan and a table's running totals, exact.",
+          "description": "`.dcss-text` MUST give the sum and the largest line of counters in `dcss-tally`, f(k) of the shared tables (k, round(k^2 / 1000), round(sqrt(1000 k)) for k 0 to 999), a scan and a table's running totals, exact.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -1049,7 +1049,7 @@
       },
       "A45": {
         "__compat": {
-          "description": "A `.arrays-collapse` of signed margins, `.arrays-zoom` factors in a sum, an `.arrays-baseline` row, `.arrays-columns` with `--arrays-parts` and `.arrays-flex` shares MUST give their laid-out results within 1/64 px.",
+          "description": "A `.dcss-collapse` of signed margins, `.dcss-zoom` factors in a sum, an `.dcss-baseline` row, `.dcss-columns` with `--dcss-parts` and `.dcss-flex` shares MUST give their laid-out results within 1/64 px.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -1072,7 +1072,7 @@
       },
       "A46": {
         "__compat": {
-          "description": "Collapses MUST nest: two laid-out widths in one collapse (W1 / 2 - W2), three levels of `.arrays-scope`, the results counted in an `.arrays-stack` and an `.arrays-tallest` with no reader between.",
+          "description": "Collapses MUST nest: two laid-out widths in one collapse (W1 / 2 - W2), three levels of `.dcss-scope`, the results counted in an `.dcss-stack` and an `.dcss-tallest` with no reader between.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -1095,7 +1095,7 @@
       },
       "A47": {
         "__compat": {
-          "description": "A collapse as a row of a grid MUST turn into a column through `.arrays-hop-y`, and a second collapse over that column MUST subtract a third width, read by the row, the column and their readers.",
+          "description": "A collapse as a row of a grid MUST turn into a column through `.dcss-hop-y`, and a second collapse over that column MUST subtract a third width, read by the row, the column and their readers.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -1119,7 +1119,7 @@
       },
       "A48": {
         "__compat": {
-          "description": "`<div class=\"arrays-minus\">A<b>B</b></div>` MUST be max(0, A - B) wide for widths A and B under 2^20 px: alone, as min and |a - b|, two deep, and inside a collapse, an `.arrays-least` and an `.arrays-scale`.",
+          "description": "`<div class=\"dcss-minus\">A<b>B</b></div>` MUST be max(0, A - B) wide for widths A and B under 2^20 px: alone, as min and |a - b|, two deep, and inside a collapse, an `.dcss-width-min` and an `.dcss-scale`.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -1142,7 +1142,7 @@
       },
       "A49": {
         "__compat": {
-          "description": "`.arrays-turn` with `--arrays-tick` changed whenever an input under it changes MUST lay a height on as a width: under `.arrays-largest`, in an `.arrays-least` slot, as a subtrahend and in a stack, with inputs moving every frame.",
+          "description": "`.dcss-turn` with `--dcss-turn-tick` changed whenever an input under it changes MUST lay a height on as a width: under `.dcss-largest`, in an `.dcss-width-min` slot, as a subtrahend and in a stack, with inputs moving every frame.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -1165,7 +1165,7 @@
       },
       "A50": {
         "__compat": {
-          "description": "`.arrays-rom` with `.arrays-sq` or `.arrays-sqrt` and `--arrays-k` from 0 to 999 MUST give its child `--arrays-value` round(k^2 / 1000) or round(sqrt(1000 k)), and `.arrays-rom2` the five pair tables for a and b from 0 to 31, at style time with no layout.",
+          "description": "`.dcss-rom` with `.dcss-sq` or `.dcss-sqrt` and `--dcss-k` from 0 to 999 MUST give its child `--dcss-value` round(k^2 / 1000) or round(sqrt(1000 k)), and `.dcss-rom2` the five pair tables for a and b from 0 to 31, at style time with no layout.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -1211,7 +1211,7 @@
       },
       "A53": {
         "__compat": {
-          "description": "Results of separate computations, each an `.arrays-array` as wide as its total and named by `anchor-name`, MUST place their marks in sorted order in the same frame when each mark's `top` sums, over the others, `clamp(0, (anchor-size(--other width) - anchor-size(--own width)) / 1px * 2 + t, 1)` (t 1 ",
+          "description": "Results of separate computations, each an `.dcss-array` as wide as its total and named by `anchor-name`, MUST place their marks in sorted order in the same frame when each mark's `top` sums, over the others, `clamp(0, (anchor-size(--other width) - anchor-size(--own width)) / 1px * 2 + t, 1)` (t 1 fo",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -1234,7 +1234,7 @@
       },
       "A55": {
         "__compat": {
-          "description": "`.arrays-ranked` with `--arrays-bins` G up to 16 (32 with `arrays-wide`) MUST place bar k at its group's total of `--arrays-n` (`.arrays-max`: its largest), as many `--arrays-band`s down as groups beat it, largest or smallest first, ties to the lower bin; an item's `<b>` on its group's bar after the",
+          "description": "`.dcss-ranked` with `--dcss-bins` G up to 16 (32 with `dcss-wide`) MUST place bar k at its group's total of `--dcss-n` (`.dcss-bin-max`: its largest), as many `--dcss-band`s down as groups beat it, largest or smallest first, ties to the lower bin; an item's `<b>` on its group's bar after the items b",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -1257,7 +1257,7 @@
       },
       "A56": {
         "__compat": {
-          "description": "`.arrays-piles` MUST place each item at the sum of the heights before it in its group; `.arrays-starts` MUST place group k's marker at the sum of `--arrays-n` over earlier groups; a `.list`'s `.arrays-size` MUST read its width and height.",
+          "description": "`.dcss-piles` MUST place each item at the sum of the heights before it in its group; `.dcss-starts` MUST place group k's marker at the sum of `--dcss-n` over earlier groups; a `.list`'s `.dcss-size` MUST read its width and height.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -1280,7 +1280,7 @@
       },
       "A57": {
         "__compat": {
-          "description": "`.arrays-ranked.arrays-copy` with `--arrays-copy-width` and `.arrays-ranks > b > .arrays-segments` holding G `.arrays-group` and the items again MUST place each segment as A55 does, for up to 16 groups.",
+          "description": "`.dcss-ranked.dcss-copy` with `--dcss-copy-width` and `.dcss-ranks > b > .dcss-segments` holding G `.dcss-group` and the items again MUST place each segment as A55 does, for up to 16 groups.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {

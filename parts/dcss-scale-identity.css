@@ -11,7 +11,7 @@
 
 /* DCSS d3.scaleLog: map and invert (linear.mjs). */
 
-@property --arrays-identity-present{syntax:'<integer>';inherits:false;initial-value:0}
-@property --arrays-identity-error{syntax:'<integer>';inherits:false;initial-value:1}
-.dcss-scale-identity{--dcss-scale-identity:calc(var(--value));--dcss-scale-identity-invert:calc(var(--value));--arrays-identity-present:calc(var(--dcss-scale-identity) * 0 + 1);--arrays-identity-error:calc(1 - var(--arrays-identity-present));--dcss-ready:var(--arrays-identity-present);--dcss-err:var(--arrays-identity-error);--dcss-scale-identity-ready:var(--arrays-identity-present);--dcss-scale-identity-error:var(--arrays-identity-error);--arrays-static-input-ready:var(--arrays-identity-present);--arrays-static-input-error:var(--arrays-identity-error);--arrays-static-input-gate:var(--arrays-identity-present);}
+@property --dcss-identity-present{syntax:'<integer>';inherits:false;initial-value:0}
+@property --dcss-identity-error{syntax:'<integer>';inherits:false;initial-value:1}
+.dcss-scale-identity{--dcss-scale-identity:calc(var(--value));--dcss-scale-identity-invert:calc(var(--value));--dcss-identity-present:calc(var(--dcss-scale-identity) * 0 + 1);--dcss-identity-error:calc(1 - var(--dcss-identity-present));--dcss-ready:var(--dcss-identity-present);--dcss-err:var(--dcss-identity-error);--dcss-scale-identity-ready:var(--dcss-identity-present);--dcss-scale-identity-error:var(--dcss-identity-error);--dcss-static-input-ready:var(--dcss-identity-present);--dcss-static-input-error:var(--dcss-identity-error);--dcss-static-input-gate:var(--dcss-identity-present);}
 :where(.dcss-scale-identity)>*{--value:initial}

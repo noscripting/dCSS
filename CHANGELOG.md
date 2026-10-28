@@ -14,6 +14,8 @@ All notable changes to dcss-array.css are written here. The format follows [Keep
 
 ### Changed
 
+- The sheet's own names (its grids, readers and internal numbers, `arrays-*` before) are `dcss-*`; the 40 that a call also used have names of their own (`.dcss-width-sum`, `--dcss-array-length`; the list is `src/names.mjs`'s `RENAMED`).
+
 - The list median, quantile, quantileSorted and quantile scale take 1/64 steps within ±131,072 and whole numbers up to 8,257,535 (was ±1024).
 - Smaller sheets: `families/order.css` 12.6 to 1.8 MB, `color-text.css` 14.6 to 3.7 MB, `date-parse.css` 4.2 to 1.0 MB, `date-parse-local.css` 7.5 to 1.1 MB, `aggregate.css` 6.3 to 4.0 MB, with the same answers.
 

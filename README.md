@@ -178,42 +178,42 @@ Each family's section in Reference lists its other inputs (strings, objects, acc
 
 ## The grid primitives
 
-The core, `dcss-array.css`, works without d3's names. Numbers go in as `--arrays-n` on `<i>` entries inside a grid. A reader, `<b class="arrays-at">`, picks one by `--arrays-i`, and the `<u>` inside it gets the result as `--arrays-value`:
+The core, `dcss-array.css`, works without d3's names. Numbers go in as `--dcss-n` on `<i>` entries inside a grid. A reader, `<b class="dcss-at">`, picks one by `--dcss-i`, and the `<u>` inside it gets the result as `--dcss-value`:
 
 ```html
 <!doctype html>
 <link rel="stylesheet" href="dcss-array.css">
-<style>.arrays-at u::after { counter-reset: v var(--arrays-value); content: counter(v); }</style>
+<style>.dcss-at u::after { counter-reset: v var(--dcss-value); content: counter(v); }</style>
 
-<div class="arrays-array arrays-count">
-  <b class="arrays-out"><b class="arrays-at" style="--arrays-i: 2"><u></u></b></b>
-  <i style="--arrays-n: 12"></i>
-  <i style="--arrays-n: 40"></i>
-  <i style="--arrays-n: 30"></i>
+<div class="dcss-array dcss-track-count">
+  <b class="dcss-out"><b class="dcss-at" style="--dcss-i: 2"><u></u></b></b>
+  <i style="--dcss-n: 12"></i>
+  <i style="--dcss-n: 40"></i>
+  <i style="--dcss-n: 30"></i>
 </div>
 ```
 
-The page shows 40, entry 2. With `--arrays-i: 1; --arrays-j: -1` the reader shows the sum, 82; with `--arrays-i: -1`, the last entry, 30. Change any `--arrays-n`, by a rule, a transition or an animation, and the reader follows in the same frame. [Grid markup](#grid-markup) in Reference has the rules, and the sections after it each kind of grid.
+The page shows 40, entry 2. With `--dcss-i: 1; --dcss-j: -1` the reader shows the sum, 82; with `--dcss-i: -1`, the last entry, 30. Change any `--dcss-n`, by a rule, a transition or an animation, and the reader follows in the same frame. [Grid markup](#grid-markup) in Reference has the rules, and the sections after it each kind of grid.
 
-The text reads (`.arrays-text`) use fonts embedded in the sheet. To have them right from the first frame, copy the `<link rel="preload">` lines of `arrays-preload.html` into the page's `<head>`. Loops and sheets also need [dcss-store.css](https://noscript.ing) on the page.
+The text reads (`.dcss-text`) use fonts embedded in the sheet. To have them right from the first frame, copy the `<link rel="preload">` lines of `dcss-preload.html` into the page's `<head>`. Loops and sheets also need [dcss-store.css](https://noscript.ing) on the page.
 
 ## Recipes
 
-- **First-fit decreasing.** Order a pack's children widest first: `.arrays-pack > * { order: calc(-1 * var(--arrays-w)); }`. Equal widths keep the markup's order.
-- **A window's median, or any order statistic of a window.** In an `.arrays-array.arrays-sort`, push the keys outside the window past every key inside it, keep the number as `--arrays-n`, and read the middle of the window:
+- **First-fit decreasing.** Order a pack's children widest first: `.dcss-pack > * { order: calc(-1 * var(--dcss-w)); }`. Equal widths keep the markup's order.
+- **A window's median, or any order statistic of a window.** In an `.dcss-array.dcss-sort`, push the keys outside the window past every key inside it, keep the number as `--dcss-n`, and read the middle of the window:
 
   ```css
   .win > i { --idx: calc(sibling-index() - 1); --inside: calc(clamp(0, var(--idx) - var(--start) + 1, 1) * clamp(0, var(--start) + 3 - var(--idx), 1));
-    --arrays-key: calc(var(--v) + (1 - var(--inside)) * 1000); --arrays-n: var(--v); }
+    --dcss-key: calc(var(--v) + (1 - var(--inside)) * 1000); --dcss-n: var(--v); }
   ```
 
-  A reader with `--arrays-i: 2` then reads the median of the 3 entries from entry `--start`, counting from 1 when `arrays-out` is the grid's first child. 1000 has to be above every key. Use one window per grid.
-- **Sort results of separate computations, in the same frame.** Values only flow down a grid, so totals worked out in different grids can't be another grid's keys; anchors carry them across. Make each result a box as wide as it is (an `.arrays-array` is as wide as its total) and name it. Each mark's `top` counts the results that beat its own:
+  A reader with `--dcss-i: 2` then reads the median of the 3 entries from entry `--start`, counting from 1 when `dcss-out` is the grid's first child. 1000 has to be above every key. Use one window per grid.
+- **Sort results of separate computations, in the same frame.** Values only flow down a grid, so totals worked out in different grids can't be another grid's keys; anchors carry them across. Make each result a box as wide as it is (an `.dcss-array` is as wide as its total) and name it. Each mark's `top` counts the results that beat its own:
 
   ```html
   <div class="board" style="position: relative">
-    <div class="arrays-array" style="anchor-name: --t1; width: max-content">...</div>   <!-- one per result -->
-    <div class="arrays-array" style="anchor-name: --t2; width: max-content">...</div>
+    <div class="dcss-array" style="anchor-name: --t1; width: max-content">...</div>   <!-- one per result -->
+    <div class="dcss-array" style="anchor-name: --t2; width: max-content">...</div>
     <b class="bar" style="position: absolute; left: anchor(--t1 left); right: anchor(--t1 right);
       top: calc(clamp(0, (anchor-size(--t2 width) - anchor-size(--t1 width)) / 1px * 2 + 0, 1) * 20px)"></b>
     <b class="bar" style="position: absolute; left: anchor(--t2 left); right: anchor(--t2 right);
@@ -222,7 +222,7 @@ The text reads (`.arrays-text`) use fonts embedded in the sheet. To have them ri
   ```
 
   The `+ 1` breaks a tie in favour of the earlier result. Each mark sums one term per other result, so the markup grows as the square of their number. The bars and the results they name share a containing block, here `.board`. In Firefox, compare in `top` and span with `anchor()` edges ([QUIRKS.md](QUIRKS.md) Q3).
-- **argmax and argmin.** Pack the number and its place into one, `--arrays-n: calc(var(--v) * S + (S - i))` with S above the count, and read any max (a bin of `.arrays-bins.arrays-max`, `.arrays-slide`, `.arrays-map`): `round(down, value / S)` is the number and `S - mod(round(value), S)` its place, ties going to the first. For the smallest, write a bound minus the number. Keep the packed number under 1,000,000.
+- **argmax and argmin.** Pack the number and its place into one, `--dcss-n: calc(var(--v) * S + (S - i))` with S above the count, and read any max (a bin of `.dcss-bins.dcss-bin-max`, `.dcss-slide`, `.dcss-map`): `round(down, value / S)` is the number and `S - mod(round(value), S)` its place, ties going to the first. For the smallest, write a bound minus the number. Keep the packed number under 1,000,000.
 
 ## Reference
 
@@ -307,15 +307,15 @@ A bisect figure draws nothing and is one line tall, with its answer in it: give 
 
 #### Shares
 
-`.dcss-share` gives each item its fraction of the list's total. The label stays in the item, and a `.arrays-share-result` inside a `.arrays-share-read` gets the numbers:
+`.dcss-share` gives each item its fraction of the list's total. The label stays in the item, and a `.dcss-share-result` inside a `.dcss-share-read` gets the numbers:
 
 ```html
 <figure class="dcss-share">
   <ol>
     <li style="--value: 96">
       <span>Documents, 96 MB</span>
-      <span class="arrays-share-read">
-        <span class="arrays-share-result">
+      <span class="dcss-share-read">
+        <span class="dcss-share-result">
           <output class="dcss-format-percent"
                   style="--value: var(--dcss-share); --precision: 1"></output>
         </span>
@@ -323,8 +323,8 @@ A bisect figure draws nothing and is one line tall, with its answer in it: give 
     </li>
     <li style="--value: 224">
       <span>Photos, 224 MB</span>
-      <span class="arrays-share-read">
-        <span class="arrays-share-result">
+      <span class="dcss-share-read">
+        <span class="dcss-share-result">
           <output class="dcss-format-percent"
                   style="--value: var(--dcss-share); --precision: 1"></output>
         </span>
@@ -334,11 +334,11 @@ A bisect figure draws nothing and is one line tall, with its answer in it: give 
 </figure>
 ```
 
-The outputs print `30.0%` and `70.0%`. Inside `.arrays-share-result`, `--dcss-total` is 320 and `--dcss-share` is the item's fraction, 0.3 or 0.7, which also works in a style: `width: calc(var(--dcss-share) * 100%)`. Put each item's label in one wrapper, or inside the result. A share takes 1 to 64 values, each 0 or more, a multiple of 1/64 and at most 4,095. A total of 0 is error 2; any bad value, or more than 64 items, is error 1 for the whole call.
+The outputs print `30.0%` and `70.0%`. Inside `.dcss-share-result`, `--dcss-total` is 320 and `--dcss-share` is the item's fraction, 0.3 or 0.7, which also works in a style: `width: calc(var(--dcss-share) * 100%)`. Put each item's label in one wrapper, or inside the result. A share takes 1 to 64 values, each 0 or more, a multiple of 1/64 and at most 4,095. A total of 0 is error 2; any bad value, or more than 64 items, is error 1 for the whole call.
 
 #### Median, quantile, discrete scales and cumsum
 
-These calls read their list through wrappers. `.arrays-call-read` measures the list; the `.arrays-call-result` inside it gets the number. `.arrays-call-input` between two calls passes the first one's readiness and errors on to the next, so its text stays hidden when the first has no answer. This page chains a median, a precision helper and a formatter, and prints `1,234.6`:
+These calls read their list through wrappers. `.dcss-call-read` measures the list; the `.dcss-call-result` inside it gets the number. `.dcss-call-input` between two calls passes the first one's readiness and errors on to the next, so its text stays hidden when the first has no answer. This page chains a median, a precision helper and a formatter, and prints `1,234.6`:
 
 ```html
 <figure class="dcss-median">
@@ -347,11 +347,11 @@ These calls read their list through wrappers. `.arrays-call-read` measures the l
     <li style="--value: .25"></li>
     <li style="--value: .5"></li>
   </ol>
-  <div class="arrays-call-read">
-    <div class="arrays-call-result">
-      <div class="arrays-call-input">
+  <div class="dcss-call-read">
+    <div class="dcss-call-result">
+      <div class="dcss-call-input">
         <div class="dcss-precision-fixed" style="--step: var(--dcss-median)">
-          <div class="arrays-call-input">
+          <div class="dcss-call-input">
             <output class="dcss-format-fixed"
                     style="--value: 1234.5678; --comma: 1;
                            --precision: var(--dcss-precision-fixed)"></output>
@@ -370,19 +370,19 @@ These calls read their list through wrappers. `.arrays-call-read` measures the l
 | `dcss-scale-threshold` | up to 16 ascending thresholds within ±2^24 as the list; the query as `--value` | `--dcss-scale-threshold` |
 | `dcss-scale-quantize` | `--domain-0` and `--domain-1` (0 and 1 by default), ascending; one empty `<li>` per threshold | `--dcss-scale-quantize` |
 | `dcss-scale-quantile` | 0 to 64 values as for quantile; the query as `--value` | `--dcss-scale-quantile` |
-| `dcss-cumsum` | 0 to 64 values on the 1/64 grid within ±1024, signed; a second `<ol class="arrays-scan-results">` with one `<li><div class="arrays-call-result">` per value | each result's own `--dcss-cumsum`; missing values add 0 |
+| `dcss-cumsum` | 0 to 64 values on the 1/64 grid within ±1024, signed; a second `<ol class="dcss-scan-results">` with one `<li><div class="dcss-call-result">` per value | each result's own `--dcss-cumsum`; missing values add 0 |
 
-When the rank falls between two values, as for an even median or most quantiles, the answer needs the list twice. Put an `.arrays-order-upper` inside the first result, holding the same list and another `.arrays-call-read > .arrays-call-result`; that last result gets the answer. Add `.arrays-source-order` to it for quantileSorted. Write changing values once as properties such as `--a` and use them in both lists.
+When the rank falls between two values, as for an even median or most quantiles, the answer needs the list twice. Put an `.dcss-order-upper` inside the first result, holding the same list and another `.dcss-call-read > .dcss-call-result`; that last result gets the answer. Add `.dcss-source-order` to it for quantileSorted. Write changing values once as properties such as `--a` and use them in both lists.
 
 ```html
 <figure class="dcss-median">
   <ol><li style="--value: 4"></li> <li style="--value: 1"></li> <li style="--value: 3"></li> <li style="--value: 2"></li></ol>
-  <div class="arrays-call-read">
-    <div class="arrays-call-result">
-      <div class="arrays-order-upper">
+  <div class="dcss-call-read">
+    <div class="dcss-call-result">
+      <div class="dcss-order-upper">
         <ol><li style="--value: 4"></li> <li style="--value: 1"></li> <li style="--value: 3"></li> <li style="--value: 2"></li></ol>
-        <div class="arrays-call-read">
-          <div class="arrays-call-result">
+        <div class="dcss-call-read">
+          <div class="dcss-call-result">
             <output class="dcss-format-fixed" style="--value: var(--dcss-median); --precision: 1"></output>   <!-- 2.5 -->
           </div>
         </div>
@@ -392,19 +392,19 @@ When the rank falls between two values, as for an even median or most quantiles,
 </figure>
 ```
 
-The three discrete scales take `--ranges` (2 by default, up to 17) and `--range-0` to `--range-16`, numbers or quoted text; `--unknown` is the answer for a missing query. A bare `<output>` prints a text range; use a formatter for a number. A threshold or quantize call reads through `.arrays-call-read > .arrays-range-copy > .arrays-call-result`. A quantile scale uses its list three times: inside the first result, `.arrays-quantile-low` and then `.arrays-quantile-high` each hold the list and a read, and the high one's result holds `.arrays-range-copy > .arrays-call-result`. In full, with a list of three and two ranges (the answer is 1):
+The three discrete scales take `--ranges` (2 by default, up to 17) and `--range-0` to `--range-16`, numbers or quoted text; `--unknown` is the answer for a missing query. A bare `<output>` prints a text range; use a formatter for a number. A threshold or quantize call reads through `.dcss-call-read > .dcss-range-copy > .dcss-call-result`. A quantile scale uses its list three times: inside the first result, `.dcss-quantile-low` and then `.dcss-quantile-high` each hold the list and a read, and the high one's result holds `.dcss-range-copy > .dcss-call-result`. In full, with a list of three and two ranges (the answer is 1):
 
 ```html
 <figure class="dcss-scale-quantile" style="--value: 3; --ranges: 2; --range-0: 0; --range-1: 1">
   <ol><li style="--value: 1"></li><li style="--value: 2"></li><li style="--value: 4"></li></ol>
-  <div class="arrays-call-read"><div class="arrays-call-result">
-    <div class="arrays-quantile-low">
+  <div class="dcss-call-read"><div class="dcss-call-result">
+    <div class="dcss-quantile-low">
       <ol><li style="--value: 1"></li><li style="--value: 2"></li><li style="--value: 4"></li></ol>
-      <div class="arrays-call-read"><div class="arrays-call-result">
-        <div class="arrays-quantile-high">
+      <div class="dcss-call-read"><div class="dcss-call-result">
+        <div class="dcss-quantile-high">
           <ol><li style="--value: 1"></li><li style="--value: 2"></li><li style="--value: 4"></li></ol>
-          <div class="arrays-call-read"><div class="arrays-call-result">
-            <div class="arrays-range-copy"><div class="arrays-call-result">
+          <div class="dcss-call-read"><div class="dcss-call-result">
+            <div class="dcss-range-copy"><div class="dcss-call-result">
               <output class="dcss-format-fixed" style="--value: var(--dcss-scale-quantile); --precision: 0"></output>
             </div></div>
           </div></div>
@@ -415,7 +415,7 @@ The three discrete scales take `--ranges` (2 by default, up to 17) and `--range-
 </figure>
 ```
 
-Keep the thresholds in order and the repeated lists identical; the sheet takes both as given. A value off the grid is error 1; an empty quantile or a missing `--p` is error 2. To repeat a call on its own result, set the next input on the `.arrays-call-input` wrapper, so it keeps the previous result before the next call reuses the name.
+Keep the thresholds in order and the repeated lists identical; the sheet takes both as given. A value off the grid is error 1; an empty quantile or a missing `--p` is error 2. To repeat a call on its own result, set the next input on the `.dcss-call-input` wrapper, so it keeps the previous result before the next call reuses the name.
 
 #### Precision helpers
 
@@ -431,7 +431,7 @@ Keep the thresholds in order and the repeated lists identical; the sheet takes b
 <output class="dcss-precision-round" style="--step: .01; --max: 1.01"></output> <!-- 3 -->
 
 <div class="dcss-precision-fixed" style="--step: .01">
-  <div class="arrays-call-input">
+  <div class="dcss-call-input">
     <output class="dcss-format-fixed"
             style="--value: 1.2345; --precision: var(--dcss-precision-fixed)"></output>   <!-- 1.23 -->
   </div>
@@ -642,7 +642,7 @@ A partition keeps the top band for the root, as d3 does: wrap the list in one `<
 | `--dcss-accessor` | 0 the value, 1 `.value`, 2 the index from 1, 3 undefined, 4 the count accessor's field |
 | `data-dcss-capacity="8"` or `"4"` | computes only that many slots, which is faster; a longer list is error 1. A call with `data-dcss-backend="layout"` always computes 20 |
 
-A string is 1 to 4 ASCII characters. Strings of one or two digits, with an optional space before them, count as numbers; one with a character no number can have is skipped; other number-shaped strings, such as `1e3`, are error 1. The cumulative calls take one `<ol class="arrays-aggregate-results">` inside the call, with one `<li>` per value, and each `<li>` gets its own `--dcss-cumsum` or `--dcss-fcumsum`. The mean of nothing has no value, without an error.
+A string is 1 to 4 ASCII characters. Strings of one or two digits, with an optional space before them, count as numbers; one with a character no number can have is skipped; other number-shaped strings, such as `1e3`, are error 1. The cumulative calls take one `<ol class="dcss-aggregate-results">` inside the call, with one `<li>` per value, and each `<li>` gets its own `--dcss-cumsum` or `--dcss-fcumsum`. The mean of nothing has no value, without an error.
 
 ### Order: families/order.css
 
@@ -861,12 +861,12 @@ The `.dcss-geo-*` calls are d3's identity, equirectangular, rotation, stereograp
 
 ### Grid markup
 
-- A grid is one computation. Its children, `<i>`, are the entries, the inputs. Its readers, `<b class="arrays-at"><u></u></b>`, are the outputs, and each reads the nearest grid around it.
-- A reader goes in `<b class="arrays-out">`, the grid's first child, or inside an entry. In a grid with no child entries (a packed array, a cycle), it is a child of the grid.
-- The results land on the `<u>` inside a reader and everything in it. That `<u>` is yours: put content there. Leave the entries, readers and `arrays-out` empty, since content in them can change what they read.
+- A grid is one computation. Its children, `<i>`, are the entries, the inputs. Its readers, `<b class="dcss-at"><u></u></b>`, are the outputs, and each reads the nearest grid around it.
+- A reader goes in `<b class="dcss-out">`, the grid's first child, or inside an entry. In a grid with no child entries (a packed array, a cycle), it is a child of the grid.
+- The results land on the `<u>` inside a reader and everything in it. That `<u>` is yours: put content there. Leave the entries, readers and `dcss-out` empty, since content in them can change what they read.
 - A grid inside a reader's `<u>` reads its own entries, so one computation feeds the next in the same frame. Results only flow down: results of several entries reach another grid's entries a frame later, through dcss-store.css.
 - Put changing numbers on the entries. A number that changes above a grid and is inherited through it restyles every reader, used or not.
-- Every name the sheet uses starts with `arrays-`; its internal numbers are `--arrays-p-*`, and its anchor names `--arrays-where`, `--arrays-lo` and `--arrays-hi`. The d3 calls use `dcss-*` classes and `--dcss-*` results, which aren't registered, so they keep any value you give them elsewhere.
+- Every name the sheet uses starts with `dcss-`, the calls' and its own grids', readers' and numbers' alike; its internal numbers include `--dcss-p-*`, and its anchor names are `--dcss-where`, `--dcss-lo` and `--dcss-hi`. A call's results (`--dcss-*`, listed in `src/names.mjs`), which aren't registered, so they keep any value you give them elsewhere.
 - Every grid resets its padding, border, `writing-mode` and `direction`.
 
 [Primitives](#primitives) lists every kind of grid with its markup.
@@ -875,20 +875,20 @@ The `.dcss-geo-*` calls are d3's identity, equirectangular, rotation, stereograp
 
 | Name | Set on | Holds |
 |---|---|---|
-| `--arrays-value` | a reader's `<u>` | the entry, track, sum, maximum or table value read |
-| `--arrays-ok` | a reader's `<u>` | 1 for a valid read; 0 for an index or key out of range, which also reads `--arrays-value` 0 |
-| `--arrays-value-y` | a reader's `<u>` in an `.arrays-xy` array | the entry's second number, or row r |
-| `--arrays-rank` | the `<u>` of a bins entry | its place among the children of its bin, from 1 |
-| `--arrays-count` | the `<u>` of an `.arrays-count` | bins in use, the most intervals at one point, or lines |
-| `--arrays-below` | the `<u>` of an `.arrays-below` | the bins in use below its own |
-| `--arrays-x`, `--arrays-y` | the inner `<u>` of an `.arrays-where` | where the child is, in the grid's units |
-| `--arrays-place` | the inner `<u>` of an `.arrays-where` in a sort | its place, 1 for the smallest key |
-| `--arrays-column`, `--arrays-row` | the inner `<u>` of an `.arrays-where` in a pack | where first fit put it |
-| `--arrays-width`, `--arrays-height`, `--arrays-fits` | the inner `<u>` of an `.arrays-where` in tiles | its area's size, and 1 when it fits the map |
-| `--arrays-lower`, `--arrays-upper`, `--arrays-frequency`, `--arrays-member` | the inner `<u>` of a search probe | keys below, keys up to, keys equal, and whether there is one |
-| `--arrays-before` | a scan reader's `<u>` | the sum of the entries before |
-| `--arrays-high`, `--arrays-low` | the inner `<u>` of an `.arrays-two` text | the two numbers of one read |
-| `--arrays-top1` to `--arrays-top6` | the inner `<u>` of an `.arrays-in` query | the six highest bits of its mask, which is its `--arrays-value` |
+| `--dcss-value` | a reader's `<u>` | the entry, track, sum, maximum or table value read |
+| `--dcss-ok` | a reader's `<u>` | 1 for a valid read; 0 for an index or key out of range, which also reads `--dcss-value` 0 |
+| `--dcss-value-y` | a reader's `<u>` in an `.dcss-xy` array | the entry's second number, or row r |
+| `--dcss-rank` | the `<u>` of a bins entry | its place among the children of its bin, from 1 |
+| `--dcss-track-count` | the `<u>` of an `.dcss-track-count` | bins in use, the most intervals at one point, or lines |
+| `--dcss-below` | the `<u>` of an `.dcss-below` | the bins in use below its own |
+| `--dcss-x`, `--dcss-y` | the inner `<u>` of an `.dcss-where` | where the child is, in the grid's units |
+| `--dcss-place` | the inner `<u>` of an `.dcss-where` in a sort | its place, 1 for the smallest key |
+| `--dcss-column`, `--dcss-row` | the inner `<u>` of an `.dcss-where` in a pack | where first fit put it |
+| `--dcss-width`, `--dcss-height`, `--dcss-fits` | the inner `<u>` of an `.dcss-where` in tiles | its area's size, and 1 when it fits the map |
+| `--dcss-lower`, `--dcss-upper`, `--dcss-frequency`, `--dcss-member` | the inner `<u>` of a search probe | keys below, keys up to, keys equal, and whether there is one |
+| `--dcss-before` | a scan reader's `<u>` | the sum of the entries before |
+| `--dcss-high`, `--dcss-low` | the inner `<u>` of an `.dcss-two` text | the two numbers of one read |
+| `--dcss-top1` to `--dcss-top6` | the inner `<u>` of an `.dcss-in` query | the six highest bits of its mask, which is its `--dcss-value` |
 
 ### Primitives
 
@@ -898,265 +898,265 @@ Each kind of grid: what it computes, its markup, whether it reads in the same fr
 
 #### Entry i of an array of child entries
 
-`.arrays-array` > children with `--arrays-n`; a reader `.arrays-at` with `--arrays-i`, in the port (`<b class="arrays-out">`, the first child) or a child of an entry; what is inside the reader gets `--arrays-value` and `--arrays-ok`.
+`.dcss-array` > children with `--dcss-n`; a reader `.dcss-at` with `--dcss-i`, in the port (`<b class="dcss-out">`, the first child) or a child of an entry; what is inside the reader gets `--dcss-value` and `--dcss-ok`.
 
 Same frame: yes, both. Whole numbers exact; fractions to 1/64 px.
 
-#### Counting the entries: negative indices and the end's check without writing `--arrays-length`
+#### Counting the entries: negative indices and the end's check without writing `--dcss-array-length`
 
-`.arrays-count` on the array: the grid works the count out from its last child's place (`:nth-child`), up to 360,359 entries, any number of entries: 40 entries, `-1`, `-40`, the total and entry 35, every frame, both engines.
+`.dcss-track-count` on the array: the grid works the count out from its last child's place (`:nth-child`), up to 360,359 entries, any number of entries: 40 entries, `-1`, `-40`, the total and entry 35, every frame, both engines.
 
 Same frame: yes. Exact.
 
 #### Entry -i (from the end)
 
-`--arrays-i: -1`.
+`--dcss-i: -1`.
 
 Same frame: yes. Exact.
 
 #### The sum of entries i to j, either order; -1 as the end; i = j
 
-`--arrays-i: 2; --arrays-j: 4`; `--arrays-i: 1; --arrays-j: -1` is the total.
+`--dcss-i: 2; --dcss-j: 4`; `--dcss-i: 1; --dcss-j: -1` is the total.
 
 Same frame: yes. Exact.
 
 #### Track i of a packed array, any length
 
-`.arrays-array.arrays-packed` with `--arrays-tracks` (the track list, line names included: `[--arrays-x] 90px 70px`) and `--arrays-length` for the end; without it -1 is the last track.
+`.dcss-array.dcss-packed` with `--dcss-tracks` (the track list, line names included: `[--dcss-x] 90px 70px`) and `--dcss-array-length` for the end; without it -1 is the last track.
 
 Same frame: yes. Exact.
 
 #### The i-th slot named x: several arrays in one grid
 
-`--arrays-l3: --arrays-x` on the array; `--arrays-of: --arrays-x` on the reader or the array; `--arrays-j` counts slots from there, named or not.
+`--dcss-l3: --dcss-x` on the array; `--dcss-of: --dcss-x` on the reader or the array; `--dcss-j` counts slots from there, named or not.
 
 Same frame: yes. Exact.
 
-#### Two numbers an entry: --arrays-value and --arrays-value-y of entry i, or column i and row r
+#### Two numbers an entry: --dcss-value and --dcss-value-y of entry i, or column i and row r
 
-`.arrays-array.arrays-xy` > children with `--arrays-n` and `--arrays-m` (or, packed, `--arrays-tracks` and `--arrays-tracks-y` on the array); the reader gets both; `--arrays-r` picks the row (unset: the row of `--arrays-i`), `--arrays-j` still a range of columns.
+`.dcss-array.dcss-xy` > children with `--dcss-n` and `--dcss-m` (or, packed, `--dcss-tracks` and `--dcss-tracks-y` on the array); the reader gets both; `--dcss-r` picks the row (unset: the row of `--dcss-i`), `--dcss-j` still a range of columns.
 
 Same frame: yes, both numbers moving; readers in the port. Exact.
 
 #### Entry i of a cyclic array, round either way
 
-`.arrays-cycle` with `--arrays-tracks`, any number of tracks; readers are children and in flow.
+`.dcss-cycle` with `--dcss-tracks`, any number of tracks; readers are children and in flow.
 
 Same frame: yes, forwards past the entries and backwards from -1. Exact.
 
 #### Rank within a bin: 1 for the first child put in a bin, 2 for the next, to 32
 
-`.arrays-bins` > children with `--arrays-bin`; what is inside gets `--arrays-bin` and `--arrays-rank`.
+`.dcss-bins` > children with `--dcss-bin`; what is inside gets `--dcss-bin` and `--dcss-rank`.
 
 Same frame: yes, with a bin changing every frame. Exact to 32; 33 reads 1.
 
 #### The largest number in a bin
 
-`.arrays-bins.arrays-max` > children with `--arrays-bin` and `--arrays-n`; a reader `.arrays-at` with `--arrays-i` the bin; a range sums the maxes.
+`.dcss-bins.dcss-bin-max` > children with `--dcss-bin` and `--dcss-n`; a reader `.dcss-at` with `--dcss-i` the bin; a range sums the maxes.
 
 Same frame: yes, with an item changing bin and number every frame. Exact.
 
 #### How many bins hold something
 
-`.arrays-bins > .arrays-count`; what is inside gets `--arrays-count`.
+`.dcss-bins > .dcss-track-count`; what is inside gets `--dcss-track-count`.
 
 Same frame: yes, with an item moving every frame. Exact for bins up to the box's width in px.
 
 #### Water filling: slot k reads min(cap k, level), the level what fills the width
 
-`.arrays-array.arrays-packed` with `--arrays-tracks: minmax(0, cap 1) minmax(0, cap 2) ...`, the width is the water.
+`.dcss-array.dcss-packed` with `--dcss-tracks: minmax(0, cap 1) minmax(0, cap 2) ...`, the width is the water.
 
 Same frame: yes, caps and width moving. To 1/64 px.
 
 #### A sort: entry i in order of a key; the i-th smallest, the largest (-1), the sum of the smallest few; equal keys in markup order
 
-`.arrays-array.arrays-sort` > children with `--arrays-key` (whole) and `--arrays-n`; readers as for child entries.
+`.dcss-array.dcss-sort` > children with `--dcss-key` (whole) and `--dcss-n`; readers as for child entries.
 
 Same frame: yes, with a key moving past the others every frame. Exact.
 
 #### How many bins in use are below a child's bin: its rank among the distinct bins, from 0
 
-`.arrays-bins` (not max): a `<b class="arrays-below">` inside a child; what is inside it gets `--arrays-below`.
+`.dcss-bins` (not max): a `<b class="dcss-below">` inside a child; what is inside it gets `--dcss-below`.
 
 Same frame: yes, with an item moving every frame, so the bins in use change. Exact for bins up to the box's width in px.
 
 #### First-fit packing: each child's column and row where it lands, rows from the top
 
-`.arrays-pack` with `--arrays-columns` > children with `--arrays-w` (columns taken), a `.arrays-where` in each; what is inside its `<u>` gets `--arrays-column` and `--arrays-row`.
+`.dcss-pack` with `--dcss-columns` > children with `--dcss-w` (columns taken), a `.dcss-where` in each; what is inside its `<u>` gets `--dcss-column` and `--dcss-row`.
 
 Same frame: yes, with two spans changing every frame. Exact.
 
 #### Where a child is: its offset from the grid's top-left; in an array of child entries, the sum of the entries before it
 
-A `<b class="arrays-where"><u><u></u></u></b>` inside a child of an array, bins, shares, pack, sort, map or slide; what is inside the `<u>` gets `--arrays-x` and `--arrays-y`.
+A `<b class="dcss-where"><u><u></u></u></b>` inside a child of an array, bins, shares, pack, sort, map or slide; what is inside the `<u>` gets `--dcss-x` and `--dcss-y`.
 
 Same frame: yes, with entries, shares and widths moving. Exact (1/64 px with fractions).
 
 #### Places in a sort: 1 for the smallest key, equal keys in markup order
 
-`.arrays-sort` > children with `--arrays-key` and a `.arrays-where`; what is inside its `<u>` gets `--arrays-place`.
+`.dcss-sort` > children with `--dcss-key` and a `.dcss-where`; what is inside its `<u>` gets `--dcss-place`.
 
 Same frame: yes, with two keys moving past the others every frame. Exact.
 
 #### A tile map: where each named area is and how big, and whether it is in the map
 
-`.arrays-tiles` with `--arrays-columns`, `--arrays-rows` and `--arrays-areas` (the grid-template-areas strings, picked by state if you like) > children at `grid-area: name` with a `.arrays-where`; what is inside its `<u>` gets `--arrays-x`, `--arrays-y`, `--arrays-width`, `--arrays-height` and `--arrays-fits`.
+`.dcss-tiles` with `--dcss-columns`, `--dcss-rows` and `--dcss-areas` (the grid-template-areas strings, picked by state if you like) > children at `grid-area: name` with a `.dcss-where`; what is inside its `<u>` gets `--dcss-x`, `--dcss-y`, `--dcss-width`, `--dcss-height` and `--dcss-fits`.
 
 Same frame: yes, with six maps (one invalid) switching every few frames. Exact, in tiles.
 
 #### 2D packing around walls: each child of w x h tiles where first fit puts it, row by row from the top, around the map's named areas and the children before it; whether it fits in the map
 
-`.arrays-tiles.arrays-pack` with a map: children at `grid-area: name` are walls, the others carry `--arrays-w` and `--arrays-h` and a `.arrays-where`; what is inside its `<u>` gets `--arrays-x`, `--arrays-y`, `--arrays-column`, `--arrays-row` and `--arrays-fits`.
+`.dcss-tiles.dcss-pack` with a map: children at `grid-area: name` are walls, the others carry `--dcss-w` and `--dcss-h` and a `.dcss-where`; what is inside its `<u>` gets `--dcss-x`, `--dcss-y`, `--dcss-column`, `--dcss-row` and `--dcss-fits`.
 
 Same frame: yes, with three maps switching and two spans moving every frame. Exact.
 
 #### The push: boxes in order, each at the larger of its target and the end of the box before (1D non-penetration in one layout)
 
-`.arrays-push` > children with `--arrays-h` (width) and `--arrays-target`, a `.arrays-where` in each; what is inside its `<u>` gets `--arrays-x`, the box's start.
+`.dcss-push` > children with `--dcss-h` (width) and `--dcss-target`, a `.dcss-where` in each; what is inside its `<u>` gets `--dcss-x`, the box's start.
 
 Same frame: yes, with two targets and two widths moving every frame. Exact.
 
 #### The push from the end: each box at the smaller of its target and the start of the box after less its width, none past the wall
 
-`.arrays-push.arrays-end` with `--arrays-wall`, the same children. `.arrays-nested` on either nests the children in each other, each `<i>` holding its `.arrays-where` first and then the next child. It is 2x (Chrome) to 2.3x (WebKit) faster at 300 (vs-calc/trials/nested-push.mjs). It takes at most a few hundred children (HTML parsers stop nesting at 512 deep), and targets and ends under 65,536 px in the push.
+`.dcss-push.dcss-end` with `--dcss-wall`, the same children. `.dcss-nested` on either nests the children in each other, each `<i>` holding its `.dcss-where` first and then the next child. It is 2x (Chrome) to 2.3x (WebKit) faster at 300 (vs-calc/trials/nested-push.mjs). It takes at most a few hundred children (HTML parsers stop nesting at 512 deep), and targets and ends under 65,536 px in the push.
 
 Same frame: yes, the same. Exact.
 
 #### Groups ranked by their totals: each group's bar at its total, sorted largest or smallest first (two stages in one frame)
 
-`.arrays-ranked` with `--arrays-bins` (up to 16; up to 32 with the class `arrays-wide`) and `--arrays-desc: 1` for largest first. It holds first G `<b class="arrays-group"><b class="arrays-total"></b></b>`, then `<b class="arrays-bars">` holding G `<b>`, then the items with `--arrays-bin` and `--arrays-n`; `--arrays-key` under `--arrays-span` orders items inside a group. Each bar's top is its rank times `--arrays-band` (2 px), its left and right its group's total. `.arrays-max` ranks each group's largest instead. A `<b>` in an item is its segment of its group's bar (a sorted stacked bar). A `<b class="arrays-labels">` after the bars holds a label a group, right-aligned to the box's start at its bar's top. For many items, `.arrays-copy` with `--arrays-copy-width` reads the ranks back once instead of a lookup a segment (up to 16 groups). After the items it takes `<b class="arrays-ranks"><b><div class="arrays-segments">`, holding G `<b class="arrays-group">` and the items again, each with its `<b>`; the first items then hold no `<b>`.
+`.dcss-ranked` with `--dcss-bins` (up to 16; up to 32 with the class `dcss-wide`) and `--dcss-desc: 1` for largest first. It holds first G `<b class="dcss-group"><b class="dcss-group-total"></b></b>`, then `<b class="dcss-bars">` holding G `<b>`, then the items with `--dcss-bin` and `--dcss-n`; `--dcss-key` under `--dcss-span` orders items inside a group. Each bar's top is its rank times `--dcss-band` (2 px), its left and right its group's total. `.dcss-bin-max` ranks each group's largest instead. A `<b>` in an item is its segment of its group's bar (a sorted stacked bar). A `<b class="dcss-labels">` after the bars holds a label a group, right-aligned to the box's start at its bar's top. For many items, `.dcss-copy` with `--dcss-copy-width` reads the ranks back once instead of a lookup a segment (up to 16 groups). After the items it takes `<b class="dcss-ranks"><b><div class="dcss-segments">`, holding G `<b class="dcss-group">` and the items again, each with its `<b>`; the first items then hold no `<b>`.
 
 Same frame: yes, with the totals moving. Exact in Chrome, WebKit and Firefox.
 
-#### Grouped sums: each child reads the sum of the earlier children in its group; an item after a group reads its total; with --arrays-n 1, counts
+#### Grouped sums: each child reads the sum of the earlier children in its group; an item after a group reads its total; with --dcss-n 1, counts
 
-`.arrays-groups` > children with `--arrays-bin` and `--arrays-n` (whole, from 1), a `.arrays-where` in each; what is inside its `<u>` gets `--arrays-y` (the sum before it) and `--arrays-x` (the bin less 1).
+`.dcss-groups` > children with `--dcss-bin` and `--dcss-n` (whole, from 1), a `.dcss-where` in each; what is inside its `<u>` gets `--dcss-y` (the sum before it) and `--dcss-x` (the bin less 1).
 
 Same frame: yes, with two values moving every frame. Exact.
 
 #### The most intervals at one point; each interval's lane (interval colouring, first fit by start)
 
-`.arrays-overlap` > children with `--arrays-i` (start, whole, from 1) and `--arrays-span` (length), a `.arrays-where` in each; a `.arrays-count` in the grid gets `--arrays-count`, what is inside a child's `.arrays-where` `<u>` gets `--arrays-y` (its lane from 0).
+`.dcss-overlap` > children with `--dcss-i` (start, whole, from 1) and `--dcss-span` (length), a `.dcss-where` in each; a `.dcss-track-count` in the grid gets `--dcss-track-count`, what is inside a child's `.dcss-where` `<u>` gets `--dcss-y` (its lane from 0).
 
 Same frame: yes, with two intervals moving every frame. Exact.
 
 #### Next-fit lines: how many lines a row of widths takes, each child's line and its place on it
 
-`.arrays-lines` with `--arrays-columns` (the row's width) > children with `--arrays-n`, a `.arrays-where` in each; `.arrays-count` gets the lines, a child's `.arrays-where` `--arrays-y` (its line from 0) and `--arrays-x` (before it on the line).
+`.dcss-lines` with `--dcss-columns` (the row's width) > children with `--dcss-n`, a `.dcss-where` in each; `.dcss-track-count` gets the lines, a child's `.dcss-where` `--dcss-y` (its line from 0) and `--dcss-x` (before it on the line).
 
 Same frame: yes, with a width moving every frame. Exact.
 
 #### Column and row maxima of a matrix, from one grid
 
-`.arrays-array.arrays-xy.arrays-cells` > children with `--arrays-i` (column), `--arrays-r` (row), `--arrays-n` (width) and `--arrays-m` (height); a reader with `--arrays-i` and `--arrays-r` gets the column's widest as `--arrays-value` and the row's tallest as `--arrays-value-y`.
+`.dcss-array.dcss-xy.dcss-cells` > children with `--dcss-i` (column), `--dcss-r` (row), `--dcss-n` (width) and `--dcss-m` (height); a reader with `--dcss-i` and `--dcss-r` gets the column's widest as `--dcss-value` and the row's tallest as `--dcss-value-y`.
 
 Same frame: yes, with entries moving. Exact.
 
 #### Entries at any depth in a bins max
 
-`.arrays-bins.arrays-max` > `.arrays-nest` wrappers (subgrids over every column, no padding) > ... > `<i>` with `--arrays-bin` and `--arrays-n`.
+`.dcss-bins.dcss-bin-max` > `.dcss-nest` wrappers (subgrids over every column, no padding) > ... > `<i>` with `--dcss-bin` and `--dcss-n`.
 
 Same frame: yes. Exact.
 
 #### Search in a sort: how many keys are below a key, up to it, equal to it, and whether any is
 
-`.arrays-sort` with a `.arrays-lo` probe before the entries and a `.arrays-hi` probe after, both with the key; inside `.arrays-lo`'s `.arrays-where` `--arrays-lower`, inside `.arrays-hi`'s `--arrays-upper`, inside a `.arrays-between` in `.arrays-hi` `--arrays-frequency` and `--arrays-member`.
+`.dcss-sort` with a `.dcss-lo` probe before the entries and a `.dcss-hi` probe after, both with the key; inside `.dcss-lo`'s `.dcss-where` `--dcss-lower`, inside `.dcss-hi`'s `--dcss-upper`, inside a `.dcss-between` in `.dcss-hi` `--dcss-frequency` and `--dcss-member`.
 
 Same frame: yes, with the key moving over absent, present and end keys and an entry moving. Exact.
 
 #### A key range: which entries have a key in [from, to], as a bit mask and the six highest bits; many queries over one row
 
-`.arrays-range` > `<i style="--arrays-key: k; --arrays-bit: b">` (b 1 to 19) and queries `<b class="arrays-in" style="--arrays-from: f; --arrays-to: t; --arrays-not: b"><b><u><u></u></u></b></b>`; an entry and its query may share a `<div>` (display: contents); `.arrays-range.arrays-mask` for the mask alone (no top bits).
+`.dcss-key-range` > `<i style="--dcss-key: k; --dcss-bit: b">` (b 1 to 19) and queries `<b class="dcss-in" style="--dcss-from: f; --dcss-to: t; --dcss-not: b"><b><u><u></u></u></b></b>`; an entry and its query may share a `<div>` (display: contents); `.dcss-key-range.dcss-mask` for the mask alone (no top bits).
 
 Same frame: yes. Exact, keys and bounds moving, any whole keys, 19 bits.
 
 #### A window: entries counted from a moving start
 
-A `<b class="arrays-window">` with `--arrays-i` and `--arrays-span` in the port of an array; readers inside it (`--arrays-i: 1` its first, `-1` its last, ranges).
+A `<b class="dcss-window">` with `--dcss-i` and `--dcss-span` in the port of an array; readers inside it (`--dcss-i: 1` its first, `-1` its last, ranges).
 
 Same frame: yes, with the window moving every frame. Exact.
 
 #### A keyed map: the largest number written at any whole key
 
-`.arrays-map` > children with `--arrays-key` and `--arrays-n`; a reader `.arrays-at` with `--arrays-key`.
+`.dcss-map` > children with `--dcss-key` and `--dcss-n`; a reader `.dcss-at` with `--dcss-key`.
 
-Same frame: yes, with a key and a value moving every frame. Exact; an unused key, or one outside `--arrays-min-key` .. `--arrays-max-key` (±1000 by default), reads 0; keys to ±20,000 checked.
+Same frame: yes, with a key and a value moving every frame. Exact; an unused key, or one outside `--dcss-min-key` .. `--dcss-max-key` (±1000 by default), reads 0; keys to ±20,000 checked.
 
 #### Formulas: sums, maxima, constant factors, min and difference, any depth, over numbers and whole computations
 
-`.arrays-sum`, `.arrays-largest`, `.arrays-scale`, `.arrays-least` (with `.arrays-rest`), `.arrays-stack`, `.arrays-tallest`, leaves with `--arrays-n`, readers `.arrays-at` in any node; see Formulas.
+`.dcss-width-sum`, `.dcss-largest`, `.dcss-scale`, `.dcss-width-min` (with `.dcss-rest`), `.dcss-stack`, `.dcss-tallest`, leaves with `--dcss-n`, readers `.dcss-at` in any node; see Formulas.
 
 Same frame: yes (check 46). Exact within 6 digits through `var()`.
 
 #### A second and a third pass in one grid: rows sized from sums of columns, a column from sums of rows
 
-In the port of an array: `<b class="arrays-hop">` with `--arrays-i`, `--arrays-j` (the columns it reads) and `--arrays-r` (its row). Its `<u>` gets `--arrays-value` (the span's sum) and sets `--arrays-put` (any style function of it; unset, the sum itself), and the row is as tall as its largest hop. `<b class="arrays-hop-y">` with `--arrays-i`, `--arrays-j` (rows) and `--arrays-r` (its column after the entries; needs `--arrays-length`) does the same in the other axis. The readers are `.arrays-at-y` (rows `--arrays-i` to `--arrays-j`) and `.arrays-at-x` (hop columns).
+In the port of an array: `<b class="dcss-hop">` with `--dcss-i`, `--dcss-j` (the columns it reads) and `--dcss-r` (its row). Its `<u>` gets `--dcss-value` (the span's sum) and sets `--dcss-put` (any style function of it; unset, the sum itself), and the row is as tall as its largest hop. `<b class="dcss-hop-y">` with `--dcss-i`, `--dcss-j` (rows) and `--dcss-r` (its column after the entries; needs `--dcss-array-length`) does the same in the other axis. The readers are `.dcss-at-y` (rows `--dcss-i` to `--dcss-j`) and `.dcss-at-x` (hop columns).
 
-Same frame: yes, entries moving (check 60). Exact on whole px; a written `--arrays-put` floors to 1/64 px.
+Same frame: yes, entries moving (check 60). Exact on whole px; a written `--dcss-put` floors to 1/64 px.
 
 #### A sum of whole numbers, a max of sums, f(k) by a lookup table, without a grid
 
-`<b class="arrays-text">` with the author's counters (`counter-reset`) and `--arrays-text: counter(a, arrays-tally) counter(b, arrays-tally)` (`'\\a'` between lines); `arrays-table` and `.arrays-sq`, `.arrays-sqrt` or `--arrays-font` for f; the inner `<u>` of `<u><u></u></u>` gets `--arrays-value`; see Text.
+`<b class="dcss-text">` with the author's counters (`counter-reset`) and `--dcss-text: counter(a, dcss-tally) counter(b, dcss-tally)` (`'\\a'` between lines); `dcss-table` and `.dcss-sq`, `.dcss-sqrt` or `--dcss-font` for f; the inner `<u>` of `<u><u></u></u>` gets `--dcss-value`; see Text.
 
 Same frame: yes (check 61). Exact.
 
 #### Prefix sums: each entry the sum so far, and the sum before it
 
-`.arrays-scan` > entries `<i style="--arrays-n: 12"></i>`, then readers `<b class="arrays-at" style="--arrays-i: k"><u></u></b>` (k 1 to the length, whole). The `<u>` gets `--arrays-value`, the sum of entries 1 to k, and `--arrays-before`, the sum of entries 1 to k - 1. A reader whose k never changes can be placed by `style="grid-area: 1 / 1 / span k / span k"` instead.
+`.dcss-scan` > entries `<i style="--dcss-n: 12"></i>`, then readers `<b class="dcss-at" style="--dcss-i: k"><u></u></b>` (k 1 to the length, whole). The `<u>` gets `--dcss-value`, the sum of entries 1 to k, and `--dcss-before`, the sum of entries 1 to k - 1. A reader whose k never changes can be placed by `style="grid-area: 1 / 1 / span k / span k"` instead.
 
 Same frame: yes (checks 61, 66). Exact, whole numbers.
 
-#### Signed extremes: max(positives) + min(negatives) of any number of signed numbers; laid-out widths times factors in the same collapse, and through scopes two laid-out widths in one (a difference p1 W1 - p2 W2); as a child of a `.arrays-stack` or `.arrays-tallest` it counts there as its value, with no reader
+#### Signed extremes: max(positives) + min(negatives) of any number of signed numbers; laid-out widths times factors in the same collapse, and through scopes two laid-out widths in one (a difference p1 W1 - p2 W2); as a child of a `.dcss-stack` or `.dcss-tallest` it counts there as its value, with no reader
 
-`.arrays-collapse` > formula children (floated: they give the width W and stay out of the margins). They are `<i style="--arrays-n: x">` (signed px) or `--arrays-p: p` (p% of the width it sits in), `<b class="arrays-scope">` (a box with its own margin and its own laid-out width, nesting), and a `<b class="arrays-at"><u></u></b>`. Numbers run from -10,000 up.
+`.dcss-collapse` > formula children (floated: they give the width W and stay out of the margins). They are `<i style="--dcss-n: x">` (signed px) or `--dcss-p: p` (p% of the width it sits in), `<b class="dcss-scope">` (a box with its own margin and its own laid-out width, nesting), and a `<b class="dcss-at"><u></u></b>`. Numbers run from -10,000 up.
 
 Same frame: yes (checks 63, 64). Exact.
 
 #### max(0, A - B) of two laid-out widths as a width, with no reader; so min(a, b) and |a - b| on the width side too
 
-`<div class="arrays-minus">A<b>B</b></div>` (A and B width nodes; B under 2^20 px); `min` = minus(a + b, max(a, b)), `abs` = minus(a, b) + minus(b, a).
+`<div class="dcss-minus">A<b>B</b></div>` (A and B width nodes; B under 2^20 px); `min` = minus(a + b, max(a, b)), `abs` = minus(a, b) + minus(b, a).
 
 Same frame: yes. Exact, inputs moving, in a sum, a collapse, a least, a scale, two deep.
 
-#### A height as a width, live: what a .arrays-least, a collapse or a stack is, laid on as a width
+#### A height as a width, live: what a .dcss-width-min, a collapse or a stack is, laid on as a width
 
-`<div class="arrays-sum"><b class="arrays-turn"><b><b>H</b></b></b></div>`, with `--arrays-tick` (and `--arrays-tick-2`) on a box around it changing whenever an input under it does.
+`<div class="dcss-width-sum"><b class="dcss-turn"><b><b>H</b></b></b></div>`, with `--dcss-turn-tick` (and `--dcss-turn-tick-2`) on a box around it changing whenever an input under it does.
 
-Same frame: yes. Exact, inputs moving, nested, under .arrays-largest, .arrays-least, a collapse; idles at rest.
+Same frame: yes. Exact, inputs moving, nested, under .dcss-largest, .dcss-width-min, a collapse; idles at rest.
 
 #### A factor in flow: f x a laid-out size, counted by whatever contains it
 
-`.arrays-zoom` with `--arrays-zoom: f` on a node or a leaf; nests.
+`.dcss-zoom` with `--dcss-zoom: f` on a node or a leaf; nests.
 
 Same frame: yes (check 63). To 1/64 px a zoomed length (exact for quarters, eighths ...); f > 0.
 
 #### Baselines: a row of max(a) + max(d), and each item handed max(a) - a_j
 
-`.arrays-baseline` > `<i style="--arrays-n: a; --arrays-m: d">` (a `.arrays-where` inside an item reads `--arrays-y`), a reader for the row.
+`.dcss-baseline` > `<i style="--dcss-n: a; --dcss-m: d">` (a `.dcss-where` inside an item reads `--dcss-y`), a reader for the row.
 
 Same frame: yes (check 63). Exact.
 
 #### The best contiguous split into K parts: the least possible largest part
 
-`.arrays-columns` with `--arrays-parts: K` > `<i style="--arrays-n: h">`; for WebKit two copies in a `.arrays-alternate` with `--arrays-parity` flipped at each change, its reader reading the copy shown.
+`.dcss-columns` with `--dcss-parts: K` > `<i style="--dcss-n: h">`; for WebKit two copies in a `.dcss-alternate` with `--dcss-parity` flipped at each change, its reader reading the copy shown.
 
 Same frame: yes (check 63). Exact.
 
 #### Flex shares: weights, shrink, floors and caps in one layout
 
-`.arrays-flex` (a width) > `<i style="--arrays-n: start; --arrays-grow: g; --arrays-shrink: s; --arrays-min: lo; --arrays-max: hi">`; what is inside an `<i>` reads its width.
+`.dcss-flex` (a width) > `<i style="--dcss-n: start; --dcss-grow: g; --dcss-shrink: s; --dcss-flex-min: lo; --dcss-flex-max: hi">`; what is inside an `<i>` reads its width.
 
 Same frame: yes (check 63). To 1/64 px.
 
-#### Sliding-window maxima: the largest of the --arrays-span entries ending at entry j
+#### Sliding-window maxima: the largest of the --dcss-span entries ending at entry j
 
-`.arrays-slide` with `--arrays-span` > children with `--arrays-n`, then readers `.arrays-at` with `--arrays-i`.
+`.dcss-slide` with `--dcss-span` > children with `--dcss-n`, then readers `.dcss-at` with `--dcss-i`.
 
 Same frame: yes, with two entries moving every frame. Exact.
 
 #### Fair shares with floors: each child gets max(floor, weight x level), the level what fills the width
 
-`.arrays-shares` with a width > children with `--arrays-n` (the floor) and `--arrays-w` (a whole weight, 1 by default); what is inside a child gets `--arrays-value`.
+`.dcss-shares` with a width > children with `--dcss-n` (the floor) and `--dcss-w` (a whole weight, 1 by default); what is inside a child gets `--dcss-value`.
 
 Same frame: yes, a floor and the width moving. To 1/32 px.
 
@@ -1170,26 +1170,26 @@ Same frame: yes: calc(), no layout. Equal to d3's answer on all 254 calls d3-arr
 
 ### Packed maps
 
-`.arrays-map.arrays-packed` keeps many values in one CSS track list, with no element per entry. Write the list in `grid-template-columns` on the map, which is fastest, or in `--arrays-tracks`:
+`.dcss-map.dcss-packed` keeps many values in one CSS track list, with no element per entry. Write the list in `grid-template-columns` on the map, which is fastest, or in `--dcss-tracks`:
 
 ```html
-<div class="arrays-map arrays-packed" style="--arrays-min-key: -2; --arrays-max-key: 2;
+<div class="dcss-map dcss-packed" style="--dcss-min-key: -2; --dcss-max-key: 2;
   grid-template-columns: minmax(12px, max-content)
             minmax(0px, max-content)
             minmax(calc(var(--amount) * 1px), max-content)
             repeat(2, minmax(0px, max-content));">
-  <b class="arrays-out">
-    <b class="arrays-at" style="--arrays-key: 0"><u><!-- --arrays-value and --arrays-ok --></u></b>
+  <b class="dcss-out">
+    <b class="dcss-at" style="--dcss-key: 0"><u><!-- --dcss-value and --dcss-ok --></u></b>
   </b>
-  <i style="--arrays-key: var(--moving-key); --arrays-n: var(--moving-value)">
-    <b class="arrays-at"><u><!-- reads the entry's current key --></u></b>
+  <i style="--dcss-key: var(--moving-key); --dcss-n: var(--moving-value)">
+    <b class="dcss-at"><u><!-- reads the entry's current key --></u></b>
   </i>
 </div>
 ```
 
-- Track 1 is `--arrays-min-key`, and each track after it the next whole key. The bounds are inclusive and can change; changing the minimum relabels every track.
-- Each track is `minmax(<length>, max-content)`, 1px for 1: `calc(number * 1px)` for numbers, `repeat(n, minmax(0px, max-content))` for gaps, `max(...)` inside the length for duplicate keys. Tracks left off the end are 0, and `--arrays-tracks: none` is an empty map. `fr`, percentages, `auto`, `subgrid` and auto-repeat don't work here.
-- Child entries work beside the list: a key reads the largest of its track and every child at that key. Children outside the bounds are left out. A key outside the bounds reads 0 with `--arrays-ok` 0; an empty key inside them reads 0 with `--arrays-ok` 1.
+- Track 1 is `--dcss-min-key`, and each track after it the next whole key. The bounds are inclusive and can change; changing the minimum relabels every track.
+- Each track is `minmax(<length>, max-content)`, 1px for 1: `calc(number * 1px)` for numbers, `repeat(n, minmax(0px, max-content))` for gaps, `max(...)` inside the length for duplicate keys. Tracks left off the end are 0, and `--dcss-tracks: none` is an empty map. `fr`, percentages, `auto`, `subgrid` and auto-repeat don't work here.
+- Child entries work beside the list: a key reads the largest of its track and every child at that key. Children outside the bounds are left out. A key outside the bounds reads 0 with `--dcss-ok` 0; an empty key inside them reads 0 with `--dcss-ok` 1.
 - A packed map is at least `max-content` wide, so duplicates stay exact under a narrow `width`: clip it with a wrapper.
 - A track has no element, so an entry that needs content inside it, or a key that changes, stays an `<i>`.
 
@@ -1199,56 +1199,56 @@ A formula is nested boxes: layout works out each box's size from its children's,
 
 | Node | Markup | Its value |
 |---|---|---|
-| a leaf | `<i style="--arrays-n: 12"></i>` | 12: that many px wide (in a `.arrays-stack` or a `.arrays-tallest`, that many px tall) |
-| a computation as a leaf | an `.arrays-array`, `.arrays-map`, `.arrays-bins.arrays-max`, `.arrays-sort` or `.arrays-slide` among a node's children | its width: an array's total, a map's largest `--arrays-n` at each key summed, the largest in each bin summed, a sort's count of entries, each column's window maximum summed |
-| `.arrays-sum` | children side by side | the sum of their widths |
-| `.arrays-largest` | children in one column | the largest width |
-| `.arrays-scale` | one child; `--arrays-k` an `fr` value of at most `1fr`, `--arrays-more` an `fr` value | (k + more) x the child: `--arrays-k: 0.5fr` halves, `--arrays-more: 1fr` doubles |
-| `.arrays-cap` | a `<b>` holding E; `--arrays-c` a number (px) | min(E, c), as a width |
-| `.arrays-least` | E1, then a `<b>` holding E2 and, if wanted, a `.arrays-rest` | as tall as min(E1, E2); a reader in its `.arrays-rest` reads max(0, E1 - E2) |
-| `.arrays-times` | E (a width node or a leaf); `--arrays-f` a number more than 0 | f x E, as a height: into a `.arrays-stack` or `.arrays-tallest` |
-| `.arrays-stack` | `.arrays-least` nodes, other heights, height leaves | the sum of their heights |
-| `.arrays-tallest` | the same | the largest height |
-| a reader | `<b class="arrays-at"><u></u></b>` as a child of any node | what is inside gets `--arrays-value`, the node's value, and `--arrays-ok` |
-| a stage | a reader whose child has `style="--arrays-k1: var(--arrays-value)"` (`--arrays-k1` to `--arrays-k16`) | keeps the reader's value as `--arrays-k1` for everything inside it |
-| `.arrays-calc` | `<b class="arrays-calc" style="width: calc(... anchor-size(--a width) ...)"><u><u></u></u></b>`, after the results it names | its width (any `calc()` of named results: x, /, min, max); the inner `<u>` gets `--arrays-value`; name it for the next |
-| `.arrays-collapse` | formula children, `<i style="--arrays-n: x">` (signed px) or `--arrays-p: p` (p% of the width it sits in), `<b class="arrays-scope">` boxes, and a reader | max(positives) + min(negatives) of its margins, a height |
-| `.arrays-minus` | `<div class="arrays-minus">A<b>B</b></div>` | max(0, A - B), a width |
-| `.arrays-turn` | `<b class="arrays-turn"><b><b>H</b></b></b>` in a width node, `--arrays-tick` on a box around it changed whenever an input under it changes | the height H, as a width |
+| a leaf | `<i style="--dcss-n: 12"></i>` | 12: that many px wide (in a `.dcss-stack` or a `.dcss-tallest`, that many px tall) |
+| a computation as a leaf | an `.dcss-array`, `.dcss-map`, `.dcss-bins.dcss-bin-max`, `.dcss-sort` or `.dcss-slide` among a node's children | its width: an array's total, a map's largest `--dcss-n` at each key summed, the largest in each bin summed, a sort's count of entries, each column's window maximum summed |
+| `.dcss-width-sum` | children side by side | the sum of their widths |
+| `.dcss-largest` | children in one column | the largest width |
+| `.dcss-scale` | one child; `--dcss-k` an `fr` value of at most `1fr`, `--dcss-more` an `fr` value | (k + more) x the child: `--dcss-k: 0.5fr` halves, `--dcss-more: 1fr` doubles |
+| `.dcss-cap` | a `<b>` holding E; `--dcss-c` a number (px) | min(E, c), as a width |
+| `.dcss-width-min` | E1, then a `<b>` holding E2 and, if wanted, a `.dcss-rest` | as tall as min(E1, E2); a reader in its `.dcss-rest` reads max(0, E1 - E2) |
+| `.dcss-times` | E (a width node or a leaf); `--dcss-f` a number more than 0 | f x E, as a height: into a `.dcss-stack` or `.dcss-tallest` |
+| `.dcss-stack` | `.dcss-width-min` nodes, other heights, height leaves | the sum of their heights |
+| `.dcss-tallest` | the same | the largest height |
+| a reader | `<b class="dcss-at"><u></u></b>` as a child of any node | what is inside gets `--dcss-value`, the node's value, and `--dcss-ok` |
+| a stage | a reader whose child has `style="--dcss-k1: var(--dcss-value)"` (`--dcss-k1` to `--dcss-k16`) | keeps the reader's value as `--dcss-k1` for everything inside it |
+| `.dcss-calc` | `<b class="dcss-calc" style="width: calc(... anchor-size(--a width) ...)"><u><u></u></u></b>`, after the results it names | its width (any `calc()` of named results: x, /, min, max); the inner `<u>` gets `--dcss-value`; name it for the next |
+| `.dcss-collapse` | formula children, `<i style="--dcss-n: x">` (signed px) or `--dcss-p: p` (p% of the width it sits in), `<b class="dcss-scope">` boxes, and a reader | max(positives) + min(negatives) of its margins, a height |
+| `.dcss-minus` | `<div class="dcss-minus">A<b>B</b></div>` | max(0, A - B), a width |
+| `.dcss-turn` | `<b class="dcss-turn"><b><b>H</b></b></b>` in a width node, `--dcss-turn-tick` on a box around it changed whenever an input under it changes | the height H, as a width |
 
-- Widths add up through `.arrays-sum`, `.arrays-largest` and `.arrays-scale`. `.arrays-least` turns a minimum into a height, and heights add up through `.arrays-stack` and `.arrays-tallest`. A height becomes a width again through `.arrays-turn`, an `.arrays-hop-y` or a stage.
-- A formula can be an entry of an `.arrays-array`, a `.arrays-map` or a `.arrays-bins.arrays-max`, where it counts as its result. A reader can sit anywhere among a node's children, and a formula can sit inside any reader, using what it read as a leaf (`--arrays-n: var(--arrays-value)`).
-- Every number is 0 or more. On the width side, a negative `--arrays-n` makes every reader above it read `--arrays-ok: 0` and `--arrays-value: 0`. For signed numbers, add an offset B to every leaf: a sum of k leaves then reads its total plus k x B.
+- Widths add up through `.dcss-width-sum`, `.dcss-largest` and `.dcss-scale`. `.dcss-width-min` turns a minimum into a height, and heights add up through `.dcss-stack` and `.dcss-tallest`. A height becomes a width again through `.dcss-turn`, an `.dcss-hop-y` or a stage.
+- A formula can be an entry of an `.dcss-array`, a `.dcss-map` or a `.dcss-bins.dcss-bin-max`, where it counts as its result. A reader can sit anywhere among a node's children, and a formula can sit inside any reader, using what it read as a leaf (`--dcss-n: var(--dcss-value)`).
+- Every number is 0 or more. On the width side, a negative `--dcss-n` makes every reader above it read `--dcss-ok: 0` and `--dcss-value: 0`. For signed numbers, add an offset B to every leaf: a sum of k leaves then reads its total plus k x B.
 - A formula is exact while every number passed through `var()` fits in 6 significant digits: whole numbers and eighths under 10,000, and values passed through a stage under 1,000 in eighths.
-- `.arrays-scale`'s factors are written as `fr`s, since no CSS turns a computed number into one.
+- `.dcss-scale`'s factors are written as `fr`s, since no CSS turns a computed number into one.
 
 ### Text
 
-A number can be a CSS counter printed in a font whose glyphs draw nothing and are as wide as a table says. The text is then as wide as the numbers it prints, and a `<u>` over it reads that width back. The counters are the page's own, written with `counter-reset` and `counter-increment`; `--arrays-text` says what to print.
+A number can be a CSS counter printed in a font whose glyphs draw nothing and are as wide as a table says. The text is then as wide as the numbers it prints, and a `<u>` over it reads that width back. The counters are the page's own, written with `counter-reset` and `counter-increment`; `--dcss-text` says what to print.
 
 ```html
-<b class="arrays-text" style="counter-reset: a 12 b 40; --arrays-text: counter(a, arrays-tally) counter(b, arrays-tally)"><u><u></u></u></b>
+<b class="dcss-text" style="counter-reset: a 12 b 40; --dcss-text: counter(a, dcss-tally) counter(b, dcss-tally)"><u><u></u></u></b>
 ```
 
-| What | Markup | `--arrays-value` of the inner `<u>` |
+| What | Markup | `--dcss-value` of the inner `<u>` |
 |---|---|---|
 | a sum | counters on one line | the sum: 52 above |
 | a max | `'\a'` between counters: each line stands alone | the widest line: a max of sums |
-| f(k) by a table | `counter(a, arrays-table)` (k from 0 to 999 as the glyph U+E000 + k) in `.arrays-text.arrays-sq` (round(k^2 / 1000)), `.arrays-sqrt` (round(sqrt(1000 k))) or `style="--arrays-font: arrays-name"` | the sum of f over the line; past 999 `arrays-table` prints the tally, so f = k there |
-| a table's totals | `<tr style="counter-increment: a 12 b 7">` in a `<table style="counter-reset: a b">`, and texts printing `counter(a, arrays-tally)` | in a row, the total so far; after the rows (a `<tfoot>`), the total |
-| a text in a grid | `<i class="arrays-text" style="...">` as an entry of an `.arrays-array`, `.arrays-bins.arrays-max` or `.arrays-map`, or a leaf of a formula | (no reader of its own) its track or leaf is as wide as its text |
-| two numbers by a table: min, max, a x b, \|a - b\|, a > b | a pair counter `counter-reset: p calc(64 * a + b + 65)` (a, b 0 to 31) printed by `counter(p, arrays-min)`, `arrays-max`, `arrays-product`, `arrays-difference` or `arrays-greater` | g(a, b); pairs on one line add up, any mix of tables |
-| a x b | `counter(a, arrays-unary)` (a glyphs of 1px) with `--arrays-each: b` (each glyph spaced b - 1 more) | a x b (b may be a fraction; the product fits six digits) |
-| floor(a / b) | `.arrays-text.arrays-divide`, `counter(a, arrays-tally4) '\9'` with `--arrays-tab: b` | floor(a / b) |
-| \|a - b\|, its sign, max(0, a - b) | a counter d = a - b (`counter-reset: d a; counter-increment: d calc(-1 * b)`) printed by `arrays-abs`, `arrays-sign` or `arrays-relu` | \|d\|, \|d\| + [d < 0], max(0, d) |
-| two numbers from one read | `.arrays-text.arrays-two`, `counter(a, arrays-kilo) counter(b, arrays-tally)` (b 0 to 999) | `--arrays-high` a and `--arrays-low` b |
-| a grid result looked up | `<u style="counter-reset: g round(var(--arrays-value))">` inside a grid's reader, a `.arrays-text` inside it printing `counter(g, arrays-table)` | f of the grid's result |
+| f(k) by a table | `counter(a, dcss-table)` (k from 0 to 999 as the glyph U+E000 + k) in `.dcss-text.dcss-sq` (round(k^2 / 1000)), `.dcss-sqrt` (round(sqrt(1000 k))) or `style="--dcss-font: dcss-name"` | the sum of f over the line; past 999 `dcss-table` prints the tally, so f = k there |
+| a table's totals | `<tr style="counter-increment: a 12 b 7">` in a `<table style="counter-reset: a b">`, and texts printing `counter(a, dcss-tally)` | in a row, the total so far; after the rows (a `<tfoot>`), the total |
+| a text in a grid | `<i class="dcss-text" style="...">` as an entry of an `.dcss-array`, `.dcss-bins.dcss-bin-max` or `.dcss-map`, or a leaf of a formula | (no reader of its own) its track or leaf is as wide as its text |
+| two numbers by a table: min, max, a x b, \|a - b\|, a > b | a pair counter `counter-reset: p calc(64 * a + b + 65)` (a, b 0 to 31) printed by `counter(p, dcss-pair-min)`, `dcss-pair-max`, `dcss-pair-product`, `dcss-pair-difference` or `dcss-pair-greater` | g(a, b); pairs on one line add up, any mix of tables |
+| a x b | `counter(a, dcss-unary)` (a glyphs of 1px) with `--dcss-each: b` (each glyph spaced b - 1 more) | a x b (b may be a fraction; the product fits six digits) |
+| floor(a / b) | `.dcss-text.dcss-divide`, `counter(a, dcss-tally4) '\9'` with `--dcss-tab: b` | floor(a / b) |
+| \|a - b\|, its sign, max(0, a - b) | a counter d = a - b (`counter-reset: d a; counter-increment: d calc(-1 * b)`) printed by `dcss-abs`, `dcss-sign` or `dcss-relu` | \|d\|, \|d\| + [d < 0], max(0, d) |
+| two numbers from one read | `.dcss-text.dcss-two`, `counter(a, dcss-kilo) counter(b, dcss-tally)` (b 0 to 999) | `--dcss-high` a and `--dcss-low` b |
+| a grid result looked up | `<u style="counter-reset: g round(var(--dcss-value))">` inside a grid's reader, a `.dcss-text` inside it printing `counter(g, dcss-table)` | f of the grid's result |
 
-- `arrays-tally` prints any whole number as glyphs of 0, 1, 10, 100, 1,000, 10,000 and 30,000 px, so a number up to 999,999 takes at most 38 glyphs.
+- `dcss-tally` prints any whole number as glyphs of 0, 1, 10, 100, 1,000, 10,000 and 30,000 px, so a number up to 999,999 takes at most 38 glyphs.
 - Use whole numbers, 0 or more: counters are integers, so `round()` a computed one. The result fits six digits through `var()` and 33,554,428 px of layout; a table's keys run from 0 to 999.
 - A text keeps its own type: your `letter-spacing` or `text-transform` doesn't reach it.
-- `--arrays-text` can't be registered with `inherits: false`, and a `"` inside `style="..."` ends the attribute, so write `'\a'`.
-- `.arrays-rom` reads f(k) at style time from a variable font, with no text: `<i class="arrays-rom arrays-sqrt" style="--arrays-k: 300"><u></u></i>` gives the `<u>` `--arrays-value: 548`. `.arrays-rom2` reads the five pair tables the same way. Spread many `.arrays-rom2` reads over several pages, or use the pair counters of `.arrays-text` instead: each distinct read is a font variation of its own, and Safari loads a page of many slowly ([Performance](#performance)).
+- `--dcss-text` can't be registered with `inherits: false`, and a `"` inside `style="..."` ends the attribute, so write `'\a'`.
+- `.dcss-rom` reads f(k) at style time from a variable font, with no text: `<i class="dcss-rom dcss-sqrt" style="--dcss-k: 300"><u></u></i>` gives the `<u>` `--dcss-value: 548`. `.dcss-rom2` reads the five pair tables the same way. Spread many `.dcss-rom2` reads over several pages, or use the pair counters of `.dcss-text` instead: each distinct read is a font variation of its own, and Safari loads a page of many slowly ([Performance](#performance)).
 
 ### Loops and sheets
 
@@ -1291,13 +1291,13 @@ A sheet is a `<table class="sheet">` whose cells are stored numbers and whose fo
 ### Limits
 
 - Entries are 0 or more, since a track can't be negative: add an offset for signed numbers. An array's sum stays under layout's range, about 33 million px.
-- Compute from `--arrays-value`, never from `100cqw` directly: Chrome's `cqw` is a hair under a whole number.
-- Ranks go to 32, and `.arrays-bins.arrays-max` has 32 bins. A range that mixes a positive end with a negative one needs the end known: `.arrays-count`, or `--arrays-length`. A cyclic array's ranges go forwards only.
-- An `.arrays-xy` array has as many rows as entries; a reader reads one row, and `--arrays-r` takes no range.
+- Compute from `--dcss-value`, never from `100cqw` directly: Chrome's `cqw` is a hair under a whole number.
+- Ranks go to 32, and `.dcss-bins.dcss-bin-max` has 32 bins. A range that mixes a positive end with a negative one needs the end known: `.dcss-track-count`, or `--dcss-array-length`. A cyclic array's ranges go forwards only.
+- An `.dcss-xy` array has as many rows as entries; a reader reads one row, and `--dcss-r` takes no range.
 - A reader is placed against its grid, so nothing between them can have a transform, filter, perspective or containment of its own.
 - Bins in use are counted up to the box's width in px. For the smallest number in a bin, take the max of a bound minus the number.
 - A reduction's value is kept to 1/64. In Chrome, a list wider than 262,144 px (2^18) reads without its 64ths, and past 2^24 px without whole pixels. Up to 63 skipped items are counted.
-- In Firefox, put `.arrays-calc` boxes and the results they name in a container as wide as its content (`width: max-content`): Firefox keeps an `anchor-size()` until the box is laid out again ([QUIRKS.md](QUIRKS.md) Q3).
+- In Firefox, put `.dcss-calc` boxes and the results they name in a container as wide as its content (`width: max-content`): Firefox keeps an `anchor-size()` until the box is laid out again ([QUIRKS.md](QUIRKS.md) Q3).
 
 ## Browsers
 
@@ -1351,9 +1351,9 @@ The core is 308 KB, 76 KB gzipped. Parts, gzipped, the median part of each famil
 - The typed aggregates compute 20 slots whatever the length. With four values, an fsum update takes 3 ms in Chrome and 6 in WebKit at `data-dcss-capacity="4"`, against 39 and 76 at 20 slots.
 - SI formatting is too slow for 30 outputs changing every frame.
 - Sorting separate results with anchors (Recipes): 32 bars take 1.6 ms an update in Chrome and 2 in WebKit.
-- Put changing numbers on the entries: 1,000 entries each animating its own `--arrays-n` take 13.6 ms a frame in Chrome and 16 in WebKit, against 32.0 and 54 with one changing number inherited from the grid.
-- On an `.arrays-plain` array (whole indices from 1 to the length, nothing negative or fractional), readers skip the index math: a window max of 298 readers drops from 8.1 to 4.9 ms in Chrome and from 14 to 8 in WebKit.
-- `.arrays-rom2` reads load slowly in Safari: all 5,120 pair-table entries on one page took 53.6 s to load in WebKit 26.4, against 0.5 s in Chrome 155; as five pages of 1,324 reads, each loaded in under 7 s (2026-10-22).
+- Put changing numbers on the entries: 1,000 entries each animating its own `--dcss-n` take 13.6 ms a frame in Chrome and 16 in WebKit, against 32.0 and 54 with one changing number inherited from the grid.
+- On an `.dcss-plain` array (whole indices from 1 to the length, nothing negative or fractional), readers skip the index math: a window max of 298 readers drops from 8.1 to 4.9 ms in Chrome and from 14 to 8 in WebKit.
+- `.dcss-rom2` reads load slowly in Safari: all 5,120 pair-table entries on one page took 53.6 s to load in WebKit 26.4, against 0.5 s in Chrome 155; as five pages of 1,324 reads, each loaded in under 7 s (2026-10-22).
 - A treemap's line drifts with its length: WebKit is 0.29 px off at 1,000 siblings.
 
 Each grid primitive's cost, Chrome then WebKit: a frame's time with 300 readers less the same page without them, divided by 300, the numbers changing every frame, in µs unless written otherwise.
@@ -1361,10 +1361,10 @@ Each grid primitive's cost, Chrome then WebKit: a frame's time with 300 readers 
 | Primitive | Cost |
 |---|---|
 | Entry i of an array of child entries | Chrome 6.3-6.5 µs a read, WebKit 9.1-9.6 |
-| Counting the entries: negative indices and the end's check without writing `--arrays-length` | Chrome 8.2 µs a read, WebKit 29.3 |
+| Counting the entries: negative indices and the end's check without writing `--dcss-array-length` | Chrome 8.2 µs a read, WebKit 29.3 |
 | Track i of a packed array, any length | Chrome 5.5-5.8, WebKit 9.3-10.0 |
 | The i-th slot named x: several arrays in one grid | Chrome 5.8-6.5, WebKit 6.2-10.6 |
-| Two numbers an entry: --arrays-value and --arrays-value-y of entry i, or column i and row r | Chrome 7.9 µs a read (two numbers), WebKit 9.9 |
+| Two numbers an entry: --dcss-value and --dcss-value-y of entry i, or column i and row r | Chrome 7.9 µs a read (two numbers), WebKit 9.9 |
 | Entry i of a cyclic array, round either way | Chrome 6.1-6.4, WebKit 11.1-12.2 (on these fixed-size tracks) |
 | Rank within a bin: 1 for the first child put in a bin, 2 for the next, to 32 | Chrome 5.6-6.3, WebKit 9.8-10.1 |
 | The largest number in a bin | Chrome 16.1 µs a child plus its reader, WebKit 25.9 |
@@ -1377,7 +1377,7 @@ Each grid primitive's cost, Chrome then WebKit: a frame's time with 300 readers 
 | 2D packing around walls: each child of w x h tiles where first fit puts it, row by row from the top, around the map's named areas and the children before it; whether it fits in the map | Chrome 34.1 an item (25 maps of 12, switching), WebKit 107.3 (one map of 100: 5.9 ms a frame) |
 | The push: boxes in order, each at the larger of its target and the end of the box before (1D non-penetration in one layout) | Chrome 26.8 a box with its where, WebKit 50.2 |
 | The push from the end: each box at the smaller of its target and the start of the box after less its width, none past the wall | Chrome 24.2, WebKit 44.1 |
-| Grouped sums: each child reads the sum of the earlier children in its group; an item after a group reads its total; with --arrays-n 1, counts | Chrome 20.1 an item (19.3 with values to 1,000), WebKit 39.9 (178 with values to 1,000) |
+| Grouped sums: each child reads the sum of the earlier children in its group; an item after a group reads its total; with --dcss-n 1, counts | Chrome 20.1 an item (19.3 with values to 1,000), WebKit 39.9 (178 with values to 1,000) |
 | The most intervals at one point; each interval's lane (interval colouring, first fit by start) | Chrome 5.3 an item (5.5 at 1,800), WebKit 13.3 (14.0 at 1,800) |
 | Next-fit lines: how many lines a row of widths takes, each child's line and its place on it | Chrome 3.5 an item (3.7 at 1,800), WebKit 9.1 (9.4 at 1,800) |
 | Search in a sort: how many keys are below a key, up to it, equal to it, and whether any is | Chrome 11.2 an element, WebKit 17.0 |
@@ -1387,13 +1387,13 @@ Each grid primitive's cost, Chrome then WebKit: a frame's time with 300 readers 
 | A second and a third pass in one grid: rows sized from sums of columns, a column from sums of rows | Chrome 7.6 µs a hop at 256, WebKit 23 |
 | A sum of whole numbers, a max of sums, f(k) by a lookup table, without a grid | Chrome 1.13 ms for 256 numbers summed and looked up, WebKit 2.25 |
 | Prefix sums: each entry the sum so far, and the sum before it | Chrome 2.5 ms for 300 entries, every sum read (150 readers, placed by grid-area; vs-calc prefix), WebKit 5.0 |
-| Signed extremes: max(positives) + min(negatives) of any number of signed numbers; laid-out widths times factors in the same collapse, and through scopes two laid-out widths in one (a difference p1 W1 - p2 W2); as a child of a `.arrays-stack` or `.arrays-tallest` it counts there as its value, with no reader | Chrome 1.43 ms a chain of 256, WebKit 2.50 |
-| A height as a width, live: what a .arrays-least, a collapse or a stack is, laid on as a width | Chrome 14.6 a turn, WebKit 40.7 |
+| Signed extremes: max(positives) + min(negatives) of any number of signed numbers; laid-out widths times factors in the same collapse, and through scopes two laid-out widths in one (a difference p1 W1 - p2 W2); as a child of a `.dcss-stack` or `.dcss-tallest` it counts there as its value, with no reader | Chrome 1.43 ms a chain of 256, WebKit 2.50 |
+| A height as a width, live: what a .dcss-width-min, a collapse or a stack is, laid on as a width | Chrome 14.6 a turn, WebKit 40.7 |
 | A factor in flow: f x a laid-out size, counted by whatever contains it | Chrome a dot product of 256: 2.57, WebKit 3.62 |
 | Baselines: a row of max(a) + max(d), and each item handed max(a) - a_j | Chrome 1.56 a row of 256, WebKit 5.00 |
 | The best contiguous split into K parts: the least possible largest part | Chrome 1.10 for 256 in 8 parts, WebKit 4.0 |
 | Flex shares: weights, shrink, floors and caps in one layout | Chrome 1.91 for 256, WebKit 4.38 |
-| Sliding-window maxima: the largest of the --arrays-span entries ending at entry j | Chrome 5.2, WebKit 6.4 |
+| Sliding-window maxima: the largest of the --dcss-span entries ending at entry j | Chrome 5.2, WebKit 6.4 |
 | Fair shares with floors: each child gets max(floor, weight x level), the level what fills the width | Chrome 10.5 an entry, WebKit 13.4 |
 | d3's axis and d3-array's ticks, tickIncrement, tickStep and nice: a range's ticks as d3 picks them, drawn and labelled as d3.axisBottom draws them | Chrome 0.42 ms a .dcss-ticks of 16, 1.17 a drawn axis, 0.84 a .dcss-nice, WebKit 0.74, 1.62 and 1.51 ms |
 
@@ -1401,7 +1401,7 @@ Formulas, an update forced:
 
 | Cost | Chrome | WebKit |
 |---|---|---|
-| a chain of 250 nested `.arrays-sum` / `.arrays-largest` nodes | 0.37 ms | 1.1 ms |
+| a chain of 250 nested `.dcss-width-sum` / `.dcss-largest` nodes | 0.37 ms | 1.1 ms |
 | a stage, over 1 / 8 / 16 small arrays | 0.04 / 0.51 / 1.88 ms | 0.10 / 1.40 / 9.20 ms |
 | 32 formulas needing one changing 100-entry array's total: one reader shared, or a copy in each | 0.90 / 14.8 ms | 2.0 / 28.0 ms |
 | a page without formulas, 1,000 array readers | unchanged | unchanged |
@@ -1410,7 +1410,7 @@ Share a result through a reader rather than copy a computation into each formula
 
 ## Build
 
-`dcss-array.css`, the families, `families.json` and `dcss-array-all.css` are written by `build.mjs`, and the `parts/` folder by `parts.mjs`, both in `libraries/arrays/` of the [noscript.ing repo](https://github.com/noscripting/noscript.ing).
+`dcss-array.css`, the families, `families.json` and `dcss-array-all.css` are written by `build.mjs`, and the `parts/` folder by `parts.mjs`, both in `libraries/dcss/` of the [noscript.ing repo](https://github.com/noscripting/noscript.ing).
 
 ## License
 

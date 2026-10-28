@@ -11,7 +11,7 @@ Measured 2026-10-22, headless: Chrome 155.0.8059.86, WebKit 26.4, Firefox 158.0.
 - Engines: Chrome PASS · WebKit FAIL: 100 px tall for 20 after its 100 px block shrinks to 10 px · Firefox PASS
 - Repro: `quirks/multicol-shrink.html`
 - Bug: none found
-- Workaround: `.arrays-columns` sits in an `.arrays-alternate` as two copies, shown in turn by `--arrays-parity` at each change, so every layout starts from a box that was `display: none`.
+- Workaround: `.dcss-columns` sits in an `.dcss-alternate` as two copies, shown in turn by `--dcss-parity` at each change, so every layout starts from a box that was `display: none`.
 - Affects: A45
 
 ### Q2 WebKit: a shrink-to-fit box takes the width a vertical aspect-ratio box had in its last layout
@@ -21,7 +21,7 @@ Measured 2026-10-22, headless: Chrome 155.0.8059.86, WebKit 26.4, Firefox 158.0.
 - Engines: Chrome PASS · WebKit FAIL: 40 px wide for 70 after the box's content grows from 40 to 70 px · Firefox PASS
 - Repro: `quirks/orthogonal-aspect-ratio.html`
 - Bug: none found
-- Workaround: `.arrays-turn` puts the vertical box in a `max-content` grid column and changes its `max-height` by `--arrays-tick` whenever an input under it changes.
+- Workaround: `.dcss-turn` puts the vertical box in a `max-content` grid column and changes its `max-height` by `--dcss-turn-tick` whenever an input under it changes.
 - Affects: A49
 
 ### Q3 Firefox: `anchor-size()` keeps the size its anchor had when the box was laid out
@@ -31,7 +31,7 @@ Measured 2026-10-22, headless: Chrome 155.0.8059.86, WebKit 26.4, Firefox 158.0.
 - Engines: Chrome PASS · WebKit PASS · Firefox FAIL: 20 px wide after its anchor grew from 20 to 60 px
 - Repro: `quirks/anchor-size-follows.html`
 - Bug: none found
-- Workaround: the `.arrays-calc` boxes and the results they name sit in a container as wide as its content (`width: max-content`), so a changed result resizes the container and Firefox lays the boxes out again (check 69). Comparisons of `anchor-size()` in a box's `top`, and `anchor()` edges, followed their anchors on every frame of `probes/anchor-sort-check.mjs`, where an `anchor-size()` width was a frame stale once in 40. No way in the sheet alone (`probes/anchor-size-ways.mjs`, 2026-10-23): `position-anchor` with `anchor-size(width)` and `position-visibility` stay at 20 px; `anchor()` insets follow (60), but a product of two anchors' insets stays stale (60 for 180).
+- Workaround: the `.dcss-calc` boxes and the results they name sit in a container as wide as its content (`width: max-content`), so a changed result resizes the container and Firefox lays the boxes out again (check 69). Comparisons of `anchor-size()` in a box's `top`, and `anchor()` edges, followed their anchors on every frame of `probes/anchor-sort-check.mjs`, where an `anchor-size()` width was a frame stale once in 40. No way in the sheet alone (`probes/anchor-size-ways.mjs`, 2026-10-23): `position-anchor` with `anchor-size(width)` and `position-visibility` stay at 20 px; `anchor()` insets follow (60), but a product of two anchors' insets stays stale (60 for 180).
 - Affects: A41
 
 ### Q4 Firefox: a tab skips the stop 0.5ch away in a font with no 0 glyph
@@ -41,7 +41,7 @@ Measured 2026-10-22, headless: Chrome 155.0.8059.86, WebKit 26.4, Firefox 158.0.
 - Engines: Chrome PASS · WebKit PASS · Firefox FAIL: the box after the tab at 32 px for 16, 1ch being 8 px
 - Repro: `quirks/tab-no-zero.html`
 - Bug: none found
-- Workaround: the sheet's text fonts carry a 1 px `0` glyph, so 1ch is 1 px and every tab of `.arrays-divide` lands on its stop.
+- Workaround: the sheet's text fonts carry a 1 px `0` glyph, so 1ch is 1 px and every tab of `.dcss-divide` lands on its stop.
 - Affects: A44
 
 ### Q5 Firefox: a size container reads `100cqh` as the viewport's height when its grid column is sized after the rows
@@ -51,7 +51,7 @@ Measured 2026-10-22, headless: Chrome 155.0.8059.86, WebKit 26.4, Firefox 158.0.
 - Engines: Chrome PASS · WebKit PASS · Firefox FAIL: 200 px, the viewport's height, for a 40 px container
 - Repro: `quirks/cq-after-regrid.html`
 - Bug: none found
-- Workaround: a collapse over a hop's column goes in an `.arrays-hop`'s `<u>` (check 65): Firefox lays a collapse that is itself a grid item in that column out with the column from the frame before, but one inside a hop on time. The row that hop makes is still a frame late in Firefox (the rows sized again after the second column pass), so a collapse read by its row stays a Firefox failure. On `.arrays-array`, `contain: none`, `width: max-content` and `height: max-content`, alone or together, leave check 65 failing in Firefox (2026-10-23).
+- Workaround: a collapse over a hop's column goes in an `.dcss-hop`'s `<u>` (check 65): Firefox lays a collapse that is itself a grid item in that column out with the column from the frame before, but one inside a hop on time. The row that hop makes is still a frame late in Firefox (the rows sized again after the second column pass), so a collapse read by its row stays a Firefox failure. On `.dcss-array`, `contain: none`, `width: max-content` and `height: max-content`, alone or together, leave check 65 failing in Firefox (2026-10-23).
 - Affects: A47
 
 ### Q6 Chrome, WebKit: a percentage of a box millions of px wide is off by a fraction of a px

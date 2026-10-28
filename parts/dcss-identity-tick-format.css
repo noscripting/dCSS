@@ -5,6 +5,6 @@
 @property --dcss-err { syntax: '<integer>'; inherits: true; initial-value: 0; }
 /* DCSS ticks and axes: d3-array's ticks, tickIncrement, tickStep and nice in calc(), d3-axis's drawing (ticks.mjs). */
 
-@property --arrays-identity-label-ready{syntax:'<integer>';inherits:false;initial-value:0}
+@property --dcss-identity-label-ready{syntax:'<integer>';inherits:false;initial-value:0}
 :where(.dcss-identity-tick-format){--value:initial}
-.dcss-format-fixed.dcss-identity-tick-format{--precision:var(--dcss-tick-precision);--arrays-identity-label-ready:calc(var(--dcss-identity-ticks-ready,0) * (var(--value) * 0 + 1));--dcss-ready:var(--arrays-identity-label-ready);--dcss-err:max(calc(1 - var(--arrays-identity-label-ready)),var(--dcss-identity-ticks-error,1),var(--arrays-fmt-big));--arrays-fmt-on:calc(var(--arrays-identity-label-ready) * (1 - min(1,var(--dcss-identity-ticks-error,1))))}
+.dcss-format-fixed.dcss-identity-tick-format{--precision:var(--dcss-tick-precision);--dcss-identity-label-ready:calc(var(--dcss-identity-ticks-ready,0) * (var(--value) * 0 + 1));--dcss-ready:var(--dcss-identity-label-ready);--dcss-err:max(calc(1 - var(--dcss-identity-label-ready)),var(--dcss-identity-ticks-error,1),var(--dcss-fmt-big));--dcss-fmt-on:calc(var(--dcss-identity-label-ready) * (1 - min(1,var(--dcss-identity-ticks-error,1))))}

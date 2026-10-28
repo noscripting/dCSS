@@ -21,11 +21,11 @@ for selection or computation. Packaging does not expand any function's bounds.
 | CSS Grid Layout Module Level 2 | Candidate Recommendation Draft, 2023-10-30 | placement (§8.5) and track sizing (§12): the arrays, bins, sorts, maps, packing and hops |
 | CSS Containment Module Level 3 | Editor's Draft, 2025-12-22 | container query units: a reader takes a track's size as `100cqw` and `100cqh` |
 | CSS Values and Units Module Level 4 | Editor's Draft, 2026-08-20 | `calc()`, `round()`, `mod()`, `sign()` and typed division in the readers |
-| CSS Anchor Positioning Module Level 1 | Working Draft, 2026-09-06 | `.arrays-calc` and the where readers (`anchor()`, `anchor-size()`) |
-| CSS Multi-column Layout Module Level 1 | Editor's Draft, 2026-08-04 | `.arrays-columns`: the least largest part of a contiguous split (§7.1) |
-| CSS Box Sizing Module Level 4 | Editor's Draft, 2026-10-10 | `.arrays-turn`: a height carried into a width by `aspect-ratio` (§4.2) |
-| CSS Flexible Box Layout Module Level 1 | Editor's Draft, 2026-05-08 | `.arrays-flex`: shares with weights, floors and caps (§9.7) |
-| CSS Counter Styles Level 3 | Editor's Draft, 2026-10-08 | `arrays-tally`, `arrays-table` and the text operators |
+| CSS Anchor Positioning Module Level 1 | Working Draft, 2026-09-06 | `.dcss-calc` and the where readers (`anchor()`, `anchor-size()`) |
+| CSS Multi-column Layout Module Level 1 | Editor's Draft, 2026-08-04 | `.dcss-columns`: the least largest part of a contiguous split (§7.1) |
+| CSS Box Sizing Module Level 4 | Editor's Draft, 2026-10-10 | `.dcss-turn`: a height carried into a width by `aspect-ratio` (§4.2) |
+| CSS Flexible Box Layout Module Level 1 | Editor's Draft, 2026-05-08 | `.dcss-flex`: shares with weights, floors and caps (§9.7) |
+| CSS Counter Styles Level 3 | Editor's Draft, 2026-10-08 | `dcss-tally`, `dcss-table` and the text operators |
 | CSS Fonts Module Level 4 | Editor's Draft, 2026-10-16 | the lookup fonts and the ROM fonts' variation axes |
 | dcss-store.css | store 4f37d4eb | the stored cells and readers the loops and sheets run on |
 
@@ -33,131 +33,131 @@ for selection or computation. Packaging does not expand any function's bounds.
 
 ### Arrays
 
-- **A1** In an `.arrays-array` of `<i>` entries with `--arrays-n`, a reader `.arrays-at` with whole `--arrays-i`, in the
-  port `<b class="arrays-out">` or inside an entry, MUST give what is inside it `--arrays-value` equal to entry i, and
+- **A1** In an `.dcss-array` of `<i>` entries with `--dcss-n`, a reader `.dcss-at` with whole `--dcss-i`, in the
+  port `<b class="dcss-out">` or inside an entry, MUST give what is inside it `--dcss-value` equal to entry i, and
   entry i from the end for -i, in the frame the entries change, exact for whole numbers.
-- **A2** A reader with `--arrays-i` and `--arrays-j` MUST read the sum of entries i to j in either order, -1 meaning the
+- **A2** A reader with `--dcss-i` and `--dcss-j` MUST read the sum of entries i to j in either order, -1 meaning the
   last entry and i = j one entry, in the same frame, exact.
-- **A3** `.arrays-array.arrays-packed` with `--arrays-tracks` MUST read track i, track -i counted back from
-  `--arrays-length`, and ranges; without `--arrays-length`, -1 MUST be the last track.
-- **A4** `--arrays-of: --x` on a reader or its array MUST count `--arrays-i` from the slot named `--x` and `--arrays-j` on
-  from there over every slot; an array inside a reader MUST NOT inherit its outer `--arrays-of` unless it names its own.
-- **A5** `.arrays-cycle` with `--arrays-tracks` MUST read entry i round the cycle, forwards past the last entry and
+- **A3** `.dcss-array.dcss-packed` with `--dcss-tracks` MUST read track i, track -i counted back from
+  `--dcss-array-length`, and ranges; without `--dcss-array-length`, -1 MUST be the last track.
+- **A4** `--dcss-of: --x` on a reader or its array MUST count `--dcss-i` from the slot named `--x` and `--dcss-j` on
+  from there over every slot; an array inside a reader MUST NOT inherit its outer `--dcss-of` unless it names its own.
+- **A5** `.dcss-cycle` with `--dcss-tracks` MUST read entry i round the cycle, forwards past the last entry and
   backwards from -1, and a range across the end.
-- **A6** `.arrays-array.arrays-xy` of entries with `--arrays-n` and `--arrays-m`, or packed with `--arrays-tracks` and
-  `--arrays-tracks-y`, MUST give a reader `--arrays-value` and `--arrays-value-y` of entry i, `--arrays-r` picking another
+- **A6** `.dcss-array.dcss-xy` of entries with `--dcss-n` and `--dcss-m`, or packed with `--dcss-tracks` and
+  `--dcss-tracks-y`, MUST give a reader `--dcss-value` and `--dcss-value-y` of entry i, `--dcss-r` picking another
   row, negative indices and a range of columns included, in the same frame.
-- **A7** `.arrays-count` on an array MUST work the number of entries out from its last entry's place, so entries -1 to
-  -40, the total and entry 35 of 40 entries read exact with no `--arrays-length`.
+- **A7** `.dcss-track-count` on an array MUST work the number of entries out from its last entry's place, so entries -1 to
+  -40, the total and entry 35 of 40 entries read exact with no `--dcss-array-length`.
 - **A8** Index 0, an index past the end or the start, a fractional index at either end of a range, and a range past the
-  end MUST read `--arrays-value` 0 and `--arrays-ok` 0, empty counted arrays included; a valid read MUST give
-  `--arrays-ok` 1.
-- **A9** In an `.arrays-xy` read, an invalid column or row MUST zero `--arrays-value`, `--arrays-value-y` and `--arrays-ok`
+  end MUST read `--dcss-value` 0 and `--dcss-ok` 0, empty counted arrays included; a valid read MUST give
+  `--dcss-ok` 1.
+- **A9** In an `.dcss-xy` read, an invalid column or row MUST zero `--dcss-value`, `--dcss-value-y` and `--dcss-ok`
   together, for entries, packed slots and empty arrays.
-- **A10** An array without `.arrays-count` MUST read negative indices and ranges to -1 from `--arrays-length`; with no
-  `--arrays-length` they MUST read 0 with `--arrays-ok` 0 while positive indices read their entries.
-- **A11** A `<b class="arrays-window">` with `--arrays-i` and `--arrays-span` in an array's port MUST number the entries
+- **A10** An array without `.dcss-track-count` MUST read negative indices and ranges to -1 from `--dcss-array-length`; with no
+  `--dcss-array-length` they MUST read 0 with `--dcss-ok` 0 while positive indices read their entries.
+- **A11** A `<b class="dcss-window">` with `--dcss-i` and `--dcss-span` in an array's port MUST number the entries
   for the readers inside it from its start: 1 its first, -1 its last, ranges, with the window moving every frame.
-- **A12** An array inside a keyed map's reader, an `.arrays-xy` reader or a tile's where MUST read its own entries, keep
+- **A12** An array inside a keyed map's reader, an `.dcss-xy` reader or a tile's where MUST read its own entries, keep
   its ranges, fraction checks and xy rows, and leave the outer read unchanged.
 - **A13** The push, a read from the end and a place in a sort MUST give the same numbers inside
   `writing-mode: vertical-rl; direction: rtl` as in horizontal text.
-- **A14** On an `.arrays-plain` array, a range read, a reader placed by its own `grid-column` and a scan reader placed by
-  its own `grid-area` MUST read the same numbers as on an array without `.arrays-plain`.
+- **A14** On an `.dcss-plain` array, a range read, a reader placed by its own `grid-column` and a scan reader placed by
+  its own `grid-area` MUST read the same numbers as on an array without `.dcss-plain`.
 
 ### Bins
 
-- **A15** In `.arrays-bins`, a child with whole `--arrays-bin` MUST give what is inside it `--arrays-rank`, 1 for the
+- **A15** In `.dcss-bins`, a child with whole `--dcss-bin` MUST give what is inside it `--dcss-rank`, 1 for the
   first child in its bin in markup order, exact to 32, with a bin changing every frame.
-- **A16** A `.arrays-count` in `.arrays-bins` MUST give `--arrays-count`, the number of bins in use, for bins up to the
+- **A16** A `.dcss-track-count` in `.dcss-bins` MUST give `--dcss-track-count`, the number of bins in use, for bins up to the
   box's width in px.
-- **A17** A `<b class="arrays-below">` in a child of `.arrays-bins` MUST give `--arrays-below`, how many distinct bins in
+- **A17** A `<b class="dcss-below">` in a child of `.dcss-bins` MUST give `--dcss-below`, how many distinct bins in
   use lie below its bin, with or without an author's padding and border on the grid.
-- **A18** `.arrays-bins.arrays-max` MUST give a reader with `--arrays-i` the largest `--arrays-n` in bin i, and a range the
-  sum of those maxima, with entries at any depth under `.arrays-nest` wrappers.
+- **A18** `.dcss-bins.dcss-bin-max` MUST give a reader with `--dcss-i` the largest `--dcss-n` in bin i, and a range the
+  sum of those maxima, with entries at any depth under `.dcss-nest` wrappers.
 
 ### Sorts and keys
 
-- **A19** `.arrays-array.arrays-sort` of entries with whole `--arrays-key` MUST read its entries in key order, equal keys
+- **A19** `.dcss-array.dcss-sort` of entries with whole `--dcss-key` MUST read its entries in key order, equal keys
   in markup order: the i-th smallest, -1 the largest, a range the sum of the smallest, with a key moving past the others
   every frame.
-- **A20** A `.arrays-where` in an entry of `.arrays-sort` MUST give `--arrays-place`, 1 for the smallest key, equal keys in
+- **A20** A `.dcss-where` in an entry of `.dcss-sort` MUST give `--dcss-place`, 1 for the smallest key, equal keys in
   markup order.
-- **A21** In `.arrays-sort`, an `.arrays-lo` probe with a key MUST give `--arrays-lower` (keys below it), an `.arrays-hi`
-  probe `--arrays-upper` (keys up to it), and an `.arrays-between` in it `--arrays-frequency` and `--arrays-member`.
-- **A22** `.arrays-map` of entries with whole `--arrays-key` and `--arrays-n` MUST give a reader with `--arrays-key` the
+- **A21** In `.dcss-sort`, an `.dcss-lo` probe with a key MUST give `--dcss-lower` (keys below it), an `.dcss-hi`
+  probe `--dcss-upper` (keys up to it), and an `.dcss-between` in it `--dcss-frequency` and `--dcss-member`.
+- **A22** `.dcss-map` of entries with whole `--dcss-key` and `--dcss-n` MUST give a reader with `--dcss-key` the
   largest number written at that key, for keys -9,000 to 9,999, in boxes of any width; an unused key, or one outside
-  `--arrays-min-key` to `--arrays-max-key`, MUST read 0 with `--arrays-ok` 0.
-- **A23** `.arrays-map.arrays-packed` MUST read a track list of values from `--arrays-min-key` on as keys, child entries
+  `--dcss-min-key` to `--dcss-max-key`, MUST read 0 with `--dcss-ok` 0.
+- **A23** `.dcss-map.dcss-packed` MUST read a track list of values from `--dcss-min-key` on as keys, child entries
   beside it, duplicate keys as their largest, empty or invalid lists as no values, with keys and values moving between
   tracks in the same frame.
-- **A24** A `.arrays-where` in an entry of a keyed map MUST read the entry's offset in the same frame, and an entry MUST
+- **A24** A `.dcss-where` in an entry of a keyed map MUST read the entry's offset in the same frame, and an entry MUST
   NOT keep an anchor name while it holds no where.
 
 ### Layout
 
-- **A25** `.arrays-array.arrays-packed` with tracks `minmax(0, c)` MUST give slot k min(c k, L), L the level at which the
+- **A25** `.dcss-array.dcss-packed` with tracks `minmax(0, c)` MUST give slot k min(c k, L), L the level at which the
   slots fill the box's width, within 1/64 px.
-- **A26** `.arrays-shares` MUST give child k max(floor k, weight k × L) from its `--arrays-n` and `--arrays-w`, L the level
-  that fills the width, and a `.arrays-where` in a child the sum of the shares before it, within 1/32 px.
-- **A27** `.arrays-pack` with `--arrays-columns` MUST give each child of `--arrays-w` columns the `--arrays-column` and
-  `--arrays-row` where first fit puts it, rows from the top, in `order`-modified document order (css-grid-2 §8.5).
-- **A28** A `.arrays-where` in an entry of an array MUST give `--arrays-x`, the sum of the entries before it, and
-  `--arrays-y` 0.
-- **A29** `.arrays-tiles` with `--arrays-columns`, `--arrays-rows` and `--arrays-areas` MUST give a child at
-  `grid-area: name` its area's `--arrays-x`, `--arrays-y`, `--arrays-width`, `--arrays-height` and `--arrays-fits` 1, and
-  `--arrays-fits` 0 to every child when an area is not a rectangle.
-- **A30** `.arrays-tiles.arrays-pack` MUST place each child of `--arrays-w` by `--arrays-h` tiles where first fit puts it,
+- **A26** `.dcss-shares` MUST give child k max(floor k, weight k × L) from its `--dcss-n` and `--dcss-w`, L the level
+  that fills the width, and a `.dcss-where` in a child the sum of the shares before it, within 1/32 px.
+- **A27** `.dcss-pack` with `--dcss-columns` MUST give each child of `--dcss-w` columns the `--dcss-column` and
+  `--dcss-row` where first fit puts it, rows from the top, in `order`-modified document order (css-grid-2 §8.5).
+- **A28** A `.dcss-where` in an entry of an array MUST give `--dcss-x`, the sum of the entries before it, and
+  `--dcss-y` 0.
+- **A29** `.dcss-tiles` with `--dcss-columns`, `--dcss-rows` and `--dcss-areas` MUST give a child at
+  `grid-area: name` its area's `--dcss-x`, `--dcss-y`, `--dcss-width`, `--dcss-height` and `--dcss-fits` 1, and
+  `--dcss-fits` 0 to every child when an area is not a rectangle.
+- **A30** `.dcss-tiles.dcss-pack` MUST place each child of `--dcss-w` by `--dcss-h` tiles where first fit puts it,
   row by row, around the map's named areas and the children before it; a child past the map's rows or wider than the map
-  MUST read `--arrays-fits` 0.
-- **A31** `.arrays-push` MUST give each child `--arrays-x`, the larger of its `--arrays-target` and the end of the child
-  before; `.arrays-push.arrays-end` with `--arrays-wall` MUST give the smaller of its target and the start of the child
+  MUST read `--dcss-fits` 0.
+- **A31** `.dcss-push` MUST give each child `--dcss-x`, the larger of its `--dcss-target` and the end of the child
+  before; `.dcss-push.dcss-end` with `--dcss-wall` MUST give the smaller of its target and the start of the child
   after less its width.
-- **A54** `.arrays-push.arrays-nested`, its children nested in each other (each holding the next), MUST give the
-  answers A31 gives, for targets and ends under 65,536 px; `.arrays-push.arrays-end.arrays-nested` likewise.
-- **A32** `.arrays-groups` MUST give each child `--arrays-y`, the sum of `--arrays-n` over the earlier children of its
-  `--arrays-bin`, and `--arrays-x`, its bin less 1.
-- **A33** `.arrays-overlap` of children with `--arrays-i` (a start) and `--arrays-span` MUST give a `.arrays-count`
-  the most intervals over one point, and each child's where `--arrays-y`, its lane by first fit from 0.
-- **A34** `.arrays-lines` with `--arrays-columns` MUST give a `.arrays-count` the number of next-fit lines its children's
-  `--arrays-n` take, and each child's where `--arrays-y`, its line from 0, and `--arrays-x`, the sum before it on its line.
-- **A35** `.arrays-slide` with `--arrays-span` MUST give a reader with `--arrays-i` j the largest of the span entries
+- **A54** `.dcss-push.dcss-nested`, its children nested in each other (each holding the next), MUST give the
+  answers A31 gives, for targets and ends under 65,536 px; `.dcss-push.dcss-end.dcss-nested` likewise.
+- **A32** `.dcss-groups` MUST give each child `--dcss-y`, the sum of `--dcss-n` over the earlier children of its
+  `--dcss-bin`, and `--dcss-x`, its bin less 1.
+- **A33** `.dcss-overlap` of children with `--dcss-i` (a start) and `--dcss-span` MUST give a `.dcss-track-count`
+  the most intervals over one point, and each child's where `--dcss-y`, its lane by first fit from 0.
+- **A34** `.dcss-lines` with `--dcss-columns` MUST give a `.dcss-track-count` the number of next-fit lines its children's
+  `--dcss-n` take, and each child's where `--dcss-y`, its line from 0, and `--dcss-x`, the sum before it on its line.
+- **A35** `.dcss-slide` with `--dcss-span` MUST give a reader with `--dcss-i` j the largest of the span entries
   ending at entry j.
-- **A36** `.arrays-array.arrays-xy.arrays-cells` of entries with `--arrays-i`, `--arrays-r`, `--arrays-n` and `--arrays-m`
-  MUST give a reader the widest entry of column i as `--arrays-value` and the tallest of row r as `--arrays-value-y`.
-- **A37** `.arrays-range` of entries with `--arrays-key` and `--arrays-bit` (1 to 19) MUST give a query `.arrays-in` with
-  `--arrays-from` and `--arrays-to` the bit mask of the entries whose key is in [from, to] less `--arrays-not`, and
-  `--arrays-top1` to `--arrays-top6`, its six highest bits.
+- **A36** `.dcss-array.dcss-xy.dcss-cells` of entries with `--dcss-i`, `--dcss-r`, `--dcss-n` and `--dcss-m`
+  MUST give a reader the widest entry of column i as `--dcss-value` and the tallest of row r as `--dcss-value-y`.
+- **A37** `.dcss-key-range` of entries with `--dcss-key` and `--dcss-bit` (1 to 19) MUST give a query `.dcss-in` with
+  `--dcss-from` and `--dcss-to` the bit mask of the entries whose key is in [from, to] less `--dcss-not`, and
+  `--dcss-top1` to `--dcss-top6`, its six highest bits.
 
 ### Formulas
 
-- **A38** `.arrays-sum` MUST add its children and `.arrays-largest` take the largest, leaves with `--arrays-n` and whole
+- **A38** `.dcss-width-sum` MUST add its children and `.dcss-largest` take the largest, leaves with `--dcss-n` and whole
   arrays as children, at any depth, read at the root or inside; a negative leaf MUST make every node above it read
-  `--arrays-ok` 0.
-- **A39** `.arrays-cap` MUST give min(E, c) of its formula E with c moving, of a sum or of a leaf; a negative leaf in it
-  MUST read 0 with `--arrays-ok` 0.
-- **A40** `.arrays-times` MUST give f × E as a height, f written and moving, counted in an `.arrays-stack` and read
+  `--dcss-ok` 0.
+- **A39** `.dcss-cap` MUST give min(E, c) of its formula E with c moving, of a sum or of a leaf; a negative leaf in it
+  MUST read 0 with `--dcss-ok` 0.
+- **A40** `.dcss-times` MUST give f × E as a height, f written and moving, counted in an `.dcss-stack` and read
   inside it.
-- **A41** `.arrays-calc` boxes MUST give a product, a min and their sum of two named formulas through `anchor-size()`,
+- **A41** `.dcss-calc` boxes MUST give a product, a min and their sum of two named formulas through `anchor-size()`,
   in the same frame.
-- **A42** `<b class="arrays-hop">` MUST give a row the sum of the columns it spans (two hops in one row the larger), and
-  `<b class="arrays-hop-y">` a column the sum of the rows it spans, read by `.arrays-at-y` and `.arrays-at-x`.
-- **A43** `.arrays-text` MUST give the sum and the largest line of counters in `arrays-tally`, f(k) of the shared tables
+- **A42** `<b class="dcss-hop">` MUST give a row the sum of the columns it spans (two hops in one row the larger), and
+  `<b class="dcss-hop-y">` a column the sum of the rows it spans, read by `.dcss-at-y` and `.dcss-at-x`.
+- **A43** `.dcss-text` MUST give the sum and the largest line of counters in `dcss-tally`, f(k) of the shared tables
   (k, round(k^2 / 1000), round(sqrt(1000 k)) for k 0 to 999), a scan and a table's running totals, exact.
 - **A44** The text operators MUST give, from pair texts and counter styles, min, max, a sum of products, |a - b|, a > b,
   a × b by `letter-spacing`, floor(a / b) by a tab, sign and relu, exact.
-- **A45** A `.arrays-collapse` of signed margins, `.arrays-zoom` factors in a sum, an `.arrays-baseline` row,
-  `.arrays-columns` with `--arrays-parts` and `.arrays-flex` shares MUST give their laid-out results within 1/64 px.
-- **A46** Collapses MUST nest: two laid-out widths in one collapse (W1 / 2 - W2), three levels of `.arrays-scope`, the
-  results counted in an `.arrays-stack` and an `.arrays-tallest` with no reader between.
-- **A47** A collapse as a row of a grid MUST turn into a column through `.arrays-hop-y`, and a second collapse over that
+- **A45** A `.dcss-collapse` of signed margins, `.dcss-zoom` factors in a sum, an `.dcss-baseline` row,
+  `.dcss-columns` with `--dcss-parts` and `.dcss-flex` shares MUST give their laid-out results within 1/64 px.
+- **A46** Collapses MUST nest: two laid-out widths in one collapse (W1 / 2 - W2), three levels of `.dcss-scope`, the
+  results counted in an `.dcss-stack` and an `.dcss-tallest` with no reader between.
+- **A47** A collapse as a row of a grid MUST turn into a column through `.dcss-hop-y`, and a second collapse over that
   column MUST subtract a third width, read by the row, the column and their readers.
-- **A48** `<div class="arrays-minus">A<b>B</b></div>` MUST be max(0, A - B) wide for widths A and B under 2^20 px: alone,
-  as min and |a - b|, two deep, and inside a collapse, an `.arrays-least` and an `.arrays-scale`.
-- **A49** `.arrays-turn` with `--arrays-tick` changed whenever an input under it changes MUST lay a height on as a width:
-  under `.arrays-largest`, in an `.arrays-least` slot, as a subtrahend and in a stack, with inputs moving every frame.
-- **A50** `.arrays-rom` with `.arrays-sq` or `.arrays-sqrt` and `--arrays-k` from 0 to 999 MUST give its child
-  `--arrays-value` round(k^2 / 1000) or round(sqrt(1000 k)), and `.arrays-rom2` the five pair tables for a and b from
+- **A48** `<div class="dcss-minus">A<b>B</b></div>` MUST be max(0, A - B) wide for widths A and B under 2^20 px: alone,
+  as min and |a - b|, two deep, and inside a collapse, an `.dcss-width-min` and an `.dcss-scale`.
+- **A49** `.dcss-turn` with `--dcss-turn-tick` changed whenever an input under it changes MUST lay a height on as a width:
+  under `.dcss-largest`, in an `.dcss-width-min` slot, as a subtrahend and in a stack, with inputs moving every frame.
+- **A50** `.dcss-rom` with `.dcss-sq` or `.dcss-sqrt` and `--dcss-k` from 0 to 999 MUST give its child
+  `--dcss-value` round(k^2 / 1000) or round(sqrt(1000 k)), and `.dcss-rom2` the five pair tables for a and b from
   0 to 31, at style time with no layout.
 
 - **A66** Both compiler entries MUST share one formula operation and layout cover, preserving standalone grammar and
@@ -166,18 +166,18 @@ for selection or computation. Packaging does not expand any function's bounds.
 
 ### Across computations
 
-- **A53** Results of separate computations, each an `.arrays-array` as wide as its total and named by `anchor-name`,
+- **A53** Results of separate computations, each an `.dcss-array` as wide as its total and named by `anchor-name`,
   MUST place their marks in sorted order in the same frame when each mark's `top` sums, over the others,
   `clamp(0, (anchor-size(--other width) - anchor-size(--own width)) / 1px * 2 + t, 1)` (t 1 for an earlier result, else 0),
   for 4 to 32 results.
-- **A55** `.arrays-ranked` with `--arrays-bins` G up to 16 (32 with `arrays-wide`) MUST place bar k at its group's total of `--arrays-n`
-  (`.arrays-max`: its largest), as many `--arrays-band`s down as groups beat it, largest or smallest first, ties to the
+- **A55** `.dcss-ranked` with `--dcss-bins` G up to 16 (32 with `dcss-wide`) MUST place bar k at its group's total of `--dcss-n`
+  (`.dcss-bin-max`: its largest), as many `--dcss-band`s down as groups beat it, largest or smallest first, ties to the
   lower bin; an item's `<b>` on its group's bar after the items before it; label k at bar k's top.
-- **A56** `.arrays-piles` MUST place each item at the sum of the heights before it in its group; `.arrays-starts`
-  MUST place group k's marker at the sum of `--arrays-n` over earlier groups; a `.list`'s `.arrays-size` MUST read its
+- **A56** `.dcss-piles` MUST place each item at the sum of the heights before it in its group; `.dcss-starts`
+  MUST place group k's marker at the sum of `--dcss-n` over earlier groups; a `.list`'s `.dcss-size` MUST read its
   width and height.
-- **A57** `.arrays-ranked.arrays-copy` with `--arrays-copy-width` and `.arrays-ranks > b > .arrays-segments` holding G
-  `.arrays-group` and the items again MUST place each segment as A55 does, for up to 16 groups.
+- **A57** `.dcss-ranked.dcss-copy` with `--dcss-copy-width` and `.dcss-ranks > b > .dcss-segments` holding G
+  `.dcss-group` and the items again MUST place each segment as A55 does, for up to 16 groups.
 - **A58** `.dcss-ticks` (or `.dcss-axis-*`) with `--start`, `--stop` and `--count` MUST give `--dcss-tick-increment` and
   `--dcss-tick-step` equal to d3-array 3.2.4's tickIncrement and tickStep, as many `<li>`s shown as its ticks (the rest
   `visibility: hidden` and out of flow), and its k-th `<li>` `--dcss-tick` the k-th tick; `.dcss-nice` with the same three MUST give
@@ -469,6 +469,6 @@ The new count/mean compiler subset matches 5 of the 45 original recorded calls i
 - Loops between grids (`.loop-flow`, `.loop-in`, `[data-store-read]`, `--store-of`) without dcss-store.css or store.css on the page: their cells are the board's stored numbers.
 - Entries of any tag but `<i>`, and readers of any tag but `<b>`.
 - Ranks past 32 in one bin (rank 33 reads 1), and bins in use counted past the box's width in px.
-- A count of bins in use in `.arrays-bins.arrays-max`, whose 32 bins are an auto-repeat that takes no `max-content`.
-- Numbers past 6 significant digits through the registered `--arrays-value`, and fractions finer than 1/64 px (css-grid-2 §12).
+- A count of bins in use in `.dcss-bins.dcss-bin-max`, whose 32 bins are an auto-repeat that takes no `max-content`.
+- Numbers past 6 significant digits through the registered `--dcss-value`, and fractions finer than 1/64 px (css-grid-2 §12).
 - A transform, filter, perspective or containment between a reader and its array: a reader is `position: fixed` against the array's `contain: layout`.
