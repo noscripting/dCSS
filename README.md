@@ -4,7 +4,7 @@ d3's data work, written as HTML and done by the stylesheet. A sum is a `<figure>
 
 Part of DCSS, Data-Driven CSS: stylesheets that do the data work d3 does in JavaScript. dcss-array does d3-array's job: sums, sorts, bins and search. With [dcss-store](https://github.com/noscripting/dcss-store), [dcss-loop](https://github.com/noscripting/dcss-loop) and [dcss-unround](https://github.com/noscripting/dcss-unround).
 
-It is not a replacement for d3. It's for the pages where script can't run or isn't wanted: Markdown and CMS output, docs, a Content-Security-Policy that forbids script, feeds. It answers 4,670 of the 7,049 calls d3's own tests make (66%), and covers 69 of d3's 508 functions in full, measured in Chrome and Safari. Underneath are grid primitives you can use directly: reads by index, sums over ranges, bins, sorts and search.
+It is not a replacement for d3. It's for the pages where script can't run or isn't wanted: Markdown and CMS output, docs, a Content-Security-Policy that forbids script, feeds. It answers 4,670 of the 7,049 calls d3's own tests make (66%), and covers 69 of d3's 508 functions in full, checked in Chrome and Safari. Underneath are grid primitives you can use directly: reads by index, sums over ranges, bins, sorts and search.
 
 Visit [noscript.ing](https://noscript.ing) for demos.
 
@@ -27,7 +27,7 @@ Each call is a file of its own in `parts/`, named after its class. Link one for 
 
 A page that uses many calls of one family can link `dcss-array.css` and that family's file instead (`families/array.css` for these two calls' family); [Only the calls a page uses](#only-the-calls-a-page-uses) compares the sizes. The class is d3's function. The list is the data, one `--value` per item, and anything inside the `<div>` after it reads the results: `--dcss-sum`, `--dcss-mean`, `--dcss-count`. `.dcss-format-fixed` prints a number as d3.format does. Change a `--value` with a rule, a `:has()` or an animation, and the outputs follow. [DCSS: d3 as HTML](#dcss-d3-as-html) has the rules every call shares, and the sections after it each family's calls.
 
-Each family is its own file, so a page loads only the calls it uses. Sizes are the file and its gzip; load is the median of three cold loads beside the core in WebKit 26.4 (2026-10-26). Chrome loads any one of them in 40 ms or less.
+Each family is its own file, so a page loads only the calls it uses. Sizes are the file and its gzip; load is the median of three cold loads beside the core in WebKit (Browsers names the versions). Chrome loads any one of them in 40 ms or less.
 
 | File in `families/` | Calls | Size, gzip | Load in WebKit |
 |---|---|---:|---:|
@@ -629,7 +629,7 @@ Each bar is within 1/32 px of d3's in x, width, y and height, and the axis's tic
 The child is 12px wide. A finite result has ready 1 and error 0; a missing/NaN query has ready 0 and error 1. Getters and string/object coercions are unsupported. For its ticks and tick labels, use `.dcss-identity-ticks` in `families/ticks.css`. It answers 11 of d3's 86 recorded identity-scale calls.
 
 
-Where the browser has `@function` (Chrome), a two-stop linear scale is also a function, `--dcss-scale-linear(x, d0, d1, r0, r1)`, with clamp and round (0 or 1) after: `--dcss-scale-linear(21, 0, 100, 32, 212)` is 69.8. Guard a call that uses `var()` with `@supports at-rule(@function)`, as for the easings. Pow, sqrt and log scales are functions too: `--dcss-scale-pow(x, d0, d1, r0, r1, exponent)`, `--dcss-scale-sqrt(...)` and `--dcss-scale-log(...)`, with the same clamp and round after. It equals the class within 1e-12 in Chrome 155.
+Where the browser has `@function` (Chrome), a two-stop linear scale is also a function, `--dcss-scale-linear(x, d0, d1, r0, r1)`, with clamp and round (0 or 1) after: `--dcss-scale-linear(21, 0, 100, 32, 212)` is 69.8. Guard a call that uses `var()` with `@supports at-rule(@function)`, as for the easings. Pow, sqrt and log scales are functions too: `--dcss-scale-pow(x, d0, d1, r0, r1, exponent)`, `--dcss-scale-sqrt(...)` and `--dcss-scale-log(...)`, with the same clamp and round after. It equals the class within 1e-12 in Chrome.
 ### Ease: families/ease.css
 
 Every easing d3-ease exports, as `.dcss-ease-<name>` on any element: `quad-in`, `quad-out`, `quad-in-out`, and the same for `cubic`, `poly`, `sin`, `exp`, `circle`, `bounce`, `back` and `elastic`, plus `linear`; the short names (`.dcss-ease-quad`, `.dcss-ease-bounce`, …) are d3's aliases. `--value` is t; the answer is `--dcss-ease-<name>`. d3's parameters are properties: `--exponent` (poly, 3), `--overshoot` (back, 1.70158), `--amplitude` and `--period` (elastic, 1 and 0.3).
@@ -642,14 +642,14 @@ Every easing d3-ease exports, as `.dcss-ease-<name>` on any element: `quad-in`, 
 
 Every call d3-ease's own tests make (413), and every function over a grid of t, is within 1e-12 of d3 in Chrome and WebKit.
 
-Where the browser has `@function` (Chrome), every easing is also a CSS function, `--dcss-ease-<name>(t)`, with the class's optional inputs after t in the order above: `--dcss-ease-poly-in(0.5, 2)` is 0.25. A browser without `@function` drops a declaration that calls one with plain numbers, so write a plain value first. A call with `var()` among its arguments passes that first check and fails later, so WebKit 26.4 and Firefox 158 lose the plain value too: put such calls inside `@supports at-rule(@function)`.
+Where the browser has `@function` (Chrome), every easing is also a CSS function, `--dcss-ease-<name>(t)`, with the class's optional inputs after t in the order above: `--dcss-ease-poly-in(0.5, 2)` is 0.25. A browser without `@function` drops a declaration that calls one with plain numbers, so write a plain value first. A call with `var()` among its arguments passes that first check and fails later, so WebKit and Firefox lose the plain value too: put such calls inside `@supports at-rule(@function)`.
 
 ```css
 .bar { width: 50%; }
 @supports at-rule(@function) { .bar { width: calc(--dcss-ease-cubic-in-out(var(--progress)) * 100%); } }
 ```
 
-Each function equals its class within 1e-12 in Chrome 155. WebKit 26.4 and Firefox 158 don't parse `@function`; the classes work everywhere.
+Each function equals its class within 1e-12 in Chrome. WebKit and Firefox don't parse `@function`; the classes work everywhere.
 
 ### Hierarchy: families/hierarchy.css
 
@@ -954,13 +954,13 @@ One section a primitive: what it computes, its markup, whether it reads in the s
 
 `.arrays-array` > children with `--arrays-n`; a reader `.arrays-at` with `--arrays-i`, in the port (`<b class="arrays-out">`, the first child) or a child of an entry; what is inside the reader gets `--arrays-value` and `--arrays-ok`.
 
-Same frame: yes, both. Whole numbers exact; fractions to 1/64 px. Cost: Chrome 6.3-6.5 µs a read, WebKit 9.1-9.6.
+Same frame: yes, both. Whole numbers exact; fractions to 1/64 px.
 
 #### Counting the entries: negative indices and the end's check without writing `--arrays-length`
 
 `.arrays-count` on the array: the grid works the count out from its last child's place (`:nth-child`), up to 360,359 entries, any number of entries: 40 entries, `-1`, `-40`, the total and entry 35, every frame, both engines.
 
-Same frame: yes. Exact. Cost: Chrome 8.2 µs a read, WebKit 29.3.
+Same frame: yes. Exact.
 
 #### Entry -i (from the end)
 
@@ -978,37 +978,37 @@ Same frame: yes. Exact. Cost: as above.
 
 `.arrays-array.arrays-packed` with `--arrays-tracks` (the track list, line names included: `[--arrays-x] 90px 70px`) and `--arrays-length` for the end; without it -1 is the last track.
 
-Same frame: yes. Exact. Cost: Chrome 5.5-5.8, WebKit 9.3-10.0.
+Same frame: yes. Exact.
 
 #### The i-th slot named x: several arrays in one grid
 
 `--arrays-l3: --arrays-x` on the array; `--arrays-of: --arrays-x` on the reader or the array; `--arrays-j` counts slots from there, named or not.
 
-Same frame: yes. Exact. Cost: Chrome 5.8-6.5, WebKit 6.2-10.6.
+Same frame: yes. Exact.
 
 #### Two numbers an entry: --arrays-value and --arrays-value-y of entry i, or column i and row r
 
 `.arrays-array.arrays-xy` > children with `--arrays-n` and `--arrays-m` (or, packed, `--arrays-tracks` and `--arrays-tracks-y` on the array); the reader gets both; `--arrays-r` picks the row (unset: the row of `--arrays-i`), `--arrays-j` still a range of columns.
 
-Same frame: yes, both numbers moving; readers in the port. Exact. Cost: Chrome 7.9 µs a read (two numbers), WebKit 9.9.
+Same frame: yes, both numbers moving; readers in the port. Exact.
 
 #### Entry i of a cyclic array, round either way
 
 `.arrays-cycle` with `--arrays-tracks`, any number of tracks; readers are children and in flow.
 
-Same frame: yes, forwards past the entries and backwards from -1. Exact. Cost: Chrome 6.1-6.4, WebKit 11.1-12.2 (on these fixed-size tracks).
+Same frame: yes, forwards past the entries and backwards from -1. Exact.
 
 #### Rank within a bin: 1 for the first child put in a bin, 2 for the next, to 32
 
 `.arrays-bins` > children with `--arrays-bin`; what is inside gets `--arrays-bin` and `--arrays-rank`.
 
-Same frame: yes, with a bin changing every frame. Exact to 32; 33 reads 1. Cost: Chrome 5.6-6.3, WebKit 9.8-10.1.
+Same frame: yes, with a bin changing every frame. Exact to 32; 33 reads 1.
 
 #### The largest number in a bin
 
 `.arrays-bins.arrays-max` > children with `--arrays-bin` and `--arrays-n`; a reader `.arrays-at` with `--arrays-i` the bin; a range sums the maxes.
 
-Same frame: yes, with an item changing bin and number every frame. Exact. Cost: Chrome 16.1 µs a child plus its reader, WebKit 25.9.
+Same frame: yes, with an item changing bin and number every frame. Exact.
 
 #### How many bins hold something
 
@@ -1020,25 +1020,25 @@ Same frame: yes, with an item moving every frame. Exact for bins up to the box's
 
 `.arrays-array.arrays-packed` with `--arrays-tracks: minmax(0, cap 1) minmax(0, cap 2) ...`, the width is the water.
 
-Same frame: yes, caps and width moving. To 1/64 px. Cost: Chrome 4.2, WebKit 9.5.
+Same frame: yes, caps and width moving. To 1/64 px.
 
 #### A sort: entry i in order of a key; the i-th smallest, the largest (-1), the sum of the smallest few; equal keys in markup order
 
 `.arrays-array.arrays-sort` > children with `--arrays-key` (whole) and `--arrays-n`; readers as for child entries.
 
-Same frame: yes, with a key moving past the others every frame. Exact. Cost: Chrome 5.5, WebKit 9.5.
+Same frame: yes, with a key moving past the others every frame. Exact.
 
 #### How many bins in use are below a child's bin: its rank among the distinct bins, from 0
 
 `.arrays-bins` (not max): a `<b class="arrays-below">` inside a child; what is inside it gets `--arrays-below`.
 
-Same frame: yes, with an item moving every frame, so the bins in use change. Exact for bins up to the box's width in px. Cost: Chrome 8.2, WebKit 15.2.
+Same frame: yes, with an item moving every frame, so the bins in use change. Exact for bins up to the box's width in px.
 
 #### First-fit packing: each child's column and row where it lands, rows from the top
 
 `.arrays-pack` with `--arrays-columns` > children with `--arrays-w` (columns taken), a `.arrays-where` in each; what is inside its `<u>` gets `--arrays-column` and `--arrays-row`.
 
-Same frame: yes, with two spans changing every frame. Exact. Cost: Chrome 19.6 an item with its where, WebKit 42.2.
+Same frame: yes, with two spans changing every frame. Exact.
 
 #### Where a child is: its offset from the grid's top-left; in an array of child entries, the sum of the entries before it
 
@@ -1050,31 +1050,31 @@ Same frame: yes, with entries, shares and widths moving. Exact (1/64 px with fra
 
 `.arrays-sort` > children with `--arrays-key` and a `.arrays-where`; what is inside its `<u>` gets `--arrays-place`.
 
-Same frame: yes, with two keys moving past the others every frame. Exact. Cost: Chrome 17.4 an entry with its where, WebKit 40.9.
+Same frame: yes, with two keys moving past the others every frame. Exact.
 
 #### A tile map: where each named area is and how big, and whether it is in the map
 
 `.arrays-tiles` with `--arrays-columns`, `--arrays-rows` and `--arrays-areas` (the grid-template-areas strings, picked by state if you like) > children at `grid-area: name` with a `.arrays-where`; what is inside its `<u>` gets `--arrays-x`, `--arrays-y`, `--arrays-width`, `--arrays-height` and `--arrays-fits`.
 
-Same frame: yes, with six maps (one invalid) switching every few frames. Exact, in tiles. Cost: Chrome 32.5 a child with its where, WebKit 96.3 (the old sheet in the same harness: 124.1 against 118.1).
+Same frame: yes, with six maps (one invalid) switching every few frames. Exact, in tiles.
 
 #### 2D packing around walls: each child of w x h tiles where first fit puts it, row by row from the top, around the map's named areas and the children before it; whether it fits in the map
 
 `.arrays-tiles.arrays-pack` with a map: children at `grid-area: name` are walls, the others carry `--arrays-w` and `--arrays-h` and a `.arrays-where`; what is inside its `<u>` gets `--arrays-x`, `--arrays-y`, `--arrays-column`, `--arrays-row` and `--arrays-fits`.
 
-Same frame: yes, with three maps switching and two spans moving every frame. Exact. Cost: Chrome 34.1 an item (25 maps of 12, switching), WebKit 107.3 (one map of 100: 5.9 ms a frame).
+Same frame: yes, with three maps switching and two spans moving every frame. Exact.
 
 #### The push: boxes in order, each at the larger of its target and the end of the box before (1D non-penetration in one layout)
 
 `.arrays-push` > children with `--arrays-h` (width) and `--arrays-target`, a `.arrays-where` in each; what is inside its `<u>` gets `--arrays-x`, the box's start.
 
-Same frame: yes, with two targets and two widths moving every frame. Exact. Cost: Chrome 26.8 a box with its where, WebKit 50.2.
+Same frame: yes, with two targets and two widths moving every frame. Exact.
 
 #### The push from the end: each box at the smaller of its target and the start of the box after less its width, none past the wall
 
 `.arrays-push.arrays-end` with `--arrays-wall`, the same children. `.arrays-nested` on either nests the children in each other, each `<i>` holding its `.arrays-where` first and then the next child. It is 2x (Chrome) to 2.3x (WebKit) faster at 300 (vs-calc/trials/nested-push.mjs). It takes at most a few hundred children (HTML parsers stop nesting at 512 deep), and targets and ends under 65,536 px in the push.
 
-Same frame: yes, the same. Exact. Cost: Chrome 24.2, WebKit 44.1.
+Same frame: yes, the same. Exact.
 
 #### Groups ranked by their totals: each group's bar at its total, sorted largest or smallest first (two stages in one frame)
 
@@ -1086,19 +1086,19 @@ Same frame: yes, with the totals moving. Exact in Chrome, WebKit and Firefox.
 
 `.arrays-groups` > children with `--arrays-bin` and `--arrays-n` (whole, from 1), a `.arrays-where` in each; what is inside its `<u>` gets `--arrays-y` (the sum before it) and `--arrays-x` (the bin less 1).
 
-Same frame: yes, with two values moving every frame. Exact. Cost: Chrome 20.1 an item (19.3 with values to 1,000), WebKit 39.9 (178 with values to 1,000).
+Same frame: yes, with two values moving every frame. Exact.
 
 #### The most intervals at one point; each interval's lane (interval colouring, first fit by start)
 
 `.arrays-overlap` > children with `--arrays-i` (start, whole, from 1) and `--arrays-span` (length), a `.arrays-where` in each; a `.arrays-count` in the grid gets `--arrays-count`, what is inside a child's `.arrays-where` `<u>` gets `--arrays-y` (its lane from 0).
 
-Same frame: yes, with two intervals moving every frame. Exact. Cost: Chrome 5.3 an item (5.5 at 1,800), WebKit 13.3 (14.0 at 1,800).
+Same frame: yes, with two intervals moving every frame. Exact.
 
 #### Next-fit lines: how many lines a row of widths takes, each child's line and its place on it
 
 `.arrays-lines` with `--arrays-columns` (the row's width) > children with `--arrays-n`, a `.arrays-where` in each; `.arrays-count` gets the lines, a child's `.arrays-where` `--arrays-y` (its line from 0) and `--arrays-x` (before it on the line).
 
-Same frame: yes, with a width moving every frame. Exact. Cost: Chrome 3.5 an item (3.7 at 1,800), WebKit 9.1 (9.4 at 1,800).
+Same frame: yes, with a width moving every frame. Exact.
 
 #### Column and row maxima of a matrix, from one grid
 
@@ -1116,25 +1116,25 @@ Same frame: yes. Exact.
 
 `.arrays-sort` with a `.arrays-lo` probe before the entries and a `.arrays-hi` probe after, both with the key; inside `.arrays-lo`'s `.arrays-where` `--arrays-lower`, inside `.arrays-hi`'s `--arrays-upper`, inside a `.arrays-between` in `.arrays-hi` `--arrays-frequency` and `--arrays-member`.
 
-Same frame: yes, with the key moving over absent, present and end keys and an entry moving. Exact. Cost: Chrome 11.2 an element, WebKit 17.0.
+Same frame: yes, with the key moving over absent, present and end keys and an entry moving. Exact.
 
 #### A key range: which entries have a key in [from, to], as a bit mask and the six highest bits; many queries over one row
 
 `.arrays-range` > `<i style="--arrays-key: k; --arrays-bit: b">` (b 1 to 19) and queries `<b class="arrays-in" style="--arrays-from: f; --arrays-to: t; --arrays-not: b"><b><u><u></u></u></b></b>`; an entry and its query may share a `<div>` (display: contents); `.arrays-range.arrays-mask` for the mask alone (no top bits).
 
-Same frame: yes. Exact, keys and bounds moving, any whole keys, 19 bits. Cost: Chrome 3.1 ms for 100 queries over 19 entries, mask only (vs-calc range), WebKit 6.
+Same frame: yes. Exact, keys and bounds moving, any whole keys, 19 bits.
 
 #### A window: entries counted from a moving start
 
 A `<b class="arrays-window">` with `--arrays-i` and `--arrays-span` in the port of an array; readers inside it (`--arrays-i: 1` its first, `-1` its last, ranges).
 
-Same frame: yes, with the window moving every frame. Exact. Cost: Chrome 8.8, WebKit 20.5 (the old sheet in the same harness: 16.2 against 18.8).
+Same frame: yes, with the window moving every frame. Exact.
 
 #### A keyed map: the largest number written at any whole key
 
 `.arrays-map` > children with `--arrays-key` and `--arrays-n`; a reader `.arrays-at` with `--arrays-key`.
 
-Same frame: yes, with a key and a value moving every frame. Exact; an unused key, or one outside `--arrays-min-key` .. `--arrays-max-key` (±1000 by default), reads 0; keys to ±20,000 measured. Cost: Chrome 18.0 (300 keys over 20,000, every key in range), WebKit 63.1 (an earlier figure, 32.5, had 271 of 300 keys outside the range).
+Same frame: yes, with a key and a value moving every frame. Exact; an unused key, or one outside `--arrays-min-key` .. `--arrays-max-key` (±1000 by default), reads 0; keys to ±20,000 checked.
 
 #### Formulas: sums, maxima, constant factors, min and difference, any depth, over numbers and whole computations
 
@@ -1146,25 +1146,25 @@ Same frame: yes (check 46). Exact within 6 digits through `var()`. Cost: see For
 
 In the port of an array: `<b class="arrays-hop">` with `--arrays-i`, `--arrays-j` (the columns it reads) and `--arrays-r` (its row). Its `<u>` gets `--arrays-value` (the span's sum) and sets `--arrays-put` (any style function of it; unset, the sum itself), and the row is as tall as its largest hop. `<b class="arrays-hop-y">` with `--arrays-i`, `--arrays-j` (rows) and `--arrays-r` (its column after the entries; needs `--arrays-length`) does the same in the other axis. The readers are `.arrays-at-y` (rows `--arrays-i` to `--arrays-j`) and `.arrays-at-x` (hop columns).
 
-Same frame: yes, entries moving (check 60). Exact on whole px; a written `--arrays-put` floors to 1/64 px. Cost: Chrome 7.6 µs a hop at 256, WebKit 23.
+Same frame: yes, entries moving (check 60). Exact on whole px; a written `--arrays-put` floors to 1/64 px.
 
 #### A sum of whole numbers, a max of sums, f(k) by a lookup table, without a grid
 
 `<b class="arrays-text">` with the author's counters (`counter-reset`) and `--arrays-text: counter(a, arrays-tally) counter(b, arrays-tally)` (`'\\a'` between lines); `arrays-table` and `.arrays-sq`, `.arrays-sqrt` or `--arrays-font` for f; the inner `<u>` of `<u><u></u></u>` gets `--arrays-value`; see Text.
 
-Same frame: yes (check 61). Exact. Cost: Chrome 1.13 ms for 256 numbers summed and looked up, WebKit 2.25.
+Same frame: yes (check 61). Exact.
 
 #### Prefix sums: each entry the sum so far, and the sum before it
 
 `.arrays-scan` > entries `<i style="--arrays-n: 12"></i>`, then readers `<b class="arrays-at" style="--arrays-i: k"><u></u></b>` (k 1 to the length, whole). The `<u>` gets `--arrays-value`, the sum of entries 1 to k, and `--arrays-before`, the sum of entries 1 to k - 1. A reader whose k never changes can be placed by `style="grid-area: 1 / 1 / span k / span k"` instead.
 
-Same frame: yes (checks 61, 66). Exact, whole numbers. Cost: Chrome 2.5 ms for 300 entries, every sum read (150 readers, placed by grid-area; vs-calc prefix), WebKit 5.0.
+Same frame: yes (checks 61, 66). Exact, whole numbers.
 
 #### Signed extremes: max(positives) + min(negatives) of any number of signed numbers; laid-out widths times factors in the same collapse, and through scopes two laid-out widths in one (a difference p1 W1 - p2 W2); as a child of a `.arrays-stack` or `.arrays-tallest` it counts there as its value, with no reader
 
 `.arrays-collapse` > formula children (floated: they give the width W and stay out of the margins). They are `<i style="--arrays-n: x">` (signed px) or `--arrays-p: p` (p% of the width it sits in), `<b class="arrays-scope">` (a box with its own margin and its own laid-out width, nesting), and a `<b class="arrays-at"><u></u></b>`. Numbers run from -10,000 up.
 
-Same frame: yes (checks 63, 64). Exact. Cost: Chrome 1.43 ms a chain of 256, WebKit 2.50.
+Same frame: yes (checks 63, 64). Exact.
 
 #### max(0, A - B) of two laid-out widths as a width, with no reader; so min(a, b) and |a - b| on the width side too
 
@@ -1176,49 +1176,49 @@ Same frame: yes. Exact, inputs moving, in a sum, a collapse, a least, a scale, t
 
 `<div class="arrays-sum"><b class="arrays-turn"><b><b>H</b></b></b></div>`, with `--arrays-tick` (and `--arrays-tick-2`) on a box around it changing whenever an input under it does.
 
-Same frame: yes. Exact, inputs moving, nested, under .arrays-largest, .arrays-least, a collapse; idles at rest. Cost: Chrome 14.6 a turn, WebKit 40.7.
+Same frame: yes. Exact, inputs moving, nested, under .arrays-largest, .arrays-least, a collapse; idles at rest.
 
 #### A factor in flow: f x a laid-out size, counted by whatever contains it
 
 `.arrays-zoom` with `--arrays-zoom: f` on a node or a leaf; nests.
 
-Same frame: yes (check 63). To 1/64 px a zoomed length (exact for quarters, eighths ...); f > 0. Cost: Chrome a dot product of 256: 2.57, WebKit 3.62.
+Same frame: yes (check 63). To 1/64 px a zoomed length (exact for quarters, eighths ...); f > 0.
 
 #### Baselines: a row of max(a) + max(d), and each item handed max(a) - a_j
 
 `.arrays-baseline` > `<i style="--arrays-n: a; --arrays-m: d">` (a `.arrays-where` inside an item reads `--arrays-y`), a reader for the row.
 
-Same frame: yes (check 63). Exact. Cost: Chrome 1.56 a row of 256, WebKit 5.00.
+Same frame: yes (check 63). Exact.
 
 #### The best contiguous split into K parts: the least possible largest part
 
 `.arrays-columns` with `--arrays-parts: K` > `<i style="--arrays-n: h">`; for WebKit two copies in a `.arrays-alternate` with `--arrays-parity` flipped at each change, its reader reading the copy shown.
 
-Same frame: yes (check 63). Exact. Cost: Chrome 1.10 for 256 in 8 parts, WebKit 4.0.
+Same frame: yes (check 63). Exact.
 
 #### Flex shares: weights, shrink, floors and caps in one layout
 
 `.arrays-flex` (a width) > `<i style="--arrays-n: start; --arrays-grow: g; --arrays-shrink: s; --arrays-min: lo; --arrays-max: hi">`; what is inside an `<i>` reads its width.
 
-Same frame: yes (check 63). To 1/64 px. Cost: Chrome 1.91 for 256, WebKit 4.38.
+Same frame: yes (check 63). To 1/64 px.
 
 #### Sliding-window maxima: the largest of the --arrays-span entries ending at entry j
 
 `.arrays-slide` with `--arrays-span` > children with `--arrays-n`, then readers `.arrays-at` with `--arrays-i`.
 
-Same frame: yes, with two entries moving every frame. Exact. Cost: Chrome 5.2, WebKit 6.4.
+Same frame: yes, with two entries moving every frame. Exact.
 
 #### Fair shares with floors: each child gets max(floor, weight x level), the level what fills the width
 
 `.arrays-shares` with a width > children with `--arrays-n` (the floor) and `--arrays-w` (a whole weight, 1 by default); what is inside a child gets `--arrays-value`.
 
-Same frame: yes, a floor and the width moving. To 1/32 px. Cost: Chrome 10.5 an entry, WebKit 13.4.
+Same frame: yes, a floor and the width moving. To 1/32 px.
 
 #### d3's axis and d3-array's ticks, tickIncrement, tickStep and nice: a range's ticks as d3 picks them, drawn and labelled as d3.axisBottom draws them
 
 `.dcss-axis-bottom` (`-top`, `-left`, `-right`) or `.dcss-ticks` (not drawn) with `--start`, `--stop`, `--count`, an `<li>` a tick: each `<li>` gets `--dcss-tick` and `--dcss-tick-at`, the list `--dcss-tick-step`, `--dcss-tick-increment`, `--dcss-tick-count`. `.dcss-nice` with the same three gets `--dcss-nice-start` and `--dcss-nice-stop`.
 
-Same frame: yes: calc(), no layout. Equal to d3's answer on all 254 calls d3-array's tests make with finite numbers; places within 1/32 px of d3's axis and labels the same pixels as d3's text. Cost: Chrome 0.42 ms a .dcss-ticks of 16, 1.17 a drawn axis, 0.84 a .dcss-nice, WebKit 0.74, 1.62 and 1.51 ms.
+Same frame: yes: calc(), no layout. Equal to d3's answer on all 254 calls d3-array's tests make with finite numbers; places within 1/32 px of d3's axis and labels the same pixels as d3's text.
 
 <!-- /primitives -->
 
@@ -1378,19 +1378,60 @@ A sheet is a `<table class="sheet">` whose cells are stored numbers and whose fo
 - Ranks go to 32 and `.arrays-bins.arrays-max` has 32 bins. A range that mixes a positive end with a negative one needs the end known: `.arrays-count`, or `--arrays-length`. A cyclic array's ranges go forwards only.
 - An `.arrays-xy` array has as many rows as entries; a reader reads one row, `--arrays-r` takes no range.
 - A reader is `position: fixed` against its array's `contain: layout`: no transform, filter, perspective or other containment between them.
-- In Firefox, put `.arrays-calc` boxes and the results they name in a container as wide as its content (`width: max-content`): Firefox 158 keeps an `anchor-size()` until the box is laid out again ([QUIRKS.md](QUIRKS.md) Q3).
+- In Firefox, put `.arrays-calc` boxes and the results they name in a container as wide as its content (`width: max-content`): Firefox keeps an `anchor-size()` until the box is laid out again ([QUIRKS.md](QUIRKS.md) Q3).
 - Bins in use are counted up to the box's width in px. The smallest number in a bin is a max of a bound minus the number.
-- Each distinct `.arrays-rom2` read is a font variation of its own, and WebKit's load time grows faster than their number on a page. All 5,120 pair-table entries on one page took 53.6 s to load in WebKit 26.4, against 0.5 s in Chrome 155. As five pages of 1,324 reads, all five loaded in under 7 s (2026-10-22). Spread many reads over pages, or use the pair counters of `.arrays-text`.
+- Each distinct `.arrays-rom2` read is a font variation of its own, and WebKit's load time grows faster than their number on a page. All 5,120 pair-table entries on one page took 53.6 s to load in WebKit, against 0.5 s in Chrome. As five pages of 1,324 reads, all five loaded in under 7 s. Spread many reads over pages, or use the pair counters of `.arrays-text`.
 
 ## Browsers
 
-Chrome 155 and Safari's WebKit 26.4, measured headless with Playwright: Chrome and WebKit pass all 115 requirements in [SPEC.md](SPEC.md), the grid primitives' and the d3 calls'.
+Chrome 155 and Safari's WebKit 26.4, measured headless with Playwright: Chrome and WebKit pass all 119 requirements in [SPEC.md](SPEC.md), the grid primitives' and the d3 calls'.
 
 Firefox 158 computes `calc()` in 32-bit floats, so the calls that need a double's exact digits (exact sums, dates, colors, most formatting) give wrong answers there; it was measured before Firefox's next release. [QUIRKS.md](QUIRKS.md) has the engine bugs the sheet works around.
 
 ## Performance
 
-Each primitive above gives its cost. For formulas, an update forced:
+Each grid primitive's cost, Chrome then WebKit, in µs an update unless written otherwise:
+
+| Primitive | Cost |
+|---|---|
+| Entry i of an array of child entries | Chrome 6.3-6.5 µs a read, WebKit 9.1-9.6 |
+| Counting the entries: negative indices and the end's check without writing `--arrays-length` | Chrome 8.2 µs a read, WebKit 29.3 |
+| Track i of a packed array, any length | Chrome 5.5-5.8, WebKit 9.3-10.0 |
+| The i-th slot named x: several arrays in one grid | Chrome 5.8-6.5, WebKit 6.2-10.6 |
+| Two numbers an entry: --arrays-value and --arrays-value-y of entry i, or column i and row r | Chrome 7.9 µs a read (two numbers), WebKit 9.9 |
+| Entry i of a cyclic array, round either way | Chrome 6.1-6.4, WebKit 11.1-12.2 (on these fixed-size tracks) |
+| Rank within a bin: 1 for the first child put in a bin, 2 for the next, to 32 | Chrome 5.6-6.3, WebKit 9.8-10.1 |
+| The largest number in a bin | Chrome 16.1 µs a child plus its reader, WebKit 25.9 |
+| Water filling: slot k reads min(cap k, level), the level what fills the width | Chrome 4.2, WebKit 9.5 |
+| A sort: entry i in order of a key; the i-th smallest, the largest (-1), the sum of the smallest few; equal keys in markup order | Chrome 5.5, WebKit 9.5 |
+| How many bins in use are below a child's bin: its rank among the distinct bins, from 0 | Chrome 8.2, WebKit 15.2 |
+| First-fit packing: each child's column and row where it lands, rows from the top | Chrome 19.6 an item with its where, WebKit 42.2 |
+| Places in a sort: 1 for the smallest key, equal keys in markup order | Chrome 17.4 an entry with its where, WebKit 40.9 |
+| A tile map: where each named area is and how big, and whether it is in the map | Chrome 32.5 a child with its where, WebKit 96.3 (the old sheet in the same harness: 124.1 against 118.1) |
+| 2D packing around walls: each child of w x h tiles where first fit puts it, row by row from the top, around the map's named areas and the children before it; whether it fits in the map | Chrome 34.1 an item (25 maps of 12, switching), WebKit 107.3 (one map of 100: 5.9 ms a frame) |
+| The push: boxes in order, each at the larger of its target and the end of the box before (1D non-penetration in one layout) | Chrome 26.8 a box with its where, WebKit 50.2 |
+| The push from the end: each box at the smaller of its target and the start of the box after less its width, none past the wall | Chrome 24.2, WebKit 44.1 |
+| Grouped sums: each child reads the sum of the earlier children in its group; an item after a group reads its total; with --arrays-n 1, counts | Chrome 20.1 an item (19.3 with values to 1,000), WebKit 39.9 (178 with values to 1,000) |
+| The most intervals at one point; each interval's lane (interval colouring, first fit by start) | Chrome 5.3 an item (5.5 at 1,800), WebKit 13.3 (14.0 at 1,800) |
+| Next-fit lines: how many lines a row of widths takes, each child's line and its place on it | Chrome 3.5 an item (3.7 at 1,800), WebKit 9.1 (9.4 at 1,800) |
+| Search in a sort: how many keys are below a key, up to it, equal to it, and whether any is | Chrome 11.2 an element, WebKit 17.0 |
+| A key range: which entries have a key in [from, to], as a bit mask and the six highest bits; many queries over one row | Chrome 3.1 ms for 100 queries over 19 entries, mask only (vs-calc range), WebKit 6 |
+| A window: entries counted from a moving start | Chrome 8.8, WebKit 20.5 (the old sheet in the same harness: 16.2 against 18.8) |
+| A keyed map: the largest number written at any whole key | Chrome 18.0 (300 keys over 20,000, every key in range), WebKit 63.1 (an earlier figure, 32.5, had 271 of 300 keys outside the range) |
+| A second and a third pass in one grid: rows sized from sums of columns, a column from sums of rows | Chrome 7.6 µs a hop at 256, WebKit 23 |
+| A sum of whole numbers, a max of sums, f(k) by a lookup table, without a grid | Chrome 1.13 ms for 256 numbers summed and looked up, WebKit 2.25 |
+| Prefix sums: each entry the sum so far, and the sum before it | Chrome 2.5 ms for 300 entries, every sum read (150 readers, placed by grid-area; vs-calc prefix), WebKit 5.0 |
+| Signed extremes: max(positives) + min(negatives) of any number of signed numbers; laid-out widths times factors in the same collapse, and through scopes two laid-out widths in one (a difference p1 W1 - p2 W2); as a child of a `.arrays-stack` or `.arrays-tallest` it counts there as its value, with no reader | Chrome 1.43 ms a chain of 256, WebKit 2.50 |
+| A height as a width, live: what a .arrays-least, a collapse or a stack is, laid on as a width | Chrome 14.6 a turn, WebKit 40.7 |
+| A factor in flow: f x a laid-out size, counted by whatever contains it | Chrome a dot product of 256: 2.57, WebKit 3.62 |
+| Baselines: a row of max(a) + max(d), and each item handed max(a) - a_j | Chrome 1.56 a row of 256, WebKit 5.00 |
+| The best contiguous split into K parts: the least possible largest part | Chrome 1.10 for 256 in 8 parts, WebKit 4.0 |
+| Flex shares: weights, shrink, floors and caps in one layout | Chrome 1.91 for 256, WebKit 4.38 |
+| Sliding-window maxima: the largest of the --arrays-span entries ending at entry j | Chrome 5.2, WebKit 6.4 |
+| Fair shares with floors: each child gets max(floor, weight x level), the level what fills the width | Chrome 10.5 an entry, WebKit 13.4 |
+| d3's axis and d3-array's ticks, tickIncrement, tickStep and nice: a range's ticks as d3 picks them, drawn and labelled as d3.axisBottom draws them | Chrome 0.42 ms a .dcss-ticks of 16, 1.17 a drawn axis, 0.84 a .dcss-nice, WebKit 0.74, 1.62 and 1.51 ms |
+
+For formulas, an update forced:
 
 | Cost | Chrome | WebKit |
 |---|---|---|
