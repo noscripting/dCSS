@@ -912,13 +912,13 @@ Same frame: yes. Exact.
 
 `--arrays-i: -1`.
 
-Same frame: yes. Exact. Cost: as above.
+Same frame: yes. Exact.
 
 #### The sum of entries i to j, either order; -1 as the end; i = j
 
 `--arrays-i: 2; --arrays-j: 4`; `--arrays-i: 1; --arrays-j: -1` is the total.
 
-Same frame: yes. Exact. Cost: as above.
+Same frame: yes. Exact.
 
 #### Track i of a packed array, any length
 
@@ -960,7 +960,7 @@ Same frame: yes, with an item changing bin and number every frame. Exact.
 
 `.arrays-bins > .arrays-count`; what is inside gets `--arrays-count`.
 
-Same frame: yes, with an item moving every frame. Exact for bins up to the box's width in px. Cost: as above.
+Same frame: yes, with an item moving every frame. Exact for bins up to the box's width in px.
 
 #### Water filling: slot k reads min(cap k, level), the level what fills the width
 
@@ -990,7 +990,7 @@ Same frame: yes, with two spans changing every frame. Exact.
 
 A `<b class="arrays-where"><u><u></u></u></b>` inside a child of an array, bins, shares, pack, sort, map or slide; what is inside the `<u>` gets `--arrays-x` and `--arrays-y`.
 
-Same frame: yes, with entries, shares and widths moving. Exact (1/64 px with fractions). Cost: Chrome about 10 a read, WebKit about 30.
+Same frame: yes, with entries, shares and widths moving. Exact (1/64 px with fractions).
 
 #### Places in a sort: 1 for the smallest key, equal keys in markup order
 
@@ -1086,7 +1086,7 @@ Same frame: yes, with a key and a value moving every frame. Exact; an unused key
 
 `.arrays-sum`, `.arrays-largest`, `.arrays-scale`, `.arrays-least` (with `.arrays-rest`), `.arrays-stack`, `.arrays-tallest`, leaves with `--arrays-n`, readers `.arrays-at` in any node; see Formulas.
 
-Same frame: yes (check 46). Exact within 6 digits through `var()`. Cost: see Formulas.
+Same frame: yes (check 46). Exact within 6 digits through `var()`.
 
 #### A second and a third pass in one grid: rows sized from sums of columns, a column from sums of rows
 
