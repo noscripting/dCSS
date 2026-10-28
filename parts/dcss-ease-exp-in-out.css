@@ -1,0 +1,7 @@
+/* DCSS array: parts/dcss-ease-exp-in-out.css, the dcss-ease-exp-in-out call alone (parts.mjs)
+   SPDX-License-Identifier: MIT
+   SPDX-FileCopyrightText: 2026 noscript.ing contributors */
+/* DCSS d3-ease: every easing as .dcss-ease-<name>, --value in, --dcss-ease-<name> out (ease.mjs). */
+.dcss-ease-exp-in-out { --dcss-ease-exp-in-out: calc(((clamp(-1 * (pow(2, 2000 * clamp(0, sign(1 - (2 * var(--value))) + 1, 1)) - 1), ((pow(2, -10 * (1 - (2 * var(--value)))) - 0.0009765625) * 1.0009775171065494), pow(2, 2000 * clamp(0, sign(1 - (2 * var(--value))) + 1, 1)) - 1) + clamp(-1 * (pow(2, 2000 * (1 - clamp(0, sign(1 - (2 * var(--value))) + 1, 1))) - 1), (2 - ((pow(2, -10 * ((2 * var(--value)) - 1)) - 0.0009765625) * 1.0009775171065494)), pow(2, 2000 * (1 - clamp(0, sign(1 - (2 * var(--value))) + 1, 1))) - 1)) / 2)); }
+:where( .dcss-ease-exp-in-out) > * { --value: initial; }
+@function --dcss-ease-exp-in-out(--value) { result: calc(((clamp(-1 * (pow(2, 2000 * clamp(0, sign(1 - (2 * var(--value))) + 1, 1)) - 1), ((pow(2, -10 * (1 - (2 * var(--value)))) - 0.0009765625) * 1.0009775171065494), pow(2, 2000 * clamp(0, sign(1 - (2 * var(--value))) + 1, 1)) - 1) + clamp(-1 * (pow(2, 2000 * (1 - clamp(0, sign(1 - (2 * var(--value))) + 1, 1))) - 1), (2 - ((pow(2, -10 * ((2 * var(--value)) - 1)) - 0.0009765625) * 1.0009775171065494)), pow(2, 2000 * (1 - clamp(0, sign(1 - (2 * var(--value))) + 1, 1))) - 1)) / 2)); }

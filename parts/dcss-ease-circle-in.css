@@ -1,0 +1,7 @@
+/* DCSS array: parts/dcss-ease-circle-in.css, the dcss-ease-circle-in call alone (parts.mjs)
+   SPDX-License-Identifier: MIT
+   SPDX-FileCopyrightText: 2026 noscript.ing contributors */
+/* DCSS d3-ease: every easing as .dcss-ease-<name>, --value in, --dcss-ease-<name> out (ease.mjs). */
+.dcss-ease-circle-in { --dcss-ease-circle-in: calc((1 - sqrt(max(0, 1 - var(--value) * var(--value))))); }
+:where( .dcss-ease-circle-in) > * { --value: initial; }
+@function --dcss-ease-circle-in(--value) { result: calc((1 - sqrt(max(0, 1 - var(--value) * var(--value))))); }

@@ -1,0 +1,15 @@
+/* DCSS array: parts/dcss-treemap-dice.css, the dcss-treemap-dice call alone (parts.mjs)
+   SPDX-License-Identifier: MIT
+   SPDX-FileCopyrightText: 2026 noscript.ing contributors */
+/* DCSS hierarchies: d3.treemapSlice, treemapDice, treemapSliceDice and partition over nested lists (hierarchy.mjs). */
+:is(.dcss-treemap-dice) { display: flex; flex-direction: column; }
+:is(.dcss-treemap-dice) > :not(:is(ul, ol)) { flex: none; }
+:is(.dcss-treemap-dice) :is(ul, ol) { display: flex; margin: 0; padding: 0; border: 0; list-style: none; box-sizing: border-box; }
+:is(.dcss-treemap-dice) > :is(ul, ol) { flex: 1 1 0px; min-width: 0; min-height: 0; position: relative; container-type: size; }
+:where(:is(.dcss-treemap-dice) li) { --value: initial; }
+:is(.dcss-treemap-dice) li { position: relative; box-sizing: border-box; margin: 0; padding: 0; border: 0; min-width: 0; min-height: 0; }
+:is(.dcss-treemap-dice) li { flex: 0 1 auto; display: grid; white-space: nowrap; }
+.dcss-treemap-dice :is(ul, ol) { flex-direction: row; }
+.dcss-treemap-dice li { grid-template: 100% / 0px minmax(0px, auto); }
+.dcss-treemap-dice li > :is(ul, ol) { grid-area: 1 / 1 / 2 / 3; }
+.dcss-treemap-dice li:not(:has(> :is(ul, ol))) { contain: inline-size; contain-intrinsic-inline-size: calc(var(--value, 0) * 100cqw / 64); }

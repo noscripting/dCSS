@@ -1,0 +1,27 @@
+/* DCSS array: parts/dcss-locale-arabic.css, the dcss-locale-arabic call alone (parts.mjs)
+   SPDX-License-Identifier: MIT
+   SPDX-FileCopyrightText: 2026 noscript.ing contributors */
+@property --dcss-ready { syntax: '<integer>'; inherits: true; initial-value: 0; }
+@property --dcss-err { syntax: '<integer>'; inherits: true; initial-value: 0; }
+/* DCSS d3.format, types f, % and s: toFixed's exact rounding, unround's parts (format.mjs). */
+@property --arrays-fmt-big { syntax: '<number>'; inherits: true; initial-value: 0; }
+@counter-style arrays-fmt-none { system: fixed -1; symbols: "";  }
+@counter-style arrays-fmt-sign { system: fixed -1; symbols: "" "" "\2212" "+"; fallback: arrays-fmt-none; }
+/* white-space: WebKit wraps a shrink-to-fit output after the point otherwise (0.005 as "0." and "005") */
+@property --arrays-fmt-on { syntax: '<integer>'; inherits: false; initial-value: 1; }
+/* General notation reuses significant rounding, with no SI prefix. Only the
+   non-exponential toPrecision range is admitted; unsupported results print nothing. */
+/* d3: with "$" the suffix is the currency's (none), not "%" */
+
+/* DCSS d3.scaleLog's ticks, nice and tickFormat's labels (ticks.mjs). */
+
+@counter-style arrays-locale-ar-none{system: fixed -1; symbols: "";}
+@counter-style arrays-locale-ar-lead{system: numeric; symbols: "٠" "١" "٢" "٣" "٤" "٥" "٦" "٧" "٨" "٩"; range: 0 infinite; fallback: arrays-locale-ar-none;}
+@counter-style arrays-locale-ar-pad1{system: numeric; symbols: "٠" "١" "٢" "٣" "٤" "٥" "٦" "٧" "٨" "٩"; pad: 1 "٠"; range: 0 infinite; fallback: arrays-locale-ar-none;}
+@counter-style arrays-locale-ar-pad2{system: numeric; symbols: "٠" "١" "٢" "٣" "٤" "٥" "٦" "٧" "٨" "٩"; pad: 2 "٠"; range: 0 infinite; fallback: arrays-locale-ar-none;}
+@counter-style arrays-locale-ar-pad3{system: numeric; symbols: "٠" "١" "٢" "٣" "٤" "٥" "٦" "٧" "٨" "٩"; pad: 3 "٠"; range: 0 infinite; fallback: arrays-locale-ar-none;}
+@counter-style arrays-locale-ar-comma{system: fixed 0; symbols: "" "٬";}
+@counter-style arrays-locale-ar-dot{system: fixed 0; symbols: "" "٫";}
+@property --arrays-locale-input-ready{syntax:'<integer>';inherits:false;initial-value:0}
+.dcss-format-locale.dcss-locale-arabic{--arrays-locale-input-ready:calc(var(--value) * 0 + 1);--arrays-fmt-on:var(--arrays-locale-input-ready);--dcss-ready:var(--arrays-locale-input-ready);--dcss-err:max(calc(1 - var(--arrays-locale-input-ready)),var(--arrays-fmt-big))}
+.dcss-format-locale.dcss-locale-arabic::after{content:counter(arrays-fmt-s, arrays-fmt-sign) attr(data-dcss-locale-prefix) counter(arrays-fmt-l6, arrays-locale-ar-lead) counter(arrays-fmt-p6, arrays-locale-ar-pad3) counter(arrays-fmt-c6, arrays-locale-ar-comma) counter(arrays-fmt-l5, arrays-locale-ar-lead) counter(arrays-fmt-p5, arrays-locale-ar-pad3) counter(arrays-fmt-c5, arrays-locale-ar-comma) counter(arrays-fmt-l4, arrays-locale-ar-lead) counter(arrays-fmt-p4, arrays-locale-ar-pad3) counter(arrays-fmt-c4, arrays-locale-ar-comma) counter(arrays-fmt-l3, arrays-locale-ar-lead) counter(arrays-fmt-p3, arrays-locale-ar-pad3) counter(arrays-fmt-c3, arrays-locale-ar-comma) counter(arrays-fmt-l2, arrays-locale-ar-lead) counter(arrays-fmt-p2, arrays-locale-ar-pad3) counter(arrays-fmt-c2, arrays-locale-ar-comma) counter(arrays-fmt-l1, arrays-locale-ar-lead) counter(arrays-fmt-p1, arrays-locale-ar-pad3) counter(arrays-fmt-c1, arrays-locale-ar-comma) counter(arrays-fmt-l0, arrays-locale-ar-lead) counter(arrays-fmt-p0, arrays-locale-ar-pad3) counter(arrays-fmt-d, arrays-locale-ar-dot) counter(arrays-fmt-fl1, arrays-locale-ar-pad1) counter(arrays-fmt-fl2, arrays-locale-ar-pad2) counter(arrays-fmt-fl3, arrays-locale-ar-pad3) counter(arrays-fmt-fp5, arrays-locale-ar-pad3) counter(arrays-fmt-fp4, arrays-locale-ar-pad3) counter(arrays-fmt-fp3, arrays-locale-ar-pad3) counter(arrays-fmt-fp2, arrays-locale-ar-pad3) counter(arrays-fmt-fp1, arrays-locale-ar-pad3) counter(arrays-fmt-fp0, arrays-locale-ar-pad3) attr(data-dcss-locale-suffix)}

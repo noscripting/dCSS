@@ -1,0 +1,7 @@
+/* DCSS array: parts/dcss-ease-exp-in.css, the dcss-ease-exp-in call alone (parts.mjs)
+   SPDX-License-Identifier: MIT
+   SPDX-FileCopyrightText: 2026 noscript.ing contributors */
+/* DCSS d3-ease: every easing as .dcss-ease-<name>, --value in, --dcss-ease-<name> out (ease.mjs). */
+.dcss-ease-exp-in { --dcss-ease-exp-in: calc(((pow(2, -10 * (1 - var(--value))) - 0.0009765625) * 1.0009775171065494)); }
+:where( .dcss-ease-exp-in) > * { --value: initial; }
+@function --dcss-ease-exp-in(--value) { result: calc(((pow(2, -10 * (1 - var(--value))) - 0.0009765625) * 1.0009775171065494)); }

@@ -1,0 +1,10 @@
+/* DCSS array: parts/dcss-identity-tick-format.css, the dcss-identity-tick-format call alone (parts.mjs)
+   SPDX-License-Identifier: MIT
+   SPDX-FileCopyrightText: 2026 noscript.ing contributors */
+@property --dcss-ready { syntax: '<integer>'; inherits: true; initial-value: 0; }
+@property --dcss-err { syntax: '<integer>'; inherits: true; initial-value: 0; }
+/* DCSS ticks and axes: d3-array's ticks, tickIncrement, tickStep and nice in calc(), d3-axis's drawing (ticks.mjs). */
+
+@property --arrays-identity-label-ready{syntax:'<integer>';inherits:false;initial-value:0}
+:where(.dcss-identity-tick-format){--value:initial}
+.dcss-format-fixed.dcss-identity-tick-format{--precision:var(--dcss-tick-precision);--arrays-identity-label-ready:calc(var(--dcss-identity-ticks-ready,0) * (var(--value) * 0 + 1));--dcss-ready:var(--arrays-identity-label-ready);--dcss-err:max(calc(1 - var(--arrays-identity-label-ready)),var(--dcss-identity-ticks-error,1),var(--arrays-fmt-big));--arrays-fmt-on:calc(var(--arrays-identity-label-ready) * (1 - min(1,var(--dcss-identity-ticks-error,1))))}

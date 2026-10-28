@@ -1,0 +1,136 @@
+/* DCSS array: parts/dcss-ticks.css, the dcss-ticks call alone (parts.mjs)
+   SPDX-License-Identifier: MIT
+   SPDX-FileCopyrightText: 2026 noscript.ing contributors */
+@property --arrays-k { syntax: '*'; inherits: false; initial-value: 1fr; }
+/* DCSS ticks and axes: d3-array's ticks, tickIncrement, tickStep and nice in calc(), d3-axis's drawing (ticks.mjs). */
+@property --arrays-t0-p0 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --arrays-t0-p { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --arrays-t0-f { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --arrays-t0-m { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --arrays-t0-r1 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --arrays-t0-i1 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --arrays-t0-r2 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --arrays-t0-i2 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --arrays-t1-p0 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --arrays-t1-p { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --arrays-t1-f { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --arrays-t1-m { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --arrays-t1-r1 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --arrays-t1-i1 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --arrays-t1-r2 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --arrays-t1-i2 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --arrays-t2-p0 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --arrays-t2-p { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --arrays-t2-f { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --arrays-t2-m { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --arrays-t2-r1 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --arrays-t2-i1 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --arrays-t2-r2 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --arrays-t2-i2 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --arrays-t-l { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --arrays-t-p { syntax: '<integer>'; inherits: true; initial-value: 0; }
+@property --arrays-t-f { syntax: '<integer>'; inherits: true; initial-value: 0; }
+@property --arrays-t-m { syntax: '<integer>'; inherits: true; initial-value: 0; }
+@property --arrays-t-i1 { syntax: '<integer>'; inherits: true; initial-value: 0; }
+@property --arrays-t-i2 { syntax: '<integer>'; inherits: true; initial-value: 0; }
+@property --arrays-tick-increment { syntax: '<number>'; inherits: false; initial-value: 0; }
+@property --arrays-tick-step { syntax: '<number>'; inherits: false; initial-value: 0; }
+@property --arrays-tick-n { syntax: '<integer>'; inherits: true; initial-value: 0; }
+@property --arrays-tick-value { syntax: '<number>'; inherits: false; initial-value: 0; }
+@property --arrays-tick-d { syntax: '<integer>'; inherits: true; initial-value: 0; }
+@property --arrays-ix { syntax: '<integer>'; inherits: false; initial-value: 0; }
+
+:is(.dcss-ticks) { --arrays-t0-a: min(var(--start), var(--stop)); --arrays-t0-b: max(var(--start), var(--stop)); --arrays-t0-s: calc((var(--arrays-t0-b) - var(--arrays-t0-a)) / max(0, (var(--count, 10) * 1))); --arrays-t0-p0: round(log(var(--arrays-t0-s), 10));
+  --arrays-t0-p: calc(var(--arrays-t0-p0) - max(0, sign(pow(10, var(--arrays-t0-p0)) - (var(--arrays-t0-s))))); --arrays-t0-e: calc(var(--arrays-t0-s) / pow(10, var(--arrays-t0-p)));
+  --arrays-t0-f: calc(1 + (1 - max(0, sign(sqrt(2) - (var(--arrays-t0-e))))) + 3 * (1 - max(0, sign(sqrt(10) - (var(--arrays-t0-e))))) + 5 * (1 - max(0, sign(sqrt(50) - (var(--arrays-t0-e)))))); --arrays-t0-m: max(0, sign(0 - (var(--arrays-t0-p))));
+  --arrays-t0-kn: calc(pow(10, -1 * var(--arrays-t0-p)) / var(--arrays-t0-f)); --arrays-t0-kp: calc(pow(10, var(--arrays-t0-p)) * var(--arrays-t0-f));
+  --arrays-t0-r1: round((var(--arrays-t0-m) * var(--arrays-t0-a) * var(--arrays-t0-kn) + (1 - var(--arrays-t0-m)) * var(--arrays-t0-a) / var(--arrays-t0-kp))); --arrays-t0-i1: calc(var(--arrays-t0-r1) + max(0, sign(var(--arrays-t0-a) - ((var(--arrays-t0-m) * var(--arrays-t0-r1) / var(--arrays-t0-kn) + (1 - var(--arrays-t0-m)) * var(--arrays-t0-r1) * var(--arrays-t0-kp))) - (abs((var(--arrays-t0-m) * var(--arrays-t0-r1) / var(--arrays-t0-kn) + (1 - var(--arrays-t0-m)) * var(--arrays-t0-r1) * var(--arrays-t0-kp))) * 8.9e-16))));
+  --arrays-t0-r2: round((var(--arrays-t0-m) * var(--arrays-t0-b) * var(--arrays-t0-kn) + (1 - var(--arrays-t0-m)) * var(--arrays-t0-b) / var(--arrays-t0-kp))); --arrays-t0-i2: calc(var(--arrays-t0-r2) - max(0, sign((var(--arrays-t0-m) * var(--arrays-t0-r2) / var(--arrays-t0-kn) + (1 - var(--arrays-t0-m)) * var(--arrays-t0-r2) * var(--arrays-t0-kp)) - (var(--arrays-t0-b)) - (abs(var(--arrays-t0-b)) * 8.9e-16))));
+  --arrays-t1-a: min(var(--start), var(--stop)); --arrays-t1-b: max(var(--start), var(--stop)); --arrays-t1-s: calc((var(--arrays-t1-b) - var(--arrays-t1-a)) / max(0, (var(--count, 10) * 2))); --arrays-t1-p0: round(log(var(--arrays-t1-s), 10));
+  --arrays-t1-p: calc(var(--arrays-t1-p0) - max(0, sign(pow(10, var(--arrays-t1-p0)) - (var(--arrays-t1-s))))); --arrays-t1-e: calc(var(--arrays-t1-s) / pow(10, var(--arrays-t1-p)));
+  --arrays-t1-f: calc(1 + (1 - max(0, sign(sqrt(2) - (var(--arrays-t1-e))))) + 3 * (1 - max(0, sign(sqrt(10) - (var(--arrays-t1-e))))) + 5 * (1 - max(0, sign(sqrt(50) - (var(--arrays-t1-e)))))); --arrays-t1-m: max(0, sign(0 - (var(--arrays-t1-p))));
+  --arrays-t1-kn: calc(pow(10, -1 * var(--arrays-t1-p)) / var(--arrays-t1-f)); --arrays-t1-kp: calc(pow(10, var(--arrays-t1-p)) * var(--arrays-t1-f));
+  --arrays-t1-r1: round((var(--arrays-t1-m) * var(--arrays-t1-a) * var(--arrays-t1-kn) + (1 - var(--arrays-t1-m)) * var(--arrays-t1-a) / var(--arrays-t1-kp))); --arrays-t1-i1: calc(var(--arrays-t1-r1) + max(0, sign(var(--arrays-t1-a) - ((var(--arrays-t1-m) * var(--arrays-t1-r1) / var(--arrays-t1-kn) + (1 - var(--arrays-t1-m)) * var(--arrays-t1-r1) * var(--arrays-t1-kp))) - (abs((var(--arrays-t1-m) * var(--arrays-t1-r1) / var(--arrays-t1-kn) + (1 - var(--arrays-t1-m)) * var(--arrays-t1-r1) * var(--arrays-t1-kp))) * 8.9e-16))));
+  --arrays-t1-r2: round((var(--arrays-t1-m) * var(--arrays-t1-b) * var(--arrays-t1-kn) + (1 - var(--arrays-t1-m)) * var(--arrays-t1-b) / var(--arrays-t1-kp))); --arrays-t1-i2: calc(var(--arrays-t1-r2) - max(0, sign((var(--arrays-t1-m) * var(--arrays-t1-r2) / var(--arrays-t1-kn) + (1 - var(--arrays-t1-m)) * var(--arrays-t1-r2) * var(--arrays-t1-kp)) - (var(--arrays-t1-b)) - (abs(var(--arrays-t1-b)) * 8.9e-16))));
+  --arrays-t2-a: min(var(--start), var(--stop)); --arrays-t2-b: max(var(--start), var(--stop)); --arrays-t2-s: calc((var(--arrays-t2-b) - var(--arrays-t2-a)) / max(0, (var(--count, 10) * 4))); --arrays-t2-p0: round(log(var(--arrays-t2-s), 10));
+  --arrays-t2-p: calc(var(--arrays-t2-p0) - max(0, sign(pow(10, var(--arrays-t2-p0)) - (var(--arrays-t2-s))))); --arrays-t2-e: calc(var(--arrays-t2-s) / pow(10, var(--arrays-t2-p)));
+  --arrays-t2-f: calc(1 + (1 - max(0, sign(sqrt(2) - (var(--arrays-t2-e))))) + 3 * (1 - max(0, sign(sqrt(10) - (var(--arrays-t2-e))))) + 5 * (1 - max(0, sign(sqrt(50) - (var(--arrays-t2-e)))))); --arrays-t2-m: max(0, sign(0 - (var(--arrays-t2-p))));
+  --arrays-t2-kn: calc(pow(10, -1 * var(--arrays-t2-p)) / var(--arrays-t2-f)); --arrays-t2-kp: calc(pow(10, var(--arrays-t2-p)) * var(--arrays-t2-f));
+  --arrays-t2-r1: round((var(--arrays-t2-m) * var(--arrays-t2-a) * var(--arrays-t2-kn) + (1 - var(--arrays-t2-m)) * var(--arrays-t2-a) / var(--arrays-t2-kp))); --arrays-t2-i1: calc(var(--arrays-t2-r1) + max(0, sign(var(--arrays-t2-a) - ((var(--arrays-t2-m) * var(--arrays-t2-r1) / var(--arrays-t2-kn) + (1 - var(--arrays-t2-m)) * var(--arrays-t2-r1) * var(--arrays-t2-kp))) - (abs((var(--arrays-t2-m) * var(--arrays-t2-r1) / var(--arrays-t2-kn) + (1 - var(--arrays-t2-m)) * var(--arrays-t2-r1) * var(--arrays-t2-kp))) * 8.9e-16))));
+  --arrays-t2-r2: round((var(--arrays-t2-m) * var(--arrays-t2-b) * var(--arrays-t2-kn) + (1 - var(--arrays-t2-m)) * var(--arrays-t2-b) / var(--arrays-t2-kp))); --arrays-t2-i2: calc(var(--arrays-t2-r2) - max(0, sign((var(--arrays-t2-m) * var(--arrays-t2-r2) / var(--arrays-t2-kn) + (1 - var(--arrays-t2-m)) * var(--arrays-t2-r2) * var(--arrays-t2-kp)) - (var(--arrays-t2-b)) - (abs(var(--arrays-t2-b)) * 8.9e-16))));
+  --arrays-t-l: calc(max(0, sign(var(--arrays-t0-i1) - (var(--arrays-t0-i2)))) * (1 - max(0, sign(0.5 - (var(--count, 10) * 1)))) * max(0, sign(2 - (var(--count, 10) * 1))) * (1 + max(0, sign(var(--arrays-t1-i1) - (var(--arrays-t1-i2)))) * (1 - max(0, sign(0.5 - (var(--count, 10) * 2)))) * max(0, sign(2 - (var(--count, 10) * 2))))); --arrays-t-p: calc((1 - min(1, abs(var(--arrays-t-l) - 0))) * var(--arrays-t0-p) + (1 - min(1, abs(var(--arrays-t-l) - 1))) * var(--arrays-t1-p) + (1 - min(1, abs(var(--arrays-t-l) - 2))) * var(--arrays-t2-p)); --arrays-t-f: calc((1 - min(1, abs(var(--arrays-t-l) - 0))) * var(--arrays-t0-f) + (1 - min(1, abs(var(--arrays-t-l) - 1))) * var(--arrays-t1-f) + (1 - min(1, abs(var(--arrays-t-l) - 2))) * var(--arrays-t2-f)); --arrays-t-m: calc((1 - min(1, abs(var(--arrays-t-l) - 0))) * var(--arrays-t0-m) + (1 - min(1, abs(var(--arrays-t-l) - 1))) * var(--arrays-t1-m) + (1 - min(1, abs(var(--arrays-t-l) - 2))) * var(--arrays-t2-m)); --arrays-t-i1: calc((1 - min(1, abs(var(--arrays-t-l) - 0))) * var(--arrays-t0-i1) + (1 - min(1, abs(var(--arrays-t-l) - 1))) * var(--arrays-t1-i1) + (1 - min(1, abs(var(--arrays-t-l) - 2))) * var(--arrays-t2-i1)); --arrays-t-i2: calc((1 - min(1, abs(var(--arrays-t-l) - 0))) * var(--arrays-t0-i2) + (1 - min(1, abs(var(--arrays-t-l) - 1))) * var(--arrays-t1-i2) + (1 - min(1, abs(var(--arrays-t-l) - 2))) * var(--arrays-t2-i2));
+  --arrays-t-kn: calc(pow(10, -1 * var(--arrays-t-p)) / var(--arrays-t-f)); --arrays-t-kp: calc(pow(10, var(--arrays-t-p)) * var(--arrays-t-f));
+  --arrays-t-inc: calc(var(--arrays-t-m) * -1 * var(--arrays-t-kn) + (1 - var(--arrays-t-m)) * var(--arrays-t-kp));
+  --arrays-tick-increment: var(--arrays-t-inc); --arrays-tick-step: calc((1 - 2 * max(0, sign(var(--start) - (var(--stop))))) * (var(--arrays-t-m) / var(--arrays-t-kn) + (1 - var(--arrays-t-m)) * var(--arrays-t-kp)));
+  --arrays-tick-n: calc(max(0, sign(var(--count, 10) - (0))) * ((1 - abs(sign(var(--stop) - var(--start)))) + (1 - (1 - abs(sign(var(--stop) - var(--start))))) * max(0, var(--arrays-t-i2) - var(--arrays-t-i1) + 1)));
+  --arrays-tick-d: calc(var(--arrays-t-m) * (-1 * var(--arrays-t-p) - (1 - min(1, abs(var(--arrays-t-f) - 10)))));
+  --dcss-tick-increment: var(--arrays-tick-increment); --dcss-tick-step: var(--arrays-tick-step); --dcss-tick-count: var(--arrays-tick-n);
+  --dcss-tick-precision: var(--arrays-tick-d); }
+:is(.dcss-ticks) > li { --arrays-k: calc(sibling-index() - 1); --arrays-ix: calc(((1 - max(0, sign(var(--start) - (var(--stop))))) * (var(--arrays-t-i1) + var(--arrays-k)) + max(0, sign(var(--start) - (var(--stop)))) * (var(--arrays-t-i2) - var(--arrays-k))));
+  --arrays-tick-value: calc((1 - abs(sign(var(--stop) - var(--start)))) * var(--start) + (1 - (1 - abs(sign(var(--stop) - var(--start))))) * (var(--arrays-t-m) * var(--arrays-ix) / var(--arrays-t-kn) + (1 - var(--arrays-t-m)) * var(--arrays-ix) * var(--arrays-t-kp)));
+  --dcss-tick: var(--arrays-tick-value); --dcss-tick-at: calc((1 - abs(sign(var(--stop) - var(--start)))) * 0.5 + (1 - (1 - abs(sign(var(--stop) - var(--start))))) * ((var(--arrays-t-m) * var(--arrays-ix) / var(--arrays-t-kn) + (1 - var(--arrays-t-m)) * var(--arrays-ix) * var(--arrays-t-kp)) - var(--start)) / (var(--stop) - var(--start) + (1 - abs(sign(var(--stop) - var(--start)))))); }
+@container style(--arrays-tick-n: 0) { :is(.dcss-ticks) > li:nth-child(n + 1) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--arrays-tick-n: 1) { :is(.dcss-ticks) > li:nth-child(n + 2) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--arrays-tick-n: 2) { :is(.dcss-ticks) > li:nth-child(n + 3) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--arrays-tick-n: 3) { :is(.dcss-ticks) > li:nth-child(n + 4) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--arrays-tick-n: 4) { :is(.dcss-ticks) > li:nth-child(n + 5) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--arrays-tick-n: 5) { :is(.dcss-ticks) > li:nth-child(n + 6) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--arrays-tick-n: 6) { :is(.dcss-ticks) > li:nth-child(n + 7) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--arrays-tick-n: 7) { :is(.dcss-ticks) > li:nth-child(n + 8) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--arrays-tick-n: 8) { :is(.dcss-ticks) > li:nth-child(n + 9) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--arrays-tick-n: 9) { :is(.dcss-ticks) > li:nth-child(n + 10) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--arrays-tick-n: 10) { :is(.dcss-ticks) > li:nth-child(n + 11) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--arrays-tick-n: 11) { :is(.dcss-ticks) > li:nth-child(n + 12) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--arrays-tick-n: 12) { :is(.dcss-ticks) > li:nth-child(n + 13) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--arrays-tick-n: 13) { :is(.dcss-ticks) > li:nth-child(n + 14) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--arrays-tick-n: 14) { :is(.dcss-ticks) > li:nth-child(n + 15) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--arrays-tick-n: 15) { :is(.dcss-ticks) > li:nth-child(n + 16) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--arrays-tick-n: 16) { :is(.dcss-ticks) > li:nth-child(n + 17) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--arrays-tick-n: 17) { :is(.dcss-ticks) > li:nth-child(n + 18) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--arrays-tick-n: 18) { :is(.dcss-ticks) > li:nth-child(n + 19) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--arrays-tick-n: 19) { :is(.dcss-ticks) > li:nth-child(n + 20) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--arrays-tick-n: 20) { :is(.dcss-ticks) > li:nth-child(n + 21) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--arrays-tick-n: 21) { :is(.dcss-ticks) > li:nth-child(n + 22) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--arrays-tick-n: 22) { :is(.dcss-ticks) > li:nth-child(n + 23) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--arrays-tick-n: 23) { :is(.dcss-ticks) > li:nth-child(n + 24) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--arrays-tick-n: 24) { :is(.dcss-ticks) > li:nth-child(n + 25) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--arrays-tick-n: 25) { :is(.dcss-ticks) > li:nth-child(n + 26) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--arrays-tick-n: 26) { :is(.dcss-ticks) > li:nth-child(n + 27) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--arrays-tick-n: 27) { :is(.dcss-ticks) > li:nth-child(n + 28) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--arrays-tick-n: 28) { :is(.dcss-ticks) > li:nth-child(n + 29) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--arrays-tick-n: 29) { :is(.dcss-ticks) > li:nth-child(n + 30) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--arrays-tick-n: 30) { :is(.dcss-ticks) > li:nth-child(n + 31) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--arrays-tick-n: 31) { :is(.dcss-ticks) > li:nth-child(n + 32) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--arrays-tick-n: 32) { :is(.dcss-ticks) > li:nth-child(n + 33) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--arrays-tick-n: 33) { :is(.dcss-ticks) > li:nth-child(n + 34) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--arrays-tick-n: 34) { :is(.dcss-ticks) > li:nth-child(n + 35) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--arrays-tick-n: 35) { :is(.dcss-ticks) > li:nth-child(n + 36) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--arrays-tick-n: 36) { :is(.dcss-ticks) > li:nth-child(n + 37) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--arrays-tick-n: 37) { :is(.dcss-ticks) > li:nth-child(n + 38) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--arrays-tick-n: 38) { :is(.dcss-ticks) > li:nth-child(n + 39) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--arrays-tick-n: 39) { :is(.dcss-ticks) > li:nth-child(n + 40) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--arrays-tick-n: 40) { :is(.dcss-ticks) > li:nth-child(n + 41) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--arrays-tick-n: 41) { :is(.dcss-ticks) > li:nth-child(n + 42) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--arrays-tick-n: 42) { :is(.dcss-ticks) > li:nth-child(n + 43) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--arrays-tick-n: 43) { :is(.dcss-ticks) > li:nth-child(n + 44) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--arrays-tick-n: 44) { :is(.dcss-ticks) > li:nth-child(n + 45) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--arrays-tick-n: 45) { :is(.dcss-ticks) > li:nth-child(n + 46) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--arrays-tick-n: 46) { :is(.dcss-ticks) > li:nth-child(n + 47) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--arrays-tick-n: 47) { :is(.dcss-ticks) > li:nth-child(n + 48) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--arrays-tick-n: 48) { :is(.dcss-ticks) > li:nth-child(n + 49) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--arrays-tick-n: 49) { :is(.dcss-ticks) > li:nth-child(n + 50) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--arrays-tick-n: 50) { :is(.dcss-ticks) > li:nth-child(n + 51) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--arrays-tick-n: 51) { :is(.dcss-ticks) > li:nth-child(n + 52) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--arrays-tick-n: 52) { :is(.dcss-ticks) > li:nth-child(n + 53) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--arrays-tick-n: 53) { :is(.dcss-ticks) > li:nth-child(n + 54) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--arrays-tick-n: 54) { :is(.dcss-ticks) > li:nth-child(n + 55) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--arrays-tick-n: 55) { :is(.dcss-ticks) > li:nth-child(n + 56) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--arrays-tick-n: 56) { :is(.dcss-ticks) > li:nth-child(n + 57) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--arrays-tick-n: 57) { :is(.dcss-ticks) > li:nth-child(n + 58) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--arrays-tick-n: 58) { :is(.dcss-ticks) > li:nth-child(n + 59) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--arrays-tick-n: 59) { :is(.dcss-ticks) > li:nth-child(n + 60) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--arrays-tick-n: 60) { :is(.dcss-ticks) > li:nth-child(n + 61) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--arrays-tick-n: 61) { :is(.dcss-ticks) > li:nth-child(n + 62) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--arrays-tick-n: 62) { :is(.dcss-ticks) > li:nth-child(n + 63) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--arrays-tick-n: 63) { :is(.dcss-ticks) > li:nth-child(n + 64) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--arrays-tick-n: 64) { :is(.dcss-ticks) > li:nth-child(n + 65) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }

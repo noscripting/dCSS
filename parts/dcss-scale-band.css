@@ -1,0 +1,38 @@
+/* DCSS array: parts/dcss-scale-band.css, the dcss-scale-band call alone (parts.mjs)
+   SPDX-License-Identifier: MIT
+   SPDX-FileCopyrightText: 2026 noscript.ing contributors */
+/* DCSS bar chart: d3.scaleBand and d3.scaleLinear([0, max]) over a list (scale.mjs). */
+@property --arrays-plot-h { syntax: '<length>'; inherits: true; initial-value: 0px; }
+@property --arrays-plot-w { syntax: '<length>'; inherits: true; initial-value: 0px; }
+@property --arrays-step { syntax: '<length>'; inherits: true; initial-value: 0px; }
+@property --arrays-pi { syntax: '<number>'; inherits: true; initial-value: 0; }
+@property --arrays-band-raw { syntax: '<number>'; inherits: true; initial-value: 0; }
+@property --arrays-band-max { syntax: '<number>'; inherits: true; initial-value: 0; }
+.dcss-scale-band.dcss-scale-linear { display: grid; grid-template: auto / 100%; align-content: start; container-type: size; overflow: clip; }
+.dcss-scale-band.dcss-scale-linear > :is(ul, ol),.dcss-scale-band.dcss-scale-linear > :is(ul, ol) + * { grid-area: 1 / 1; margin: 0; padding: 0; border: 0; --arrays-plot-h: 100cqh; --arrays-plot-w: 100cqw; }
+.dcss-scale-band.dcss-scale-linear > :is(ul, ol) { display: flex; align-items: stretch; list-style: none; position: relative; --arrays-pi: var(--padding-inner, var(--padding, 0));
+  background: linear-gradient(currentColor 0 0) 0 var(--arrays-plot-h) / 100% 1px no-repeat,
+    linear-gradient(currentColor 0 0) 0 var(--arrays-plot-h) / 1px 6px no-repeat, linear-gradient(currentColor 0 0) 100% var(--arrays-plot-h) / 1px 6px no-repeat; }
+.dcss-scale-band.dcss-scale-linear > :is(ul, ol)::before,.dcss-scale-band.dcss-scale-linear > :is(ul, ol)::after { content: ''; flex: 1 1 0px; min-width: 0; }
+.dcss-scale-band.dcss-scale-linear > :is(ul, ol)::before { flex-grow: calc(2 * var(--padding-outer, var(--padding, 0)) * var(--align, 0.5) - var(--padding-inner, var(--padding, 0)) / 2); }
+.dcss-scale-band.dcss-scale-linear > :is(ul, ol)::after { flex-grow: calc(2 * var(--padding-outer, var(--padding, 0)) * (1 - var(--align, 0.5)) - var(--padding-inner, var(--padding, 0)) / 2); }
+.dcss-scale-band.dcss-scale-linear > :is(ul, ol) > li { flex: 1 1 0px; min-width: 0; margin: 0; border: 0; box-sizing: content-box; container-type: size; position: static;
+  --arrays-step: calc(var(--arrays-plot-w) / max(1, sibling-count() - var(--arrays-pi) + 2 * var(--padding-outer, var(--padding, 0))));
+  --arrays-band-x: calc((var(--arrays-plot-w) - var(--arrays-step) * (sibling-count() - var(--arrays-pi))) * var(--align, 0.5) + var(--arrays-step) * (sibling-index() - 1));
+  padding: calc(var(--arrays-plot-h) + 9px) 0 0; min-height: clamp(0px, (log(var(--value), 2) + 64) * 1024px, 131072px);
+  font: 10px sans-serif; line-height: 1; text-align: center; white-space: nowrap; }
+.dcss-scale-band.dcss-scale-linear > :is(ul, ol) > li::before { content: ''; position: absolute; left: var(--arrays-band-x); width: calc((1 - var(--arrays-pi)) * var(--arrays-step));
+  --arrays-band-raw: max(pow(2, round(100cqh / 1px, 0.0078125) / 1024 - 64), var(--value)); --arrays-band-max: calc(var(--arrays-band-raw) + sign(max(0, 0.00002 * var(--arrays-band-raw) - abs(round(var(--arrays-band-raw), pow(10, round(down, log(var(--arrays-band-raw), 10), 1) - 3)) - var(--arrays-band-raw)))) * (round(var(--arrays-band-raw), pow(10, round(down, log(var(--arrays-band-raw), 10), 1) - 3)) - var(--arrays-band-raw))); height: calc(var(--value) / var(--arrays-band-max) * var(--arrays-plot-h));
+  top: calc(var(--arrays-plot-h) - var(--value) / var(--arrays-band-max) * var(--arrays-plot-h)); }
+:where(.dcss-scale-band.dcss-scale-linear > :is(ul, ol) > li)::before { background: steelblue; }
+.dcss-scale-band.dcss-scale-linear > :is(ul, ol) > li::after { content: ''; position: absolute; left: calc(var(--arrays-band-x) + (1 - var(--arrays-pi)) * var(--arrays-step) / 2 - 0.5px); top: var(--arrays-plot-h); width: 1px; height: 6px; background: currentColor; }
+.dcss-scale-band.dcss-scale-linear > :is(ul, ol) + * { display: block; position: relative; container-type: size; min-width: 0; min-height: 0; }
+.dcss-scale-band.dcss-scale-linear > :is(ul, ol) + * > * { --arrays-band-raw: pow(2, (round(100cqh / 1px, 0.0078125) - var(--arrays-plot-h) / 1px - 9) / 1024 - 64); --arrays-band-max: calc(var(--arrays-band-raw) + sign(max(0, 0.00002 * var(--arrays-band-raw) - abs(round(var(--arrays-band-raw), pow(10, round(down, log(var(--arrays-band-raw), 10), 1) - 3)) - var(--arrays-band-raw)))) * (round(var(--arrays-band-raw), pow(10, round(down, log(var(--arrays-band-raw), 10), 1) - 3)) - var(--arrays-band-raw))); --dcss-max: var(--arrays-band-max); }
+.dcss-scale-band.dcss-scale-linear > :is(ul, ol) + * > :is { position: absolute; top: 0; height: var(--arrays-plot-h); }
+.dcss-scale-band.dcss-scale-linear > :is(ul, ol) + * > .dcss-axis-left { right: 100%; } .dcss-scale-band.dcss-scale-linear > :is(ul, ol) + * > .dcss-axis-right { left: 100%; }
+
+/* DCSS d3.scaleLinear: up to 8 stops, clamp, rangeRound (linear.mjs). */
+
+/* DCSS d3.scalePow and scaleSqrt (linear.mjs). */
+
+/* DCSS d3.scaleLog: map and invert (linear.mjs). */

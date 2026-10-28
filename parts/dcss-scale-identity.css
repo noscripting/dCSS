@@ -1,0 +1,17 @@
+/* DCSS array: parts/dcss-scale-identity.css, the dcss-scale-identity call alone (parts.mjs)
+   SPDX-License-Identifier: MIT
+   SPDX-FileCopyrightText: 2026 noscript.ing contributors */
+@property --dcss-ready { syntax: '<integer>'; inherits: true; initial-value: 0; }
+@property --dcss-err { syntax: '<integer>'; inherits: true; initial-value: 0; }
+/* DCSS bar chart: d3.scaleBand and d3.scaleLinear([0, max]) over a list (scale.mjs). */
+
+/* DCSS d3.scaleLinear: up to 8 stops, clamp, rangeRound (linear.mjs). */
+
+/* DCSS d3.scalePow and scaleSqrt (linear.mjs). */
+
+/* DCSS d3.scaleLog: map and invert (linear.mjs). */
+
+@property --arrays-identity-present{syntax:'<integer>';inherits:false;initial-value:0}
+@property --arrays-identity-error{syntax:'<integer>';inherits:false;initial-value:1}
+.dcss-scale-identity{--dcss-scale-identity:calc(var(--value));--dcss-scale-identity-invert:calc(var(--value));--arrays-identity-present:calc(var(--dcss-scale-identity) * 0 + 1);--arrays-identity-error:calc(1 - var(--arrays-identity-present));--dcss-ready:var(--arrays-identity-present);--dcss-err:var(--arrays-identity-error);--dcss-scale-identity-ready:var(--arrays-identity-present);--dcss-scale-identity-error:var(--arrays-identity-error);--arrays-static-input-ready:var(--arrays-identity-present);--arrays-static-input-error:var(--arrays-identity-error);--arrays-static-input-gate:var(--arrays-identity-present);}
+:where(.dcss-scale-identity)>*{--value:initial}
