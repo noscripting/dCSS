@@ -2523,7 +2523,7 @@
       },
       "A110": {
         "__compat": {
-          "description": "Qualified date parsing MUST retain every original UTC/local identity and each source-owned factory context through both branches. The vector MUST be at most 24 ASCII characters; 38 fixed English formats, civil years 100..9999, epoch years −9999..19999 and explicit America/Los_Angeles time MUST remai",
+          "description": "Qualified date parsing MUST retain every original UTC/local identity and each source-owned factory context through both branches. The vector MUST be at most 24 ASCII characters; 41 fixed English formats (d3's 38 and three ISO ones, held to d3 by `iso-check.mjs`), civil years 100..9999, epoch years −",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -2656,6 +2656,102 @@
             "firefox": {
               "version_added": null,
               "notes": "NOTRUN: typed order family"
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A116": {
+        "__compat": {
+          "description": "Median, quantile, quantileSorted and the quantile scale MUST take 1/64 steps within ±131,072 and whole numbers from −131,072 to 8,257,535, matching d3. They MUST refuse values past those bounds with error 1.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": "≤26.4",
+              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+            },
+            "firefox": {
+              "version_added": null,
+              "notes": "NOTRUN: list order statistics"
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A117": {
+        "__compat": {
+          "description": "Order, aggregate and extrema calls MUST take `--length`, `--type-N` (0 number, 1 null, 2 undefined, 3 NaN) and `--value-N` on the call element, matching d3. The same names on an ancestor MUST NOT reach a call.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": "≤26.4",
+              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+            },
+            "firefox": {
+              "version_added": null,
+              "notes": "NOTRUN: shared typed names"
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A118": {
+        "__compat": {
+          "description": "Each public class's part (`parts.mjs`) MUST answer as its family does, with or without `dcss-array.css`: every DCSS check MUST pass with parts linked in place of families. Parts MUST combine in any order.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": "≤26.4",
+              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+            },
+            "firefox": {
+              "version_added": null,
+              "notes": "NOTRUN: parts"
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A119": {
+        "__compat": {
+          "description": "Where the browser parses `@function`, each easing and the two-stop linear scale MUST also be functions (`--dcss-ease-<name>(t, ...)`, `--dcss-scale-linear(x, d0, d1, r0, r1, clamp, round)`) equal to their classes within 1e-12. Elsewhere a declaration calling one MUST fall back to its earlier plain v",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": "≤26.4",
+              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+            },
+            "firefox": {
+              "version_added": null,
+              "notes": "NOTRUN: easing functions"
             }
           },
           "status": {

@@ -28,7 +28,7 @@ Download `dcss-array.css` and the `families/` folder. Link the core and the fami
 
 The class is d3's function. The list is the data, one `--value` per item, and anything inside the `<div>` after it reads the results: `--dcss-sum`, `--dcss-mean`, `--dcss-count`. `.dcss-format-fixed` prints a number as d3.format does. Change a `--value` with a rule, a `:has()` or an animation, and the outputs follow. [DCSS: d3 as HTML](#dcss-d3-as-html) has the rules every call shares, and the sections after it each family's calls.
 
-Each family is its own file, so a page loads only the calls it uses. Sizes are the file and its gzip; load is the median of three cold loads beside the core in WebKit 26.4 (`probes/architecture/load-cost.mjs`, 2026-10-26). Chrome loads any one of them in 40 ms or less.
+Each family is its own file, so a page loads only the calls it uses. Sizes are the file and its gzip; load is the median of three cold loads beside the core in WebKit 26.4 (2026-10-26). Chrome loads any one of them in 40 ms or less.
 
 | File in `families/` | Calls | Size, gzip | Load in WebKit |
 |---|---|---:|---:|
@@ -38,17 +38,76 @@ Each family is its own file, so a page loads only the calls it uses. Sizes are t
 | `scale.css` | linear, pow, sqrt, log, band, identity | 85 KB, 6 KB | 12 ms |
 | `ease.css` | every d3-ease function | 19 KB, 2 KB | 11 ms |
 | `hierarchy.css` | treemaps (slice, dice, slice-dice), partition, five-circle pack | 2.7 MB, 158 KB | 59 ms |
-| `aggregate.css` | typed sum, count, mean, cumsum, fsum, fcumsum | 6.3 MB, 300 KB | 114 ms |
-| `order.css` | typed median, quantile, quantileSorted, their indexes, mode | 12.6 MB, 476 KB | 225 ms |
+| `aggregate.css` | typed sum, count, mean, cumsum, fsum, fcumsum | 4.0 MB, 222 KB | 76 ms |
+| `order.css` | typed median, quantile, quantileSorted, their indexes, mode | 1.8 MB, 82 KB | 42 ms |
 | `extrema.css` | typed min, max, extent, least, greatest, their indexes, scan, ascending, descending | 956 KB, 40 KB | 27 ms |
-| `color.css` | rgb, hsl, lab, hcl, lch, gray, cubehelix; conversions | 3.4 MB, 158 KB | 65 ms |
-| `color-text.css` | parsing CSS color text: names, hex, rgb() and hsl() strings | 14.6 MB, 348 KB | 285 ms |
-| `date-parse.css` | utcParse, 38 formats; calendar fields | 4.2 MB, 162 KB | 86 ms |
-| `date-parse-local.css` | timeParse in Pacific time, the same formats | 7.5 MB, 459 KB | 132 ms |
+| `color.css` | rgb, hsl, lab, hcl, lch, gray, cubehelix; conversions | 3.1 MB, 142 KB | 59 ms |
+| `color-text.css` | parsing CSS color text: names, hex, rgb() and hsl() strings | 3.7 MB, 155 KB | 75 ms |
+| `date-parse.css` | utcParse, 41 formats; calendar fields | 1.0 MB, 41 KB | 32 ms |
+| `date-parse-local.css` | timeParse in Pacific time, the same formats | 1.1 MB, 54 KB | 30 ms |
 | `time.css` | UTC and local intervals: day, week, month, year, hour, minute | 1.6 MB, 90 KB | 37 ms |
 | `date-format.css` | timeFormat and utcFormat, 41 formats | 88 KB, 7 KB | 12 ms |
 | `geo.css` | equirectangular, mercator, stereographic, identity; rotation, distance | 1.7 MB, 76 KB | 33 ms |
 | `random.css` | randomLcg | 60 KB, 5 KB | 12 ms |
+
+### Only the calls a page uses
+
+Each public class is also a file of its own in `parts/`, named after the class: `parts/dcss-median.css` holds the list median and nothing else. Link one part for each class the page uses, in any order, in place of the families. A part carries what it needs from `dcss-array.css`, so a page of DCSS calls alone can leave the core out (308 KB, 76 KB gzipped); link it for the grid primitives and text reads:
+
+```html
+<link rel="stylesheet" href="parts/dcss-sum.css">
+<link rel="stylesheet" href="parts/dcss-format-fixed.css">
+```
+
+A part is its family's own rules cut to one class, and each part's rules match its own call only, so parts combine in any order. Every DCSS check runs with parts as well as with families. Sizes gzipped, the median part of each family against the whole family:
+
+| Family | Parts | A part | The family |
+|---|---:|---:|---:|
+| `array.css` | 35 | 4.3 KB (3.5–16) | 26 KB |
+| `ticks.css` | 8 | 2.6 KB | 13 KB |
+| `format.css` | 9 | 3.0 KB | 17 KB |
+| `scale.css` | 6 | 1.7 KB | 5.6 KB |
+| `ease.css` | 38 | 0.2 KB | 1.5 KB |
+| `color.css` | 22 | 5.0 KB (0.7–104) | 142 KB |
+| `date-parse.css`, `date-parse-local.css` | 106 | 8.4 KB | 41, 54 KB |
+| `time.css` | 118 | 0.5 KB (to 16) | 90 KB |
+| `date-format.css` | 82 | 5.7 KB | 7.3 KB |
+| `geo.css` | 22 | 1.4 KB (to 30) | 76 KB |
+| `aggregate.css` | 6 | 45 KB (to 157) | 222 KB |
+| `order.css` | 6 | 46 KB | 82 KB |
+| `extrema.css` | 12 | 35 KB | 40 KB |
+| `color-text.css` | 3 | 113 KB | 155 KB |
+
+The typed families gain least: their shared circuit is most of each part, and each part carries its own copy. For two or more calls from `aggregate.css`, `order.css`, `extrema.css` or `color-text.css` on one page, link that family instead: three order parts are 3.8 MB, the family 1.8 MB. Parts and families mix on one page.
+
+### Typed values
+
+The list calls read numbers from a list's items, which suits a page written by hand. The typed calls (order, aggregate and extrema) take each value as properties on the call element, with its type, so d3's nulls, NaNs and empty slots arrive as d3 sees them:
+
+- `--length`: how many values.
+- `--type-N` for slot N, from 0: 0 a number, 1 null, 2 undefined, 3 NaN.
+- `--value-N`: the number, for type 0.
+
+```html
+<div class="dcss-fsum" style="--length: 3; --type-0: 0; --value-0: 0.1;
+     --type-1: 1; --type-2: 0; --value-2: 0.2">
+  <output class="dcss-format-fixed" style="--value: var(--dcss-fsum); --precision: 2"></output>   <!-- 0.30 -->
+</div>
+```
+
+Write them where the page is made, from the data:
+
+```js
+// in a template or a build step: an array to a typed call's style attribute
+const typed = (values) => `--length: ${values.length}; ` + values.map((v, i) =>
+  v === null ? `--type-${i}: 1` : v === undefined ? `--type-${i}: 2` : Number.isNaN(v) ? `--type-${i}: 3`
+  : `--type-${i}: 0; --value-${i}: ${v}`).join('; ');
+
+// text to character codes, for the color and date parsers
+const text = (s) => `--length: ${s.length}; ` + [...s].map((c, i) => `--c${i}: ${c.charCodeAt(0)}`).join('; ');
+```
+
+Each family's section lists its other inputs (strings, objects, accessors) and its own longer names, which also work.
 
 ### Grid primitives
 
@@ -124,11 +183,29 @@ It is for pages where script can't run or isn't wanted (Markdown and CMS output,
 - The data is inline style, so a Content-Security-Policy must allow it: `style-src 'unsafe-inline'`, or the values in a linked stylesheet (`.sales li:nth-child(1) { --value: 120 }`). The core embeds its lookup fonts as `data:` URLs, so text reads also need `font-src data:`.
 - Where d3's answer is a layout, the `<li>`s are laid out at it, in source order; nothing is read back. A reduction's list is drawn one px a unit, so leave its items empty: text in them spills over the result. To hide the drawing, give the figure a height and `overflow: clip`; never shrink or hide the list itself, since its size is the answer (an extent whose list is `height: 0` reads the wrong minimum and sets `--dcss-err: 2`).
 - Where it is a number, the element after the list is its size container. The number is read on that container's direct children and pseudo-elements, then inherited inward as `var(--dcss-*)`. An empty `<output>` prints it through its pseudo-element. To compose another call, use a `<div>` after the list and put that call inside it; the container itself does not receive the number.
-- A call's `--value` is its own: the calls inside it don't inherit it (each sets its own; one with none has no answer, so a reader's `var()` fallback applies). Settings (`--domain-0`, `--precision`, `--start` …) do inherit, so a shared one can be set on an ancestor, and a `--value` on a plain element is shared by the calls inside it.
+- A call's `--value` is its own: the calls inside it don't inherit it (each sets its own; one with none has no answer, so a reader's `var()` fallback applies). Settings (`--domain-0`, `--precision`, `--start` …) do inherit, so a shared one can be set on an ancestor, and a `--value` on a plain element is shared by the calls inside it. Typed calls are the exception: they read `--length`, `--c0` … or `--dcss-input-*` on the call element only, and inputs set on an ancestor give `--dcss-err: 1`.
 - Results reach inward only, in the same frame through `var()`; printed digits trail a moving number by a frame in Chrome. Beside each result, `--dcss-ready` (0 until it is read) and `--dcss-err` (0, or why not).
-- Numbers are px: whole to 2^24, fractions to 1/64, a total under 33 million, 6 significant digits through `var()`, 0 or more. Give money in whole cents and divide for printing with `.dcss-scale-linear` (see Format): 19.99 is not a multiple of 1/64.
+- To use two results together, nest one call inside the other. Where both publish the same name, copy the outer one to a name of your own on an element between them: `--first: var(--dcss-date-parse)`.
+- Numbers are px: whole to 2^24, fractions to 1/64, a total under 33 million, 6 significant digits through `var()`, 0 or more. Give money in whole cents and divide for printing with `.dcss-scale-linear` (see Format): 19.99 is not a multiple of 1/64. A median or quantile takes whole cents up to 8,257,535; a min or max index takes them divided by 64 (Array, index calls).
 - A figure is as wide as its container; where it would shrink to fit its content (a flex item, an inline-block) it is 12em, not the width of its drawing. The element after the list keeps its text on one line. A call nested in another's result needs its own height and `overflow: clip`.
 - The sheet owns the display and size of the figure, its list, its items and the element after the list, and the empty `<output>`'s `::after`; the rest is the page's.
+
+#### When a call can't answer
+
+A call that can't answer sets `--dcss-err` to 1 or 2 on its result children, and an `<output>` or formatter in error prints nothing. A number read straight from a result in error is not d3's answer: a `counter()` of an index in error shows 0. To show a message instead, wrap the reading in one element inside the result container and query its `--dcss-err`. This works in Chrome and WebKit:
+
+```html
+<style>
+  .bad { display: none; }
+  @container style(--dcss-err: 1) { .ok { display: none; } .bad { display: inline; } }
+</style>
+<figure class="dcss-max-index" style="height: 1lh; overflow: clip">
+  <ul><li style="--value: 3"></li><li style="--value: 9"></li><li style="--value: 4"></li></ul>
+  <div><span><span class="ok">Highest: item <output></output></span><span class="bad">no answer</span></span></div>
+</figure>
+```
+
+Printed text lives in `::after` counters, which script reads back as `counter()` expressions, not digits. To test a page, read the number it prints from (`getComputedStyle(el).getPropertyValue('--dcss-sum')`) and its `--dcss-err`, or compare a screenshot.
 
 ### Array: families/array.css
 
@@ -136,7 +213,7 @@ It is for pages where script can't run or isn't wanted (Markdown and CMS output,
 
 #### Reductions
 
-`.dcss-sum`, `.dcss-count`, `.dcss-mean`, `.dcss-min`, `.dcss-max`, `.dcss-extent` and `.dcss-length` (the list's length, items skipped included), each a figure as above. Children and pseudo-elements of the result container get `--dcss-sum` (and so on; an extent `--dcss-min` and `--dcss-max`). An empty `<output>` after the list prints it as d3.format(",") does, to 6 decimals, a line above the list (an extent as `3–125`). An item whose `--value` is not a number of 0 or more is skipped, as d3 skips it, and `--dcss-err` is 1. A mean, min, max or extent of no items is d3's undefined, `--dcss-err` 2. In error the `<output>` prints nothing.
+`.dcss-sum`, `.dcss-count`, `.dcss-mean`, `.dcss-min`, `.dcss-max`, `.dcss-extent` and `.dcss-length` (the list's length, items skipped included), each a figure as above. Children and pseudo-elements of the result container get `--dcss-sum` (and so on; an extent `--dcss-min` and `--dcss-max`). An empty `<output>` after the list prints it as d3.format(",") does, to 6 decimals, a line above the list (an extent as `3–125`). An item whose `--value` is not a number of 0 or more (an empty `<li>` is d3's null) is skipped, as d3 skips it; the results count the rest, and `--dcss-err` is 1 to say an item was skipped. A mean, min, max or extent of no items is d3's undefined, `--dcss-err` 2. In error the `<output>` prints nothing.
 
 ```html
 <figure class="dcss-extent">
@@ -159,7 +236,7 @@ A sum's figure also gives `--dcss-count`, `--dcss-mean` and `--dcss-length`, so 
 
 With no values the mean is 0 beside a count of 0, where d3 gives undefined. To feed another kind of call the same numbers, set them once as custom properties on an ancestor (`--jan: 120`) and write `--value: var(--jan)` in each list.
 
-The list is drawn as it computes. A sum is a staircase as wide as the sum and as tall as the count; a min or max is boxes stacked as wide as the largest and 1 + 2 x (max - min) px tall. The figure clips the width; give it a height and `overflow: clip` to hide the rest (any selector works: the sheet sets only `overflow-x`). A value is taken to 1/64; in Chrome a list past 262,144 px (2^18) reads without its 64ths, past 2^24 without whole px (ENGINES.md); up to 63 skipped items are counted.
+The list is drawn as it computes. A sum is a staircase as wide as the sum and as tall as the count; a min or max is boxes stacked as wide as the largest and 1 + 2 x (max - min) px tall. The figure clips the width; give it a height and `overflow: clip` to hide the rest (any selector works: the sheet sets only `overflow-x`). A value is taken to 1/64; in Chrome a list past 262,144 px (2^18) reads without its 64ths, past 2^24 without whole px; up to 63 skipped items are counted.
 
 For typed values (null, strings, objects, accessors), use the calls of `families/aggregate.css`.
 
@@ -198,7 +275,7 @@ For typed values (null, strings, objects, accessors), use the calls of `families
 
 The result is 1. `.dcss-least` and `.dcss-greatest` use the same list and holder structure, publishing the winning numeric value as `--dcss-least` or `--dcss-greatest`.
 
-Each call accepts 0–64 numeric values on a 1/64 grid within [-1024, 1024]. Nullish, missing and NaN observations are skipped; an empty or all-missing list returns -1 with error 0 for index calls, or CSS NaN with error 2 for least/greatest values. Off-grid, out-of-bound values or more than 64 items give error 1 and CSS NaN. Results and `--dcss-ready`/`--dcss-err` inherit from the result child across intervening size containers. The call owns the list's computation geometry, as reductions do. Strings, accessors and custom comparator callbacks are unsupported; `families/extrema.css` takes them.
+Each call accepts 0–64 numeric values on a 1/64 grid within [-1024, 1024]. Whole numbers up to 65,536, such as prices in cents, fit divided by 64 (`--value: calc(8417 / 64)`): they stay exact and in order, so the index is the same. Nullish, missing and NaN observations are skipped; an empty or all-missing list returns -1 with error 0 for index calls, or CSS NaN with error 2 for least/greatest values. Off-grid, out-of-bound values or more than 64 items give error 1 and CSS NaN. Results and `--dcss-ready`/`--dcss-err` inherit from the result child across intervening size containers. The call owns the list's computation geometry, as reductions do. Strings, accessors and custom comparator callbacks are unsupported; `families/extrema.css` takes them.
 
 Of d3's recorded calls, these answer 9 of 14 for each comparison, 13 of 46 for minIndex and maxIndex, 9 of 26 for leastIndex and greatestIndex, and 8 of 26 for least and greatest.
 
@@ -261,7 +338,7 @@ The outputs print `30.0%` and `70.0%`. On `.arrays-share-result` and its descend
 
 A share accepts 1–64 nonnegative finite values, each a multiple of 1/64 and at most 4,095. A positive total gives ready 1 and error 0, including a zero-valued item whose share is 0. An all-zero total gives error 2. A missing, NaN, negative, off-grid or out-of-range value, or more than 64 items, gives error 1 throughout the call. Error 1 takes precedence over a zero total. Errors publish CSS NaN instead of a usable share or total, and dependent generated text is suppressed. A nested call reads its own list.
 
-A share is d3's sum and a division, not a d3 function of its own. The share example reuses each fraction for percent text and a width.
+A share is d3's sum and a division, not a d3 function of its own. One share call can reuse each fraction for percent text and a width.
 
 #### Composing results
 
@@ -319,10 +396,10 @@ This prints `1,234.6`. The median remains available as `--dcss-median`; the prec
 
 | Call | Drop-in data and result |
 |---|---|
-| `dcss-median`, `dcss-quantile` | 0–64 observations on the 1/64 grid within ±1024. Quantile takes `--p`; median fixes it at .5. The result is `--dcss-median` or `--dcss-quantile`. |
+| `dcss-median`, `dcss-quantile` | 0–64 observations: 1/64 steps within ±131,072, or whole numbers from −131,072 to 8,257,535 (prices in cents, counts). Quantile takes `--p`; median fixes it at .5. The result is `--dcss-median` or `--dcss-quantile`. |
 | `dcss-quantile-sorted` | The same bounds, selecting by source position rather than sorting; result `--dcss-quantile-sorted`. |
 | `dcss-scale-threshold` | Up to 16 ascending numeric thresholds within ±2^24; `--value` is the query. |
-| `dcss-scale-quantize` | Ascending `--domain-0`/`--domain-1` (defaults 0/1), and one empty `li` per threshold. Each threshold is computed at runtime from an integer snapshot of `sibling-index()` (Q9). |
+| `dcss-scale-quantize` | Ascending `--domain-0`/`--domain-1` (defaults 0/1), and one empty `li` per threshold. Each threshold is computed at runtime from an integer snapshot of `sibling-index()` (QUIRKS.md Q9). |
 | `dcss-scale-quantile` | 0–64 observations within the quantile bounds, and a query `--value`. |
 | `dcss-cumsum` | 0–64 signed observations within ±1024 on the 1/64 grid. A second `ol.arrays-scan-results` has one `li > div.arrays-call-result` per input. Each result publishes its own `--dcss-cumsum`; missing/NaN observations contribute zero. |
 
@@ -348,7 +425,28 @@ For an interpolated quantile or an even median, put an `arrays-order-upper` cont
 
 All three discrete scales take an explicit `--ranges` (default 2), from 1 to 17, and `--range-0` through `--range-16`. Threshold and quantize holders are `arrays-call-read > arrays-range-copy > arrays-call-result`. The result property is `--dcss-scale-threshold`, `--dcss-scale-quantize` or `--dcss-scale-quantile`; numeric and quoted text ranges are read through `var()`, without per-page rules. A bare output prints a quoted text range; use a formatter for numeric text. `--unknown` supplies the answer for a missing/NaN query. Threshold input ordering and identical repeated observation lists are author preconditions.
 
-A quantile scale uses three copies of its observation list: the outer figure counts observations at or below the query; inside its first result, `arrays-quantile-low` and then `arrays-quantile-high` each contain a list and reader/result pair. The high result contains `arrays-range-copy > arrays-call-result`. Only the gap containing the query needs interpolated threshold comparisons. probes/dcss/static/check.mjs has complete markup for every holder path.
+A quantile scale uses three copies of its observation list: the outer figure counts observations at or below the query; inside its first result, `arrays-quantile-low` and then `arrays-quantile-high` each contain a list and reader/result pair. The high result contains `arrays-range-copy > arrays-call-result`. Only the gap containing the query needs interpolated threshold comparisons. In full, with a list of three and two ranges (the answer is 1):
+
+```html
+<figure class="dcss-scale-quantile" style="--value: 3; --ranges: 2; --range-0: 0; --range-1: 1">
+  <ol><li style="--value: 1"></li><li style="--value: 2"></li><li style="--value: 4"></li></ol>
+  <div class="arrays-call-read"><div class="arrays-call-result">
+    <div class="arrays-quantile-low">
+      <ol><li style="--value: 1"></li><li style="--value: 2"></li><li style="--value: 4"></li></ol>
+      <div class="arrays-call-read"><div class="arrays-call-result">
+        <div class="arrays-quantile-high">
+          <ol><li style="--value: 1"></li><li style="--value: 2"></li><li style="--value: 4"></li></ol>
+          <div class="arrays-call-read"><div class="arrays-call-result">
+            <div class="arrays-range-copy"><div class="arrays-call-result">
+              <output class="dcss-format-fixed" style="--value: var(--dcss-scale-quantile); --precision: 0"></output>
+            </div></div>
+          </div></div>
+        </div>
+      </div></div>
+    </div>
+  </div></div>
+</figure>
+```
 
 Invalid grid values flag error 1; an empty quantile or missing probability flags error 2 and publishes CSS NaN. Use an `arrays-call-input` wrapper between calls to propagate those errors and suppress dependent text. When repeating a function, set its next input on that wrapper, so it captures the previous result before the next call shadows the result name.
 
@@ -434,7 +532,7 @@ They answer 62 more of d3's recorded identity-scale calls: 11 complete tick arra
 
 #### Fixed, percent and SI
 
-d3.format's types `f`, `%` and `s` on one element, an `<output>` most often: `.dcss-format-fixed`, `.dcss-format-percent` or `.dcss-format-si`, the number as `--value`, d3's specifier fields as numbers. It prints into its `::after` the text d3.format prints.
+d3.format's types `f`, `%` and `s` on one element, an `<output>` most often: `.dcss-format-fixed`, `.dcss-format-percent` or `.dcss-format-si`, the number as `--value`, d3's specifier fields as numbers. It prints into its `::after` the text d3.format prints. A missing or NaN `--value`, such as an empty median's result, prints nothing, with `--dcss-err: 1`.
 
 ```html
 <output class="dcss-format-fixed" style="--value: 1234.5; --precision: 2; --comma: 1"></output>   <!-- 1,234.50 -->
@@ -473,7 +571,7 @@ Of d3-format's 142 recorded calls with these specifiers, 139 are within these bo
 <output class="dcss-format-general" style="--value: 2.718281828459045"></output>
 ```
 
-This prints `2.71828182846`. Only results that use ordinary decimal notation are supported: the rounded decimal exponent must be at least -6 and below the significant precision. Scientific notation is refused with error 1 and no text. Missing/NaN input gives ready 0/error 1; finite supported input gives ready 1/error 0. Nested calls own their value and readiness.
+This prints `2.71828182846`. Only results that use ordinary decimal notation are supported: the rounded decimal exponent must be at least -6 and below the significant precision. Scientific notation is refused with error 1 and no text. Finite supported input gives ready 1/error 0. Nested calls own their value and readiness.
 
 #### Log ticks and labels
 
@@ -532,6 +630,8 @@ Each bar is within 1/32 px of d3's in x, width, y and height, and the axis's tic
 
 The child is 12px wide. A finite result has ready 1 and error 0; a missing/NaN query has ready 0 and error 1. Getters and string/object coercions are unsupported. For its ticks and tick labels, use `.dcss-identity-ticks` in `families/ticks.css`. It answers 11 of d3's 86 recorded identity-scale calls.
 
+
+Where the browser has `@function` (Chrome), a two-stop linear scale is also a function, `--dcss-scale-linear(x, d0, d1, r0, r1)`, with clamp and round (0 or 1) after: `--dcss-scale-linear(21, 0, 100, 32, 212)` is 69.8. Write a plain value first for browsers without `@function`, as for the easings. It equals the class within 1e-12 in Chrome 155.
 ### Ease: families/ease.css
 
 Every easing d3-ease exports, as `.dcss-ease-<name>` on any element: `quad-in`, `quad-out`, `quad-in-out`, and the same for `cubic`, `poly`, `sin`, `exp`, `circle`, `bounce`, `back` and `elastic`, plus `linear`; the short names (`.dcss-ease-quad`, `.dcss-ease-bounce`, …) are d3's aliases. `--value` is t; the answer is `--dcss-ease-<name>`. d3's parameters are properties: `--exponent` (poly, 3), `--overshoot` (back, 1.70158), `--amplitude` and `--period` (elastic, 1 and 0.3).
@@ -543,6 +643,14 @@ Every easing d3-ease exports, as `.dcss-ease-<name>` on any element: `quad-in`, 
 ```
 
 Every call d3-ease's own tests make (413), and every function over a grid of t, is within 1e-12 of d3 in Chrome and WebKit.
+
+Where the browser has `@function` (Chrome), every easing is also a CSS function, `--dcss-ease-<name>(t)`, with the class's optional inputs after t in the order above: `--dcss-ease-poly-in(0.5, 2)` is 0.25. A browser without `@function` drops a declaration that calls one, so write a plain value first:
+
+```css
+.bar { width: 50%; width: calc(--dcss-ease-cubic-in-out(0.25) * 100%); }
+```
+
+Each function equals its class within 1e-12 in Chrome 155. WebKit 26.4 and Firefox 158 don't parse `@function`; the classes work everywhere.
 
 ### Hierarchy: families/hierarchy.css
 
@@ -578,7 +686,7 @@ It answers 200 of d3's 203 recorded `packSiblings` calls; the other three use mo
 
 `families/aggregate.css` supplies `.dcss-aggregate-sum`, `.dcss-aggregate-count`, `.dcss-aggregate-mean`, `.dcss-aggregate-cumsum`, `.dcss-fsum` and `.dcss-fcumsum`. They take raw typed values on the call element and expose `--dcss-<operation>` to descendants. The list-based `.dcss-sum`, `.dcss-count`, `.dcss-mean` and `.dcss-cumsum` of `families/array.css` keep their own markup.
 
-`--dcss-input-length` is an integer 0–20; `--dcss-accessor` is an integer 0–4. Each `--dcss-input-N-type` and field type is an integer 0–5: 0 number, 1 null, 2 undefined, 3 NaN, 4 string and 5 object. Numeric types require an actual finite `--dcss-input-N-value` (or field value) within ±Number.MAX_VALUE/64. There is no caller-supplied presence flag. Accessor 0 uses the datum, 1 reads `.value`, 2 returns the one-based index, 3 returns undefined, and 4 uses the recorded count accessor's numeric field. Arbitrary callback code is unsupported.
+Put the inputs on the call element itself, as Typed values shows (`--length`, `--type-N`, `--value-N`), or with this family's own names: `--dcss-input-length` is an integer 0–20; `--dcss-accessor` is an integer 0–4. Each `--dcss-input-N-type` and field type is an integer 0–5: 0 number, 1 null, 2 undefined, 3 NaN, 4 string and 5 object. Numeric types require an actual finite `--dcss-input-N-value` (or field value) within ±Number.MAX_VALUE/64. There is no caller-supplied presence flag. Accessor 0 uses the datum, 1 reads `.value`, 2 returns the one-based index, 3 returns undefined, and 4 uses the recorded count accessor's numeric field. Arbitrary callback code is unsupported.
 
 Strings use length 1–4 and ASCII character codes 0–127. Numeric strings are one or two unsigned digits, optionally preceded by one space. Strings with a character outside the possible numeric spelling are skipped; other unsupported number-shaped strings, including scientific and radix notation, are refused. Missing, fractional, malformed or overflowing transport sets `--dcss-err: 1`. A valid empty mean has no value while its call remains ready without an error.
 
@@ -599,9 +707,24 @@ Exact sums keep binary64 residuals and tie correction.
 
 ### Order: families/order.css
 
-`families/order.css` supplies `.dcss-order-median`, `.dcss-order-quantile`, `.dcss-order-quantile-sorted`, `.dcss-order-median-index`, `.dcss-order-quantile-index` and `.dcss-order-mode`. The list-based median and quantile calls of `families/array.css` keep their layout markup.
+`families/order.css` supplies `.dcss-order-median`, `.dcss-order-quantile`, `.dcss-order-quantile-sorted`, `.dcss-order-median-index`, `.dcss-order-quantile-index` and `.dcss-order-mode`. The list-based median and quantile calls of `families/array.css` keep their layout markup. Those take 1/64 steps, or whole numbers up to 8,257,535 such as prices in cents; these take any finite number as written.
 
-Set `--length` to an integer 0–16 (0–8 for index operations). Each zero-based slot has `--type-N`: 0 finite number, 1 null, 2 undefined, 3 NaN, 4 ASCII string or 5 object. Numbers require `--value-N`; strings use `--length-N` and `--char-xNxJ` character codes. Strings have at most 16 characters; numeric coercion supports unsigned digits. Accessor 0 reads the datum, 1 reads `.value` using `--field-type-N` and `--field-value-N`, 2 returns the one-based index, and 3 returns undefined. Arbitrary callbacks are unsupported.
+```html
+<!-- Ten order amounts. The median prints 59.50; links families/format.css too. -->
+<div class="dcss-order-median" style="--length: 10;
+     --type-0: 0; --value-0: 42;    --type-1: 0; --value-1: 18.5;
+     --type-2: 0; --value-2: 77;    --type-3: 0; --value-3: 18.5;
+     --type-4: 0; --value-4: 130;   --type-5: 0; --value-5: 64;
+     --type-6: 0; --value-6: 9.99;  --type-7: 0; --value-7: 55;
+     --type-8: 0; --value-8: 77;    --type-9: 0; --value-9: 210">
+  <output class="dcss-format-fixed"
+          style="--value: var(--dcss-order-median); --precision: 2"></output>
+</div>
+```
+
+The same inputs on `.dcss-order-quantile` with `--order-p-type: 0; --order-p-number: 0.9` give the 90th percentile, 138. The call's descendants read its result.
+
+Set `--length` to an integer 0–16 (0–8 for index operations). For a median index of more than 8 values, sort them in a grid and read the middle entry (A sort, under Primitives). Each zero-based slot has `--type-N`: 0 finite number, 1 null, 2 undefined, 3 NaN, 4 ASCII string or 5 object. Numbers require `--value-N`; strings use `--length-N` and `--char-xNxJ` character codes. Strings have at most 16 characters; numeric coercion supports unsigned digits. Accessor 0 reads the datum, 1 reads `.value` using `--field-type-N` and `--field-value-N`, 2 returns the one-based index, and 3 returns undefined. Arbitrary callbacks are unsupported.
 
 Quantile calls require a raw `--order-p-type`: 0 finite number supplied as `--order-p-number`, 1 null, 2 undefined, 3 NaN, or 4 a nonnumeric ASCII string of 1–4 characters supplied with `--order-p-length` and `--order-p-char-J`. Null computes probability zero and ignores any numeric payload. Number-shaped strings are refused. Median and mode ignore probability inputs; nested calls root their own inputs. Missing, malformed, fractional metadata and out-of-capacity vectors report `--dcss-err:1`.
 
@@ -621,11 +744,11 @@ Results are `--dcss-order-<operation>` with hyphenated names; mode publishes `--
 </figure>
 ```
 
-The input has 0–10 slots. A slot's `--extrema-i-type` is 0 for a finite number, 1 for ASCII text, 2 for null, 3 for undefined, 4 for NaN, or 5 for an object. Numbers use `--extrema-i-number`; text uses `--extrema-i-length` and `-c0`, `-c1`, `-c2`, with at most three ASCII characters. Two strings compare lexically; mixed string/number comparisons cover empty text and unsigned strings of up to three decimal digits; other numeric spellings are outside this contract. Numbers are compared exactly, with every binary digit.
+The input has 0–10 slots, given as Typed values shows (`--length`, `--type-N`, `--value-N`) or with this family's own names. A slot's `--extrema-i-type` is 0 for a finite number, 1 for ASCII text, 2 for null, 3 for undefined, 4 for NaN, or 5 for an object. Numbers use `--extrema-i-number`; text uses `--extrema-i-length` and `-c0`, `-c1`, `-c2`, with at most three ASCII characters. Two strings compare lexically; mixed string/number comparisons cover empty text and unsigned strings of up to three decimal digits; other numeric spellings are outside this contract. Numbers are compared exactly, with every binary digit.
 
 `--extrema-mode` selects how items are compared: 0 natural order, 1 `.value`, 2 callback index plus one, 3 undefined context, 4 identity, 5 `.name`, 6 `.v`, 7 numeric subtraction, or 8 subtraction of `.value` fields. `--extrema-direction:1` reverses the least/greatest comparator. Scalar comparison uses two slots. The selected object's comparison field uses `--extrema-i-field-*`; its preserved `name`, `value`, `v` and `index` payloads use `--extrema-i-object-<key>-*` with the same typed encoding. Absent object fields are explicitly type 3. Arbitrary callbacks, locale-sensitive name comparison beyond lowercase ASCII, signed-zero identity, longer strings and larger vectors are unsupported.
 
-Results expose `--dcss-extrema-type`, `-number`, `-length`, `-c0` through `-c2`, and `-index`. Object results also retain `-object-<key>-*`; extent supplies `-min-*` and `-max-*`. `--dcss-ready:1; --dcss-err:0` means the call is valid. `--dcss-extrema-field-ready:0` retains native undefined/NaN without making it an input error. Read type and payload only when field-ready is 1: absence means NaN for scalar comparisons and undefined for value or scan results. Numeric fields are absent for nonnumeric results, each with its own readiness. Missing inputs and malformed bounds report an error.
+Results expose `--dcss-extrema-type`, `-number`, `-length`, `-c0` through `-c2`, and `-index`; an extent's two ends are `--dcss-extrema-min-number` and `--dcss-extrema-max-number`. Object results also retain `-object-<key>-*`; extent supplies `-min-*` and `-max-*`. `--dcss-ready:1; --dcss-err:0` means the call is valid. `--dcss-extrema-field-ready:0` retains native undefined/NaN without making it an input error. Read type and payload only when field-ready is 1: absence means NaN for scalar comparisons and undefined for value or scan results. Numeric fields are absent for nonnumeric results, each with its own readiness. Missing inputs and malformed bounds report an error.
 
 ### Color: families/color.css
 
@@ -662,7 +785,20 @@ RGB conversion to HSL, Lab, Hcl or Lch works for channels 0–255. Direct RGB an
 
 #### Color text
 
-`.dcss-parse-color-complete` reads a complete 0–64-character ASCII vector in `--length` and `--c0` onward. It accepts CSS names, hex and legacy RGB/RGBA/HSL/HSLA. It publishes `--dcss-color-kind` and the reusable channel fields; native null and NaN fields remain absent rather than becoming zeros. Fractional, missing or out-of-range character codes report errors. Use `.dcss-color-coerce-*` to turn parser fields into a named constructor.
+CSS cannot read the letters of a string, so the text goes in one character per custom property, as its character code. `tomato` is `--length: 6` and `--c0` to `--c5`: 116, 111, 109, 97, 116, 111. A build step writes them (`[...text].map(c => c.charCodeAt(0))`), or an ASCII table by hand.
+
+```html
+<!-- Links families/color-text.css (families/color.css is not needed) and families/format.css. -->
+<div class="dcss-parse-color-complete" style="--length: 6;
+     --c0: 116; --c1: 111; --c2: 109; --c3: 97; --c4: 116; --c5: 111">
+  <span style="display: inline-block; width: 1em; height: 1em;
+    background: rgb(var(--dcss-color-r) var(--dcss-color-g) var(--dcss-color-b))"></span>
+  <output class="dcss-format-fixed"
+          style="--value: var(--dcss-color-r); --precision: 0"></output>   <!-- 255 -->
+</div>
+```
+
+The parser's descendants read its results. `.dcss-parse-color-complete` reads a complete 0–64-character ASCII vector in `--length` and `--c0` onward. It accepts CSS names, hex and legacy RGB/RGBA/HSL/HSLA. It publishes `--dcss-color-kind` and the reusable channel fields; native null and NaN fields remain absent rather than becoming zeros. Fractional, missing or out-of-range character codes report errors. Use `.dcss-color-coerce-*` to turn parser fields into a named constructor.
 
 `.dcss-parse-color-function` reads a complete live vector of 1–64 ASCII codes in `--length` and `--c0` through `--c63`. It parses legacy comma-form RGB/RGBA and HSL/HSLA in CSS, including signed integers, decimal/exponent percentages, alpha and outer whitespace. Numeric tokens have a five-digit mantissa, at most five fractional digits and exponent magnitude at most 9. Source RGB components and alpha have magnitude at most 1024.
 
@@ -676,7 +812,7 @@ Constructors consume the parsed fields. Newer space-separated color syntax remai
 
 #### Formats
 
-The parser consumes text as `--length` and `--c0` onward, each a live ASCII character code. It accepts at most 24 raw ASCII characters and 38 fixed English d3 format configurations. Civil dates are bounded to years 100 through 9999; integer epoch inputs and outputs are bounded to years −9999 through 19999. Local calls use the explicit `America/Los_Angeles` rule. Other locales and arbitrary format configurations are unsupported.
+The parser consumes text as `--length` and `--c0` onward, each a character code, as in Color text. It accepts at most 24 raw ASCII characters and 41 fixed English formats: d3's 38, then ISO dates and times (38 to 40). Civil dates are bounded to years 100 through 9999; integer epoch inputs and outputs are bounded to years −9999 through 19999. Local calls use the explicit `America/Los_Angeles` rule. Other locales and arbitrary format configurations are unsupported.
 
 ```html
 <!-- The complete text "432", parsed as UTC milliseconds on 1900-01-01. -->
@@ -699,7 +835,8 @@ A format's class is `dcss-date-parse-N` for UTC, `dcss-local-date-parse-N` for P
 | 24 | `%f` | 25 | `%I:%M:%S %p` | 26 | `%Y %q` | 27 | `%Y %q %m` |
 | 28 | `%% %m/%d/%Y` | 29 | `%m/%d/%Y %Z` | 30 | `%-m/%0d/%_Y` | 31 | `%Y %U %w` |
 | 32 | `%V %Y` | 33 | `%V %G` | 34 | `%Q` | 35 | `%s` |
-| 36 | `%s.%L` | 37 | `%s.%f` |
+| 36 | `%s.%L` | 37 | `%s.%f` | 38 | `%Y-%m-%d` | 39 | `%Y-%m-%dT%H:%M:%SZ` |
+| 40 | `%Y-%m-%dT%H:%M:%S.%LZ` |
 
 <!-- /date-parse-formats -->
 

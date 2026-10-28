@@ -2,9 +2,9 @@
   "version": 1,
   "core": {
     "file": "dcss-array.css",
-    "raw": 308025,
-    "gzip9": 75916,
-    "sha256": "fd3ef61cef059e0c32867fd1d9457b5b853fb316540f38ca2ae1fa5adb959614"
+    "raw": 308148,
+    "gzip9": 76002,
+    "sha256": "f56dabbe267198c3b37100c092a63ce09bcebe417af9a9288084a50767b3d7d9"
   },
   "order": [
     "ticks",
@@ -39,9 +39,9 @@
         "dcss-nice",
         "dcss-ticks"
       ],
-      "raw": 172322,
-      "gzip9": 12967,
-      "sha256": "1743841bbed9602b731420d8aceaf610b30dd83ec43b3eae32dae7087109e2e0"
+      "raw": 172449,
+      "gzip9": 13073,
+      "sha256": "840524450ea4c4bcd27d7c1a0b5687124051c69a95c1e661520a847f6961b8e3"
     },
     "array": {
       "file": "families/array.css",
@@ -83,9 +83,9 @@
         "dcss-sum",
         "dcss-variance"
       ],
-      "raw": 426696,
-      "gzip9": 26205,
-      "sha256": "6909f7c6e1572b9f2296ecc6dc4fb94ec268cad61cabb2fac20d4adf6520e4ba"
+      "raw": 427100,
+      "gzip9": 26341,
+      "sha256": "ad26099279c5cb30c4fa64c08e6ca7cafe400c2603338d86b06133ba22baea5b"
     },
     "aggregate": {
       "file": "families/aggregate.css",
@@ -98,9 +98,9 @@
         "dcss-fcumsum",
         "dcss-fsum"
       ],
-      "raw": 6277925,
-      "gzip9": 299743,
-      "sha256": "46e747024e408212a0d329265807c83ced96edb454f489de1ec4096e6d122b00"
+      "raw": 3953101,
+      "gzip9": 222993,
+      "sha256": "54d18bc80ced205edb2a5962e374b7e1c840d3706ffa55991b31f8046eef6226"
     },
     "order": {
       "file": "families/order.css",
@@ -113,9 +113,9 @@
         "dcss-order-quantile-index",
         "dcss-order-quantile-sorted"
       ],
-      "raw": 12648625,
-      "gzip9": 476182,
-      "sha256": "c84f7532f63a7b2660f91e10a550e4ce065553b2ac87b99db2314af0884ec782"
+      "raw": 1843058,
+      "gzip9": 81829,
+      "sha256": "cd1113af33d6de9d40857a8ba7bdb7441d7ff033b1585138b73348fbd58efb37"
     },
     "extrema": {
       "file": "families/extrema.css",
@@ -134,9 +134,9 @@
         "dcss-extrema-minIndex",
         "dcss-extrema-scan"
       ],
-      "raw": 955658,
-      "gzip9": 39977,
-      "sha256": "054e4bc25ede3ad4dad946192e8ec10f63b603a0033861c384bf2612df8865f3"
+      "raw": 957400,
+      "gzip9": 40451,
+      "sha256": "0c7c5cb3b49909b33be548ab91707664650af5b78fc69eaea99f243fbfc074dc"
     },
     "hierarchy": {
       "file": "families/hierarchy.css",
@@ -148,9 +148,9 @@
         "dcss-treemap-slice",
         "dcss-treemap-slice-dice"
       ],
-      "raw": 2670045,
-      "gzip9": 158202,
-      "sha256": "931bc910c01578f24585470f567ce7c456b714337eae96b52de38b9fcb307457"
+      "raw": 2670176,
+      "gzip9": 158303,
+      "sha256": "a74ec6799bee9eee650f5c1aea880433981f333d37576de91d3dac2393f89770"
     },
     "scale": {
       "file": "families/scale.css",
@@ -163,9 +163,9 @@
         "dcss-scale-pow",
         "dcss-scale-sqrt"
       ],
-      "raw": 85317,
-      "gzip9": 5576,
-      "sha256": "71669f62f2135604bf3f2f84d9efab54151649fb82d45adfe7cffeebe30a02c7"
+      "raw": 86059,
+      "gzip9": 5814,
+      "sha256": "d04b95468e8c1bfde5d9435eb00c1360ba45d69c048c0d07e5bfa2b44cf07aa4"
     },
     "format": {
       "file": "families/format.css",
@@ -181,9 +181,9 @@
         "dcss-ticks-log",
         "dcss-ticks-log-format"
       ],
-      "raw": 244982,
-      "gzip9": 17461,
-      "sha256": "9a122a17f7f718ad46e956196b2014147e5f67f67085665e419793076fd6d8c3"
+      "raw": 245504,
+      "gzip9": 17724,
+      "sha256": "046aaa3bf6959790c99b89ebfec8238f6d142c57d80c423b785ef7da0e4b7803"
     },
     "ease": {
       "file": "families/ease.css",
@@ -228,9 +228,9 @@
         "dcss-ease-sin-in-out",
         "dcss-ease-sin-out"
       ],
-      "raw": 18536,
-      "gzip9": 1511,
-      "sha256": "d98af250b1b7ad7fc9af007544f0c898ab025e40b453742ae9e4515832bf2730"
+      "raw": 36772,
+      "gzip9": 2088,
+      "sha256": "b8a95d6eecf70a5ff5d8a3ad599bc011449f9003ef8c57d3e3d0556dbf2f3077"
     },
     "color": {
       "file": "families/color.css",
@@ -259,9 +259,9 @@
         "dcss-lch",
         "dcss-rgb"
       ],
-      "raw": 3442815,
-      "gzip9": 157431,
-      "sha256": "2289197a5ba433ef5f32c3c5986a58efbd38e6a95e36d4713ea3f69877d8802d"
+      "raw": 3119050,
+      "gzip9": 142409,
+      "sha256": "6142bb29679e13e5643d3b3218924c6fbc50a1158fadf821659873c94b95df8d"
     },
     "color-text": {
       "file": "families/color-text.css",
@@ -271,9 +271,9 @@
         "dcss-parse-color-complete",
         "dcss-parse-color-function"
       ],
-      "raw": 14614421,
-      "gzip9": 347614,
-      "sha256": "22e92029ad6474bcb0d764ee0d57bd21786672f745d6a2ba57fe9167a63eac9e"
+      "raw": 3662955,
+      "gzip9": 155055,
+      "sha256": "488972f786a51b0cee723546df6f6f84bf8bba2003830a01d96e26dc9eeacf54"
     },
     "date-parse": {
       "file": "families/date-parse.css",
@@ -311,7 +311,10 @@
         "dcss-date-parse-35",
         "dcss-date-parse-36",
         "dcss-date-parse-37",
+        "dcss-date-parse-38",
+        "dcss-date-parse-39",
         "dcss-date-parse-4",
+        "dcss-date-parse-40",
         "dcss-date-parse-5",
         "dcss-date-parse-6",
         "dcss-date-parse-7",
@@ -349,7 +352,10 @@
         "dcss-local-date-parse-35",
         "dcss-local-date-parse-36",
         "dcss-local-date-parse-37",
+        "dcss-local-date-parse-38",
+        "dcss-local-date-parse-39",
         "dcss-local-date-parse-4",
+        "dcss-local-date-parse-40",
         "dcss-local-date-parse-5",
         "dcss-local-date-parse-6",
         "dcss-local-date-parse-7",
@@ -380,9 +386,9 @@
         "dcss-utc-parse-s",
         "dcss-utc-parse-us"
       ],
-      "raw": 4191036,
-      "gzip9": 161740,
-      "sha256": "d848d9acd3356c71c80593518c778b932ef62ee3ec46b52b4317696184f83615"
+      "raw": 1027824,
+      "gzip9": 41536,
+      "sha256": "9bc961874d7d9949d0b3ce92ae859d334484ec631118f9d5566238ece67b4843"
     },
     "date-parse-local": {
       "file": "families/date-parse-local.css",
@@ -420,7 +426,10 @@
         "dcss-date-parse-35",
         "dcss-date-parse-36",
         "dcss-date-parse-37",
+        "dcss-date-parse-38",
+        "dcss-date-parse-39",
         "dcss-date-parse-4",
+        "dcss-date-parse-40",
         "dcss-date-parse-5",
         "dcss-date-parse-6",
         "dcss-date-parse-7",
@@ -458,16 +467,19 @@
         "dcss-local-date-parse-35",
         "dcss-local-date-parse-36",
         "dcss-local-date-parse-37",
+        "dcss-local-date-parse-38",
+        "dcss-local-date-parse-39",
         "dcss-local-date-parse-4",
+        "dcss-local-date-parse-40",
         "dcss-local-date-parse-5",
         "dcss-local-date-parse-6",
         "dcss-local-date-parse-7",
         "dcss-local-date-parse-8",
         "dcss-local-date-parse-9"
       ],
-      "raw": 7486669,
-      "gzip9": 454504,
-      "sha256": "f2e8100e994d6ccfcaec3e782c6bb5a67d2850e9015ad2baa5cfaad65bb148ef"
+      "raw": 1085151,
+      "gzip9": 53939,
+      "sha256": "1804b60f89ea791241aecce736f711de5f070f0b65d2be414e1266160bb9508b"
     },
     "time": {
       "file": "families/time.css",
@@ -592,9 +604,9 @@
         "dcss-utc-year-offset",
         "dcss-utc-year-round"
       ],
-      "raw": 1618077,
-      "gzip9": 89857,
-      "sha256": "877a04f2812b442d5cc2b976cca4e4f97e6bd72e5ebb8a42ba2ef0570593be01"
+      "raw": 1618203,
+      "gzip9": 90021,
+      "sha256": "104734f6d075d405ca2a4bf29d538e25e14c1a997f38298d7d62f6e4b3e686d7"
     },
     "date-format": {
       "file": "families/date-format.css",
@@ -683,9 +695,9 @@
         "dcss-local-date-format-8",
         "dcss-local-date-format-9"
       ],
-      "raw": 88167,
-      "gzip9": 7345,
-      "sha256": "89f81c79f23230d020c488da6d8267072c288c4d048e742991c4802fc9f555b4"
+      "raw": 88300,
+      "gzip9": 7457,
+      "sha256": "1f99c63531103c44504d430d655d794a1961e3514d4afdc7c9ec7741d084ff64"
     },
     "geo": {
       "file": "families/geo.css",
@@ -714,9 +726,9 @@
         "dcss-geo-transverse-mercator-fit-extent",
         "dcss-geo-transverse-mercator-invert"
       ],
-      "raw": 1661982,
-      "gzip9": 75515,
-      "sha256": "91b3c45a66b21c577157d0dd7acedb51169a2b294ea9e59188ab9da40eae4566"
+      "raw": 1662107,
+      "gzip9": 75646,
+      "sha256": "5cd33b8157bac9f746c4c29ff093885ba74926d9703a41ccaaa414871b74e709"
     },
     "random": {
       "file": "families/random.css",
@@ -724,9 +736,9 @@
       "classes": [
         "dcss-random-lcg"
       ],
-      "raw": 60349,
-      "gzip9": 5174,
-      "sha256": "4148d8c5af550a9487fee120a1987f175a3e2f5140a83c6f0af0dcab75ef4aad"
+      "raw": 60477,
+      "gzip9": 5306,
+      "sha256": "a5d3edcee875d81821bae5c1ede232c4108f917b8e0826f7a95aa7f0dd9a4cf2"
     }
   },
   "owners": {
@@ -912,7 +924,10 @@
     "dcss-date-parse-35": "date-parse",
     "dcss-date-parse-36": "date-parse",
     "dcss-date-parse-37": "date-parse",
+    "dcss-date-parse-38": "date-parse",
+    "dcss-date-parse-39": "date-parse",
     "dcss-date-parse-4": "date-parse",
+    "dcss-date-parse-40": "date-parse",
     "dcss-date-parse-5": "date-parse",
     "dcss-date-parse-6": "date-parse",
     "dcss-date-parse-7": "date-parse",
@@ -950,7 +965,10 @@
     "dcss-local-date-parse-35": "date-parse",
     "dcss-local-date-parse-36": "date-parse",
     "dcss-local-date-parse-37": "date-parse",
+    "dcss-local-date-parse-38": "date-parse",
+    "dcss-local-date-parse-39": "date-parse",
     "dcss-local-date-parse-4": "date-parse",
+    "dcss-local-date-parse-40": "date-parse",
     "dcss-local-date-parse-5": "date-parse",
     "dcss-local-date-parse-6": "date-parse",
     "dcss-local-date-parse-7": "date-parse",
@@ -8675,6 +8693,204 @@
         }
       },
       "dcss-local-date-parse-37": {
+        "id": "dateParseLocal",
+        "family": "date-parse",
+        "compilerDefault": "calc",
+        "runtimeBackend": "calc",
+        "timing": {
+          "mode": "same-update",
+          "latencyFrames": 0
+        },
+        "representations": {
+          "input": "scalar-custom-property",
+          "intermediate": "scalar-custom-property",
+          "result": "prepared"
+        },
+        "contracts": {
+          "input": "prepared",
+          "result": "prepared",
+          "precision": "prepared",
+          "readiness": "prepared"
+        },
+        "candidates": {
+          "calc": {
+            "status": "available"
+          },
+          "layout": {
+            "status": "unimplemented",
+            "reason": "no qualified layout implementation"
+          }
+        },
+        "eligibility": {
+          "status": "prepared"
+        }
+      },
+      "dcss-date-parse-38": {
+        "id": "dateParseUTC",
+        "family": "date-parse",
+        "compilerDefault": "calc",
+        "runtimeBackend": "calc",
+        "timing": {
+          "mode": "same-update",
+          "latencyFrames": 0
+        },
+        "representations": {
+          "input": "scalar-custom-property",
+          "intermediate": "scalar-custom-property",
+          "result": "prepared"
+        },
+        "contracts": {
+          "input": "prepared",
+          "result": "prepared",
+          "precision": "prepared",
+          "readiness": "prepared"
+        },
+        "candidates": {
+          "calc": {
+            "status": "available"
+          },
+          "layout": {
+            "status": "unimplemented",
+            "reason": "no qualified layout implementation"
+          }
+        },
+        "eligibility": {
+          "status": "prepared"
+        }
+      },
+      "dcss-local-date-parse-38": {
+        "id": "dateParseLocal",
+        "family": "date-parse",
+        "compilerDefault": "calc",
+        "runtimeBackend": "calc",
+        "timing": {
+          "mode": "same-update",
+          "latencyFrames": 0
+        },
+        "representations": {
+          "input": "scalar-custom-property",
+          "intermediate": "scalar-custom-property",
+          "result": "prepared"
+        },
+        "contracts": {
+          "input": "prepared",
+          "result": "prepared",
+          "precision": "prepared",
+          "readiness": "prepared"
+        },
+        "candidates": {
+          "calc": {
+            "status": "available"
+          },
+          "layout": {
+            "status": "unimplemented",
+            "reason": "no qualified layout implementation"
+          }
+        },
+        "eligibility": {
+          "status": "prepared"
+        }
+      },
+      "dcss-date-parse-39": {
+        "id": "dateParseUTC",
+        "family": "date-parse",
+        "compilerDefault": "calc",
+        "runtimeBackend": "calc",
+        "timing": {
+          "mode": "same-update",
+          "latencyFrames": 0
+        },
+        "representations": {
+          "input": "scalar-custom-property",
+          "intermediate": "scalar-custom-property",
+          "result": "prepared"
+        },
+        "contracts": {
+          "input": "prepared",
+          "result": "prepared",
+          "precision": "prepared",
+          "readiness": "prepared"
+        },
+        "candidates": {
+          "calc": {
+            "status": "available"
+          },
+          "layout": {
+            "status": "unimplemented",
+            "reason": "no qualified layout implementation"
+          }
+        },
+        "eligibility": {
+          "status": "prepared"
+        }
+      },
+      "dcss-local-date-parse-39": {
+        "id": "dateParseLocal",
+        "family": "date-parse",
+        "compilerDefault": "calc",
+        "runtimeBackend": "calc",
+        "timing": {
+          "mode": "same-update",
+          "latencyFrames": 0
+        },
+        "representations": {
+          "input": "scalar-custom-property",
+          "intermediate": "scalar-custom-property",
+          "result": "prepared"
+        },
+        "contracts": {
+          "input": "prepared",
+          "result": "prepared",
+          "precision": "prepared",
+          "readiness": "prepared"
+        },
+        "candidates": {
+          "calc": {
+            "status": "available"
+          },
+          "layout": {
+            "status": "unimplemented",
+            "reason": "no qualified layout implementation"
+          }
+        },
+        "eligibility": {
+          "status": "prepared"
+        }
+      },
+      "dcss-date-parse-40": {
+        "id": "dateParseUTC",
+        "family": "date-parse",
+        "compilerDefault": "calc",
+        "runtimeBackend": "calc",
+        "timing": {
+          "mode": "same-update",
+          "latencyFrames": 0
+        },
+        "representations": {
+          "input": "scalar-custom-property",
+          "intermediate": "scalar-custom-property",
+          "result": "prepared"
+        },
+        "contracts": {
+          "input": "prepared",
+          "result": "prepared",
+          "precision": "prepared",
+          "readiness": "prepared"
+        },
+        "candidates": {
+          "calc": {
+            "status": "available"
+          },
+          "layout": {
+            "status": "unimplemented",
+            "reason": "no qualified layout implementation"
+          }
+        },
+        "eligibility": {
+          "status": "prepared"
+        }
+      },
+      "dcss-local-date-parse-40": {
         "id": "dateParseLocal",
         "family": "date-parse",
         "compilerDefault": "calc",

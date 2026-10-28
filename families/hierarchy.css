@@ -1,3 +1,6 @@
+/* DCSS array: families/hierarchy.css
+   SPDX-License-Identifier: MIT
+   SPDX-FileCopyrightText: 2026 noscript.ing contributors */
 /* DCSS hierarchies: d3.treemapSlice, treemapDice, treemapSliceDice and partition over nested lists (hierarchy.mjs). */
 :is(.dcss-treemap-dice, .dcss-treemap-slice, .dcss-treemap-slice-dice, .dcss-partition) { display: flex; flex-direction: column; }
 :is(.dcss-treemap-dice, .dcss-treemap-slice, .dcss-treemap-slice-dice, .dcss-partition) > :not(:is(ul, ol)) { flex: none; }

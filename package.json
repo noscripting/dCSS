@@ -1,0 +1,37 @@
+{
+  "name": "dcss-array.css",
+  "version": "1.0.0",
+  "description": "d3's data work as CSS: sums, medians, quantiles, extents, scales, ticks, number and date formats, color parsing and more, computed by the stylesheet in the same frame, with no script.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/noscripting/dcss-array.git"
+  },
+  "keywords": ["css", "d3", "d3-array", "data", "statistics", "scale", "format", "no-javascript", "css-grid"],
+  "main": "dcss-array.css",
+  "style": "dcss-array.css",
+  "exports": {
+    ".": "./dcss-array.css",
+    "./*.css": "./*.css",
+    "./families/*.css": "./families/*.css",
+    "./parts/*.css": "./parts/*.css",
+    "./families.json": "./families.json",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dcss-array.css",
+    "dcss-array-all.css",
+    "families/",
+    "parts/",
+    "families.json",
+    "arrays-preload.html",
+    "README.md",
+    "TUTORIAL.md",
+    "SPEC.md",
+    "QUIRKS.md",
+    "CHANGELOG.md",
+    "LICENSE",
+    "LICENSE-THIRD-PARTY",
+    "compat.json"
+  ]
+}
