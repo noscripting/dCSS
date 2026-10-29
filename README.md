@@ -10,7 +10,7 @@ Visit [noscript.ing](https://noscript.ing) for demos.
 
 ## Installation
 
-Each call is a file of its own in `parts/`, named after its class. Download the ones the page uses and link them; nothing else is needed. This page prints the total and the average of three numbers, with two parts that come to 5 KB gzipped:
+Each call is a file of its own in `parts/`, named after its class. Download the ones the page uses and link them; nothing else is needed. This page prints the total and the average of three numbers, with two parts that come to 6 KB gzipped:
 
 ```html
 <!doctype html>
@@ -222,7 +222,7 @@ A call can also be written in Content MathML, the W3C's markup for what a formul
 </math>
 ```
 
-The build writes a figure whose caption is the formula, median(4, 1, 3, jan), in Presentation MathML, which browsers draw and screen readers read, with the Content MathML kept as its annotation; then the `.dcss-median` call, one `<li>` an argument, and its `<output>` with the formatter and settings the `<math>` gave (a median with none prints up to six decimals). `<ci>jan</ci>` becomes `--value: var(--jan, 0.001)`: set `--jan` on an ancestor and the answer follows it; a name the page never sets leaves no answer and `--dcss-err` 1. Each number is written once, and the page keeps the formula.
+The build writes a figure whose caption is the formula, median(4, 1, 3, jan), in Presentation MathML, which browsers draw and screen readers read, with the Content MathML kept as its annotation; then the `.dcss-median` call, one `<li>` an argument, and its `<output>` with the formatter and settings the `<math>` gave (a median with none prints as d3.format(",") does, as the other calls print their own). `<ci>jan</ci>` becomes `--value: var(--jan, 0.001)`: set `--jan` on an ancestor and the answer follows it; a name the page never sets leaves no answer and `--dcss-err` 1. Each number is written once, and the page keeps the formula.
 
 | Content MathML | Call |
 |---|---|
@@ -234,12 +234,24 @@ The build writes a figure whose caption is the formula, median(4, 1, 3, jan), in
 Arguments are `<cn>` numbers (decimal; `type` integer, real, double, e-notation or rational) and `<ci>` names. The build stops with the file, line and reason, rather than write a page that shows a wrong or blank answer, on:
 
 - an operator with no call: `<sum/>` binds a variable over limits, `<variance/>` and `<sdev/>` divide by n where d3 divides by n - 1, `<card/>` and a `set1` set drop repeated values;
-- a nested `<apply>`, a qualifier (`<bvar>`, `<condition>`, `<lowlimit>`), `definitionURL`, or Content MathML outside an annotation that it can't compile, which browsers would show as nothing;
+- a qualifier (`<bvar>`, `<condition>`, `<lowlimit>`), `definitionURL`, or Content MathML outside an annotation that it can't compile, which browsers would show as nothing;
 - a number off the 1/64 grid or past the call's range, or a list of numbers too long to read exactly (Performance);
 - one `<ci>` alone, which MathML reads as a data set, and a name dcss reads itself (`value`, `dcss-*`);
 - a formula beside text in a `<p>`, since the call's list would end the paragraph (a `<p>` holding only the formula is replaced).
 
-A `<math>` without an `<apply>` is left as it is, the rest of the page is copied byte for byte, and the build run on its own output changes nothing. It links the families the calls need beside the page's link to dcss. Not yet: formulas inside formulas, the quantile, variance and deviation, extent.
+A formula can hold formulas, as d3's calls take each other's answers:
+
+```html
+<math><apply><median/>
+  <apply><mean/><cn>120</cn><cn>80</cn></apply>
+  <apply><mean/><cn>90</cn><ci>feb</ci></apply>
+  <cn>100</cn>
+</apply></math>
+```
+
+The build writes the inner calls first, each one's figure holding the next, since an answer reaches only what is inside it, and copies each answer to a name of its own for the item that reads it. An inner answer is an item like any other, so the call taking it has to be able to take it: min, max and sums of 64ths always are, a mean or the median of an even count may not be. The mean of 1, 2 and 4 is 7/3, off the 1/64 grid: the build refuses it when every number under it is written, and with a `<ci>` under it the page shows no answer, `--dcss-err` 1. An inner call with no answer leaves the one taking it none.
+
+A `<math>` without an `<apply>` is left as it is, the rest of the page is copied byte for byte, and the build run on its own output changes nothing. It links the families the calls need beside the page's link to dcss. Not yet: the quantile, variance and deviation, extent.
 
 ## The grid primitives
 
@@ -1266,7 +1278,7 @@ In WebKit, the median of three cold loads beside the core (2026-10-28):
 | `array.css` | 263 KB | 15 ms |
 | `hierarchy.css` | 6.6 KB | 10 ms |
 | `scale.css` | 120 KB | 12 ms |
-| `format.css` | 233 KB | 15 ms |
+| `format.css` | 235 KB | 15 ms |
 | `ease.css` | 41 KB | 10 ms |
 | `time.css` | 315 KB | 15 ms |
 | `date-format.css` | 36 KB | 10 ms |
@@ -1280,7 +1292,7 @@ The core is 284 KB, 73 KB gzipped; `dcss-array-extras.css`, the lists, loops and
 | `array.css` | 38 | 1.7 KB (0.8–5.8) | 20 KB |
 | `hierarchy.css` | 4 | 0.6 KB (0.6–0.7) | 0.9 KB |
 | `scale.css` | 6 | 2.3 KB (0.5–3.0) | 7.5 KB |
-| `format.css` | 9 | 3.3 KB (1.0–11.5) | 18 KB |
+| `format.css` | 9 | 3.4 KB (1.0–11.6) | 18 KB |
 | `ease.css` | 37 | 0.7 KB (0.5–1.0) | 2.9 KB |
 | `time.css` | 65 | 0.8 KB (0.8–3.7) | 15 KB |
 | `date-format.css` | 41 | 3.4 KB (3.3–3.5) | 4.2 KB |

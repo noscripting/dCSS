@@ -6,7 +6,7 @@ All notable changes to dcss-array.css are written here. The format follows [Keep
 
 ### Added
 
-- `mathml.mjs`, a build step in Node beside the sheets, the package's one script (never loaded by a page): a call written in Content MathML (`<apply><median/><cn>4</cn><ci>jan</ci></apply>`) is compiled to the call, the formula kept in the page as Presentation MathML with its Content MathML as annotation; median, mean, min, max and plus, with refusals for what it can't give exactly.
+- `mathml.mjs`, a build step in Node beside the sheets, the package's one script (never loaded by a page): a call written in Content MathML (`<apply><median/><cn>4</cn><ci>jan</ci></apply>`) is compiled to the call, the formula kept in the page as Presentation MathML with its Content MathML as annotation; median, mean, min, max and plus, formulas inside formulas (a median of means), with refusals for what it can't give exactly.
 - `.dcss-bin`, d3.bin() on the grid with a domain and thresholds, or `--count` for d3's tick thresholds: one `<li>` per bin in a second list, each reading its count, x0 and x1.
 - `.dcss-variance` and `.dcss-deviation`, d3.variance() and d3.deviation() on the grid: each value's square as two exact halves, read through two anchors, so 64 values in 64ths to ±1024 give the true variance rounded once.
 - `.dcss-median-index` and `.dcss-quantile-index` on the grid, written as the median is: the list sorted once, the index of the value at k read as the list's height. 0 to 64 values within ±131,072; with ties, the copy the order picks.
@@ -47,6 +47,7 @@ All notable changes to dcss-array.css are written here. The format follows [Keep
 
 ### Fixed
 
+- `--trim: 1` on `.dcss-format-fixed` and `.dcss-format-percent` drops trailing zeros as d3's `~` does (5 at `--precision: 6` prints 5); it did nothing there, only in SI and general.
 - A scale's answer given to another scale as a domain stop or exponent gave no value in Safari (it passed Safari's 65,535 tokens a `var()`); a scale's answer is now about 400 tokens. Moving scales cost up to a fifth more in Safari for it, nothing more in Chrome.
 - A formatter whose `--precision` came from a call that failed printed the number with no decimals; it prints nothing and sets `--dcss-err: 1`.
 - The mean, min, max and extent of nothing published 0 beside error 2; they publish no number, as d3 gives undefined.

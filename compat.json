@@ -1443,7 +1443,7 @@
       },
       "A64": {
         "__compat": {
-          "description": "`.dcss-format-fixed` and `.dcss-format-percent` with `--value`, `--precision`, `--comma`, `--sign` and `--symbol` MUST print in their `::after` the text d3-format 3.1.2's format prints for that specifier (type f or %, sign - or +, symbol none or $), where |value| x 10^precision is under 2^53; past it `--dcss-err` MUST be 1.",
+          "description": "`.dcss-format-fixed` and `.dcss-format-percent` with `--value`, `--precision`, `--comma`, `--sign`, `--symbol` and `--trim` MUST print in their `::after` the text d3-format 3.1.2's format prints for that specifier (type f or %, sign - or +, symbol none or $, `~` for `--trim: 1`), where |value| x 10^precision is under 2^53; past it `--dcss-err` MUST be 1.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -1455,7 +1455,7 @@
             },
             "firefox": {
               "version_added": false,
-              "notes": "FAIL: 30 of 30, 2,011 of 2,939, 441 of 600: calc() in single precision"
+              "notes": "FAIL: 2,122 of 2,948, 460 of 600: calc() in single precision (2026-10-29)"
             }
           },
           "status": {
@@ -1800,7 +1800,7 @@
       },
       "A131": {
         "__compat": {
-          "description": "`mathml.mjs` MUST compile each `<math>` whose one element child is an `<apply>` of `<median/>`, `<mean/>`, `<min/>`, `<max/>` or `<plus/>` (or their `s_data1`, `minmax1` over one `set1` set, and `arith1` symbols) with `<cn>` and `<ci>` arguments into that call, one `<li>` an argument, `<ci>name</ci>` as `--value: var(--name, 0.001)`, the formula kept as Presentation MathML with its Content MathML as the annotation, so the page gives d3's answer, and an unset name `--dcss-err` 1. It MUST stop with the file, line and reason on any other Content MathML outside an annotation, a number off the 1/64 grid or past the call's range, a list of numbers Chrome reads without its 64ths, one `<ci>` alone, and a formula beside text in a `<p>`; it MUST leave the rest of the page byte for byte and change nothing run on its own output.",
+          "description": "`mathml.mjs` MUST compile each `<math>` whose one element child is an `<apply>` of `<median/>`, `<mean/>`, `<min/>`, `<max/>` or `<plus/>` (or their `s_data1`, `minmax1` over one `set1` set, and `arith1` symbols) with `<cn>`, `<ci>` and `<apply>` arguments into that call, one `<li>` an argument, `<ci>name</ci>` as `--value: var(--name, 0.001)`, an inner `<apply>` as its call computed first, its answer the item, the formula kept as Presentation MathML with its Content MathML as the annotation, so the page gives d3's answer (composed as d3's calls compose), an unset name `--dcss-err` 1, an inner answer off the 1/64 grid or past the outer call's range error 1, and an inner call with no answer error 1 for the call taking it. It MUST stop with the file, line and reason on any other Content MathML outside an annotation, a number off the 1/64 grid or past the call's range (an inner call's answer too, when every number under it is written), a list of numbers Chrome reads without its 64ths, one `<ci>` alone, and a formula beside text in a `<p>`; it MUST leave the rest of the page byte for byte and change nothing run on its own output.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
