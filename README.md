@@ -64,7 +64,7 @@ Every call in the families works the same way. The class goes on a `<figure>`, n
 
 ### The data
 
-The data is the `<ul>` or `<ol>` inside the figure, one `<li>` per datum, each with its number as `--value`. Where d3 groups data, `--key` gives the group, a whole number from 1. A hierarchy is nested lists. Give each datum its own `--value`: it never takes its parent's. An item without one is skipped, as d3 skips a missing value: the sum, variance and bins skip it quietly; the mean, count, min, max and extent skip it and set `--dcss-err` to 1 beside their answer; the median, quantile and their indexes give no answer.
+The data is the `<ul>` or `<ol>` inside the figure, one `<li>` per datum, each with its number as `--value`. Where d3 groups data, `--key` gives the group, a whole number from 1. A hierarchy is nested lists. Give each datum its own `--value`: it never takes its parent's. An item without one is skipped, as d3 skips a missing value: the sum, variance, bins and median skip it quietly, as does the quantile at `--p` 0, 0.5 and 1; the mean, count, min, max and extent skip it and set `--dcss-err` to 1 beside their answer; the quantile at any other `--p` and the median and quantile indexes give no answer.
 
 ```html
 <figure class="dcss-sum">
@@ -522,12 +522,12 @@ The middle number of the list, or the one at any place `--p` between its least a
 
 | Input | Takes | Default |
 |---|---|---|
-| `--value`, on each `<li>` | a number on the 1/64 grid, within ±131,072, or a whole number from -131,072 to 8,257,535 |  |
+| `--value`, on each `<li>` | a number on the 1/64 grid, from -131,072 to 131,071, or a whole number from -131,072 to 8,257,535 |  |
 | `--p`, on a quantile | a number, 0 to 1 |  |
 
 Output: `--dcss-median`, `--dcss-quantile`, inside the third of three nested elements after the list ([Medians, quantiles and the discrete scales](#medians-quantiles-and-the-discrete-scales)).
 
-0 to 64 values; one that isn't a number, or past the range, leaves no answer.
+0 to 64 values. An item with no number is skipped, as d3 skips it, by the median and by the quantile at `--p` 0, 0.5 and 1; at any other `--p` it leaves no answer. A value off the grid or past the range leaves no answer.
 
 #### `.dcss-quantile-sorted`
 
@@ -535,10 +535,12 @@ A quantile of a list already sorted: the list taken in its order. Source: [d3.qu
 
 | Input | Takes | Default |
 |---|---|---|
-| `--value`, on each `<li>` | a number on the 1/64 grid, within ±131,072, or a whole number from -131,072 to 8,257,535 |  |
+| `--value`, on each `<li>` | a number on the 1/64 grid, from -131,072 to 131,071, or a whole number from -131,072 to 8,257,535 |  |
 | `--p` | a number, 0 to 1 |  |
 
 Output: `--dcss-quantile-sorted`, read as a quantile's.
+
+An item with no number leaves no answer where the quantile reads it, as in d3, and is passed over elsewhere.
 
 #### `.dcss-median-index`, `.dcss-quantile-index`
 
@@ -1211,7 +1213,7 @@ A sheet is a `<table class="sheet">` whose cells are stored numbers and whose fo
 
 <!-- browsers -->
 
-Chrome and Safari's engine both run everything: headless Chrome 155 and WebKit 26.4 (Playwright's build of Safari's engine, not Safari itself) pass all 111 requirements in [SPEC.md](SPEC.md). The d3 calls give d3's own answer to 3,192 of the 7,049 calls d3's tests make (45%), and cover 26 of d3's 508 functions in full and 73 more in part; SPEC.md's implementation report has the count for each call. Easings and scales come within 1e-12 of d3. A treemap's boxes are within 2/64 px per level of d3's for totals up to 50,000; near a million, WebKit is 0.3 px off and Chrome 0.02 px.
+Chrome and Safari's engine both run everything: headless Chrome 155 and WebKit 26.4 (Playwright's build of Safari's engine, not Safari itself) pass all 111 requirements in [SPEC.md](SPEC.md). The d3 calls give d3's own answer to 3,206 of the 7,049 calls d3's tests make (45%), and cover 26 of d3's 508 functions in full and 73 more in part; SPEC.md's implementation report has the count for each call. Easings and scales come within 1e-12 of d3. A treemap's boxes are within 2/64 px per level of d3's for totals up to 50,000; near a million, WebKit is 0.3 px off and Chrome 0.02 px.
 
 In Chrome, a reduction's list wider or taller than 262,144 px (2^18) reads without its 64ths, and past 2^24 px without whole pixels: a sum whose positives or negatives pass 2^18, a mean whose sum and 1024 for each negative value do, or one with 64 negative values or more.
 
@@ -1230,7 +1232,7 @@ In WebKit, the median of three cold loads beside the core (2026-10-28):
 | File in `families/` | Size | Load in WebKit 26.4 |
 |---|---:|---:|
 | `ticks.css` | 128 KB | 14 ms |
-| `array.css` | 262 KB | 15 ms |
+| `array.css` | 263 KB | 15 ms |
 | `hierarchy.css` | 6.5 KB | 10 ms |
 | `scale.css` | 120 KB | 12 ms |
 | `format.css` | 233 KB | 15 ms |

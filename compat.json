@@ -1657,7 +1657,7 @@
       },
       "A74": {
         "__compat": {
-          "description": "Compiled quantile/median MUST match d3 within declared 1/64-grid bounds and static probability. Scalar ranks MUST support 64 values, layout 1,024; indexed reads require cumulative width below 2^18. Lowerings MUST preserve author nodes, output position, exact reuse, formatting and reset, flagging invalid data as error 1 and empty inputs or missing probability as error 2.",
+          "description": "Compiled quantile/median MUST match d3 within declared 1/64-grid bounds and static probability, skipping an item with no number as d3 does (quantileSorted keeping its place and refusing a read of it with error 2). Scalar ranks MUST support 64 values, layout 1,024; indexed reads require cumulative width below 2^18. Lowerings MUST preserve author nodes, output position, exact reuse, formatting and reset, flagging invalid data as error 1 and empty inputs or missing probability as error 2.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -1669,7 +1669,7 @@
             },
             "firefox": {
               "version_added": false,
-              "notes": "FAIL: quantile 34/43 and median 11/47 read, their fixed text not d3's (2026-10-29)"
+              "notes": "FAIL: quantile 34/43 and median 25/47 read, their fixed text not d3's (2026-10-29)"
             }
           },
           "status": {
@@ -2249,7 +2249,7 @@
       },
       "A116": {
         "__compat": {
-          "description": "Median, quantile, quantileSorted and the quantile scale MUST take 1/64 steps within ±131,072 and whole numbers from −131,072 to 8,257,535, matching d3. They MUST refuse values past those bounds with error 1.",
+          "description": "Median, quantile and quantileSorted MUST take 1/64 steps from −131,072 to 131,071, the quantile scale 1/64 steps within ±131,072, and all four whole numbers from −131,072 to 8,257,535, matching d3. They MUST refuse values past those bounds with error 1.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -2321,7 +2321,7 @@
       },
       "A122": {
         "__compat": {
-          "description": "`.dcss-median`, `.dcss-quantile` and `.dcss-quantile-sorted` with the list written once and three nested elements after it MUST give d3's answer on the innermost element's children, within A116's bounds and for up to 64 values. They MUST refuse an item off the grid, out of range or missing and 65 items with error 1, and an empty list or a missing p with error 2.",
+          "description": "`.dcss-median`, `.dcss-quantile` and `.dcss-quantile-sorted` with the list written once and three nested elements after it MUST give d3's answer on the innermost element's children, within A116's bounds and for up to 64 values. The median, and the quantile at p 0, 0.5 and 1, MUST skip an item with no number as d3 does, and quantileSorted MUST pass over one it doesn't read. They MUST refuse an item off the grid or out of range, an item with no number that a quantile at another p or quantileSorted reads, and 65 items with error 1, and an empty list, a median of no numbers or a missing p with error 2.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -2333,7 +2333,7 @@
             },
             "firefox": {
               "version_added": false,
-              "notes": "FAIL: 83 of 247 calls differ (2026-10-28)"
+              "notes": "FAIL: 77 of 316 calls differ (2026-10-29)"
             }
           },
           "status": {
