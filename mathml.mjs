@@ -119,9 +119,17 @@ function number(cn) {
 }
 
 // --- the operators: Content MathML's elements and their OpenMath symbols (MathML 4, appendix E; F.8.3 for s_data1)
-const CALLS = { median: 'median', mean: 'mean', min: 'min', max: 'max', plus: 'sum' };
-const SYMBOLS = { s_data1: ['median', 'mean'], minmax1: ['min', 'max'], arith1: ['plus'] };
+const CALLS = { median: 'median', mean: 'mean', min: 'min', max: 'max', plus: 'sum',
+  minus: 'minus', times: 'times', divide: 'divide', power: 'power', root: 'root', abs: 'abs', floor: 'floor', ceiling: 'ceiling' };
+const SYMBOLS = { s_data1: ['median', 'mean'], minmax1: ['min', 'max'], arith1: ['plus', 'minus', 'unary_minus', 'times', 'divide', 'power', 'root', 'abs'], rounding1: ['floor', 'ceiling'] };
+// how many arguments each takes, past the statistics' lists
+const ARITY = { minus: [1, 2], divide: [2, 2], power: [2, 2], root: [1, 1], abs: [1, 1], floor: [1, 1], ceiling: [1, 1], times: [2, Infinity], plus: [2, Infinity] };
+// CSS's exp(), log() and trigonometric functions round otherwise than JavaScript's Math (to the bit, 300 values each,
+// 2026-10-29: sin() 95 the same in Chrome, tan() 85 in WebKit, log(x, 10) 175 and 131, exp() 266 in both)
+const INEXACT = "CSS's exp(), log() and trigonometric functions don't give JavaScript's Math to the bit (sin(): 95 of 300 values in Chrome; tan(): 85 in WebKit)";
 const WHY = {
+  ...Object.fromEntries(['exp', 'ln', 'log', 'sin', 'cos', 'tan', 'sec', 'csc', 'cot', 'arcsin', 'arccos', 'arctan', 'arcsec', 'arccsc', 'arccot', 'sinh', 'cosh', 'tanh', 'sech', 'csch', 'coth', 'arcsinh', 'arccosh', 'arctanh'].map((k) => [k, INEXACT])),
+  factorial: 'CSS has no factorial, and d3 none', quotient: 'not yet: integer division', rem: 'not yet: a remainder',
   sum: '<sum/> binds a variable over limits; a list of numbers is added with <plus/>',
   variance: "MathML doesn't say it divides by n - 1, as d3 and dcss do", sdev: "MathML doesn't say it divides by n - 1, as d3 and dcss do",
   mode: 'dcss has no mode', moment: 'dcss has no moment', card: "a set's size drops repeated values, which d3.count counts",
@@ -141,11 +149,16 @@ function call(apply) {
   const kids = elements(apply), head = kids[0];
   if (!head) throw refusal(apply.start, 'an empty <apply>');
   if (head.name === 'apply') throw refusal(head.start, 'a nested <apply> as the operator: one operator applied to numbers');
-  let op, args = kids.slice(1);
+  let op, args = kids.slice(1), degree = 2;
   if (head.name === 'csymbol') {
     const cd = head.attrs.cd, name = textOf(head).trim();
-    if (!SYMBOLS[cd]?.includes(name)) throw refusal(head.start, `<csymbol cd="${cd}">${name}</csymbol> is not an operator this build takes (s_data1 median and mean, minmax1 min and max, arith1 plus)`);
-    op = name;
+    if (!SYMBOLS[cd]?.includes(name)) throw refusal(head.start, `<csymbol cd="${cd}">${name}</csymbol> is not an operator this build takes (s_data1 median and mean, minmax1 min and max, arith1 plus, minus, unary_minus, times, divide, power, root and abs, rounding1 floor and ceiling)`);
+    op = name === 'unary_minus' ? 'minus' : name;
+    if (cd === 'arith1' && name === 'unary_minus' && args.length !== 1) throw refusal(head.start, 'arith1 unary_minus takes one argument');
+    if (cd === 'arith1' && name === 'root') { // arith1's root is root(x, n): n the degree
+      if (args.length !== 2 || args[1].name !== 'cn') throw refusal(head.start, 'arith1 root takes a number and its degree, a <cn>');
+      degree = degreeOf(args[1]); args = [args[0]];
+    }
     if (cd === 'minmax1') { // min and max are unary on a set (MathML 4, F.5.1): unwrap <apply><csymbol cd="set1">set</csymbol>…</apply>
       const set = args[0], sh = set && elements(set)[0];
       if (args.length !== 1 || set.name !== 'apply' || sh?.name !== 'csymbol' || sh.attrs.cd !== 'set1' || textOf(sh).trim() !== 'set') throw refusal(head.start, 'minmax1 min and max take one set1 set: <apply><csymbol cd="set1">set</csymbol>…</apply>');
@@ -154,26 +167,33 @@ function call(apply) {
   } else {
     if (!blank(head) || elements(head).length) throw refusal(head.start, `<${head.name}> is an operator: write it empty, <${head.name}/>`);
     for (const k of ['definitionurl', 'encoding']) if (k in head.attrs) throw refusal(head.start, `<${head.name} ${k}="…">: the operator would mean another function`);
-    if (!(head.name in CALLS)) throw refusal(head.start, WHY[head.name] ?? `<${head.name}/> has no dcss call (this build takes median, mean, min, max and plus)`);
+    if (!(head.name in CALLS)) throw refusal(head.start, WHY[head.name] ?? `<${head.name}/> is not an operator this build takes (median, mean, min, max, plus, minus, times, divide, power, root, abs, floor and ceiling)`);
     op = head.name;
   }
+  if (op === 'root') { const q = args.filter((a) => a.name === 'degree'); // <root/> with a <degree> qualifier (MathML 4, 4.3.3.2); none is a square root
+    if (q.length > 1) throw refusal(q[1].start, 'two <degree>s');
+    if (q.length) { const k = elements(q[0]); if (k.length !== 1 || k[0].name !== 'cn') throw refusal(q[0].start, '<degree> holds one <cn>, the root\'s degree'); degree = degreeOf(k[0]); args = args.filter((a) => a !== q[0]); } }
   for (const a of args) if (QUALIFIERS.has(a.name)) throw refusal(a.start, `<${a.name}>: qualifiers aren't taken, only numbers`);
   for (const a of args) if (!['cn', 'ci', 'apply'].includes(a.name)) throw refusal(a.start, `<${a.name}> as an argument: only <cn> numbers, <ci> names and another <apply>`);
   if (!args.length) throw refusal(apply.start, `${op} of nothing`);
-  if (op === 'plus' && args.length < 2) throw refusal(apply.start, 'plus of one argument');
-  if (args.length === 1 && args[0].name === 'ci') throw refusal(args[0].start, `one <ci> alone: MathML reads it as a data set (MathML 4, §4.3.5.13), not one value`);
+  const [lo, hi] = ARITY[op] ?? [1, Infinity];
+  if (args.length < lo || args.length > hi) throw refusal(apply.start, `${op} of ${args.length} argument${args.length === 1 ? '' : 's'}: it takes ${lo === hi ? lo : hi === Infinity ? `${lo} or more` : `${lo} or ${hi}`}`);
+  if (args.length === 1 && args[0].name === 'ci' && !ARITY[op]) throw refusal(args[0].start, `one <ci> alone: MathML reads it as a data set (MathML 4, §4.3.5.13), not one value`);
   const items = args.map((a) => {
     if (a.name === 'apply') return { node: call(a) };
     if (a.name === 'cn') return number(a);
     if (elements(a).length) throw refusal(a.start, '<ci> with markup inside: a name is text');
     if ('type' in a.attrs) throw refusal(a.start, `<ci type="${a.attrs.type}"> names a collection or another kind of value`);
     const id = textOf(a).trim();
-    if (!/^-?[_a-zA-Z][-_a-zA-Z0-9]*$/.test(id)) throw refusal(a.start, `<ci>${id}</ci>: a name must be a CSS identifier`);
+    // a CSS identifier: letters past ASCII too (𝑚)
+    if (!/^-?[_a-zA-Z\u0080-\u{10FFFF}][-_a-zA-Z0-9\u0080-\u{10FFFF}]*$/u.test(id)) throw refusal(a.start, `<ci>${id}</ci>: a name must be a CSS identifier`);
     if (RESERVED.test(id)) throw refusal(a.start, `<ci>${id}</ci>: --${id} is a name dcss itself reads or writes`);
     return { ci: id };
   });
-  return { op, call: CALLS[op], items, start: apply.start };
+  return { op, call: CALLS[op], items, degree, start: apply.start };
 }
+// a root's degree: a whole number from 2
+function degreeOf(cn) { const { x } = number(cn); if (!Number.isInteger(x) || x < 2) throw refusal(cn.start, `a root of degree ${x}: this build takes whole degrees from 2`); return x; }
 
 // --- what CSS computes: the formula as one calc(), d3's operations in d3's order, so the page's number is d3's double
 // (read back to the bit in Chrome and WebKit: mathml-check.mjs). A sum adds left to right, each step fenced by
@@ -190,18 +210,22 @@ const sel = (g, x) => `clamp(-1 * (pow(2, 2000 * ${g}) - 1), ${x}, pow(2, 2000 *
 // Chrome divides numbers exactly and lengths as a · (1/b), WebKit the other way round (number.mjs cssDiv), and in Chrome a
 // length anywhere under a division makes it a length's (a mean of means read 1 ulp off): so each declaration is written
 // twice, every division a number's and every division a length's, and the engine's flag picks one whole form
-const DIVIDE = { plain: (a, n) => `((${a}) / ${n})`, length: (a, n) => `(((${a}) * 1px) / (${n} * 1px))` };
+const DIVIDE = { plain: (a, b) => `((${a}) / (${b}))`, length: (a, b) => `(((${a}) * 1px) / ((${b}) * 1px))` };
 const either = (plain, length) => (plain === length ? plain : `${sel(`(1 - ${W})`, plain)} + ${sel(W, length)}`);
 const SPLIT = { e: (n, v) => `round(down, log(max(abs(${v}), pow(2, -1006)), 2))`, a: (n, v) => `round(to-zero, ${v} * pow(2, 17 - var(${n}-e)))`,
   b: (n, v) => `round(to-zero, rem(${v} * pow(2, 17 - var(${n}-e)), 1) * 524288)`, c: (n, v) => `calc(rem(${v} * pow(2, 17 - var(${n}-e)) * 524288, 1) * 524288)` };
 const join = (n) => `((var(${n}-a) + var(${n}-b) / 524288 + var(${n}-c) / 274877906944) * pow(2, var(${n}-e) - 17))`;
-// d3's answer in JavaScript's doubles, when every number under it is written (null with a <ci> under it)
+// d3's answer in JavaScript's doubles (JavaScript's Math where d3 has no call), when every number under it is written
+// (null with a <ci> under it); CSS's pow() and sqrt() are Math.pow's and Math.sqrt's to the bit (300 of 300 each, both engines)
 const D3 = {
+  minus: (xs) => (xs.length === 1 ? -xs[0] : xs[0] - xs[1]), times: (xs) => xs.reduce((a, b) => a * b), divide: (xs) => xs[0] / xs[1],
+  power: (xs) => Math.pow(xs[0], xs[1]), root: (xs, n) => (n.degree === 2 ? Math.sqrt(xs[0]) : Math.pow(xs[0], 1 / n.degree)),
+  abs: (xs) => Math.abs(xs[0]), floor: (xs) => Math.floor(xs[0]), ceiling: (xs) => Math.ceil(xs[0]),
   sum: (xs) => xs.reduce((s, x) => s + x, 0), mean: (xs) => xs.reduce((s, x) => s + x, 0) / xs.length,
   min: (xs) => Math.min(...xs), max: (xs) => Math.max(...xs),
   median: (xs) => { const s = [...xs].sort((a, b) => a - b), i0 = Math.floor((s.length - 1) / 2); return s.length % 2 ? s[i0] : s[i0] + (s[i0 + 1] - s[i0]) * 0.5; },
 };
-const valueOf = (node) => { const xs = node.items.map((x) => (x.node ? valueOf(x.node) : x.ci ? null : x.x)); return xs.includes(null) ? null : D3[node.call](xs); };
+const valueOf = (node) => { const xs = node.items.map((x) => (x.node ? valueOf(x.node) : x.ci ? null : x.x)); return xs.includes(null) ? null : D3[node.call](xs, node); };
 // a median of n values the page sets compares n · (n - 1) pairs: 2,048 is a median of 45 names, 93 KB of style, a change
 // 0.1 ms of style work in Chrome and WebKit (2026-10-29)
 const MAX_COMPARES = 2048;
@@ -213,6 +237,13 @@ function form(root, divide) {
     const total = () => xs.reduce((a, b) => F(`${a} + ${b}`));
     if (node.call === 'sum') return total();
     if (node.call === 'mean') return divide(total(), xs.length);
+    if (node.call === 'minus') return xs.length === 1 ? `(-1 * ${xs[0]})` : F(`${xs[0]} - ${xs[1]}`);
+    if (node.call === 'times') return xs.reduce((a, b) => F(`${a} * ${b}`));
+    if (node.call === 'divide') return divide(xs[0], xs[1]);
+    if (node.call === 'power') return `pow(${xs[0]}, ${xs[1]})`;
+    if (node.call === 'root') return node.degree === 2 ? `sqrt(${xs[0]})` : `pow(${xs[0]}, ${String(1 / node.degree)})`;
+    if (node.call === 'abs') return `abs(${xs[0]})`;
+    if (node.call === 'floor' || node.call === 'ceiling') return `round(${node.call === 'floor' ? 'down' : 'up'}, ${xs[0]}, 1)`;
     if (node.call !== 'median') return `${node.call}(${xs.join(', ')})`;
     const n = xs.length; if (n === 1) return xs[0];
     const known = node.items.map((x) => (x.node ? valueOf(x.node) : x.ci ? null : x.x));
@@ -251,20 +282,29 @@ function write({ root, value, decls: own, ints }, math, src) {
   const classes = (math.attrs.class ?? '').split(/\s+/).filter(Boolean), fmt = classes.filter((c) => c.startsWith('dcss-format-')), keep = classes.filter((c) => !c.startsWith('dcss-format-'));
   const decls = splitStyle(math.attrs.style), fmtDecls = decls.filter(([k]) => FORMAT_SETTINGS.test(k)), varDecls = decls.filter(([k]) => k.startsWith('--') && !FORMAT_SETTINGS.test(k)), mathDecls = decls.filter(([k]) => !k.startsWith('--'));
   const css = (ds) => ds.map(([k, v]) => `${k}: ${v}`).join('; ');
-  // the formula, for readers: function notation, plus as a sum (in parentheses inside another sum); U+2061 after a
-  // function's name; a negative as an operator. Each argument is named for its call's intent; the search for a name
-  // stops at an element with its own intent (MathML 4, 5.1), so an inner call's names are its own
-  const pres = ({ op, items }, arg = '', inSum = false) => {
-    const shown = items.map((x, i) => {
-      const a = ` arg="a${i + 1}"`;
-      if (x.node) return pres(x.node, a, op === 'plus');
-      if (x.ci) return `<mi${a}>${esc(x.ci)}</mi>`;
-      if (!x.neg) return x.mag.startsWith('<mn>') && x.mag.indexOf('<', 1) === x.mag.indexOf('</mn>') ? `<mn${a}>${x.mag.slice(4)}` : `<mrow${a}>${x.mag}</mrow>`;
-      return op === 'plus' ? `<mrow${a}><mo>(</mo><mo>−</mo>${x.mag}<mo>)</mo></mrow>` : `<mrow${a}><mo>−</mo>${x.mag}</mrow>`;
-    });
-    const intent = `${op}(${items.map((_, i) => `$a${i + 1}`).join(',')})`;
-    return op === 'plus' ? `<mrow${arg} intent="${intent}">${inSum ? '<mo>(</mo>' : ''}${shown.join('<mo>+</mo>')}${inSum ? '<mo>)</mo>' : ''}</mrow>`
-      : `<mrow${arg} intent="${intent}"><mi>${op}</mi><mo>⁡</mo><mrow><mo>(</mo>${shown.join('<mo>,</mo>')}<mo>)</mo></mrow></mrow>`;
+  // the formula, for readers: d3's calls in function notation, U+2061 after the name; sums, differences and products
+  // infix; fractions, powers, roots and bars as MathML draws them; a negative as an operator; parentheses only where a
+  // lower operator sits inside a higher one. Each argument is named for its call's intent; the search for a name stops
+  // at an element with its own intent (MathML 4, 5.1), so an inner call's names are its own
+  const PREC = { plus: 1, minus: 1, times: 2, power: 4 }; // the rest stand alone
+  const prec = (x) => (x.node ? (x.node.op === 'minus' && x.node.items.length === 1 ? 3 : PREC[x.node.op] ?? 9) : x.neg ? 3 : 9);
+  const pres = (node, arg = '') => {
+    const { op, items } = node, ids = items.map((_, i) => `$a${i + 1}`).join(',');
+    const show = (i, need = 0) => { const x = items[i], a = ` arg="a${i + 1}"`;
+      const m = x.node ? pres(x.node, a) : x.ci ? `<mi${a}>${esc(x.ci)}</mi>`
+        : !x.neg ? (x.mag.startsWith('<mn>') && x.mag.indexOf('<', 1) === x.mag.indexOf('</mn>') ? `<mn${a}>${x.mag.slice(4)}` : `<mrow${a}>${x.mag}</mrow>`)
+        : `<mrow${a}><mo>−</mo>${x.mag}</mrow>`;
+      return prec(x) < need ? `<mrow><mo>(</mo>${m}<mo>)</mo></mrow>` : m; };
+    const infix = (sign, need) => items.map((x, i) => show(i, prec(x) === 3 ? 4 : need(i))).join(`<mo>${sign}</mo>`);
+    if (op === 'plus') return `<mrow${arg} intent="plus(${ids})">${infix('+', () => 2)}</mrow>`;
+    if (op === 'times') return `<mrow${arg} intent="times(${ids})">${infix('×', () => 2)}</mrow>`;
+    if (op === 'minus') return items.length === 1 ? `<mrow${arg} intent="minus(${ids})"><mo>−</mo>${show(0, 4)}</mrow>` : `<mrow${arg} intent="minus(${ids})">${infix('−', (i) => (i ? 2 : 1))}</mrow>`;
+    if (op === 'divide') return `<mfrac${arg} intent="divide(${ids})">${show(0)}${show(1)}</mfrac>`;
+    if (op === 'power') return `<msup${arg} intent="power(${ids})">${show(0, 5)}${show(1)}</msup>`;
+    if (op === 'root') return node.degree === 2 ? `<msqrt${arg} intent="square-root(${ids})">${show(0)}</msqrt>` : `<mroot${arg} intent="root($a1,$a2)">${show(0)}<mn arg="a2">${node.degree}</mn></mroot>`;
+    if (op === 'abs' || op === 'floor' || op === 'ceiling') { const [l, r] = { abs: ['|', '|'], floor: ['⌊', '⌋'], ceiling: ['⌈', '⌉'] }[op];
+      return `<mrow${arg} intent="${op === 'abs' ? 'absolute-value' : op}(${ids})"><mo>${l}</mo>${show(0)}<mo>${r}</mo></mrow>`; }
+    return `<mrow${arg} intent="${op}(${ids})"><mi>${op}</mi><mo>⁡</mo><mrow><mo>(</mo>${items.map((_, i) => show(i)).join('<mo>,</mo>')}<mo>)</mo></mrow></mrow>`;
   };
   const mathAttrs = Object.entries(math.attrs).filter(([k]) => !['class', 'style'].includes(k)).map(([k, v]) => ` ${k}="${esc(v)}"`).join('')
     + (keep.length ? ` class="${esc(keep.join(' '))}"` : '') + (mathDecls.length ? ` style="${esc(css(mathDecls))}"` : '');

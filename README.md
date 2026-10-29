@@ -224,19 +224,24 @@ A call can also be written in Content MathML, the W3C's markup for what a formul
 </apply></math>
 ```
 
-The build writes a figure whose caption is the formula, median(mean(120, 80.5), mean(90, feb), 100), in Presentation MathML, which browsers draw and screen readers read, with the Content MathML kept as its annotation; then an `<output>` whose `--value` is the formula as one `calc()`, printed by the formatter the `<math>` names (its class and settings, as in [Format](#format-familiesformatcss)), or to six decimals with commas, as the calls print their own (d3.format(",.6~f")). `<ci>feb</ci>` reads `--feb`: set it on an ancestor and the answer follows in the same frame. A name the page doesn't set, or sets to something that isn't a number, leaves no answer and `--dcss-err` 1.
+The build writes a figure whose caption is the formula, median(mean(120, 80.5), mean(90, feb), 100), in Presentation MathML, which browsers draw and screen readers read, with the Content MathML kept as its annotation; then an `<output>` whose `--value` is the formula as one `calc()`, printed by the formatter the `<math>` names (its class and settings, as in [Format](#format-familiesformatcss)), or to six decimals with commas, as the calls print their own (d3.format(",.6~f")). `<ci>feb</ci>` reads `--feb` (a name is any CSS identifier, `𝑚` included): set it on an ancestor and the answer follows in the same frame. A name the page doesn't set, or sets to something that isn't a number, leaves no answer and `--dcss-err` 1.
 
-| Content MathML | d3 |
+| Content MathML | computes as |
 |---|---|
 | `<median/>`, `<csymbol cd="s_data1">median</csymbol>` | d3.median |
 | `<mean/>`, `<csymbol cd="s_data1">mean</csymbol>` | d3.mean |
 | `<min/>`, `<max/>`, or `<csymbol cd="minmax1">min</csymbol>` (`max`) of one `<csymbol cd="set1">set</csymbol>` | d3.min, d3.max |
 | `<plus/>`, `<csymbol cd="arith1">plus</csymbol>`, two arguments or more | d3.sum |
+| `<minus/>` (one argument or two), `<times/>`, `<divide/>`, `<power/>`, and arith1's `minus`, `unary_minus`, `times`, `divide`, `power` | JavaScript's `-`, `*`, `/` and `Math.pow` |
+| `<root/>`, with a `<degree>` holding a whole `<cn>` from 2, or arith1's `root` | `Math.sqrt`, or `Math.pow(x, 1 / n)` |
+| `<abs/>`, `<floor/>`, `<ceiling/>`, and rounding1's `floor`, `ceiling` | `Math.abs`, `Math.floor`, `Math.ceil` |
 
-A formula is not laid out: the build sees every number, so the page's number is d3's own double, with no 1/64 grid and no range but a double's. 12.3 is 12.3, the mean of 1, 2 and 4 is 2.3333333333333335, and a formula inside a formula takes it as d3 composes calls. The build adds in d3's order, divides as IEEE does in each engine, and ranks a median's values against each other where the page sets them. With that default an answer from 9,007,199,255 up prints nothing, with error 1 (its millionths pass 2^53): give it `.dcss-format-si`.
+A formula is not laid out: the build sees every number, so the page's number is d3's own double, or JavaScript's for arithmetic, with no 1/64 grid and no range but a double's. 12.3 is 12.3, the mean of 1, 2 and 4 is 2.3333333333333335, and a formula inside a formula takes it as d3 composes calls. The build adds in d3's order, divides as IEEE does in each engine, and ranks a median's values against each other where the page sets them. With that default an answer from 9,007,199,255 up prints nothing, with error 1 (its millionths pass 2^53): give it `.dcss-format-si`.
 
 Arguments are `<cn>` numbers (decimal; `type` integer, real, double, e-notation or rational) and `<ci>` names. The build stops with the file, line and reason, rather than write a page that shows a wrong or blank answer, on:
 
+- an equation or a relation (`<eq/>`, `<lt/>`, `<and/>`): it says something about numbers rather than computing one;
+- `<exp/>`, `<ln/>`, `<log/>` and the trigonometric functions: CSS's `exp()`, `log()` and `sin()` round otherwise than JavaScript's `Math`, so the page's number wouldn't be the one a script computes; `<factorial/>`, which CSS doesn't have;
 - an operator with no d3 call: `<sum/>` binds a variable over limits, `<variance/>` and `<sdev/>` divide by n where d3 divides by n - 1, `<card/>` and a `set1` set drop repeated values;
 - a qualifier (`<bvar>`, `<condition>`, `<lowlimit>`), `definitionURL`, or Content MathML outside an annotation that it can't compile, which browsers would show as nothing;
 - a number that is no double: `INF`, past the largest double, a base other than 10, a rational whose parts pass 2^53;
