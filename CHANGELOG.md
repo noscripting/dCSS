@@ -48,6 +48,7 @@ All notable changes to dcss-array.css are written here. The format follows [Keep
 
 ### Fixed
 
+- `mathml.mjs`, from a clean-room trial (2026-10-29, three readers): Chrome read a written number or a name from 3.4e38 up as 3.4e38 and the page printed another number with no error (1e40 × 1e-32 as 3,402,823); such a `<cn>` is refused and such a name gives no answer, as does an answer past the largest double (WebKit printed 0.000000). Captions no longer draw a lone number as id(3), write `<` as `&lt;`, and write what they hold past ASCII as character references; LaTeXML's `<semantics>` form compiles and its 𝑥 reads `--x`; the formula and its answer share a line; the CLI takes the built page's file and writes it only when the build succeeds, stopping when the page links no dcss sheet.
 - A sum, mean, min, max or extent whose list passes 262,144 px with fractions gives no answer (`--dcss-err` 1): Chrome read sum(262144, 0.015625) as 262,144 with no error, and Safari a min 1/64 low. Whole numbers written in the items stay exact to 2^24 px.
 - `--dcss-mean` is d3's mean to the bit: it was rounded to millionths (mean(1, 2, 4) gave 2.333333, d3 2.3333333333333335).
 - `--trim: 1` on `.dcss-format-fixed` and `.dcss-format-percent` drops trailing zeros as d3's `~` does (5 at `--precision: 6` prints 5); it did nothing there, only in SI and general.

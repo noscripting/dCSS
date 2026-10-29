@@ -8,7 +8,7 @@
 // jan]) to the bit, jan read from --jan on an ancestor (unset: no answer, --dcss-err 1). Only a <math> whose one element
 // child is an <apply> of an operator it takes is compiled; the rest of the page is copied byte for byte, so the build
 // run on its own output changes nothing.
-import { readFileSync } from 'node:fs';
+import { readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 const manifest = JSON.parse(readFileSync(new URL('families.json', import.meta.url), 'utf8')), families = manifest.families;
 // the family sheets a page's dcss- classes need, in families.json's order (as runtime.mjs picks them, read from the
@@ -90,6 +90,9 @@ const blank = (n) => n.children.every((c) => c.name || !c.text.trim());
 // --- numbers: each <cn> as the double JavaScript reads from its text, what d3 would be given, and its magnitude as
 // Presentation MathML (the sign apart)
 const MAX = 2 ** 53;
+// Chrome clamps a number token, written or brought by var(), to a 32-bit float's largest (1e40 reads 3.4028234663852886e38;
+// a value inside a calculation stays a double): measured 2026-10-29, Chrome 155; WebKit doesn't
+const FMAX = 3.4028234663852886e38;
 function number(cn) {
   const type = cn.attrs.type ?? 'real', base = cn.attrs.base;
   if (base !== undefined && base.trim() !== '10') throw refusal(cn.start, `<cn base="${base}">: this build reads numbers in base 10 only`);
@@ -102,6 +105,7 @@ function number(cn) {
   let x, mag;
   if (['real', 'integer', 'double'].includes(type)) {
     if (p.length !== 1) throw bad();
+    if (type === 'real' && /^[+-]?(\d+\.?\d*|\.\d+)[eE][+-]?\d+$/.test(p[0])) throw refusal(cn.start, `<cn>${p[0]}</cn>: MathML's real number is plain decimal; a number with an exponent is <cn type="double">${p[0]}</cn>`);
     if (type === 'integer' ? !/^[+-]?\d+$/.test(p[0]) : !/^[+-]?(\d+\.?\d*|\.\d+)([eE][+-]?\d+)?$/.test(p[0]) || (type !== 'double' && /[eE]/.test(p[0]))) throw bad();
     x = Number(p[0]); mag = `<mn>${digits(p[0])}</mn>`;
   } else if (type === 'e-notation') {
@@ -115,6 +119,7 @@ function number(cn) {
     x = n / d; mag = `<mfrac><mn>${digits(p[0])}</mn><mn>${digits(p[1])}</mn></mfrac>`;
   } else throw refusal(cn.start, `<cn type="${type}">: this build reads integer, real, double, e-notation and rational numbers`);
   if (!Number.isFinite(x)) throw refusal(cn.start, `<cn>${p.join('<sep/>')}</cn> is past the largest double`);
+  if (Math.abs(x) >= FMAX) throw refusal(cn.start, `<cn>${p.join('<sep/>')}</cn>: Chrome reads a number from 3.4e38 up as 3.4e38 (a 32-bit float's largest), so the page would compute with another number`);
   return { x, neg: x < 0 || Object.is(x, -0), mag };
 }
 
@@ -149,7 +154,7 @@ const RELS = { lt: '<', leq: '≤', gt: '>', geq: '≥' };
 let DEFS = new Map(), LATER = new Map(); // the page's definitions before the formula being compiled, and after it
 const isAssign = (h) => h?.name === 'csymbol' && h.attrs.cd === 'latexml' && textOf(h).trim() === 'assign';
 const subName = (a) => a?.name === 'apply' && elements(a)[0]?.name === 'csymbol' && elements(a)[0].attrs.cd === 'ambiguous' && textOf(elements(a)[0]).trim() === 'subscript';
-const loneName = (a) => (a?.name === 'ci' && !elements(a).length ? textOf(a).trim() : subName(a) && elements(a).length === 3 && ['ci', 'cn'].includes(elements(a)[2].name) ? `${textOf(elements(a)[1]).trim()}_${textOf(elements(a)[2]).trim()}` : null);
+const loneName = (a) => (a?.name === 'ci' && !elements(a).length ? textOf(a).trim().normalize('NFKC') : subName(a) && elements(a).length === 3 && ['ci', 'cn'].includes(elements(a)[2].name) ? `${textOf(elements(a)[1]).trim()}_${textOf(elements(a)[2]).trim()}`.normalize('NFKC') : null);
 // what a formula defines: [name, the side that defines it], or null
 function definition(top) {
   const [head, ...args] = elements(top);
@@ -232,15 +237,15 @@ function item(a, defining = false) {
     if (sub) { // LaTeXML's x_1: one name, x_1, read from --x_1 and drawn as a subscript
       const [, base, index, ...more] = elements(a);
       if (!base || !index || more.length || base.name !== 'ci' || !['ci', 'cn'].includes(index.name) || elements(base).length || elements(index).length) throw refusal(a.start, 'a subscript other than a name and one name or number (x_1, x_i): this build reads those as one name');
-      const id = `${textOf(base).trim()}_${textOf(index).trim()}`;
+      const id = `${textOf(base).trim()}_${textOf(index).trim()}`.normalize('NFKC');
       if (!/^-?[_a-zA-Z\u0080-\u{10FFFF}][-_a-zA-Z0-9\u0080-\u{10FFFF}]*$/u.test(id)) throw refusal(a.start, `the subscripted name ${id} is no CSS identifier`);
-      return named({ ci: id, sub: [textOf(base).trim(), textOf(index).trim(), index.name] }, a, defining);
+      return named({ ci: id, sub: [textOf(base).trim().normalize('NFKC'), textOf(index).trim().normalize('NFKC'), index.name] }, a, defining);
     }
     if (a.name === 'apply') return { node: call(a) };
     if (a.name === 'cn') return number(a);
     if (elements(a).length) throw refusal(a.start, '<ci> with markup inside: a name is text');
     if ('type' in a.attrs) throw refusal(a.start, `<ci type="${a.attrs.type}"> names a collection or another kind of value`);
-    const id = textOf(a).trim();
+    const id = textOf(a).trim().normalize('NFKC'); // LaTeXML's mathematical italic 𝑥 is the page's x
     // a CSS identifier: letters past ASCII too (𝑚)
     if (!/^-?[_a-zA-Z\u0080-\u{10FFFF}][-_a-zA-Z0-9\u0080-\u{10FFFF}]*$/u.test(id)) throw refusal(a.start, `<ci>${id}</ci>: a name must be a CSS identifier`);
     if (RESERVED.test(id)) throw refusal(a.start, `<ci>${id}</ci>: --${id} is a name dcss itself reads or writes`);
@@ -331,11 +336,14 @@ function former(divide) {
 }
 // a name the page doesn't set (or sets to no number) leaves no answer: --value fails with it, and so does a registered
 // step that took it (its initial 0 would be a number): 0 / 0 then
-const okDecl = (names) => ['--dcss-dcss-ok', `calc(${[...names].map((n) => `var(--${n}) * 0`).join(' + ')} + 1)`];
+// and so does one from 3.4e38 up, which Chrome reads as 3.4e38
+const okDecl = (names) => ['--dcss-dcss-ok', `calc(${[...names].map((n) => `var(--${n}) * 0`).join(' + ')} + 1 - min(1, ${[...names].map((n) => `max(0, sign(abs(var(--${n})) - ${FMAX}) + 1)`).join(' + ')}))`];
+// an answer that isn't finite (a power or product past the largest double) has none: x · 0 + 1 is then 0 in both engines
 function form(root, divide) {
   const f = former(divide), value = f.expr(root);
   if (f.names.size) f.decls.push(okDecl(f.names));
-  return { value: `${value}${f.names.size ? ' + 0 / var(--dcss-dcss-ok)' : ''}`, decls: f.decls, compares: f.compares };
+  f.decls.push(['--dcss-dcss-fin', `calc(${value} * 0 + 1)`]);
+  return { value: `${value}${f.names.size ? ' + 0 / var(--dcss-dcss-ok)' : ''} + 0 / var(--dcss-dcss-fin)`, decls: f.decls, compares: f.compares };
 }
 // each declaration in both forms of division, the engine's flag picking one
 const both = (plain, length) => ({ value: `calc(${either(plain.value, length.value)})`, decls: plain.decls.map(([k, v], i) => `${k}: calc(${either(v, length.decls[i][1])});`),
@@ -369,15 +377,15 @@ function write({ kind, root, value, decls: own, ints, sides }, math, src) {
   // lower operator sits inside a higher one. Each argument is named for its call's intent; the search for a name stops
   // at an element with its own intent (MathML 4, 5.1), so an inner call's names are its own
   const PREC = { plus: 1, minus: 1, times: 2, power: 4 }; // the rest stand alone
-  const prec = (x) => (x.node ? (x.node.op === 'minus' && x.node.items.length === 1 ? 3 : PREC[x.node.op] ?? 9) : x.neg ? 3 : 9);
+  const prec = (x) => (x.node?.op === 'id' ? prec(x.node.items[0]) : x.node ? (x.node.op === 'minus' && x.node.items.length === 1 ? 3 : PREC[x.node.op] ?? 9) : x.neg ? 3 : 9);
   const pres = (node, arg = '') => {
     const { op, items } = node, ids = items.map((_, i) => `$a${i + 1}`).join(',');
-    const show = (i, need = 0) => { const x = items[i], a = ` arg="a${i + 1}"`;
+    const show = (i, need = 0) => { const x = items[i].node?.op === 'id' ? items[i].node.items[0] : items[i], a = ` arg="a${i + 1}"`;
       const m = x.node ? pres(x.node, a) : x.sub ? `<msub${a}><mi>${esc(x.sub[0])}</mi><${x.sub[2] === 'cn' ? 'mn' : 'mi'}>${esc(x.sub[1])}</${x.sub[2] === 'cn' ? 'mn' : 'mi'}></msub>` : x.ci ? `<mi${a}>${esc(x.ci)}</mi>`
         : !x.neg ? (x.mag.startsWith('<mn>') && x.mag.indexOf('<', 1) === x.mag.indexOf('</mn>') ? `<mn${a}>${x.mag.slice(4)}` : `<mrow${a}>${x.mag}</mrow>`)
         : `<mrow${a}><mo>−</mo>${x.mag}</mrow>`;
       return prec(x) < need ? `<mrow><mo>(</mo>${m}<mo>)</mo></mrow>` : m; };
-    const infix = (sign, need) => items.map((x, i) => show(i, prec(x) === 3 ? 4 : need(i))).join(`<mo>${sign}</mo>`);
+    const infix = (sign, need) => items.map((x, i) => show(i, prec(x) === 3 ? 4 : need(i))).join(`<mo>${esc(sign)}</mo>`);
     if (op === 'eq' || op === 'assign') return `<mrow${arg} intent="${op === 'eq' ? 'equals' : 'assign'}(${ids})">${items.map((_, i) => show(i)).join(`<mo>${op === 'eq' ? '=' : '≔'}</mo>`)}</mrow>`;
     if (op in RELS) return `<mrow${arg} intent="${{ lt: 'less-than', leq: 'less-than-or-equal', gt: 'greater-than', geq: 'greater-than-or-equal' }[op]}(${ids})">${infix(RELS[op], () => 0)}</mrow>`;
     if (op === 'and') return `<mrow${arg} intent="and(${ids})">${items.map((_, i) => show(i)).join('<mo>,</mo><mspace width="0.5em"/>')}</mrow>`;
@@ -394,7 +402,9 @@ function write({ kind, root, value, decls: own, ints, sides }, math, src) {
   const mathAttrs = Object.entries(math.attrs).filter(([k]) => !['class', 'style'].includes(k)).map(([k, v]) => ` ${k}="${esc(v)}"`).join('')
     + (keep.length ? ` class="${esc(keep.join(' '))}"` : '') + (mathDecls.length ? ` style="${esc(css(mathDecls))}"` : '');
   const annotation = src.slice(elements(math)[0].start, elements(math)[0].end);
-  const caption = `<figcaption style="overflow-x: auto"><math${mathAttrs}><semantics>${pres(root)}<annotation-xml encoding="application/mathml-content+xml">${annotation}</annotation-xml></semantics></math></figcaption>`;
+  // what the build writes past ASCII goes as character references, so a page with no charset declared still shows it
+  const ascii = (t) => t.replace(/[^\x00-\x7f]/gu, (c) => `&#x${c.codePointAt(0).toString(16)};`);
+  const caption = `<figcaption style="overflow-x: auto"><math${mathAttrs}><semantics>${ascii(pres(root))}<annotation-xml encoding="application/mathml-content+xml">${annotation}</annotation-xml></semantics></math></figcaption>`;
   // the answer prints through a formatter: the author's, or d3.format(",.6~f"), as the calls print their own (format-general,
   // d3.format(","), cost 80 ms a frame for 20 moving means in WebKit, fixed 17, the formula itself 3: 2026-10-29)
   const f = fmt.length ? fmt.join(' ') : 'dcss-format-fixed', st = fmt.length || fmtDecls.length ? css(fmtDecls) : '--precision: 6; --trim: 1; --comma: 1';
@@ -402,10 +412,10 @@ function write({ kind, root, value, decls: own, ints, sides }, math, src) {
   const truth = kind === 'truth' ? '@counter-style dcss-dcss-truth { system: fixed 0; symbols: "" "false" "true"; } [data-dcss-truth]::after { content: counter(dcss-dcss-truth, dcss-dcss-truth); }' : '';
   const props = ints.length || truth ? `<style>${ints.map((n) => `@property ${n} { syntax: '<integer>'; inherits: false; initial-value: 0; }`).join(' ')}${truth ? ' ' + truth : ''}</style>` : '';
   const one = (v, d) => `<output class="${f}" style="${d.length ? d.join(' ') + ' ' : ''}--value: ${v}${st ? '; ' + st : ''}"></output>`;
-  const answer = kind === 'sides' ? sides.map((e) => one(e.value, e.decls)).join('<span aria-hidden="true"> · </span>') : kind === 'truth'
+  const answer = kind === 'sides' ? sides.map((e) => one(e.value, e.decls)).join('<span aria-hidden="true"> &#xb7; </span>') : kind === 'truth'
     ? `<output data-dcss-truth style="${own.join(' ')} counter-reset: dcss-dcss-truth calc(${value} * var(--dcss-dcss-fin) * (1 + var(--dcss-dcss-t))); --dcss-err: calc(1 - ${value} * var(--dcss-dcss-fin))"></output>`
     : `<output class="${f}" style="${own.length ? own.join(' ') + ' ' : ''}--value: ${value}${st ? '; ' + st : ''}"></output>`;
-  return `<figure data-dcss-mathml${varDecls.length ? ` style="${esc(css(varDecls))}"` : ''}>${caption}${props}<div>${answer}</div></figure>`;
+  return `<figure data-dcss-mathml${varDecls.length ? ` style="${esc(css(varDecls))}"` : ''}>${caption}${props}<div>${kind === 'value' || kind === 'define' ? '= ' : ''}${answer}</div></figure>`;
 }
 
 // --- the page: each <math> the parser would build, compiled when it is one <apply> of an operator
@@ -420,6 +430,7 @@ export function toDcss(src, { file = 'page.html' } = {}) {
     if (!t) { i = lt + 1; continue; }
     if (!t.close && RAW.has(t.name)) { const e = src.toLowerCase().indexOf(`</${t.name}`, lt + t.length); i = e < 0 ? src.length : e; continue; }
     if (t.close) { if (t.name === 'p') pOpen = null; i = lt + t.length; continue; }
+    if (t.name === 'figure' && /\bdata-dcss-mathml\b/.test(t.rawAttrs)) { const e = src.toLowerCase().indexOf('</figure', lt); i = e < 0 ? src.length : e; continue; } // a formula this build wrote
     if (t.name === 'p') pOpen = { start: lt, end: lt + t.length };
     else if (CLOSES_P.has(t.name)) pOpen = null;
     if (t.name !== 'svg' && t.name !== 'math') { i = lt + t.length; continue; }
@@ -427,6 +438,10 @@ export function toDcss(src, { file = 'page.html' } = {}) {
     let math;
     try { math = parseMath(src, lt); } catch (e) { if (e instanceof Refusal) throw new Error(`${file}:${lineOf(src, e.at)}: ${e.message}`); throw e; }
     i = math.end;
+    // LaTeXML's form: <semantics>, its Presentation MathML first and the Content MathML in an annotation-xml
+    const sem = elements(math).length === 1 && elements(math)[0].name === 'semantics' ? elements(math)[0] : null;
+    const content = sem && elements(sem).find((a) => a.name === 'annotation-xml' && /^(MathML-Content|application\/mathml-content\+xml)$/i.test(a.attrs.encoding ?? ''));
+    if (content && elements(content).length === 1 && elements(content)[0].name === 'apply') math = { ...math, children: [elements(content)[0]] };
     const kids = elements(math);
     if (kids.length !== 1 || kids[0].name !== 'apply' || !blank(math)) {
       // a formula with Content MathML outside an annotation would draw nothing in Chrome and Safari
@@ -459,7 +474,8 @@ export function toDcss(src, { file = 'page.html' } = {}) {
       compiled = f.compiled = compile(f.math);
     } catch (e) { if (e instanceof Refusal) throw new Error(`${file}:${lineOf(src, e.at)}: ${e.message}`); throw e; }
     const each = (n) => { calls.add(n.call); n.items.forEach((x) => x.node && each(x.node)); }; each(compiled.root);
-    return { from: f.from, to: f.to, html: write(compiled, f.math, src) };
+    // the first figure brings the rule that puts each answer beside its formula, at no specificity, so a page's own wins
+    return { from: f.from, to: f.to, html: (k ? '' : LAYOUT) + write(compiled, f.math, src) };
   });
   let out = '', at = 0;
   for (const e of edits) { out += src.slice(at, e.from) + e.html; at = e.to; }
@@ -467,6 +483,7 @@ export function toDcss(src, { file = 'page.html' } = {}) {
   return { ...links(out, edits.length), calls: [...calls], count: edits.length };
 }
 
+const LAYOUT = '<style>:where(figure[data-dcss-mathml]) { display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 0.5em; }</style>';
 // the sheets the compiled calls need, linked beside the page's link to dcss (dcss.css, or dcss-array.css as published),
 // unless the page links them or their parts already; with no link to dcss at all, listed in `needs`
 function links(html, count) {
@@ -481,8 +498,12 @@ function links(html, count) {
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
-  const file = process.argv[2];
-  if (!file) { console.error('usage: node mathml.mjs <page.html>  (writes the page to stdout)'); process.exit(1); }
-  try { const r = toDcss(readFileSync(file, 'utf8'), { file }); process.stdout.write(r.html); if (r.needs.length) console.error(`${file}: ${r.count} formulas compiled; the page links no dcss sheet: it needs ${manifest.core.file} and ${r.needs.join(', ')}`); }
-  catch (e) { console.error(e.message); process.exit(1); }
+  // node mathml.mjs page.html [built.html]: the built page to the file, written only when the build succeeds, or to stdout
+  const [file, to] = process.argv.slice(2);
+  if (!file) { console.error('usage: node mathml.mjs <page.html> [built.html]  (with no second file, the page goes to stdout)'); process.exit(1); }
+  try {
+    const r = toDcss(readFileSync(file, 'utf8'), { file });
+    if (r.needs.length) { console.error(`${file}: the page links no dcss sheet: link ${manifest.core.file} (it brings ${r.needs.join(', ')} beside it); nothing written`); process.exit(1); }
+    if (to) writeFileSync(to, r.html); else process.stdout.write(r.html);
+  } catch (e) { console.error(e.message); process.exit(1); }
 }
