@@ -270,8 +270,9 @@ function write({ root, value, decls: own, ints }, math, src) {
     + (keep.length ? ` class="${esc(keep.join(' '))}"` : '') + (mathDecls.length ? ` style="${esc(css(mathDecls))}"` : '');
   const annotation = src.slice(elements(math)[0].start, elements(math)[0].end);
   const caption = `<figcaption style="overflow-x: auto"><math${mathAttrs}><semantics>${pres(root)}<annotation-xml encoding="application/mathml-content+xml">${annotation}</annotation-xml></semantics></math></figcaption>`;
-  // the answer prints through a formatter: the author's, or d3.format(",") (format-general with commas)
-  const f = fmt.length ? fmt.join(' ') : 'dcss-format-general', st = fmt.length || fmtDecls.length ? css(fmtDecls) : '--comma: 1';
+  // the answer prints through a formatter: the author's, or d3.format(",.6~f"), as the calls print their own (format-general,
+  // d3.format(","), cost 80 ms a frame for 20 moving means in WebKit, fixed 17, the formula itself 3: 2026-10-29)
+  const f = fmt.length ? fmt.join(' ') : 'dcss-format-fixed', st = fmt.length || fmtDecls.length ? css(fmtDecls) : '--precision: 6; --trim: 1; --comma: 1';
   const props = ints.length ? `<style>${ints.map((n) => `@property ${n} { syntax: '<integer>'; inherits: false; initial-value: 0; }`).join(' ')}</style>` : '';
   const answer = `<output class="${f}" style="${own.length ? own.join(' ') + ' ' : ''}--value: ${value}${st ? '; ' + st : ''}"></output>`;
   return `<figure data-dcss-mathml${varDecls.length ? ` style="${esc(css(varDecls))}"` : ''}>${caption}${props}<div>${answer}</div></figure>`;
