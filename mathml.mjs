@@ -142,8 +142,9 @@ const RESERVED = /^(value|dcss-.*)$/;
 // page prints the other side's value, and every later formula on the page that names it computes that side in its place
 // (a formula's answer reaches only what is inside it, so the build carries it); an inequality, or a chain of them,
 // prints true or false as JavaScript's <, <=, > and >= decide on the two doubles, and nothing when a side has no answer.
-// An equation between two formulas is refused: whether it holds depends on the digits compared (0.1 + 0.2 === 0.3 is
-// false in JavaScript), and a review (2026-10-29, four readers) split four ways on what to print for it
+// An equation between two formulas shows each side's value and no verdict: whether it holds depends on the digits
+// compared (JavaScript's 0.1 + 0.2 === 0.3 is false, and so is (a + b)² === a² + 2ab + b² for about half of inputs), and a
+// review (2026-10-29, four readers) split four ways on a verdict; two values never claim anything wrong
 const RELS = { lt: '<', leq: '≤', gt: '>', geq: '≥' };
 let DEFS = new Map(), LATER = new Map(); // the page's definitions before the formula being compiled, and after it
 const isAssign = (h) => h?.name === 'csymbol' && h.attrs.cd === 'latexml' && textOf(h).trim() === 'assign';
@@ -160,9 +161,12 @@ function compile(math) {
   if ('cdgroup' in math.attrs) throw refusal(math.start, 'a cdgroup could rename the symbols');
   const top = elements(math)[0], [head, ...args] = elements(top), assign = isAssign(head), def = definition(top);
   let out;
-  if (head?.name === 'eq' || assign) {
-    if (args.length !== 2) throw refusal(top.start, `an equation of ${args.length} sides: this build reads an equation as a definition, a name alone on one side`);
-    if (!def) throw refusal(top.start, "an equation between two formulas: whether it holds depends on the digits compared (JavaScript's 0.1 + 0.2 === 0.3 is false); this build reads an equation as a definition, a name alone on one side");
+  if ((head?.name === 'eq' || assign) && !def) {
+    if (assign) throw refusal(top.start, ':= with no name alone on its left');
+    if (args.length < 2) throw refusal(top.start, 'an equation of one side');
+    const sides = args.map((a) => asNode(item(a))), each = sides.map((n) => emit(n));
+    out = { kind: 'sides', root: { op: 'eq', call: 'relation', items: sides.map((node) => ({ node })) }, sides: each, value: each.map((e) => e.value).join(''), decls: each.flatMap((e) => e.decls), ints: [...new Set(each.flatMap((e) => e.ints))], compares: each.reduce((c, e) => c + e.compares, 0) };
+  } else if (head?.name === 'eq' || assign) {
     const [name, side, nameAt] = def, mentions = (n) => loneName(n) === name || elements(n).some(mentions);
     if (mentions(side)) throw refusal(side.start, `${name} is defined in terms of itself`);
     const nameItem = item(nameAt, true), sideNode = asNode(item(side));
@@ -356,7 +360,7 @@ const emitTruth = (pairs) => both(truthForm(pairs, DIVIDE.plain), truthForm(pair
 const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
 const FORMAT_SETTINGS = /^--(precision|comma|symbol|sign|trim|type|currency|locale|base|grouping|zero|fill|align|width|percent)$/;
 const splitStyle = (s) => (s ?? '').split(';').map((d) => d.trim()).filter(Boolean).map((d) => { const k = d.indexOf(':'); return [d.slice(0, k).trim(), d.slice(k + 1).trim()]; });
-function write({ kind, root, value, decls: own, ints }, math, src) {
+function write({ kind, root, value, decls: own, ints, sides }, math, src) {
   const classes = (math.attrs.class ?? '').split(/\s+/).filter(Boolean), fmt = classes.filter((c) => c.startsWith('dcss-format-')), keep = classes.filter((c) => !c.startsWith('dcss-format-'));
   const decls = splitStyle(math.attrs.style), fmtDecls = decls.filter(([k]) => FORMAT_SETTINGS.test(k)), varDecls = decls.filter(([k]) => k.startsWith('--') && !FORMAT_SETTINGS.test(k)), mathDecls = decls.filter(([k]) => !k.startsWith('--'));
   const css = (ds) => ds.map(([k, v]) => `${k}: ${v}`).join('; ');
@@ -374,7 +378,7 @@ function write({ kind, root, value, decls: own, ints }, math, src) {
         : `<mrow${a}><mo>−</mo>${x.mag}</mrow>`;
       return prec(x) < need ? `<mrow><mo>(</mo>${m}<mo>)</mo></mrow>` : m; };
     const infix = (sign, need) => items.map((x, i) => show(i, prec(x) === 3 ? 4 : need(i))).join(`<mo>${sign}</mo>`);
-    if (op === 'eq' || op === 'assign') return `<mrow${arg} intent="${op === 'eq' ? 'equals' : 'assign'}(${ids})">${show(0)}<mo>${op === 'eq' ? '=' : '≔'}</mo>${show(1)}</mrow>`;
+    if (op === 'eq' || op === 'assign') return `<mrow${arg} intent="${op === 'eq' ? 'equals' : 'assign'}(${ids})">${items.map((_, i) => show(i)).join(`<mo>${op === 'eq' ? '=' : '≔'}</mo>`)}</mrow>`;
     if (op in RELS) return `<mrow${arg} intent="${{ lt: 'less-than', leq: 'less-than-or-equal', gt: 'greater-than', geq: 'greater-than-or-equal' }[op]}(${ids})">${infix(RELS[op], () => 0)}</mrow>`;
     if (op === 'and') return `<mrow${arg} intent="and(${ids})">${items.map((_, i) => show(i)).join('<mo>,</mo><mspace width="0.5em"/>')}</mrow>`;
     if (op === 'plus') return `<mrow${arg} intent="plus(${ids})">${infix('+', () => 2)}</mrow>`;
@@ -397,7 +401,8 @@ function write({ kind, root, value, decls: own, ints }, math, src) {
   // a relation's truth prints through a counter style: nothing, false or true
   const truth = kind === 'truth' ? '@counter-style dcss-dcss-truth { system: fixed 0; symbols: "" "false" "true"; } [data-dcss-truth]::after { content: counter(dcss-dcss-truth, dcss-dcss-truth); }' : '';
   const props = ints.length || truth ? `<style>${ints.map((n) => `@property ${n} { syntax: '<integer>'; inherits: false; initial-value: 0; }`).join(' ')}${truth ? ' ' + truth : ''}</style>` : '';
-  const answer = kind === 'truth'
+  const one = (v, d) => `<output class="${f}" style="${d.length ? d.join(' ') + ' ' : ''}--value: ${v}${st ? '; ' + st : ''}"></output>`;
+  const answer = kind === 'sides' ? sides.map((e) => one(e.value, e.decls)).join('<span aria-hidden="true"> · </span>') : kind === 'truth'
     ? `<output data-dcss-truth style="${own.join(' ')} counter-reset: dcss-dcss-truth calc(${value} * var(--dcss-dcss-fin) * (1 + var(--dcss-dcss-t))); --dcss-err: calc(1 - ${value} * var(--dcss-dcss-fin))"></output>`
     : `<output class="${f}" style="${own.length ? own.join(' ') + ' ' : ''}--value: ${value}${st ? '; ' + st : ''}"></output>`;
   return `<figure data-dcss-mathml${varDecls.length ? ` style="${esc(css(varDecls))}"` : ''}>${caption}${props}<div>${answer}</div></figure>`;
