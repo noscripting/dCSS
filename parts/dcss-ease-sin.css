@@ -2,6 +2,11 @@
    SPDX-License-Identifier: MIT
    SPDX-FileCopyrightText: 2026 noscript.ing contributors */
 /* DCSS d3-ease: every easing as .dcss-ease-<name>, --value in, --dcss-ease-<name> out (ease.mjs). */
-.dcss-ease-sin { --dcss-ease-sin: calc(((1 - cos(pi * var(--value))) / 2)); }
+@property --dcss-p-ease-t-e { syntax: '<number>'; inherits: false; initial-value: 0; }
+@property --dcss-p-ease-t-a { syntax: '<number>'; inherits: false; initial-value: 0; }
+@property --dcss-p-ease-t-b { syntax: '<number>'; inherits: false; initial-value: 0; }
+@property --dcss-p-ease-t-c { syntax: '<number>'; inherits: false; initial-value: 0; }
+:where( .dcss-ease-sin) { --dcss-p-ease-t-e: round(down, log(max(abs(var(--value)), pow(2, -1006)), 2)); --dcss-p-ease-t-a: round(to-zero, var(--value) * pow(2, 17 - var(--dcss-p-ease-t-e))); --dcss-p-ease-t-b: round(to-zero, rem(var(--value) * pow(2, 17 - var(--dcss-p-ease-t-e)), 1) * 524288); --dcss-p-ease-t-c: calc(rem(var(--value) * pow(2, 17 - var(--dcss-p-ease-t-e)) * 524288, 1) * 524288); --dcss-p-ease-t: ((var(--dcss-p-ease-t-a) + var(--dcss-p-ease-t-b) / 524288 + var(--dcss-p-ease-t-c) / 274877906944) * pow(2, var(--dcss-p-ease-t-e) - 17)); }
+.dcss-ease-sin { --dcss-ease-sin: calc(((1 - cos(pi * var(--dcss-p-ease-t))) / 2) + 0 * sign(var(--value))); }
 :where( .dcss-ease-sin) > * { --value: initial; }
 @function --dcss-ease-sin(--value) { result: calc(((1 - cos(pi * var(--value))) / 2)); }

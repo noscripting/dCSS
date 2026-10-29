@@ -6,23 +6,49 @@ All notable changes to dcss-array.css are written here. The format follows [Keep
 
 ### Added
 
+- `.dcss-bin`, d3.bin() on the grid with a domain and thresholds, or `--count` for d3's tick thresholds: one `<li>` per bin in a second list, each reading its count, x0 and x1.
+- `.dcss-variance` and `.dcss-deviation`, d3.variance() and d3.deviation() on the grid: each value's square as two exact halves, read through two anchors, so 64 values in 64ths to ±1024 give the true variance rounded once.
+- `.dcss-median-index` and `.dcss-quantile-index` on the grid, written as the median is: the list sorted once, the index of the value at k read as the list's height. 0 to 64 values within ±131,072; with ties, the copy the order picks.
 - One file per public class in `parts/` (`parts/dcss-median.css`), each its family's rules cut to that call, usable without `dcss-array.css`.
-- One set of typed input names, `--length`, `--type-N` and `--value-N`, on order, aggregate and extrema calls; each family's own names still work.
 - CSS functions where the browser has `@function`: every easing (`--dcss-ease-cubic-in-out(t)`) and two-stop linear, pow, sqrt and log scales (`--dcss-scale-linear(x, d0, d1, r0, r1)`).
 - ISO date formats in the date parsers: `%Y-%m-%d`, `%Y-%m-%dT%H:%M:%SZ` and `%Y-%m-%dT%H:%M:%S.%LZ`.
 - License headers (SPDX) on every sheet; `package.json` for npm.
 
 ### Changed
 
+- Lists (`.list`, `.pager`), loops (`.loop-*`) and sheets (`.sheet` and its folds and formats) moved out of `dcss-array.css` into `dcss-array-extras.css`: their names have no `dcss-` prefix, so a page's own `.list` or `.sum` no longer gets their rules. A page that uses them links `dcss-array-extras.css`.
+- The reductions take signed numbers. A sum lays its positives out across and its negatives down, so it takes any, with no offset. A mean takes values from -1024, each negative one offset by 1024; min, max and extent take values within ±131,072, or whole numbers to 8,257,535. An empty `<output>` prints d3.format's minus (U+2212). The sum's list no longer gives the count, mean and length, since its height holds the negatives: a mean's list gives the sum, count and length. A sum says nothing of an item it skips (d3 doesn't either).
 - The sheet's own names (its grids, readers and internal numbers, `arrays-*` before) are `dcss-*`; the 40 that a call also used have names of their own (`.dcss-width-sum`, `--dcss-array-length`; the list is `src/names.mjs`'s `RENAMED`).
 
 - The list median, quantile, quantileSorted and quantile scale take 1/64 steps within ±131,072 and whole numbers up to 8,257,535 (was ±1024).
-- Smaller sheets: `families/order.css` 12.6 to 1.8 MB, `color-text.css` 14.6 to 3.7 MB, `date-parse.css` 4.2 to 1.0 MB, `date-parse-local.css` 7.5 to 1.1 MB, `aggregate.css` 6.3 to 4.0 MB, with the same answers.
+- Stereographic points update about ten times faster, and mercator and equirectangular points a fifth faster.
+- A median, quantile or quantileSorted of a list takes the list once, with three plain nested elements after it, in place of a second copy of the list inside `.dcss-order-upper`.
+- A quantile scale takes its list once, with four plain nested elements after it, in place of three copies of the list and nine wrappers. It updates faster: a query change on 20 scales of 64 values took 115 ms in Chrome and 159 in Safari (272 and 265 before), one value changed 18 and 36 ms (154 and 206).
+- Threshold and quantize scales take no list and no wrappers: a threshold scale's thresholds are `--domain-0` to `--domain-15`, a quantize scale's come from its domain, and everything inside the call reads the answer. A query change on 20 scales of 16 thresholds took 3.1 ms in Chrome and 4 in Safari for threshold (8.6 and 14 with a list), 4.4 and 7 for quantize (16.3 and 27). Thresholds out of order or with a gap are refused.
+- Cumsum's second list needs no class and its items no wrapper: everything inside the i-th item reads the i-th running total.
+- A scale takes two stops unless it has the class `dcss-piecewise`: `--stops` and the stops past the second need it now. Two-stop scales update about four times faster.
+- A list's length is counted in 8 `:has()` rules, one a binary digit, in place of one a length (65 for a median, 512 for the identity scale's ticks): 50 medians of 64 show in 51 ms in Chrome and 88 in Safari (62 and 134 before); `families/array.css` 431 to 394 KB, `ticks.css` 172 to 128 KB.
+
+### Removed
+
+- The typed calls (`families/aggregate.css`, `order.css` and `extrema.css`, and `.dcss-variance` and `.dcss-deviation` in `array.css`): values given as `--type-N` and `--value-N` on one element have no boxes to lay out, so each call was an arithmetic machine emulating d3's doubles, nulls, strings and objects, 5.6 MB in all. Lists on the grid are the one data model: sum, count, mean, cumsum, min, max, extent, the index extrema, median, quantile and quantileSorted take a list. Gone with them: fsum, fcumsum, mode, scan, variance and deviation, and values that aren't numbers on the grid. `families/` is 1.3 MB in all (86 KB gzipped), `array.css` 393 to 149 KB.
+- Colors (`families/color.css`, `color-text.css`): gamutant.css reads a CSS color's channels as numbers, and CSS's `color-mix()` and relative colors convert and interpolate them.
+- Date parsing (`families/date-parse.css`, `date-parse-local.css`): its text came as character codes, and the program that writes the codes holds the date as a number.
+- Pacific time (`.dcss-local-*` intervals and `.dcss-local-date-format-N`): one fixed zone, America/Los_Angeles, that d3's tests use. Time is UTC: `time.css` 1.6 MB to 315 KB, `date-format.css` 85 to 36 KB.
+- `.dcss-pack-five` (d3.packSiblings of five circles): `hierarchy.css` 2.55 MB to 6.5 KB.
+- `.dcss-geo-mercator-fit-extent` and `.dcss-geo-transverse-mercator-fit-extent`: `geo.css` 1.6 MB to 248 KB.
+- `.dcss-random-lcg` (`families/random.css`).
+- `.dcss-call-input`: a call takes another's answer written straight inside it. A call with no answer publishes no number, so the next fails too and prints nothing.
+- The markup that wrote a list two or three times, and the named wrappers: `.dcss-call-read`, `.dcss-call-result`, `.dcss-range-copy`, `.dcss-order-upper`, `.dcss-source-order`, `.dcss-quantile-low`, `.dcss-quantile-high` and `.dcss-scan-results`, and a threshold or quantize scale's list. Every call takes its data once, read through plain elements or none; a page with those classes gets no answer, and the compiler refuses them. `families/array.css` is 24 KB smaller (431 KB), and its parts shrink with it: the median part is 2.4 KB gzipped (4.2 before).
 
 ### Fixed
 
-- medianIndex and quantileIndex return d3's index on ties and at p 0 and 1.
-- An order call published other operations' results under their names.
+- A scale's answer given to another scale as a domain stop or exponent gave no value in Safari (it passed Safari's 65,535 tokens a `var()`); a scale's answer is now about 400 tokens. Moving scales cost up to a fifth more in Safari for it, nothing more in Chrome.
+- A formatter whose `--precision` came from a call that failed printed the number with no decimals; it prints nothing and sets `--dcss-err: 1`.
+- The mean, min, max and extent of nothing published 0 beside error 2; they publish no number, as d3 gives undefined.
+- A quantile scale queried exactly at a threshold could answer the range below it in Chrome (Chrome rounded the threshold away from d3's double); it gives d3's range.
+- A list median's answer was drawn at the figure's top, over a caption; it is drawn where its elements are.
 - Pow and sqrt scales gave no value in WebKit (their answers passed WebKit's 65,535-token `var()` limit); log scales gave NaN in every engine for scales of fewer than 8 stops. Linear, pow and sqrt now equal d3 exactly; log is within 256 × 2^-52.
 - Parts printed garbage for text without `dcss-array.css` (the axes and the reductions' default output); they carry the counter styles they print with.
 - Fixed, percent and SI formats printed 0 for a missing or NaN value; they print nothing and set `--dcss-err: 1`.
+- A call given another call's answer as its `--value` (an easing of a scaled value, a time interval of a scaled time) gave no value in Safari; each call now reads its `--value` once.

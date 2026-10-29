@@ -1,23 +1,23 @@
 # dcss-array.css
 
-dcss-array.css does d3's data work in HTML, with no script on the page. A sum is a `<figure>` around a list: the browser lays the list out, and the size of that layout is the answer. Change a number and the answer changes in the same frame. It works in Chrome and Safari.
+dcss-array.css does the data work of d3, the JavaScript library for data charts, in HTML, with no script on the page. A sum is a `<figure>` around a list: the browser lays the list out, and the size of that layout is the answer. Change a number and the answer changes in the same frame. It works in Chrome and Safari.
 
 Part of DCSS, Data-Driven CSS: stylesheets that do the data work d3 does in JavaScript. dcss-array does d3-array's job: sums, sorts, bins and search. With [dcss-store](https://github.com/noscripting/dcss-store), [dcss-loop](https://github.com/noscripting/dcss-loop) and [dcss-unround](https://github.com/noscripting/dcss-unround).
 
-It is for pages where script can't run or isn't wanted: Markdown and CMS output, docs, feeds, a Content-Security-Policy that forbids script. It covers sums and statistics, ticks and axes, number and date formatting, scales, easing, treemaps, colors, dates and map projections, each call written with d3's own names. Underneath them are grid primitives you can use directly: reads by index, sums over ranges, bins, sorts and search.
+It is for pages where script can't run or isn't wanted: Markdown and CMS output, docs, feeds, a Content-Security-Policy that forbids script. It covers sums and statistics, ticks and axes, number and UTC date formatting, scales, easing, treemaps, UTC time intervals and map projections, each call written with d3's own names. Underneath them are grid primitives you can use directly: reads by index, sums over ranges, bins, sorts and search.
 
 Visit [noscript.ing](https://noscript.ing) for demos.
 
 ## Installation
 
-Each call is a file of its own in `parts/`, named after its class. Download the ones the page uses and link them; nothing else is needed. This page sums three numbers and prints the total and the average, with two parts that come to 8 KB gzipped:
+Each call is a file of its own in `parts/`, named after its class. Download the ones the page uses and link them; nothing else is needed. This page prints the total and the average of three numbers, with two parts that come to 5 KB gzipped:
 
 ```html
 <!doctype html>
-<link rel="stylesheet" href="parts/dcss-sum.css">
+<link rel="stylesheet" href="parts/dcss-mean.css">
 <link rel="stylesheet" href="parts/dcss-format-fixed.css">
 
-<figure class="dcss-sum" style="height: 1lh; overflow: clip">
+<figure class="dcss-mean" style="height: 1lh; overflow: clip">
   <ul><li style="--value: 120"></li> <li style="--value: 95"></li> <li style="--value: 140"></li></ul>
   <div>
     <output class="dcss-format-fixed" style="--value: var(--dcss-sum); --precision: 0"></output>   <!-- 355 -->
@@ -40,29 +40,23 @@ A page that uses many calls can link the core, `dcss-array.css`, and the familie
 <link rel="stylesheet" href="families/format.css">
 ```
 
+<!-- families -->
+
 | File in `families/` | Calls | Size, gzipped |
 |---|---|---:|
-| `array.css` | sum, count, mean, min, max, extent, length; ascending, descending; the index extrema; bisect, bisector; share; median, quantile, the discrete scales, cumsum; the precision helpers; variance, deviation, range | 26 KB |
-| `ticks.css` | ticks, nice, the four axes, the identity scale's ticks | 13 KB |
+| `ticks.css` | ticks, nice, the four axes, the identity scale's ticks | 10 KB |
+| `array.css` | sum, count, mean, min, max, extent, length; ascending, descending; the index extrema; bisect, bisector; share; median, quantile and their indexes, the discrete scales, cumsum; bin; variance, deviation; the precision helpers; range | 20 KB |
+| `hierarchy.css` | slice, dice and slice-dice treemaps, partition | 0.9 KB |
+| `scale.css` | linear, pow, sqrt, log, band and identity scales | 7.5 KB |
 | `format.css` | format types f, %, s and general; a log scale's ticks and labels; an Arabic locale | 18 KB |
-| `scale.css` | linear, pow, sqrt, log, band and identity scales | 6 KB |
-| `ease.css` | every d3-ease function | 2 KB |
-| `hierarchy.css` | slice, dice and slice-dice treemaps, partition, a pack of five circles | 158 KB |
-| `aggregate.css` | sum, count, mean, cumsum, fsum and fcumsum over typed values | 223 KB |
-| `order.css` | median, quantile, quantileSorted, their indexes and mode over typed values | 82 KB |
-| `extrema.css` | min, max, extent, least, greatest, their indexes, scan, ascending and descending over typed values | 40 KB |
-| `color.css` | rgb, hsl, lab, hcl, lch, gray and cubehelix, and conversions between them | 142 KB |
-| `color-text.css` | color text: names, hex, `rgb()` and `hsl()` strings | 155 KB |
-| `date-parse.css` | utcParse in 41 formats, and calendar fields | 42 KB |
-| `date-parse-local.css` | timeParse in Pacific time, the same formats | 54 KB |
-| `time.css` | UTC and Pacific time intervals: day, week, month, year, hour, minute, second | 90 KB |
-| `date-format.css` | timeFormat and utcFormat in 41 formats | 7 KB |
-| `geo.css` | identity, equirectangular, mercator, transverse mercator and stereographic projections, rotation, distance | 76 KB |
-| `random.css` | randomLcg | 5 KB |
+| `ease.css` | every d3-ease function | 2.9 KB |
+| `time.css` | UTC time intervals: day, week, month, year, hour, minute, second | 14 KB |
+| `date-format.css` | utcFormat in 41 formats | 4.1 KB |
+| `geo.css` | identity, equirectangular, mercator, transverse mercator and stereographic projections, rotation, distance | 16 KB |
 
-`dcss-array-all.css` imports every family, for a page that needs all of them. `families.json` lists each file with its classes and sizes. Parts and families mix on one page, in any order. Link the core too for the grid primitives and text reads.
+<!-- /families -->
 
-Parts save most for the small calls: the median part of `array.css` is 4 KB, the whole family 26 KB. The typed families save least, since most of each part is a circuit the family shares. For two or more calls from `aggregate.css`, `order.css`, `extrema.css` or `color-text.css` on one page, link the family: three parts of `order.css` come to 3.8 MB, the whole family to 1.8 MB.
+`dcss-array-all.css` imports every family, for a page that needs all of them. `families.json` lists each file with its classes and sizes. Parts and families mix on one page, in any order. Link the core too for the grid primitives and text reads, and `dcss-array-extras.css` for the lists, loops and sheets (Reference), whose names have no `dcss-` prefix.
 
 ## Writing a call
 
@@ -70,7 +64,7 @@ Every call in the families works the same way. The class goes on a `<figure>`, n
 
 ### The data
 
-The data is the `<ul>` or `<ol>` inside the figure, one `<li>` per datum, each with its number as `--value`. Where d3 groups data, `--key` gives the group, a whole number from 1. A hierarchy is nested lists. Give each datum its own `--value`: an item without one is an error, and never takes its parent's value.
+The data is the `<ul>` or `<ol>` inside the figure, one `<li>` per datum, each with its number as `--value`. Where d3 groups data, `--key` gives the group, a whole number from 1. A hierarchy is nested lists. Give each datum its own `--value`: it never takes its parent's. An item without one is skipped, as d3 skips a missing value: the sum, variance and bins skip it quietly; the mean, count, min, max and extent skip it and set `--dcss-err` to 1 beside their answer; the median, quantile and their indexes give no answer.
 
 ```html
 <figure class="dcss-sum">
@@ -88,7 +82,7 @@ To give two calls the same numbers, set them once on an ancestor (`--jan: 120`) 
 
 Where d3's answer is a layout, as in a treemap or an axis, the `<li>`s are placed at it, in source order. Draw on them.
 
-Where the answer is a number, the element right after the list holds it. Its children and their pseudo-elements get the number as `--dcss-sum` (or the call's own name), and pass it down to everything inside them. An empty `<output>` there prints it. To use the number in another call, put a `<div>` after the list and the next call inside it.
+Where the answer is a number, the element right after the list holds it. Its children and their pseudo-elements get the number as `--dcss-sum` (or the call's own name), and pass it down to everything inside them. The number is a `calc()` of whole numbers, which DevTools shows as written: to see it as a number, register a property (`@property --n { syntax: '<number>'; inherits: false; initial-value: 0 }`) and set `--n: var(--dcss-sum)`. An empty `<output>` there prints it. To use the number in another call, put a `<div>` after the list and the next call inside it.
 
 The list is drawn at its answer: a sum is a staircase as wide as the sum and as tall as the count. Leave its items empty, since text in them spills over the result. To hide the drawing, give the figure a height and `overflow: clip`, as in Installation. Don't shrink or hide the list itself: its size is the answer, and an extent whose list is `height: 0` reads the wrong minimum.
 
@@ -98,7 +92,7 @@ Beside each result, `--dcss-ready` is 0 until the number is read, and `--dcss-er
 
 #### When a call can't answer
 
-A call that can't answer sets `--dcss-err` to 1 (an input it can't take) or 2 (d3 has no answer, as for the mean of nothing), and an `<output>` or formatter in error prints nothing. A number read straight from a result in error isn't d3's answer: a `counter()` of an index in error shows 0. To show a message instead, wrap the reading in one element inside the result and query its `--dcss-err`:
+A call that can't answer sets `--dcss-err` to 1 (an input it can't take) or 2 (d3 has no answer, as for the mean of nothing). The mean, count, min, max and extent also set 1 beside an answer when they skipped an item with no number, and an `<output>` or formatter in error prints nothing. With no answer to give, a call publishes no number, so a call or formatter that takes its answer fails too, with nothing written between them. A number read straight from a result in error isn't d3's answer: a `counter()` of an index in error shows 0. To show a message instead, wrap the reading in one element inside the result and query its `--dcss-err`:
 
 ```html
 <style>
@@ -142,39 +136,79 @@ Nest one call inside the other's result. Here a sum feeds a scale, and two outpu
 Results only travel inward, to what is inside them, in the same frame. A call nested in another's result needs its own height and `overflow: clip` to hide its drawing.
 
 - A call's `--value` is its own: the calls inside it don't inherit it, and one with none has no answer. Settings such as `--domain-0`, `--precision` and `--start` do inherit, so a shared one can go on an ancestor.
-- Where both calls publish the same name, copy the outer one to a name of your own on an element between them: `--first: var(--dcss-date-parse)`.
+- Where both calls publish the same name, copy the outer one to a name of your own on an element between them: `--first: var(--dcss-median)`.
 - In a form, keep calls outside an `<output>`. A form's reset [replaces an output's children with text](https://html.spec.whatwg.org/multipage/form-elements.html#the-output-element). Radios and checkboxes can pick values written in CSS; what someone types in an input doesn't reach CSS.
 
-Numbers are kept as pixels: whole numbers up to 2^24, fractions to 1/64, totals under 33 million, 0 or more. Give money in whole cents and divide for printing with `.dcss-scale-linear` (see [Format](#format-familiesformatcss)), since 19.99 isn't a multiple of 1/64.
+Numbers are kept as pixels: whole numbers up to 2^24, fractions to 1/64, totals under 33 million. Give money in whole cents and divide for printing with `.dcss-scale-linear` (see [Format](#format-familiesformatcss)), since 19.99 isn't a multiple of 1/64. In cents the mean takes nothing below -1024, -$10.24: for larger refunds, take the sum and divide it by the count with a scale.
 
-### Typed values
+### Medians, quantiles and the discrete scales
 
-The calls above read numbers from a list, which suits a page written by hand. The typed calls, in `order.css`, `aggregate.css` and `extrema.css`, take each value as properties on the call element itself, with its type, so d3's nulls, NaNs and empty slots arrive as d3 sees them:
-
-- `--length`: how many values.
-- `--type-N` for slot N, from 0: 0 a number, 1 null, 2 undefined, 3 NaN.
-- `--value-N`: the number, for type 0.
+A median, quantile or quantileSorted reads its list once, through three nested elements written after it. Put what reads the answer in the innermost one:
 
 ```html
-<div class="dcss-fsum" style="--length: 3; --type-0: 0; --value-0: 0.1;
-     --type-1: 1; --type-2: 0; --value-2: 0.2">
-  <output class="dcss-format-fixed" style="--value: var(--dcss-fsum); --precision: 2"></output>   <!-- 0.30 -->
-</div>
+<figure class="dcss-median">
+  <ol><li style="--value: 4"></li> <li style="--value: 1"></li> <li style="--value: 3"></li> <li style="--value: 2"></li></ol>
+  <div><div><div>
+    <output class="dcss-format-fixed" style="--value: var(--dcss-median); --precision: 1"></output>   <!-- 2.5 -->
+  </div></div></div>
+</figure>
 ```
 
-Set these on the call element only: on an ancestor they give `--dcss-err: 1`. Write them where the page is made, from the data:
+The three elements measure the list in two places, one for each of the two middle values. Variance and deviation (`.dcss-variance`, `.dcss-deviation`) read their list through three nested elements the same way. What the innermost element holds is drawn out of the page's flow: the outer element keeps one line for it, so give the figure a height when the answer takes more.
 
-```js
-// in a template or a build step: an array to a typed call's style attribute
-const typed = (values) => `--length: ${values.length}; ` + values.map((v, i) =>
-  v === null ? `--type-${i}: 1` : v === undefined ? `--type-${i}: 2` : Number.isNaN(v) ? `--type-${i}: 3`
-  : `--type-${i}: 0; --value-${i}: ${v}`).join('; ');
+A call takes another's answer as an input written straight inside it. A call that can't answer publishes no number, so the next one has none either: it fails too and its text stays hidden. This page chains a median, a precision helper and a formatter, and prints `1,234.6`:
 
-// text to character codes, for the color and date parsers
-const text = (s) => `--length: ${s.length}; ` + [...s].map((c, i) => `--c${i}: ${c.charCodeAt(0)}`).join('; ');
+```html
+<figure class="dcss-median">
+  <ol><li style="--value: .125"></li> <li style="--value: .25"></li> <li style="--value: .5"></li></ol>
+  <div><div><div>
+    <div class="dcss-precision-fixed" style="--step: var(--dcss-median)">
+      <output class="dcss-format-fixed"
+              style="--value: 1234.5678; --comma: 1;
+                     --precision: var(--dcss-precision-fixed)"></output>
+    </div>
+  </div></div></div>
+</figure>
 ```
 
-Each family's section in Reference lists its other inputs (strings, objects, accessors) and its own longer names, which also work.
+A quantile scale reads its list once too, through four nested elements: one more than the median, since the fourth works out which range the query falls in, and what it holds gets the range. In full, with a list of three and two ranges (the answer is 1):
+
+```html
+<figure class="dcss-scale-quantile" style="--value: 3; --ranges: 2; --range-0: 0; --range-1: 1">
+  <ol><li style="--value: 1"></li> <li style="--value: 2"></li> <li style="--value: 4"></li></ol>
+  <div><div><div><div>
+    <output class="dcss-format-fixed" style="--value: var(--dcss-scale-quantile); --precision: 0"></output>
+  </div></div></div></div>
+</figure>
+```
+
+A bare `<output>` there shows the range as it is, text included.
+
+A threshold or quantize scale takes no list and no wrappers: everything inside it reads the answer. A threshold scale's thresholds are `--domain-0` to `--domain-15`, in order (d3's 0.5 when there are none); a quantize scale splits `--domain-0` to `--domain-1` (0 and 1 by default) into `--ranges` equal parts. This page prints `mid`:
+
+```html
+<figure class="dcss-scale-threshold" style="--value: 0.5; --domain-0: 0.25; --domain-1: 0.75;
+        --ranges: 3; --range-0: 'low'; --range-1: 'mid'; --range-2: 'high'">
+  <output></output>
+</figure>
+```
+
+Thresholds out of order or with a gap are refused with error 1, since d3 takes them sorted.
+
+Cumsum takes a second list after its values, one item per value: everything inside the i-th item reads the i-th running total as `--dcss-cumsum`. This page prints 1, 3 and 6:
+
+```html
+<figure class="dcss-cumsum">
+  <ol><li style="--value: 1"></li> <li style="--value: 2"></li> <li style="--value: 3"></li></ol>
+  <ol><li><output class="dcss-format-fixed" style="--value: var(--dcss-cumsum); --precision: 0"></output></li>
+      <li><output class="dcss-format-fixed" style="--value: var(--dcss-cumsum); --precision: 0"></output></li>
+      <li><output class="dcss-format-fixed" style="--value: var(--dcss-cumsum); --precision: 0"></output></li></ol>
+</figure>
+```
+
+Bins (`.dcss-bin`) take a second list the same way, one item per bin, each reading its bin's count and bounds.
+
+To give a call the answer of a call of its own kind (a precision helper on another's result), set the input on a plain element between them: written on the call itself, it would read that call's own answer.
 
 ## The grid primitives
 
@@ -198,6 +232,26 @@ The page shows 40, entry 2. With `--dcss-i: 1; --dcss-j: -1` the reader shows th
 The text reads (`.dcss-text`) use fonts embedded in the sheet. To have them right from the first frame, copy the `<link rel="preload">` lines of `dcss-preload.html` into the page's `<head>`. Loops and sheets also need [dcss-store.css](https://noscript.ing) on the page.
 
 ## Recipes
+
+- **A histogram.** A `.dcss-bin` with `--count` gives d3's bins; draw each bar from an element in its bin's `<li>`, placed against the figure, since the `<li>`s themselves are the call's measuring grid and keep their own size. Eight scores in ten bins, bars 1, 2, 2, 2 and 1 high from 50 up:
+
+  ```html
+  <figure class="dcss-bin histogram" style="--domain-0: 0; --domain-1: 100; --count: 10">
+    <ol aria-hidden="true">
+      <li style="--value: 72"></li> <li style="--value: 85"></li> <li style="--value: 91"></li> <li style="--value: 64"></li>
+      <li style="--value: 58"></li> <li style="--value: 77"></li> <li style="--value: 88"></li> <li style="--value: 69"></li>
+    </ol>
+    <ol>
+      <li><b style="--i: 0"></b></li> <li><b style="--i: 1"></b></li> <li><b style="--i: 2"></b></li> <li><b style="--i: 3"></b></li> <li><b style="--i: 4"></b></li>
+      <li><b style="--i: 5"></b></li> <li><b style="--i: 6"></b></li> <li><b style="--i: 7"></b></li> <li><b style="--i: 8"></b></li> <li><b style="--i: 9"></b></li>
+    </ol>
+  </figure>
+  <style>
+    .histogram { position: relative; height: 100px; }
+    .histogram b { position: absolute; bottom: 0; left: calc(var(--i) * 10%); width: 9%;
+                   height: calc(var(--dcss-bin-length) * 20px); background: steelblue; }
+  </style>
+  ```
 
 - **First-fit decreasing.** Order a pack's children widest first: `.dcss-pack > * { order: calc(-1 * var(--dcss-w)); }`. Equal widths keep the markup's order.
 - **A window's median, or any order statistic of a window.** In an `.dcss-array.dcss-sort`, push the keys outside the window past every key inside it, keep the number as `--dcss-n`, and read the middle of the window:
@@ -226,239 +280,17 @@ The text reads (`.dcss-text`) use fonts embedded in the sheet. To have them righ
 
 ## Reference
 
-The full contract, with each requirement's result in each engine, is [SPEC.md](SPEC.md). In the d3 calls, `--dcss-err` is 1 for an input the call can't take and, in most calls, 2 where d3's own answer is undefined or NaN; either way the number is hidden and the call's text prints nothing.
+Each table lists the names a page sets and reads: the classes, their inputs and their results. [SPEC.md](SPEC.md) has every input's exact range and what happens outside it. In the d3 calls, `--dcss-ready` is 1 once the answer is read, and `--dcss-err` is 1 for an input the call can't take and, in most calls, 2 where d3's own answer is undefined or NaN; either way the number is hidden and the call's text prints nothing.
 
-Calls by family: [Array](#array-familiesarraycss), [Ticks](#ticks-familiestickscss), [Format](#format-familiesformatcss), [Scale](#scale-familiesscalecss), [Ease](#ease-familieseasecss), [Hierarchy](#hierarchy-familieshierarchycss), [Aggregate](#aggregate-familiesaggregatecss), [Order](#order-familiesordercss), [Extrema](#extrema-familiesextremacss), [Color](#color-familiescolorcss), [Date parse](#date-parse-familiesdate-parsecss), [Time](#time-familiestimecss), [Date format](#date-format-familiesdate-formatcss), [Geo](#geo-familiesgeocss), [Random](#random-familiesrandomcss). The grid primitives: [Grid markup](#grid-markup), [Outputs](#outputs), [Primitives](#primitives), [Packed maps](#packed-maps), [Formulas](#formulas), [Text](#text), [Loops and sheets](#loops-and-sheets), [Limits](#limits).
+Calls by family: [Array](#array-familiesarraycss), [Ticks](#ticks-familiestickscss), [Format](#format-familiesformatcss), [Scale](#scale-familiesscalecss), [Ease](#ease-familieseasecss), [Hierarchy](#hierarchy-familieshierarchycss), [Time](#time-familiestimecss), [Date format](#date-format-familiesdate-formatcss), [Geo](#geo-familiesgeocss). The grid primitives: [Grid markup](#grid-markup), [Outputs](#outputs), [Primitives](#primitives), [Packed maps](#packed-maps), [Formulas](#formulas), [Text](#text), [Loops and sheets](#loops-and-sheets), [Limits](#limits).
 
-### Array: families/array.css
-
-#### Reductions
-
-| Class | Gives | Notes |
-|---|---|---|
-| `dcss-sum` | `--dcss-sum`, and also `--dcss-count`, `--dcss-mean`, `--dcss-length` | one list gives all four |
-| `dcss-count`, `dcss-mean` | `--dcss-count`, `--dcss-mean` | |
-| `dcss-min`, `dcss-max` | `--dcss-min`, `--dcss-max` | |
-| `dcss-extent` | `--dcss-min` and `--dcss-max` | an `<output>` prints `3–40` |
-| `dcss-length` | `--dcss-length` | the list's length, skipped items included |
-
-```html
-<figure class="dcss-extent">
-  <ul><li style="--value: 12"></li> <li style="--value: 40"></li> <li style="--value: 3"></li></ul>
-  <output></output>                  <!-- prints 3–40 -->
-</figure>
-```
-
-An empty `<output>` after the list prints the result as d3.format(",") does, to 6 decimals, a line above the list. An item whose `--value` isn't a number of 0 or more is skipped, as d3 skips it (an empty `<li>` is d3's null). The results count the rest, and `--dcss-err` is 1 to say an item was skipped. The mean, min, max or extent of no items is d3's undefined, error 2; the mean beside a sum of no items is 0, where d3 gives undefined. A min or max is drawn as boxes stacked as wide as the largest. For typed values (null, strings, objects, accessors), use `aggregate.css`.
-
-#### Comparisons and index extrema
-
-| Class | Takes | Gives |
-|---|---|---|
-| `dcss-ascending`, `dcss-descending` | `--a` and `--b`, finite, within ±2^24 | `--dcss-ascending` or `--dcss-descending`: -1, 0 or 1, on the call and inside it |
-| `dcss-min-index`, `dcss-max-index`, `dcss-least-index`, `dcss-greatest-index` | a list of 0 to 64 values on the 1/64 grid within ±1024 | the winner's position from 0; the first wins a tie; -1 for an empty list |
-| `dcss-least`, `dcss-greatest` | the same list | the winning value as `--dcss-least` or `--dcss-greatest` |
-
-```html
-<style>
-  .comparison::after {
-    counter-reset: comparison var(--dcss-ascending);
-    content: counter(comparison);
-  }
-  .winner::after {
-    counter-reset: winner var(--dcss-min-index);
-    content: counter(winner);
-  }
-</style>
-<output class="comparison dcss-ascending" style="--a: 12; --b: 40"></output>   <!-- -1 -->
-
-<figure class="dcss-min-index">
-  <ol>
-    <li style="--value: 4"></li>
-    <li style="--value: -2"></li>
-    <li style="--value: -2"></li>
-  </ol>
-  <div><output class="winner"></output></div>   <!-- 1 -->
-</figure>
-```
-
-A missing or NaN `--a` or `--b` is error 2, one out of bounds error 1. The index calls skip null, missing and NaN items. Whole numbers up to 65,536, such as prices in cents, fit divided by 64 (`--value: calc(8417 / 64)`): they stay exact and in order, so the index is the same. An off-grid value, one out of bounds or more than 64 items is error 1; a least or greatest of nothing is error 2. With the default comparison, least and min agree, and greatest and max. For strings, accessors and comparators, use `extrema.css`.
-
-#### Bisect and bisectors
-
-| Class | Takes | Gives |
-|---|---|---|
-| `dcss-bisect-left`, `dcss-bisect-right`, `dcss-bisect` (right) | the query as the figure's `--value`; a sorted list of up to 1,024 whole numbers within ±2^24; optional `--lo` and `--hi` | the insertion index from 0, as `--dcss-bisect-left` or `--dcss-bisect-right` (`--dcss-bisect` too, for right) |
-| `dcss-bisector-left`, `dcss-bisector-right` | the same, 0 to 64 whole numbers, each datum's `value` as its `--value` | d3.bisector(d => d.value)'s index, as `--dcss-bisector-left` or `--dcss-bisector-right` |
-
-```html
-<figure class="dcss-bisect-left" style="--value: 2">
-  <ol>
-    <li style="--value: 1">1</li>
-    <li style="--value: 2">2</li>
-    <li style="--value: 2">2</li>
-    <li style="--value: 4">4</li>
-  </ol>
-  <output></output> <!-- 1; the right variant gives 3 -->
-</figure>
-```
-
-A bisect figure draws nothing and is one line tall, with its answer in it: give it no height or `overflow`, unlike a reduction's figure. `--lo` and `--hi` limit the search to `[lo, hi)`, whole numbers with `0 <= lo <= hi <= length`; they default to 0 and the list's length. A bad key or bound inside the search is error 1, a missing query error 2. On an unsorted list, the left variant counts the keys below the query and the right one those at or below it. So how many scored 80 or more is a sum's `--dcss-count` minus `.dcss-bisect-left` at 80: for 72, 85, 91, 64, 78, 88, 95, 70, 83 and 59, that is 10 minus 5.
-
-#### Shares
-
-`.dcss-share` gives each item its fraction of the list's total. The label stays in the item, and a `.dcss-share-result` inside a `.dcss-share-read` gets the numbers:
-
-```html
-<figure class="dcss-share">
-  <ol>
-    <li style="--value: 96">
-      <span>Documents, 96 MB</span>
-      <span class="dcss-share-read">
-        <span class="dcss-share-result">
-          <output class="dcss-format-percent"
-                  style="--value: var(--dcss-share); --precision: 1"></output>
-        </span>
-      </span>
-    </li>
-    <li style="--value: 224">
-      <span>Photos, 224 MB</span>
-      <span class="dcss-share-read">
-        <span class="dcss-share-result">
-          <output class="dcss-format-percent"
-                  style="--value: var(--dcss-share); --precision: 1"></output>
-        </span>
-      </span>
-    </li>
-  </ol>
-</figure>
-```
-
-The outputs print `30.0%` and `70.0%`. Inside `.dcss-share-result`, `--dcss-total` is 320 and `--dcss-share` is the item's fraction, 0.3 or 0.7, which also works in a style: `width: calc(var(--dcss-share) * 100%)`. Put each item's label in one wrapper, or inside the result. A share takes 1 to 64 values, each 0 or more, a multiple of 1/64 and at most 4,095. A total of 0 is error 2; any bad value, or more than 64 items, is error 1 for the whole call.
-
-#### Median, quantile, discrete scales and cumsum
-
-These calls read their list through wrappers. `.dcss-call-read` measures the list; the `.dcss-call-result` inside it gets the number. `.dcss-call-input` between two calls passes the first one's readiness and errors on to the next, so its text stays hidden when the first has no answer. This page chains a median, a precision helper and a formatter, and prints `1,234.6`:
-
-```html
-<figure class="dcss-median">
-  <ol>
-    <li style="--value: .125"></li>
-    <li style="--value: .25"></li>
-    <li style="--value: .5"></li>
-  </ol>
-  <div class="dcss-call-read">
-    <div class="dcss-call-result">
-      <div class="dcss-call-input">
-        <div class="dcss-precision-fixed" style="--step: var(--dcss-median)">
-          <div class="dcss-call-input">
-            <output class="dcss-format-fixed"
-                    style="--value: 1234.5678; --comma: 1;
-                           --precision: var(--dcss-precision-fixed)"></output>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</figure>
-```
-
-| Class | Takes | Gives |
-|---|---|---|
-| `dcss-median`, `dcss-quantile` | 0 to 64 values, 1/64 steps within ±131,072 or whole numbers from -131,072 to 8,257,535; quantile takes `--p` | `--dcss-median`, `--dcss-quantile` |
-| `dcss-quantile-sorted` | the same, chosen by position in the list, not sorted | `--dcss-quantile-sorted` |
-| `dcss-scale-threshold` | up to 16 ascending thresholds within ±2^24 as the list; the query as `--value` | `--dcss-scale-threshold` |
-| `dcss-scale-quantize` | `--domain-0` and `--domain-1` (0 and 1 by default), ascending; one empty `<li>` per threshold | `--dcss-scale-quantize` |
-| `dcss-scale-quantile` | 0 to 64 values as for quantile; the query as `--value` | `--dcss-scale-quantile` |
-| `dcss-cumsum` | 0 to 64 values on the 1/64 grid within ±1024, signed; a second `<ol class="dcss-scan-results">` with one `<li><div class="dcss-call-result">` per value | each result's own `--dcss-cumsum`; missing values add 0 |
-
-When the rank falls between two values, as for an even median or most quantiles, the answer needs the list twice. Put an `.dcss-order-upper` inside the first result, holding the same list and another `.dcss-call-read > .dcss-call-result`; that last result gets the answer. Add `.dcss-source-order` to it for quantileSorted. Write changing values once as properties such as `--a` and use them in both lists.
-
-```html
-<figure class="dcss-median">
-  <ol><li style="--value: 4"></li> <li style="--value: 1"></li> <li style="--value: 3"></li> <li style="--value: 2"></li></ol>
-  <div class="dcss-call-read">
-    <div class="dcss-call-result">
-      <div class="dcss-order-upper">
-        <ol><li style="--value: 4"></li> <li style="--value: 1"></li> <li style="--value: 3"></li> <li style="--value: 2"></li></ol>
-        <div class="dcss-call-read">
-          <div class="dcss-call-result">
-            <output class="dcss-format-fixed" style="--value: var(--dcss-median); --precision: 1"></output>   <!-- 2.5 -->
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</figure>
-```
-
-The three discrete scales take `--ranges` (2 by default, up to 17) and `--range-0` to `--range-16`, numbers or quoted text; `--unknown` is the answer for a missing query. A bare `<output>` prints a text range; use a formatter for a number. A threshold or quantize call reads through `.dcss-call-read > .dcss-range-copy > .dcss-call-result`. A quantile scale uses its list three times: inside the first result, `.dcss-quantile-low` and then `.dcss-quantile-high` each hold the list and a read, and the high one's result holds `.dcss-range-copy > .dcss-call-result`. In full, with a list of three and two ranges (the answer is 1):
-
-```html
-<figure class="dcss-scale-quantile" style="--value: 3; --ranges: 2; --range-0: 0; --range-1: 1">
-  <ol><li style="--value: 1"></li><li style="--value: 2"></li><li style="--value: 4"></li></ol>
-  <div class="dcss-call-read"><div class="dcss-call-result">
-    <div class="dcss-quantile-low">
-      <ol><li style="--value: 1"></li><li style="--value: 2"></li><li style="--value: 4"></li></ol>
-      <div class="dcss-call-read"><div class="dcss-call-result">
-        <div class="dcss-quantile-high">
-          <ol><li style="--value: 1"></li><li style="--value: 2"></li><li style="--value: 4"></li></ol>
-          <div class="dcss-call-read"><div class="dcss-call-result">
-            <div class="dcss-range-copy"><div class="dcss-call-result">
-              <output class="dcss-format-fixed" style="--value: var(--dcss-scale-quantile); --precision: 0"></output>
-            </div></div>
-          </div></div>
-        </div>
-      </div></div>
-    </div>
-  </div></div>
-</figure>
-```
-
-Keep the thresholds in order and the repeated lists identical; the sheet takes both as given. A value off the grid is error 1; an empty quantile or a missing `--p` is error 2. To repeat a call on its own result, set the next input on the `.dcss-call-input` wrapper, so it keeps the previous result before the next call reuses the name.
-
-#### Precision helpers
-
-| Class | Takes | Gives |
-|---|---|---|
-| `dcss-precision-fixed` | `--step` | `--dcss-precision-fixed` |
-| `dcss-precision-prefix` | `--step` and `--value` | `--dcss-precision-prefix` |
-| `dcss-precision-round` | `--step` and `--max` | `--dcss-precision-round` |
-
-```html
-<output class="dcss-precision-fixed" style="--step: .01"></output> <!-- 2 -->
-<output class="dcss-precision-prefix" style="--step: .01; --value: 1000"></output> <!-- 5 -->
-<output class="dcss-precision-round" style="--step: .01; --max: 1.01"></output> <!-- 3 -->
-
-<div class="dcss-precision-fixed" style="--step: .01">
-  <div class="dcss-call-input">
-    <output class="dcss-format-fixed"
-            style="--value: 1.2345; --precision: var(--dcss-precision-fixed)"></output>   <!-- 1.23 -->
-  </div>
-</div>
-```
-
-A precision helper gives its number on itself and inside it, so one container can set a formatter's precision. Steps are from 1e-30 to under 1e31 in size, signs as d3 treats them; a step of 0 is error 2. A precision used by a formatter must stay in the formatter's range: 0 to 15 for fixed and percent, 1 to 15 for SI.
-
-#### Variance and deviation
-
-`.dcss-variance` and `.dcss-deviation` give the sample variance (dividing by n - 1) and its square root, as `--dcss-variance` and `--dcss-deviation`, within 1e-9 of d3's. They take up to 16 values as in [Typed values](#typed-values), and types 4 (string) and 5 (object) too. `--accessor` is 0 for the value itself, 1 for `.value` (from `--field-type-N` and `--field-value-N`), 2 for the index from 1, 3 for undefined; the value it picks must be a number, null or undefined. With fewer than two valid values there is no result, as d3 returns undefined.
-
-#### Ranges
-
-`.dcss-range` gives d3.range's values, one per `<li>`: `--start`, `--stop` and `--step` (not 0), on the 1/64 grid within ±1024, up to 64 values. Each `<li>` gets `--dcss-range`, and `--dcss-range-ready` 1, or 0 when the range has ended. Too few `<li>`s, or more than 64 values, is error 1.
-
-```html
-<figure class="dcss-range" style="--start: 0; --stop: 5; --step: 1">
-  <ol><li></li><li></li><li></li><li></li><li></li></ol>   <!-- 0, 1, 2, 3, 4 -->
-</figure>
-```
+<!-- calls -->
 
 ### Ticks: families/ticks.css
 
-#### Ticks, nice and axes
+#### `.dcss-axis-bottom`, `.dcss-axis-top`, `.dcss-axis-left`, `.dcss-axis-right`
 
-`.dcss-axis-bottom`, `-top`, `-left` and `-right` draw d3's axis for a linear scale from `--start` to `--stop`, with `--count` ticks (10 by default), as long as the list. Give it one `<li>` per tick; the spare ones are hidden, up to 64 ticks, and 16 cover any 10-tick axis. Labels print in d3's tickFormat. The axis sets d3's `font: 10px sans-serif`, so an `em` on it or inside it is 10px: size it in px or `rem`.
+Draws d3's axis for a linear scale, labelled in its tickFormat. Source: [d3.axisBottom](https://d3js.org/d3-axis#axisBottom), [d3.axisTop](https://d3js.org/d3-axis#axisTop), [d3.axisLeft](https://d3js.org/d3-axis#axisLeft), [d3.axisRight](https://d3js.org/d3-axis#axisRight).
 
 ```html
 <ol class="dcss-axis-bottom" style="--start: 0; --stop: 87; --count: 10">
@@ -467,74 +299,420 @@ A precision helper gives its number on itself and inside it, so one container ca
 </ol>
 ```
 
-| Class | Takes | Gives |
+| Input | Takes | Default |
 |---|---|---|
-| `dcss-axis-bottom`, `-top`, `-left`, `-right` | `--start`, `--stop`, `--count` | a drawn axis; on each `<li>`, `--dcss-tick` (its value) and `--dcss-tick-at` (its place, 0 to 1); on the list, `--dcss-tick-step`, `--dcss-tick-increment`, `--dcss-tick-count` |
-| `dcss-ticks` | the same | the same numbers, with nothing drawn: place them yourself, `.grid > li { left: calc(var(--dcss-tick-at) * 100%) }` |
-| `dcss-nice` | the same | `--dcss-nice-start` and `--dcss-nice-stop` for everything inside |
+| `--start`, `--stop` | the scale's domain |  |
+| `--count` | how many ticks to aim for | 10 |
+| `<li>`s | one per tick, up to 64; the spare ones are hidden |  |
 
-Set the range on an ancestor to share it, and in a rule when state changes it (`.chart:has(#zoom:checked) { --stop: 870 }`), since an inline style beats any rule. To span a list's data, put the axis inside a `.dcss-nice` (`--start: var(--dcss-min); --stop: var(--dcss-max)`) inside an extent's result. A label is centred on its tick, so inside a figure, which clips at its edges, give the axis a margin on each side. `.dcss-nice` repeats d3's rounding 4 times, which settles every range in d3's own tests; about 2.4% of random ranges need more.
+Output: the drawn axis, as long as the list; on each `<li>`, `--dcss-tick` and `--dcss-tick-at`.
 
-#### Identity ticks
+16 `<li>`s cover any 10-tick axis. The axis sets d3's `font: 10px sans-serif`, so an `em` on it or inside it is 10px: size it in px or `rem`. Set the range on an ancestor to share it, and in a rule when state changes it (`.chart:has(#zoom:checked) { --stop: 870 }`), since an inline style beats any rule.
 
-`.dcss-identity-ticks` gives an identity scale's ticks from `--start`, `--stop` and `--source-count` (10 by default; `--identity-count` overrides it), up to 512 `<li>` slots. The ends are within ±1024, their span from 0.001 to 2048, the count a whole number from 1 to 256. The list gets `--dcss-tick-count` and each active `<li>` its `--dcss-tick`. For labels, put an `<output class="dcss-format-fixed dcss-identity-tick-format">` inside it with `--value` the tick: it takes the precision the list works out, `--dcss-tick-precision`.
+#### `.dcss-ticks`
 
-### Format: families/format.css
+The same ticks, not drawn: place them yourself, `left: calc(var(--dcss-tick-at) * 100%)`. Source: [d3.ticks](https://d3js.org/d3-array/ticks#ticks), [d3.tickIncrement](https://d3js.org/d3-array/ticks#tickIncrement), [d3.tickStep](https://d3js.org/d3-array/ticks#tickStep).
 
-#### Fixed, percent and SI
+| Input | Takes | Default |
+|---|---|---|
+| `--start`, `--stop`, `--count` | as an axis takes them | 10 ticks |
 
-`.dcss-format-fixed`, `.dcss-format-percent` and `.dcss-format-si` are d3.format's types `f`, `%` and `s`. They go on one element, most often an `<output>`, take the number as `--value` and print into `::after` the text d3.format prints:
+Output: on each `<li>`: `--dcss-tick`, its value, and `--dcss-tick-at`, its place from 0 to 1; on the list: `--dcss-tick-step`, `--dcss-tick-increment`, `--dcss-tick-count` and `--dcss-tick-precision`.
+
+#### `.dcss-nice`
+
+Rounds a domain out to nice numbers. Source: [d3.nice](https://d3js.org/d3-array/ticks#nice).
+
+| Input | Takes | Default |
+|---|---|---|
+| `--start`, `--stop`, `--count` | the domain and the ticks to aim for | 10 ticks |
+
+Output: `--dcss-nice-start` and `--dcss-nice-stop`, for everything inside.
+
+To span a list's data, put an axis inside a `.dcss-nice` (`--start: var(--dcss-min); --stop: var(--dcss-max)`) inside an extent's result. It repeats d3's rounding 4 times, where d3 repeats it until the range settles.
+
+#### `.dcss-identity-ticks`, `.dcss-identity-tick-format`
+
+An identity scale's ticks, and an `<output>` that prints one at their precision. Source: [d3.scaleIdentity](https://d3js.org/d3-scale/linear#scaleIdentity).
+
+| Input | Takes | Default |
+|---|---|---|
+| `--start`, `--stop` | the domain |  |
+| `--source-count` | how many ticks to aim for; `--identity-count` overrides it | 10 |
+| `<li>`s | up to 512 |  |
+
+Output: on the list, `--dcss-tick-count`, `--dcss-identity-ticks-ready` and `--dcss-identity-ticks-error`; on each active `<li>`, its `--dcss-tick` and `--dcss-identity-item-ready`.
+
+`.dcss-identity-tick-format` goes with `.dcss-format-fixed` on an `<output>` inside `.dcss-identity-ticks` whose `--value` is the tick.
+
+### Array: families/array.css
+
+The data is a list of `<li style="--value: n">` in a `<figure>` ([Writing a call](#writing-a-call)).
+
+#### `.dcss-sum`
+
+Adds the list's numbers, of any sign: the positives are laid out across and the negatives down, and the sum is the one less the other. A sum of 64ths is exact, so it is d3.fsum's too. Source: [d3.sum](https://d3js.org/d3-array/summarize#sum), [d3.fsum](https://d3js.org/d3-array/add#fsum).
 
 ```html
-<output class="dcss-format-fixed" style="--value: 1234.5; --precision: 2; --comma: 1"></output>   <!-- 1,234.50 -->
-<output class="dcss-format-percent" style="--value: 0.234; --precision: 1"></output>             <!-- 23.4% -->
-<output class="dcss-format-si" style="--value: 999.5; --precision: 3"></output>                   <!-- 1.00k -->
-<output class="dcss-format-si" style="--value: 1234; --precision: 3; --trim: 1"></output>         <!-- 1.23k -->
+<figure class="dcss-sum">
+  <ul><li style="--value: 12"></li> <li style="--value: -40"></li> <li style="--value: 30.5"></li></ul>
+  <output></output>                  <!-- prints 2.5 -->
+</figure>
 ```
 
-| Field | d3 | Default |
+| Input | Takes | Default |
 |---|---|---|
-| `--precision` | `.2` | 6; decimal places for f and %, significant digits for s |
-| `--comma` | `,` | 0 |
-| `--sign` | `+` (1), `-` (0) | 0 |
-| `--symbol` | `$` (1) | 0 |
-| `--trim` (SI) | `~` (1) | 0 |
+| `--value`, on each `<li>` | a number on the 1/64 grid |  |
 
-Fixed and percent round as d3 does, by the number's exact value with ties going up, so 4.35 at one decimal is 4.3 (4.35 is a hair under it). The minus is d3's U+2212, hidden when a negative rounds to zero unless `--sign: 1`. With `$`, a percentage has no `%`, as in d3. The number times 10 to the precision must be under 2^53 (16 digits in all). `--value` can be another call's answer, `var(--dcss-scale-linear)`, and keeps every digit. A missing `--value`, such as an empty median's, prints nothing.
+Output: `--dcss-sum`.
 
-To divide before printing, use `.dcss-scale-linear` rather than `/` in `--value`. WebKit computes `calc(a / b)` as `a × (1 / b)`, one bit off, and a tie can then round the other way: `--value: calc(8347.5 / 100)` prints 83.48 in WebKit and 83.47 in Chrome and d3. A scale divides exactly in both, as d3.scaleLinear does:
+An item that isn't a number is skipped, as d3 skips it; a sum says nothing of it.
+
+#### `.dcss-mean`
+
+Averages the list's numbers. The same list gives their sum, count and length. Source: [d3.mean](https://d3js.org/d3-array/summarize#mean).
 
 ```html
-<div class="dcss-scale-linear" style="--value: 8347.5; --domain-0: 0; --domain-1: 100; --range-0: 0; --range-1: 1">
-  <output class="dcss-format-fixed" style="--value: var(--dcss-scale-linear); --precision: 2"></output>   <!-- 83.47 -->
+<figure class="dcss-mean">
+  <ul><li style="--value: 120"></li> <li style="--value: -95"></li> <li style="--value: 140"></li></ul>
+  <output></output>                  <!-- prints 55 -->
+</figure>
+```
+
+| Input | Takes | Default |
+|---|---|---|
+| `--value`, on each `<li>` | a number on the 1/64 grid, -1024 or more |  |
+
+Output: `--dcss-mean`; `--dcss-sum`, `--dcss-count`, `--dcss-length`.
+
+Each negative value is offset by 1024 and counted apart, up to 4,095 values. A value below -1024 leaves no answer (error 2), where d3 would count it. An item that isn't a number is skipped, as d3 skips it, with `--dcss-err` 1; no numbers at all is d3's undefined, error 2.
+
+#### `.dcss-count`
+
+Counts the list's numbers. Source: [d3.count](https://d3js.org/d3-array/summarize#count).
+
+```html
+<figure class="dcss-count">
+  <ul><li style="--value: 3"></li> <li style="--value: -2"></li> <li style="--value: 7"></li></ul>
+  <output></output>                  <!-- prints 3 -->
+</figure>
+```
+
+| Input | Takes | Default |
+|---|---|---|
+| `--value`, on each `<li>` | a number |  |
+
+Output: `--dcss-count`.
+
+An item that isn't a number is skipped, with `--dcss-err` 1.
+
+#### `.dcss-length`
+
+Counts the list's items, numbers or not: d3's `array.length`. Source: this library.
+
+| Input | Takes | Default |
+|---|---|---|
+| `--value`, on each `<li>` | a number |  |
+
+Output: `--dcss-length`.
+
+#### `.dcss-min`, `.dcss-max`, `.dcss-extent`
+
+The least and greatest number of the list, or both. Source: [d3.min](https://d3js.org/d3-array/summarize#min), [d3.max](https://d3js.org/d3-array/summarize#max), [d3.extent](https://d3js.org/d3-array/summarize#extent).
+
+```html
+<figure class="dcss-extent">
+  <ul><li style="--value: 12"></li> <li style="--value: 40"></li> <li style="--value: 3"></li></ul>
+  <output></output>                  <!-- prints 3–40 -->
+</figure>
+```
+
+| Input | Takes | Default |
+|---|---|---|
+| `--value`, on each `<li>` | a number on the 1/64 grid, within ±131,072, or a whole number from -131,072 to 8,257,535 |  |
+
+Output: `--dcss-min`, `--dcss-max`: an extent gives both, and its `<output>` prints `3–40`.
+
+A value below -131,072 leaves no answer (error 2). An item that isn't a number is skipped, with `--dcss-err` 1; no numbers is error 2.
+
+#### `.dcss-ascending`, `.dcss-descending`
+
+Compares two numbers set on the call. Source: [d3.ascending](https://d3js.org/d3-array/sort#ascending), [d3.descending](https://d3js.org/d3-array/sort#descending).
+
+```html
+<div class="dcss-ascending" style="--a: 1; --b: 2">
+  <output class="dcss-format-fixed" style="--value: var(--dcss-ascending); --precision: 0"></output>   <!-- −1 -->
 </div>
 ```
 
-SI picks its prefix after rounding, so `.3s` prints 999.5 as `1.00k`. It takes 1 to 15 significant digits, and 0 or values from 1e-30 to under 1e31 in size. Below 1e-24 d3 rounds a second time, and the precision left must stay above 0 (`precision + floor(log10(abs(value))) + 24 > 0`). Past these limits it prints nothing, with error 1.
+| Input | Takes | Default |
+|---|---|---|
+| `--a`, `--b`, on the call | numbers |  |
 
-#### General labels
+Output: `--dcss-ascending`, `--dcss-descending`: -1, 0 or 1.
 
-`.dcss-format-general` is d3's general number format: 12 significant digits, trailing zeros removed. `--precision` takes 1 to 15, `--trim: 0` keeps the zeros, and sign, currency and grouping use the fields above.
+#### `.dcss-min-index`, `.dcss-max-index`, `.dcss-least-index`, `.dcss-greatest-index`
+
+The place, from 0, of the least or greatest number. Source: [d3.minIndex](https://d3js.org/d3-array/summarize#minIndex), [d3.maxIndex](https://d3js.org/d3-array/summarize#maxIndex), [d3.leastIndex](https://d3js.org/d3-array/summarize#leastIndex), [d3.greatestIndex](https://d3js.org/d3-array/summarize#greatestIndex).
+
+| Input | Takes | Default |
+|---|---|---|
+| `--value`, on each `<li>` | a number on the 1/64 grid, within ±1024; up to 64 items |  |
+
+Output: `--dcss-min-index`, `--dcss-max-index`, `--dcss-least-index`, `--dcss-greatest-index`; -1 for an empty list.
+
+The first wins a tie. d3.scan is `.dcss-least-index`, but for d3's undefined where it gives -1.
+
+#### `.dcss-least`, `.dcss-greatest`
+
+The least or greatest number, as d3.least and d3.greatest give it with their default comparator. Source: [d3.least](https://d3js.org/d3-array/summarize#least), [d3.greatest](https://d3js.org/d3-array/summarize#greatest).
+
+| Input | Takes | Default |
+|---|---|---|
+| `--value`, on each `<li>` | a number on the 1/64 grid, within ±1024; up to 64 items |  |
+
+Output: `--dcss-least`, `--dcss-greatest`.
+
+#### `.dcss-bisect-left`, `.dcss-bisect-right`, `.dcss-bisect`
+
+Where the figure's `--value` goes in a sorted list. Source: [d3.bisectLeft](https://d3js.org/d3-array/bisect#bisectLeft), [d3.bisectRight](https://d3js.org/d3-array/bisect#bisectRight), [d3.bisect](https://d3js.org/d3-array/bisect#bisect).
+
+| Input | Takes | Default |
+|---|---|---|
+| `--value`, on the figure | the number to place |  |
+| `--value`, on each `<li>` | a number on the 1/64 grid, within ±1024; up to 64 items |  |
+| `--lo`, `--hi` | the search range, `[lo, hi)` | 0 and the list's length |
+
+Output: `--dcss-bisect-left`, `--dcss-bisect-right`; `.dcss-bisect` is right and also gives `--dcss-bisect`.
+
+A bisect figure draws nothing and is one line tall, with its answer in it: give it no height or `overflow`. On an unsorted list the left variant counts the keys below the query: how many scored 80 or more is a count less `.dcss-bisect-left` at 80.
+
+#### `.dcss-bisector-left`, `.dcss-bisector-right`, `.dcss-bisector`
+
+d3.bisector(d => d.value): each datum's value as its `--value`. Source: [d3.bisector](https://d3js.org/d3-array/bisect#bisector).
+
+| Input | Takes | Default |
+|---|---|---|
+| `--value`, on the figure | the number to place |  |
+| `--value`, on each `<li>` | a number on the 1/64 grid, within ±1024; up to 64 items |  |
+| `--lo`, `--hi` | the search range | 0 and the list's length |
+
+Output: `--dcss-bisector-left`, `--dcss-bisector-right`, `--dcss-bisector` (right).
+
+#### `.dcss-share`
+
+Each item's fraction of the list's total. Source: this library.
+
+| Input | Takes | Default |
+|---|---|---|
+| `--value`, on each `<li>` | a number on the 1/64 grid, 0 or more, at most 4,095; up to 64 items |  |
+
+Output: inside an item's `.dcss-share-read > .dcss-share-result`: `--dcss-share` and `--dcss-total`.
+
+#### `.dcss-median`, `.dcss-quantile`
+
+The middle number of the list, or the one at any place `--p` between its least and greatest. Source: [d3.median](https://d3js.org/d3-array/summarize#median), [d3.quantile](https://d3js.org/d3-array/summarize#quantile).
 
 ```html
-<output class="dcss-format-general" style="--value: 2.718281828459045"></output>   <!-- 2.71828182846 -->
+<figure class="dcss-quantile" style="--p: 0.75">
+  <ol><li style="--value: 3"></li> <li style="--value: 1"></li> <li style="--value: 4"></li> <li style="--value: 2"></li></ol>
+  <div><div><div><output class="dcss-format-fixed" style="--value: var(--dcss-quantile); --precision: 2"></output></div></div></div>   <!-- 3.25 -->
+</figure>
 ```
 
-It prints plain decimal notation only: the rounded exponent must be at least -6 and under the precision. A number d3 would print in scientific notation prints nothing, with error 1.
+| Input | Takes | Default |
+|---|---|---|
+| `--value`, on each `<li>` | a number on the 1/64 grid, within ±131,072, or a whole number from -131,072 to 8,257,535 |  |
+| `--p`, on a quantile | a number, 0 to 1 |  |
 
-#### Log ticks and labels
+Output: `--dcss-median`, `--dcss-quantile`, inside the third of three nested elements after the list ([Medians, quantiles and the discrete scales](#medians-quantiles-and-the-discrete-scales)).
 
-A log scale's ticks are `.dcss-ticks-log` and its nice `.dcss-nice-log`, each with `--start`, `--stop`, `--count` and `--base` (10 by default). A label is a `.dcss-format-fixed`, `.dcss-format-si` or `.dcss-format-general` with the class `.dcss-ticks-log-format`, inside a `.dcss-ticks-log`. It prints only where d3's log tickFormat prints, and `--trim: 1` is d3's `~`. Base-e ticks and nice can be a last bit off d3's, because CSS's `exp()` isn't JavaScript's `Math.exp()`.
+0 to 64 values; one that isn't a number, or past the range, leaves no answer.
 
-#### Arabic locale
+#### `.dcss-quantile-sorted`
 
-`.dcss-format-locale.dcss-locale-arabic` prints Arabic digits and separators for the specifier `$,.2f`. Set `--value`, and put the currency affixes in `data-dcss-locale-prefix` and `data-dcss-locale-suffix`. Other locales and grouping patterns aren't available.
+A quantile of a list already sorted: the list taken in its order. Source: [d3.quantileSorted](https://d3js.org/d3-array/summarize#quantileSorted).
+
+| Input | Takes | Default |
+|---|---|---|
+| `--value`, on each `<li>` | a number on the 1/64 grid, within ±131,072, or a whole number from -131,072 to 8,257,535 |  |
+| `--p` | a number, 0 to 1 |  |
+
+Output: `--dcss-quantile-sorted`, read as a quantile's.
+
+#### `.dcss-median-index`, `.dcss-quantile-index`
+
+The place, from 0, of the number a median or quantile takes. Source: [d3.medianIndex](https://d3js.org/d3-array/summarize#medianIndex), [d3.quantileIndex](https://d3js.org/d3-array/summarize#quantileIndex).
+
+| Input | Takes | Default |
+|---|---|---|
+| `--value`, on each `<li>` | a number on the 1/64 grid, within ±131,072 |  |
+| `--p`, on a quantile index | a number, 0 to 1 |  |
+
+Output: `--dcss-median-index`, `--dcss-quantile-index`, read as a median's; -1 for no values.
+
+Where several values equal the one at the index, d3's choice follows its quickselect ([5, 5, 5] gives 0, [4, 4, 4, 4] gives 2); these take the copy their order picks: values ascending, equal ones last place first, and at `--p` 0 or less the first place, as d3.minIndex. A value off the grid, or a `--p` that isn't a number, leaves no answer.
+
+#### `.dcss-scale-threshold`
+
+Maps `--value` to a range by thresholds. Source: [d3.scaleThreshold](https://d3js.org/d3-scale/threshold#scaleThreshold).
+
+| Input | Takes | Default |
+|---|---|---|
+| `--value` | the query |  |
+| `--domain-0` to `--domain-15` | the thresholds, ascending | 0.5 |
+| `--ranges`, `--range-0` to `--range-16` | the range: 2 to 17 numbers or quoted text | 2; 0 and 1 |
+| `--unknown` | the answer to a missing query |  |
+
+Output: `--dcss-scale-threshold`, on everything inside the call.
+
+#### `.dcss-scale-quantize`
+
+Maps `--value` to a range by equal steps of its domain. Source: [d3.scaleQuantize](https://d3js.org/d3-scale/quantize#scaleQuantize).
+
+| Input | Takes | Default |
+|---|---|---|
+| `--value` | the query |  |
+| `--domain-0`, `--domain-1` | the domain | 0 and 1 |
+| `--ranges`, `--range-0` to `--range-16` | the range: 2 to 17 numbers or quoted text | 2; 0 and 1 |
+| `--unknown` | the answer to a missing query |  |
+
+Output: `--dcss-scale-quantize`, on everything inside the call.
+
+#### `.dcss-scale-quantile`
+
+Maps `--value` to a range by the quantiles of the list. Source: [d3.scaleQuantile](https://d3js.org/d3-scale/quantile#scaleQuantile).
+
+| Input | Takes | Default |
+|---|---|---|
+| `--value`, on each `<li>` | a number on the 1/64 grid, within ±131,072, or a whole number from -131,072 to 8,257,535 |  |
+| `--value`, on the figure | the query |  |
+| `--ranges`, `--range-0` to `--range-16` | the range: 2 to 17 numbers or quoted text | 2; 0 and 1 |
+| `--unknown` | the answer to a missing query |  |
+
+Output: `--dcss-scale-quantile`, inside the fourth of four nested elements after the list.
+
+#### `.dcss-cumsum`
+
+The running total of the list: a second list after the values, one `<li>` per value. Source: [d3.cumsum](https://d3js.org/d3-array/summarize#cumsum), [d3.fcumsum](https://d3js.org/d3-array/add#fcumsum).
+
+| Input | Takes | Default |
+|---|---|---|
+| `--value`, on each `<li>` | a number on the 1/64 grid, within ±1024; up to 64 items |  |
+
+Output: inside the second list's i-th `<li>`, the total of the first i values: `--dcss-cumsum`.
+
+A missing value adds 0.
+
+#### `.dcss-bin`
+
+Counts the list's values in bins, as d3.bin() with a domain and thresholds or a count: a second list after the values has one `<li>` per bin, and everything in it reads that bin. Source: [d3.bin](https://d3js.org/d3-array/bin#bin).
+
+```html
+<figure class="dcss-bin" style="--domain-0: 0; --domain-1: 30; --threshold-0: 10; --threshold-1: 20">
+  <ol><li style="--value: 3"></li> <li style="--value: 12"></li> <li style="--value: 15"></li> <li style="--value: 28"></li></ol>
+  <ol>
+    <li><output class="dcss-format-fixed" style="--value: var(--dcss-bin-length); --precision: 0"></output></li>   <!-- 1 -->
+    <li><output class="dcss-format-fixed" style="--value: var(--dcss-bin-length); --precision: 0"></output></li>   <!-- 2 -->
+    <li><output class="dcss-format-fixed" style="--value: var(--dcss-bin-length); --precision: 0"></output></li>   <!-- 1 -->
+  </ol>
+</figure>
+```
+
+| Input | Takes | Default |
+|---|---|---|
+| `--domain-0`, `--domain-1` | the domain: a value outside it isn't counted |  |
+| `--threshold-0` to `--threshold-31` | the thresholds, ascending; one outside the domain is dropped, as d3 drops it |  |
+| `--count` | in place of thresholds, d3's `thresholds(count)`: the domain's ticks for that count, those on its ends dropped; up to 32 ticks |  |
+| `--value`, on each `<li>` of the first list | a number; up to 64 items |  |
+
+Output: inside the second list's `<li>` for bin b: `--dcss-bin-length` (how many values it holds), `--dcss-bin-x0` and `--dcss-bin-x1`.
+
+Write one `<li>` in the second list per bin, one more than the thresholds kept; an item past the last bin has no answer, and so does a call with no domain, a domain backwards, more than 64 values, or a count that gives more than 32 ticks. d3's default domain (the data's extent) and thresholds (Sturges' count) aren't taken: write them.
+
+#### `.dcss-variance`, `.dcss-deviation`
+
+The variance of the list's values and its square root, as d3.variance() and d3.deviation() give them (the sample variance, divided by n - 1): the list once, then three plain elements; what is in the third reads the answers. Source: [d3.variance](https://d3js.org/d3-array/summarize#variance), [d3.deviation](https://d3js.org/d3-array/summarize#deviation).
+
+```html
+<figure class="dcss-variance">
+  <ul><li style="--value: 5"></li> <li style="--value: 1"></li> <li style="--value: 2"></li> <li style="--value: 3"></li> <li style="--value: 4"></li></ul>
+  <div><div><div>
+    <output class="dcss-format-fixed" style="--value: var(--dcss-variance); --precision: 1"></output>   <!-- 2.5 -->
+  </div></div></div>
+</figure>
+```
+
+| Input | Takes | Default |
+|---|---|---|
+| `--value`, on each `<li>` | a number in 64ths from -1024 to 1024; an item with none is skipped, as d3 skips it; up to 64 items |  |
+
+Output: inside the third element: `--dcss-variance` and `--dcss-deviation`.
+
+The answer is the true variance rounded once, which d3's running sum gives in about a third of lists and misses by a few units in the last place in the others. Fewer than two numbers, more than 64 items, or a value outside the range give no answer. The figure is a line tall and clips: give it another height for more lines.
+
+#### `.dcss-precision-fixed`, `.dcss-precision-prefix`, `.dcss-precision-round`
+
+The precision d3.format needs for a step. Source: [d3.precisionFixed](https://d3js.org/d3-format#precisionFixed), [d3.precisionPrefix](https://d3js.org/d3-format#precisionPrefix), [d3.precisionRound](https://d3js.org/d3-format#precisionRound).
+
+| Input | Takes | Default |
+|---|---|---|
+| `--step` | the step |  |
+| `--value`, on a prefix | the value |  |
+| `--max`, on a round | the largest value |  |
+
+Output: `--dcss-precision-fixed`, `--dcss-precision-prefix`, `--dcss-precision-round`, on the element and inside it.
+
+#### `.dcss-range`
+
+The numbers from `--start` to `--stop` by `--step`, one per `<li>`. Source: [d3.range](https://d3js.org/d3-array/ticks#range).
+
+| Input | Takes | Default |
+|---|---|---|
+| `--start`, `--stop`, `--step` | numbers | 0, the stop, 1 |
+
+Output: on each `<li>`: `--dcss-range`, and `--dcss-range-ready` 0 once the range has ended.
+
+Values are numbers on the grid: strings, objects, accessors and comparators aren't taken.
+
+### Hierarchy: families/hierarchy.css
+
+#### `.dcss-treemap-slice`, `.dcss-treemap-dice`, `.dcss-treemap-slice-dice`
+
+d3.treemap() with that tile, after hierarchy.sum(): each `<li>` of a nested list laid out at its node's rectangle, in a figure of the size you give it. Source: [d3.treemapSlice](https://d3js.org/d3-hierarchy/treemap#treemapSlice), [d3.treemapDice](https://d3js.org/d3-hierarchy/treemap#treemapDice), [d3.treemapSliceDice](https://d3js.org/d3-hierarchy/treemap#treemapSliceDice).
+
+| Input | Takes | Default |
+|---|---|---|
+| `--value`, on each leaf `<li>` | a number 0 or more; in slice-dice, on every inner `<li>` too, its subtree's sum |  |
+
+Output: the `<li>`s, laid out: draw on them.
+
+#### `.dcss-partition`
+
+d3.partition(), up to 12 levels; the top band is the root's, so wrap the list in one `<li>` to draw it. Source: [d3.partition](https://d3js.org/d3-hierarchy/partition#partition).
+
+```html
+<figure class="dcss-partition" style="width: 640px; height: 240px">
+  <ul>
+    <li>Citrus <ul><li style="--value: 30">Orange</li> <li style="--value: 20">Lemon</li></ul></li>
+    <li style="--value: 40">Apples</li>
+  </ul>
+</figure>
+```
+
+| Input | Takes | Default |
+|---|---|---|
+| `--value`, on each leaf `<li>` | a number 0 or more |  |
+
+Output: the `<li>`s, laid out: draw on them.
+
+The total can be from 64 to 2^31 times the figure's width in pixels (2.2 million at 960 px); under 64, the layout is narrower than the figure.
 
 ### Scale: families/scale.css
 
-#### Linear, pow, sqrt and log
+#### `.dcss-scale-linear`, `.dcss-piecewise`
 
-`.dcss-scale-linear` on any element is d3.scaleLinear. It takes `--domain-0`, `--domain-1`, `--range-0`, `--range-1` and `--value`, set on it or inherited, and gives `--dcss-scale-linear` and `--dcss-scale-linear-invert` to the element and everything inside it:
+Maps `--value` from a domain to a range, and back. Source: [d3.scaleLinear](https://d3js.org/d3-scale/linear#scaleLinear).
 
 ```html
 <div class="dcss-scale-linear" style="--domain-0: 0; --domain-1: 100; --range-0: 32; --range-1: 212; --value: 21">
@@ -542,20 +720,46 @@ A log scale's ticks are `.dcss-ticks-log` and its nice `.dcss-nice-log`, each wi
 </div>
 ```
 
-| Class | Takes | Gives |
+| Input | Takes | Default |
 |---|---|---|
-| `dcss-scale-linear` | the inputs above; up to 8 stops, `--domain-0` to `--domain-7` and `--range-0` to `--range-7`, with `--stops` (2 by default); `--clamp: 1`, `--round: 1` (d3's rangeRound) | `--dcss-scale-linear`, `--dcss-scale-linear-invert` |
-| `dcss-scale-pow` | the same, and `--exponent` (1 by default) | `--dcss-scale-pow`, `--dcss-scale-pow-invert` |
-| `dcss-scale-sqrt` | the same | `--dcss-scale-sqrt`, `--dcss-scale-sqrt-invert` |
-| `dcss-scale-log` | the same; a negative domain works as in d3 | `--dcss-scale-log`, `--dcss-scale-log-invert` |
+| `--value` | the number to map |  |
+| `--domain-0`, `--domain-1`, `--range-0`, `--range-1` | the two stops, set on the element or inherited | 0, 1, 0, 1 |
+| `--stops`, `--domain-2` to `--domain-7`, `--range-2` to `--range-7` | with `.dcss-piecewise`: up to 8 stops | 2 |
+| `--clamp`, `--round` | 1 for d3's clamp and rangeRound | 0 |
 
-A linear, pow or sqrt scale's ticks and nice are `.dcss-ticks` and `.dcss-nice` on its domain's two ends. Its tickFormat is a `.dcss-format-fixed` whose `--precision` is the tick list's `--dcss-tick-precision`, 2 less for `%`. A log scale's are under [Log ticks and labels](#log-ticks-and-labels). Linear, pow and sqrt scales equal d3's answer exactly. A log scale is within 256 × 2^-52 of it, since the browsers' `log()` and `exp()` differ from JavaScript's in the last bits. Ranges of colours or dates, custom interpolators and inputs that aren't numbers aren't available.
+Output: `--dcss-scale-linear` and `--dcss-scale-linear-invert`, on the element and inside it.
 
-Where the browser has `@function` (Chrome), a two-stop linear scale is also a function, `--dcss-scale-linear(x, d0, d1, r0, r1)`, with clamp and round (0 or 1) after: `--dcss-scale-linear(21, 0, 100, 32, 212)` is 69.8. Pow, sqrt and log scales are functions too: `--dcss-scale-pow(x, d0, d1, r0, r1, exponent)`, `--dcss-scale-sqrt(...)` and `--dcss-scale-log(...)`, with clamp and round after. Write a plain value first for the browsers without `@function`, and guard a call that uses `var()`, as for [the easings](#ease-familieseasecss).
+Without `.dcss-piecewise` a scale takes two stops and is several times faster. Its ticks and nice are `.dcss-ticks` and `.dcss-nice` on its domain's two ends; its tickFormat is a `.dcss-format-fixed` with `--precision: var(--dcss-tick-precision)`, 2 less for `%`. Ranges of colours or dates, custom interpolators and inputs that aren't numbers aren't available. Where the browser has `@function`, `--dcss-scale-linear(x, d0, d1, r0, r1)` is the same scale as a function, then clamp and round (0 or 1): write a plain value before it for the browsers without, and guard one that uses `var()`, as for [the easings](#ease-familieseasecss).
 
-#### Band scale
+#### `.dcss-scale-pow`, `.dcss-scale-sqrt`
 
-`.dcss-scale-band.dcss-scale-linear` on a `<figure>` is d3's bar chart: d3.scaleBand across the `<li>`s and d3.scaleLinear([0, d3.max]) up, one bar per `<li>` at its `--value`. The figure's content box is the plot and its padding the margins, so give it a width and a height. `--padding` (or `--padding-inner` and `--padding-outer`, the outer at least half the inner) and `--align` are d3's, 0, 0 and 0.5 by default. Each bar is its `<li>`'s `::before`, steelblue unless you colour it, and the `<li>`'s text is its label, under the plot. The element after the list gets `--dcss-max`, for an axis:
+A power scale, and its square root. Source: [d3.scalePow](https://d3js.org/d3-scale/pow#scalePow), [d3.scaleSqrt](https://d3js.org/d3-scale/pow#scaleSqrt).
+
+| Input | Takes | Default |
+|---|---|---|
+| `--value`, the stops | as a linear scale takes them |  |
+| `--exponent`, on pow | the exponent | 1 |
+
+Output: `--dcss-scale-pow`, `--dcss-scale-pow-invert`; `--dcss-scale-sqrt`, `--dcss-scale-sqrt-invert`.
+
+Functions: `--dcss-scale-pow(x, d0, d1, r0, r1, exponent)`, `--dcss-scale-sqrt(x, d0, d1, r0, r1)`.
+
+#### `.dcss-scale-log`
+
+A log scale, a negative domain as in d3. Source: [d3.scaleLog](https://d3js.org/d3-scale/log#scaleLog).
+
+| Input | Takes | Default |
+|---|---|---|
+| `--value`, the stops | as a linear scale takes them |  |
+| `--base` | the base | 10 |
+
+Output: `--dcss-scale-log`, `--dcss-scale-log-invert`.
+
+Its ticks and nice are `.dcss-ticks-log` and `.dcss-nice-log`. Function: `--dcss-scale-log(x, d0, d1, r0, r1)`.
+
+#### `.dcss-scale-band`
+
+With `.dcss-scale-linear`, on a figure: d3's bar chart, scaleBand across the `<li>`s and scaleLinear([0, max]) up. Source: [d3.scaleBand](https://d3js.org/d3-scale/band#scaleBand).
 
 ```html
 <figure class="dcss-scale-band dcss-scale-linear" style="--padding: 0.1; width: 600px; height: 340px; padding: 30px 0 30px 40px">
@@ -567,21 +771,95 @@ Where the browser has `@function` (Chrome), a two-stop linear scale is also a fu
 </figure>
 ```
 
-Each bar lands within 1/32 px of d3's, and the axis's ticks at d3's places. The max is read from the layout as a logarithm: any value from 2^-64 to 2^64, to about 1/100,000 of itself (0.127019 for 0.12702). It is exact when it has 4 significant digits or fewer (10, 1000, 0.3), so a max that falls on a tick stays on it.
+| Input | Takes | Default |
+|---|---|---|
+| `--value`, on each `<li>` | a number on the 1/64 grid, 0 or more |  |
+| `--padding`, `--padding-inner`, `--padding-outer`, `--align` | the band scale's, as d3's; the outer at least half the inner | 0, 0, 0, 0.5 |
 
-#### Identity scale
+Output: the bars, each its `<li>`'s `::before`; the element after the list gets `--dcss-max`.
 
-`.dcss-scale-identity` gives the query `--value` back unchanged, as both `--dcss-scale-identity` and `--dcss-scale-identity-invert`; the domain and range don't change it, as in d3. A missing query is error 1. Its ticks are `.dcss-identity-ticks` in `ticks.css`.
+The figure is the plot and its padding the margins, so give it a width and a height. Each bar is steelblue unless you colour it, and the `<li>`'s text is its label, under the plot. The max is exact when it has 4 significant digits or fewer, so a max that falls on a tick stays on it.
+
+#### `.dcss-scale-identity`
+
+`--value` back, as d3.scaleIdentity gives it. Source: [d3.scaleIdentity](https://d3js.org/d3-scale/linear#scaleIdentity).
+
+| Input | Takes | Default |
+|---|---|---|
+| `--value` | a number |  |
+
+Output: `--dcss-scale-identity` and `--dcss-scale-identity-invert`, with `--dcss-scale-identity-ready` and `--dcss-scale-identity-error`.
+
+Its ticks are `.dcss-identity-ticks`.
+
+### Format: families/format.css
+
+#### `.dcss-format-fixed`, `.dcss-format-percent`, `.dcss-format-si`
+
+Prints `--value` into the element's `::after` as d3.format does with type `f`, `%` or `s`. Source: [d3.format](https://d3js.org/d3-format#format).
 
 ```html
-<span class="dcss-scale-identity" style="--value: 12">
-  <span style="display: inline-block; width: calc(var(--dcss-scale-identity) * 1px)"></span>   <!-- 12px wide -->
-</span>
+<output class="dcss-format-fixed" style="--value: 1234.5; --precision: 2; --comma: 1"></output>   <!-- 1,234.50 -->
+<output class="dcss-format-percent" style="--value: 0.234; --precision: 1"></output>             <!-- 23.4% -->
+<output class="dcss-format-si" style="--value: 999.5; --precision: 3"></output>                   <!-- 1.00k -->
+<output class="dcss-format-si" style="--value: 1234; --precision: 3; --trim: 1"></output>         <!-- 1.23k -->
 ```
+
+| Input | Takes | Default |
+|---|---|---|
+| `--value` | a number, or another call's answer |  |
+| `--precision` | d3's `.2`: decimal places for f and %, significant digits for s | 6 |
+| `--comma`, `--sign`, `--symbol` | 1 for d3's `,`, `+` and `$` | 0 |
+| `--trim` | 1 for d3's `~` | 0; 1 for SI and log labels |
+
+Output: the text, in `::after`.
+
+Fixed and percent round by the number's exact value, ties going up, as d3 does: 4.35 at one decimal is 4.3 (4.35 is a hair under it). The minus is d3's U+2212. SI picks its prefix after rounding, so `.3s` prints 999.5 as `1.00k`. A missing `--value`, such as an empty median's, prints nothing; so does a number past the format's range, with error 1. To divide before printing, use `.dcss-scale-linear` rather than `/` in `--value`: Safari computes `calc(a / b)` as `a × (1 / b)`, a bit off, so a tie can round the other way.
+
+#### `.dcss-format-general`
+
+d3's general format (no type): 12 significant digits, trailing zeros removed, in plain decimal notation. Source: [d3.format](https://d3js.org/d3-format#format).
+
+```html
+<output class="dcss-format-general" style="--value: 2.718281828459045"></output>                  <!-- 2.71828182846 -->
+```
+
+| Input | Takes | Default |
+|---|---|---|
+| `--value` | a number |  |
+| `--precision` | significant digits | 12 |
+| `--trim` | 0 to keep trailing zeros | 1 |
+
+Output: the text, in `::after`.
+
+#### `.dcss-ticks-log`, `.dcss-nice-log`, `.dcss-ticks-log-format`
+
+A log scale's ticks and nice; with a formatter inside a `.dcss-ticks-log`, `.dcss-ticks-log-format` prints only where d3's log tickFormat prints. Source: [d3.scaleLog](https://d3js.org/d3-scale/log#scaleLog).
+
+| Input | Takes | Default |
+|---|---|---|
+| `--start`, `--stop`, `--count` | the domain and the ticks to aim for | 10 ticks |
+| `--base` | the base | 10 |
+
+Output: as `.dcss-ticks` and `.dcss-nice`; `--dcss-tick-show` 1 where a label prints.
+
+#### `.dcss-format-locale`, `.dcss-locale-arabic`
+
+Arabic digits and separators for the specifier `$,.2f`, on `.dcss-format-locale.dcss-locale-arabic`. Source: [d3.formatLocale](https://d3js.org/d3-format#formatLocale).
+
+| Input | Takes | Default |
+|---|---|---|
+| `--value` | a number |  |
+| `--dcss-locale-precision`, `--dcss-locale-sign` | its precision and sign | 2, 0 |
+| `data-dcss-locale-prefix`, `data-dcss-locale-suffix` | the currency affixes |  |
+
+Output: the text, in `::after`.
 
 ### Ease: families/ease.css
 
-Every easing d3-ease exports is a class, `.dcss-ease-<name>`, on any element: `quad-in`, `quad-out`, `quad-in-out`, and the same for `cubic`, `poly`, `sin`, `exp`, `circle`, `bounce`, `back` and `elastic`, plus `linear`. The short names (`.dcss-ease-quad`, `.dcss-ease-bounce` and so on) are d3's aliases. `--value` is t, and the answer is `--dcss-ease-<name>`. d3's parameters are properties: `--exponent` (poly, 3 by default), `--overshoot` (back, 1.70158), `--amplitude` and `--period` (elastic, 1 and 0.3).
+#### `.dcss-ease-<name>`
+
+d3-ease's functions in kebab case: `linear`; `quad-in`, `quad-out`, `quad-in-out`, and the same for `cubic`, `poly`, `sin`, `exp`, `circle`, `bounce`, `back` and `elastic`; and d3's short names (`.dcss-ease-quad` and so on), each the variant d3 aliases it to. Source: [d3.easeCubic](https://d3js.org/d3-ease#easeCubic).
 
 ```html
 <span class="dcss-ease-cubic-in-out" style="--value: 0.25">
@@ -589,212 +867,20 @@ Every easing d3-ease exports is a class, `.dcss-ease-<name>`, on any element: `q
 </span>
 ```
 
-Where the browser has `@function` (Chrome), every easing is also a CSS function, `--dcss-ease-<name>(t)`, with the class's other inputs after t in the order above: `--dcss-ease-poly-in(0.5, 2)` is 0.25. A browser without `@function` drops a declaration that calls one with plain numbers, so write a plain value first. A call with `var()` among its arguments gets past that first check and fails later, so the plain value is lost too: put such calls inside `@supports at-rule(@function)`.
-
-```css
-.bar { width: 50%; }
-@supports at-rule(@function) { .bar { width: calc(--dcss-ease-cubic-in-out(var(--progress)) * 100%); } }
-```
-
-### Hierarchy: families/hierarchy.css
-
-#### Treemaps and partition
-
-`.dcss-treemap-slice`, `.dcss-treemap-dice`, `.dcss-treemap-slice-dice` and `.dcss-partition` go on a figure of the size you give it, holding a nested list. Each leaf `<li>` has its value as `--value`. Every `<li>` is laid out at its node's rectangle, as d3.treemap().tile(...) or d3.partition() places it after hierarchy.sum(); draw on the `<li>`s.
-
-```html
-<figure class="dcss-partition" style="width: 640px; height: 240px">
-  <ul>
-    <li>Citrus <ul><li style="--value: 30">Orange</li> <li style="--value: 20">Lemon</li></ul></li>
-    <li style="--value: 40">Apples</li>
-  </ul>
-</figure>
-```
-
-A partition keeps the top band for the root, as d3 does: wrap the list in one `<li>` to draw it. Slice, dice and partition add up the leaves themselves. Slice-dice turns each level a quarter, and there every inner `<li>` needs its subtree's sum as `--value` too. The total can be from 64 to 2^31 times the figure's width in pixels (2.2 million at 960 px); under 64, the layout is narrower than the figure. A partition takes 12 levels.
-
-#### Five-circle pack
-
-`.dcss-pack-five` takes five radii, `--r0` to `--r4`, each from 0.25 to 32, and places them as d3.packSiblings does, then centres them as its enclosing circle does. The call and everything inside it get `--dcss-pack-x0`, `--dcss-pack-y0` and `--dcss-pack-r0`, and so on to index 4. A missing or out-of-range radius is error 1.
-
-```html
-<div class="dcss-pack-five" style="--r0: 10; --r1: 14; --r2: 22; --r3: 8; --r4: 2"></div>
-```
-
-### Aggregate: families/aggregate.css
-
-`.dcss-aggregate-sum`, `.dcss-aggregate-count`, `.dcss-aggregate-mean`, `.dcss-aggregate-cumsum`, `.dcss-fsum` and `.dcss-fcumsum` take typed values on the call element and give `--dcss-<name>` (`--dcss-fsum`, `--dcss-aggregate-mean`) to everything inside it. Exact sums keep binary64's lost digits, as d3's fsum does.
-
-```html
-<div class="dcss-fsum" style="--dcss-input-length: 3;
-     --dcss-input-0-type: 0; --dcss-input-0-value: 12;
-     --dcss-input-1-type: 0; --dcss-input-1-value: 40;
-     --dcss-input-2-type: 0; --dcss-input-2-value: 30">
-  <output style="counter-reset: total var(--dcss-fsum)"></output>   <!-- --dcss-fsum is 82 -->
-</div>
-```
-
-| Input | What it is |
-|---|---|
-| `--length` or `--dcss-input-length` | how many values, 0 to 20 |
-| `--type-N` or `--dcss-input-N-type` | 0 number, 1 null, 2 undefined, 3 NaN, 4 string, 5 object |
-| `--value-N` or `--dcss-input-N-value` | the number, finite, within ±Number.MAX_VALUE / 64 |
-| `--dcss-accessor` | 0 the value, 1 `.value`, 2 the index from 1, 3 undefined, 4 the count accessor's field |
-| `data-dcss-capacity="8"` or `"4"` | computes only that many slots, which is faster; a longer list is error 1. A call with `data-dcss-backend="layout"` always computes 20 |
-
-A string is 1 to 4 ASCII characters. Strings of one or two digits, with an optional space before them, count as numbers; one with a character no number can have is skipped; other number-shaped strings, such as `1e3`, are error 1. The cumulative calls take one `<ol class="dcss-aggregate-results">` inside the call, with one `<li>` per value, and each `<li>` gets its own `--dcss-cumsum` or `--dcss-fcumsum`. The mean of nothing has no value, without an error.
-
-### Order: families/order.css
-
-`.dcss-order-median`, `.dcss-order-quantile`, `.dcss-order-quantile-sorted`, `.dcss-order-median-index`, `.dcss-order-quantile-index` and `.dcss-order-mode` take typed values, so any finite number works as written:
-
-```html
-<!-- Ten order amounts. The median prints 59.50; links families/format.css too. -->
-<div class="dcss-order-median" style="--length: 10;
-     --type-0: 0; --value-0: 42;    --type-1: 0; --value-1: 18.5;
-     --type-2: 0; --value-2: 77;    --type-3: 0; --value-3: 18.5;
-     --type-4: 0; --value-4: 130;   --type-5: 0; --value-5: 64;
-     --type-6: 0; --value-6: 9.99;  --type-7: 0; --value-7: 55;
-     --type-8: 0; --value-8: 77;    --type-9: 0; --value-9: 210">
-  <output class="dcss-format-fixed"
-          style="--value: var(--dcss-order-median); --precision: 2"></output>
-</div>
-```
-
-The same values on `.dcss-order-quantile` with `--order-p-type: 0; --order-p-number: 0.9` give the 90th percentile, 138. Results are `--dcss-order-<name>`, read anywhere inside the call.
-
-| Input | What it is |
-|---|---|
-| `--length` | 0 to 16 values (0 to 8 for the index calls) |
-| `--type-N` | 0 number, 1 null, 2 undefined, 3 NaN, 4 ASCII string, 5 object |
-| `--value-N` | the number |
-| `--length-N`, `--char-xNxJ` | a string's length (up to 16) and its character codes |
-| `--accessor` | 0 the value, 1 `.value` (from `--field-type-N` and `--field-value-N`), 2 the index from 1, 3 undefined |
-| `--order-p-type` | the quantile's p: 0 a number in `--order-p-number`, 1 null (p is 0), 2 undefined, 3 NaN, 4 a string of 1 to 4 characters that isn't a number, in `--order-p-length` and `--order-p-char-J` |
-
-Mode gives `--dcss-order-mode-value` and `--dcss-order-type`, with a string's length and characters. `--dcss-ready` says the inputs are valid, and `--dcss-order-present` that there is a result. An index call of nothing gives -1; a value call of nothing has no result. For a median index of more than 8 values, sort them in a grid and read the middle entry (A sort, under [Primitives](#primitives)).
-
-### Extrema: families/extrema.css
-
-`.dcss-extrema-<name>` is d3's `min`, `max`, `extent`, `minIndex`, `maxIndex`, `least`, `greatest`, `leastIndex`, `greatestIndex`, `scan`, `ascending` or `descending` (`.dcss-extrema-min-index`) over typed values:
-
-```html
-<link rel="stylesheet" href="dcss-array.css">
-<link rel="stylesheet" href="families/extrema.css">
-<figure class="dcss-extrema-min"
-  style="--extrema-size:2; --extrema-0-type:0; --extrema-0-number:5;
-         --extrema-1-type:0; --extrema-1-number:2">
-  <div style="width:calc(var(--dcss-extrema-number) * 10px)"></div>   <!-- 20px wide -->
-</figure>
-```
-
-It takes 0 to 10 slots, written as in [Typed values](#typed-values) or with this family's own names:
-
-| Input | What it is |
-|---|---|
-| `--extrema-size` | how many slots |
-| `--extrema-i-type` | 0 number, 1 ASCII text, 2 null, 3 undefined, 4 NaN, 5 object |
-| `--extrema-i-number` | the number, compared with every binary digit |
-| `--extrema-i-length`, `--extrema-i-c0` to `-c2` | text of up to 3 characters |
-| `--extrema-mode` | how items compare: 0 natural order, 1 `.value`, 2 the index plus one, 3 undefined, 4 identity, 5 `.name`, 6 `.v`, 7 subtraction, 8 subtraction of `.value` |
-| `--extrema-direction: 1` | reverses least and greatest |
-| `--extrema-i-field-*`, `--extrema-i-object-<key>-*` | an object's compared field, and its `name`, `value`, `v` and `index`, each typed the same way; an absent field is type 3 |
-
-Results are `--dcss-extrema-type`, `-number`, `-length`, `-c0` to `-c2` and `-index`; an extent's ends are `--dcss-extrema-min-number` and `--dcss-extrema-max-number`, and an object result keeps its `-object-<key>-*` fields. `--dcss-ready: 1; --dcss-err: 0` means the call is valid. Read the type and value only when `--dcss-extrema-field-ready` is 1: at 0 the answer is d3's NaN or undefined. `ascending` and `descending` compare the first two slots. Two strings compare as text; a string against a number works for empty text and unsigned numbers of up to three digits.
-
-### Color: families/color.css
-
-#### Constructors
-
-`.dcss-rgb`, `.dcss-hsl`, `.dcss-lab`, `.dcss-hcl`, `.dcss-lch` and `.dcss-gray` give d3's color coordinates and opacity as numbers:
-
-```html
-<span class="dcss-rgb" style="--r: 70; --g: 130; --b: 180">
-  <span style="display: inline-block; width: 1em; height: 1em;
-    background: rgb(var(--dcss-rgb-r) var(--dcss-rgb-g) var(--dcss-rgb-b)
-                    / var(--dcss-rgb-opacity))"></span>
-</span>
-```
-
-The inputs are the coordinates' names (`--r`, `--g`, `--b`; `--h`, `--s`, `--l`; `--l`, `--a`, `--b`; or `--h`, `--c`, `--l`), each finite within ±2^24, and `--opacity`, 1 by default. Each output is `--dcss-<class>-<field>`, such as `--dcss-hsl-s`. Lch gives Hcl's `h`, `c` and `l`; gray gives Lab's `l`, with `a` and `b` 0. Nothing is clamped, opacity included. A missing coordinate is error 1, and the others stay available. They give coordinates only: formatting and color methods aren't available.
-
-For typed arguments, add `.dcss-color-input` to the constructor. Set `--arg-count`, then each argument's `--arg-N-type` (1 number, 2 null, 3 undefined, 4 NaN, 5 a numeric string) and `--arg-N-value`, or for a string `--arg-N-length` and `--arg-N-char-M`. A string is up to 16 characters, with five digits and an exponent up to 9; a number is within ±1024.
-
-#### Conversions
-
-`.dcss-convert-rgb`, `-hsl`, `-lab`, `-hcl` or `-lch` converts a color, together with a class naming its source, such as `.dcss-from-lab`. `--from` says the same as a number: 1 RGB, 2 HSL, 3 Lab, 4 Hcl. `--from-0`, `--from-1` and `--from-2` hold the source's coordinates and `--from-opacity` its opacity (1 by default). The results are `--dcss-convert-<target>-<field>`.
-
-```html
-<div class="dcss-convert-hcl dcss-from-lab"
-     style="--from:3;--from-0:50;--from-1:4;--from-2:-5"></div>
-```
-
-RGB channels go from 0 to 255, HSL saturation and lightness from 0 to 1, and other coordinates within ±1024. `.dcss-convert-cubehelix` takes `--r`, `--g`, `--b` (0 to 255) and `--opacity`. A missing field is an error for the fields that need it; the others stay usable.
-
-#### Color text
-
-The color parsers are in `families/color-text.css`. CSS can't read the letters of a string, so the text goes in one character per custom property, as its character code. `tomato` is `--length: 6` and `--c0` to `--c5`: 116, 111, 109, 97, 116, 111. A build step writes them (`[...text].map(c => c.charCodeAt(0))`).
-
-```html
-<!-- Links families/color-text.css (families/color.css is not needed) and families/format.css. -->
-<div class="dcss-parse-color-complete" style="--length: 6;
-     --c0: 116; --c1: 111; --c2: 109; --c3: 97; --c4: 116; --c5: 111">
-  <span style="display: inline-block; width: 1em; height: 1em;
-    background: rgb(var(--dcss-color-r) var(--dcss-color-g) var(--dcss-color-b))"></span>
-  <output class="dcss-format-fixed"
-          style="--value: var(--dcss-color-r); --precision: 0"></output>   <!-- 255 -->
-</div>
-```
-
-| Class | Reads | Gives |
+| Input | Takes | Default |
 |---|---|---|
-| `dcss-parse-color-complete` | 0 to 64 ASCII characters: CSS names, hex, and comma-separated `rgb()`, `rgba()`, `hsl()`, `hsla()` | `--dcss-color-kind` and the fields below |
-| `dcss-parse-color-function` | 1 to 64 characters of comma-separated `rgb()`, `rgba()`, `hsl()` or `hsla()` | the same |
-| `dcss-color-coerce-*` | a parser's fields | a named constructor's fields |
+| `--value` | t |  |
+| `--exponent`, `--overshoot`, `--amplitude`, `--period` | poly's exponent, back's overshoot, elastic's amplitude and period | 3, 1.70158, 1, 0.3 |
 
-`--dcss-color-kind` is 0 for d3's null, 1 for RGB and 2 for HSL. The fields are `--dcss-color-r`, `-g`, `-b` and `-opacity`, and for HSL `--dcss-color-h`, `-s` and `-l`, each with its own readiness. Where d3 gives null or NaN, the field is left out rather than set to 0: an alpha of 0 or less keeps the opacity and leaves out the RGB fields. A number in the text has up to five significant digits, at most five after the point, an exponent up to 9 and a value up to 1024 in size. A character code that is missing or not a whole number is an error; well-formed text that isn't a color gives kind 0 with no error. The space-separated syntax (`rgb(70 130 180)`) isn't available.
+Output: `--dcss-ease-<name>`.
 
-### Date parse: families/date-parse.css
-
-#### Formats
-
-`.dcss-date-parse-N` parses date text as d3's English utcParse does, into epoch milliseconds, `--dcss-date-parse`. The text goes in as character codes, `--length` and `--c0` onward, as in [Color text](#color-text), up to 24 characters. `.dcss-local-date-parse-N`, in `families/date-parse-local.css`, parses in Pacific time (America/Los_Angeles), as timeParse does there.
-
-```html
-<!-- The text "432", format 23 (%L): 432 ms past 1900-01-01, UTC. -->
-<div class="dcss-date-parse-23"
-     style="--length:3;--c0:52;--c1:51;--c2:50"></div>
-```
-
-N is the format's place in this list: d3's 38 formats, then three ISO ones (38 to 40).
-
-<!-- date-parse-formats -->
-
-| N | Format | N | Format | N | Format | N | Format |
-|---:|---|---:|---|---:|---|---:|---|
-| 0 | `%c` | 1 | `%a %m/%d/%Y` | 2 | `%A %m/%d/%Y` | 3 | `%U %Y` |
-| 4 | `%a %U %Y` | 5 | `%A %U %Y` | 6 | `%w %U %Y` | 7 | `%w %V %Y` |
-| 8 | `%w %V %G` | 9 | `%w %V %g` | 10 | `%V %g` | 11 | `%u %W %Y` |
-| 12 | `%W %Y` | 13 | `%a %W %Y` | 14 | `%A %W %Y` | 15 | `%w %W %Y` |
-| 16 | `%m/%d/%y` | 17 | `%x` | 18 | `%b %d, %Y` | 19 | `%B %d, %Y` |
-| 20 | `%j %m/%d/%Y` | 21 | `%H:%M:%S` | 22 | `%X` | 23 | `%L` |
-| 24 | `%f` | 25 | `%I:%M:%S %p` | 26 | `%Y %q` | 27 | `%Y %q %m` |
-| 28 | `%% %m/%d/%Y` | 29 | `%m/%d/%Y %Z` | 30 | `%-m/%0d/%_Y` | 31 | `%Y %U %w` |
-| 32 | `%V %Y` | 33 | `%V %G` | 34 | `%Q` | 35 | `%s` |
-| 36 | `%s.%L` | 37 | `%s.%f` | 38 | `%Y-%m-%d` | 39 | `%Y-%m-%dT%H:%M:%SZ` |
-| 40 | `%Y-%m-%dT%H:%M:%S.%LZ` |
-
-<!-- /date-parse-formats -->
-
-Calendar dates take years 100 to 9999; epoch numbers, years -9999 to 19999. A character code that is missing or not a whole number hides the result with error 1. Other locales and the browser's own time zone aren't available.
-
-#### Calendar fields
-
-`.dcss-parse-calendar-<form>` parses ISO weeks, Sunday and Monday weeks and quarters, from the same character codes into the same `--dcss-date-parse`. The UTC forms are `isoWYear`, `isoYear` and `isoYear2`, for years 1900 to 2099. The Pacific forms are `localIsoWYear`, `localIsoWYear2`, `localIsoYear2`, `weekSunday`, `weekSundayDefault`, `weekMonday`, `weekMondayDefault`, `quarter` and `quarterMonth`, for years 1990 to 2037. Weeks and days are one or two digits as the format has them; ISO weeks run 1 to 53, quarters 1 to 4.
+Where the browser has `@function`, each easing is also a function, the class's other inputs after t: `--dcss-ease-poly-in(0.5, 2)` is 0.25. A browser without `@function` drops a declaration that calls one with plain numbers, so write a plain value first; a call with `var()` among its arguments gets past that first check and fails later, so put it inside `@supports at-rule(@function)`: `.bar { width: 50%; } @supports at-rule(@function) { .bar { width: calc(--dcss-ease-cubic-in-out(var(--progress)) * 100%); } }`.
 
 ### Time: families/time.css
 
-`families/time.css` holds d3's time intervals on epoch milliseconds, in UTC and in Pacific time. Each interval has five calls, `-floor`, `-ceil`, `-round`, `-offset` and `-count`, and each takes the time as `--value`; offset also takes `--step` (1 by default), and count takes `--start` and `--stop`. The answer is on the call and everything inside it.
+#### `.dcss-utc-<interval>-<op>`
+
+d3's UTC time intervals on epoch milliseconds: `day` (unixDay too), `hour`, `minute`, `second`, `sunday` to `saturday`, `month` and `year`, each with five calls, `-floor`, `-ceil`, `-round`, `-offset` and `-count`. Source: [d3.utcDay](https://d3js.org/d3-time#utcDay).
 
 ```html
 <!-- Links families/format.css too. 2023-11-14 22:13:20 UTC, floored to its day. -->
@@ -803,24 +889,30 @@ Calendar dates take years 100 to 9999; epoch numbers, years -9999 to 19999. A ch
 </span>
 ```
 
-| Classes | Gives | Times it takes |
+| Input | Takes | Default |
 |---|---|---|
-| `dcss-utc-day-*`, `-hour-*`, `-minute-*`, `-second-*` | `--dcss-utc-day` and so on; the day calls are d3's unixDay too | within ±8×10¹² ms; a fraction of a millisecond is dropped |
-| `dcss-utc-sunday-*` to `dcss-utc-saturday-*` | `--dcss-utc-sunday` and so on | within ±8×10¹⁵ ms |
-| `dcss-utc-month-*`, `dcss-utc-year-*` | `--dcss-utc-month`, `--dcss-utc-year` | within ±8×10¹³ ms |
-| `dcss-local-day-*`, `dcss-local-month-*` | `--dcss-local-day`, `--dcss-local-month` | 2007 to 2037 (1167609600000 to 2145916800000) |
-| `dcss-local-hour-*`, `dcss-local-minute-*` (no count) | `--dcss-local-hour`, `--dcss-local-minute` | 2007 to 2037 |
-| `dcss-local-sunday-*` to `dcss-local-saturday-*` | `--dcss-local-sunday` and so on | years -9999 to 19999 |
+| `--value` | the time: within ±8×10¹² ms for day, hour, minute and second, ±8×10¹⁵ for the weekdays, ±8×10¹³ for month and year |  |
+| `--step` | offset's step, to ±10,000 | 1 |
+| `--start`, `--stop` | count's range |  |
+| `--every` | a year period from 1 to 10,000, counted from year zero; count needs 1 | 1 |
 
-- Round picks the later interval on a tie. A time or a result outside its range is error 1, and the number is hidden.
-- Month and year offsets keep the day and time and overflow as Date's setters do, so January 31 plus a month is March 2 or 3. For years, `--every` picks a period from 1 to 10,000 (1 by default), counted from year zero; count needs `--every: 1`. Steps go to ±10,000.
-- The Pacific calls follow America/Los_Angeles daylight saving time. In a spring gap they take the later instant, in an autumn fold the earlier. Their steps go to ±240 for days and months, ±10,000 for hours and minutes, ±1,000 for weekdays. The weekday calls follow the zone's full history; the others its rule from 2007 to 2037.
+Output: `--dcss-utc-<interval>`, such as `--dcss-utc-day`, on the call and everything inside it.
+
+Round picks the later interval on a tie. A time or a result outside its range is error 1, and the number is hidden. Month and year offsets keep the day and time and overflow as Date's setters do, so January 31 plus a month is March 2 or 3. A fraction of a millisecond is dropped.
 
 ### Date format: families/date-format.css
 
-`.dcss-date-format-N` prints epoch milliseconds in `--value` as d3's English utcFormat does, and `.dcss-local-date-format-N` as timeFormat does in Pacific time. N is the specifier's place in this list:
+#### `.dcss-date-format-N`
 
-<!-- date-format-formats -->
+Prints the epoch milliseconds in `--value` as d3's English utcFormat does with specifier N of the list below. Source: [d3.utcFormat](https://d3js.org/d3-time-format#utcFormat).
+
+| Input | Takes | Default |
+|---|---|---|
+| `--value` | the time, in years -9999 to 19999 |  |
+
+Output: the text; inside the call, the numbers behind it: `--dcss-date-year`, `--dcss-date-month`, `--dcss-date-day`, `--dcss-date-hour`, `--dcss-date-minute`, `--dcss-date-second`, `--dcss-date-millis`, `--dcss-date-weekday`, `--dcss-date-iso-year`, `--dcss-date-iso-week`, `--dcss-date-week-sunday`, `--dcss-date-week-monday`.
+
+Outside its years the text is hidden with an error.
 
 | N | Format | N | Format | N | Format | N | Format |
 |---:|---|---:|---|---:|---|---:|---|
@@ -836,28 +928,63 @@ Calendar dates take years 100 to 9999; epoch numbers, years -9999 to 19999. A ch
 | 36 | `.%L` | 37 | `:%S` | 38 | `%I:%M` | 39 | `%I %p` |
 | 40 | `%a %d` |
 
-<!-- /date-format-formats -->
-
-The time must fall in years -9999 to 19999; outside that, the text is hidden with an error. The numbers behind the text, such as `--dcss-date-year`, are there to use inside the call.
-
 ### Geo: families/geo.css
 
-The `.dcss-geo-*` calls are d3's identity, equirectangular, rotation, stereographic, mercator and transverse mercator projections, and distance. A point call takes `--x` and `--y` and gives `--dcss-geo-x` and `--dcss-geo-y`; `-invert` gives the inverse. Distance gives `--dcss-geo-distance` in radians. The settings are d3's: scale, translation, reflection, angle, center and rotation.
+#### `.dcss-geo-identity`, `.dcss-geo-equirectangular`, `.dcss-geo-mercator`, `.dcss-geo-transverse-mercator`, `.dcss-geo-stereographic`, `.dcss-geo-rotation`
 
-- Points are within ±1e6, scale from 0.001 to 10,000. The `-config` calls give the settings back, with scale and translation up to 1e12.
-- Mercator's `-extent` calls give its clip rectangle: kind 0 is null, kind 1 has four corner fields. Shapes aren't clipped; polygons, lines and streams aren't available.
-- Mercator's `-fit-extent` calls work out scale and translation from 1 to 64 points, `--length` and `--longitude-1`, `--latitude-1` onward, and a rectangle, `--extent-x0`, `--extent-y0`, `--extent-x1`, `--extent-y1`. The points must be finite and the rectangle more than 0 across.
-- Points come within 1e-6 of d3's, distance within 1e-12, fitted settings within 0.001.
+Projects the point `--x`, `--y`. Source: [d3.geoIdentity](https://d3js.org/d3-geo/projection#geoIdentity), [d3.geoEquirectangular](https://d3js.org/d3-geo/cylindrical#geoEquirectangular), [d3.geoMercator](https://d3js.org/d3-geo/cylindrical#geoMercator), [d3.geoTransverseMercator](https://d3js.org/d3-geo/cylindrical#geoTransverseMercator), [d3.geoStereographic](https://d3js.org/d3-geo/azimuthal#geoStereographic), [d3.geoRotation](https://d3js.org/d3-geo/math#geoRotation).
 
-### Random: families/random.css
+| Input | Takes | Default |
+|---|---|---|
+| `--x`, `--y` | the point, within ±1e6 |  |
+| `--scale` | from 0.001 to 10,000 | d3's |
+| `--translate-x`, `--translate-y`, `--reflect-x`, `--reflect-y`, `--angle`, `--center-lambda`, `--center-phi`, `--rotate-lambda`, `--rotate-phi`, `--rotate-gamma` | d3's settings | d3's |
 
-`.dcss-random-lcg` is d3-random 3.0.1's randomLcg with a `--seed` from 0 up to 1. It holds an `<ol>` or `<ul>` of 1 to 199 `<li>`s, and the first `<li>` is the first draw, the second the second, and so on. Each `<li>` gets `--dcss-random-lcg`, and the generator's 32-bit state as two whole numbers from 0 to 65,535, `--dcss-random-lcg-low` and `--dcss-random-lcg-high`; the fraction is off by at most 1/4294967296. A missing seed, or more than 199 `<li>`s, hides the numbers with an error.
+Output: `--dcss-geo-x`, `--dcss-geo-y`.
 
-```html
-<figure class="dcss-random-lcg" style="--seed: 0.5">
-  <ol><li></li><li></li><li></li></ol>
-</figure>
-```
+Shapes aren't clipped; polygons, lines and streams aren't available. Moving points are costly: see Performance.
+
+#### `.dcss-geo-identity-invert`, `.dcss-geo-equirectangular-invert`, `.dcss-geo-mercator-invert`, `.dcss-geo-transverse-mercator-invert`, `.dcss-geo-stereographic-invert`, `.dcss-geo-rotation-invert`
+
+Projects the point `--x`, `--y` back: d3's projection.invert. Source: [d3.geoMercator](https://d3js.org/d3-geo/cylindrical#geoMercator).
+
+| Input | Takes | Default |
+|---|---|---|
+| `--x`, `--y`, the settings | as the projection takes them |  |
+
+Output: `--dcss-geo-x`, `--dcss-geo-y`.
+
+#### `.dcss-geo-identity-config`, `.dcss-geo-equirectangular-config`, `.dcss-geo-mercator-config`, `.dcss-geo-transverse-mercator-config`, `.dcss-geo-stereographic-config`
+
+The settings back, as d3's getters give them. Source: [d3.geoMercator](https://d3js.org/d3-geo/cylindrical#geoMercator).
+
+| Input | Takes | Default |
+|---|---|---|
+| the settings | as the projection takes them |  |
+
+Output: `--dcss-geo-scale`, `--dcss-geo-angle`.
+
+#### `.dcss-geo-mercator-extent`, `.dcss-geo-transverse-mercator-extent`
+
+The clip rectangle, as projection.clipExtent gives it. Source: [d3.geoMercator](https://d3js.org/d3-geo/cylindrical#geoMercator).
+
+| Input | Takes | Default |
+|---|---|---|
+| `--clip-enabled`, `--clip-x0`, `--clip-y0`, `--clip-x1`, `--clip-y1` | the clip rectangle |  |
+
+Output: `--dcss-geo-clip-kind`, 0 for null and 1 with `--dcss-geo-clip-x0`, `--dcss-geo-clip-y0`, `--dcss-geo-clip-x1`, `--dcss-geo-clip-y1`.
+
+#### `.dcss-geo-distance`
+
+The great-circle distance between two points, in radians. Source: [d3.geoDistance](https://d3js.org/d3-geo/math#geoDistance).
+
+| Input | Takes | Default |
+|---|---|---|
+| `--longitude-a`, `--latitude-a`, `--longitude-b`, `--latitude-b` | the points, in degrees |  |
+
+Output: `--dcss-geo-distance`.
+
+<!-- /calls -->
 
 ### Grid markup
 
@@ -866,7 +993,7 @@ The `.dcss-geo-*` calls are d3's identity, equirectangular, rotation, stereograp
 - The results land on the `<u>` inside a reader and everything in it. That `<u>` is yours: put content there. Leave the entries, readers and `dcss-out` empty, since content in them can change what they read.
 - A grid inside a reader's `<u>` reads its own entries, so one computation feeds the next in the same frame. Results only flow down: results of several entries reach another grid's entries a frame later, through dcss-store.css.
 - Put changing numbers on the entries. A number that changes above a grid and is inherited through it restyles every reader, used or not.
-- Every name the sheet uses starts with `dcss-`, the calls' and its own grids', readers' and numbers' alike; its internal numbers include `--dcss-p-*`, and its anchor names are `--dcss-where`, `--dcss-lo` and `--dcss-hi`. A call's results (`--dcss-*`, listed in `src/names.mjs`), which aren't registered, so they keep any value you give them elsewhere.
+- Every name `dcss-array.css` and the families use starts with `dcss-`, the calls' and its own grids', readers' and numbers' alike. The lists (`.list`, `.pager`, `--if`, `--page`), the loops (`.loop` and `.loop-*`) and the sheets (`.sheet` and the formats and folds below) are in `dcss-array-extras.css`, which a page links only when it uses them; its internal numbers include `--dcss-p-*`, and its anchor names are `--dcss-where`, `--dcss-lo` and `--dcss-hi`. A call's results aren't registered, so they keep any value you give them elsewhere.
 - Every grid resets its padding, border, `writing-mode` and `direction`.
 
 [Primitives](#primitives) lists every kind of grid with its markup.
@@ -892,279 +1019,59 @@ The `.dcss-geo-*` calls are d3's identity, equirectangular, rotation, stereograp
 
 ### Primitives
 
-Each kind of grid: what it computes, its markup, whether it reads in the same frame it changes, and how exact it is. [Performance](#performance) gives each one's cost.
+Each kind of grid: the names it uses and what it computes; its markup is in the [SPEC.md](SPEC.md) requirement beside it, and what it gives in [Outputs](#outputs). Every one reads in the frame its numbers change, exact for whole numbers except where [Limits](#limits) says; [Performance](#performance) gives each one's cost.
 
 <!-- primitives -->
 
-#### Entry i of an array of child entries
-
-`.dcss-array` > children with `--dcss-n`; a reader `.dcss-at` with `--dcss-i`, in the port (`<b class="dcss-out">`, the first child) or a child of an entry; what is inside the reader gets `--dcss-value` and `--dcss-ok`.
-
-Same frame: yes, both. Whole numbers exact; fractions to 1/64 px.
-
-#### Counting the entries: negative indices and the end's check without writing `--dcss-array-length`
-
-`.dcss-track-count` on the array: the grid works the count out from its last child's place (`:nth-child`), up to 360,359 entries, any number of entries: 40 entries, `-1`, `-40`, the total and entry 35, every frame, both engines.
-
-Same frame: yes. Exact.
-
-#### Entry -i (from the end)
-
-`--dcss-i: -1`.
-
-Same frame: yes. Exact.
-
-#### The sum of entries i to j, either order; -1 as the end; i = j
-
-`--dcss-i: 2; --dcss-j: 4`; `--dcss-i: 1; --dcss-j: -1` is the total.
-
-Same frame: yes. Exact.
-
-#### Track i of a packed array, any length
-
-`.dcss-array.dcss-packed` with `--dcss-tracks` (the track list, line names included: `[--dcss-x] 90px 70px`) and `--dcss-array-length` for the end; without it -1 is the last track.
-
-Same frame: yes. Exact.
-
-#### The i-th slot named x: several arrays in one grid
-
-`--dcss-l3: --dcss-x` on the array; `--dcss-of: --dcss-x` on the reader or the array; `--dcss-j` counts slots from there, named or not.
-
-Same frame: yes. Exact.
-
-#### Two numbers an entry: --dcss-value and --dcss-value-y of entry i, or column i and row r
-
-`.dcss-array.dcss-xy` > children with `--dcss-n` and `--dcss-m` (or, packed, `--dcss-tracks` and `--dcss-tracks-y` on the array); the reader gets both; `--dcss-r` picks the row (unset: the row of `--dcss-i`), `--dcss-j` still a range of columns.
-
-Same frame: yes, both numbers moving; readers in the port. Exact.
-
-#### Entry i of a cyclic array, round either way
-
-`.dcss-cycle` with `--dcss-tracks`, any number of tracks; readers are children and in flow.
-
-Same frame: yes, forwards past the entries and backwards from -1. Exact.
-
-#### Rank within a bin: 1 for the first child put in a bin, 2 for the next, to 32
-
-`.dcss-bins` > children with `--dcss-bin`; what is inside gets `--dcss-bin` and `--dcss-rank`.
-
-Same frame: yes, with a bin changing every frame. Exact to 32; 33 reads 1.
-
-#### The largest number in a bin
-
-`.dcss-bins.dcss-bin-max` > children with `--dcss-bin` and `--dcss-n`; a reader `.dcss-at` with `--dcss-i` the bin; a range sums the maxes.
-
-Same frame: yes, with an item changing bin and number every frame. Exact.
-
-#### How many bins hold something
-
-`.dcss-bins > .dcss-track-count`; what is inside gets `--dcss-track-count`.
-
-Same frame: yes, with an item moving every frame. Exact for bins up to the box's width in px.
-
-#### Water filling: slot k reads min(cap k, level), the level what fills the width
-
-`.dcss-array.dcss-packed` with `--dcss-tracks: minmax(0, cap 1) minmax(0, cap 2) ...`, the width is the water.
-
-Same frame: yes, caps and width moving. To 1/64 px.
-
-#### A sort: entry i in order of a key; the i-th smallest, the largest (-1), the sum of the smallest few; equal keys in markup order
-
-`.dcss-array.dcss-sort` > children with `--dcss-key` (whole) and `--dcss-n`; readers as for child entries.
-
-Same frame: yes, with a key moving past the others every frame. Exact.
-
-#### How many bins in use are below a child's bin: its rank among the distinct bins, from 0
-
-`.dcss-bins` (not max): a `<b class="dcss-below">` inside a child; what is inside it gets `--dcss-below`.
-
-Same frame: yes, with an item moving every frame, so the bins in use change. Exact for bins up to the box's width in px.
-
-#### First-fit packing: each child's column and row where it lands, rows from the top
-
-`.dcss-pack` with `--dcss-columns` > children with `--dcss-w` (columns taken), a `.dcss-where` in each; what is inside its `<u>` gets `--dcss-column` and `--dcss-row`.
-
-Same frame: yes, with two spans changing every frame. Exact.
-
-#### Where a child is: its offset from the grid's top-left; in an array of child entries, the sum of the entries before it
-
-A `<b class="dcss-where"><u><u></u></u></b>` inside a child of an array, bins, shares, pack, sort, map or slide; what is inside the `<u>` gets `--dcss-x` and `--dcss-y`.
-
-Same frame: yes, with entries, shares and widths moving. Exact (1/64 px with fractions).
-
-#### Places in a sort: 1 for the smallest key, equal keys in markup order
-
-`.dcss-sort` > children with `--dcss-key` and a `.dcss-where`; what is inside its `<u>` gets `--dcss-place`.
-
-Same frame: yes, with two keys moving past the others every frame. Exact.
-
-#### A tile map: where each named area is and how big, and whether it is in the map
-
-`.dcss-tiles` with `--dcss-columns`, `--dcss-rows` and `--dcss-areas` (the grid-template-areas strings, picked by state if you like) > children at `grid-area: name` with a `.dcss-where`; what is inside its `<u>` gets `--dcss-x`, `--dcss-y`, `--dcss-width`, `--dcss-height` and `--dcss-fits`.
-
-Same frame: yes, with six maps (one invalid) switching every few frames. Exact, in tiles.
-
-#### 2D packing around walls: each child of w x h tiles where first fit puts it, row by row from the top, around the map's named areas and the children before it; whether it fits in the map
-
-`.dcss-tiles.dcss-pack` with a map: children at `grid-area: name` are walls, the others carry `--dcss-w` and `--dcss-h` and a `.dcss-where`; what is inside its `<u>` gets `--dcss-x`, `--dcss-y`, `--dcss-column`, `--dcss-row` and `--dcss-fits`.
-
-Same frame: yes, with three maps switching and two spans moving every frame. Exact.
-
-#### The push: boxes in order, each at the larger of its target and the end of the box before (1D non-penetration in one layout)
-
-`.dcss-push` > children with `--dcss-h` (width) and `--dcss-target`, a `.dcss-where` in each; what is inside its `<u>` gets `--dcss-x`, the box's start.
-
-Same frame: yes, with two targets and two widths moving every frame. Exact.
-
-#### The push from the end: each box at the smaller of its target and the start of the box after less its width, none past the wall
-
-`.dcss-push.dcss-end` with `--dcss-wall`, the same children. `.dcss-nested` on either nests the children in each other, each `<i>` holding its `.dcss-where` first and then the next child. It is 2x (Chrome) to 2.3x (WebKit) faster at 300 (vs-calc/trials/nested-push.mjs). It takes at most a few hundred children (HTML parsers stop nesting at 512 deep), and targets and ends under 65,536 px in the push.
-
-Same frame: yes, the same. Exact.
-
-#### Groups ranked by their totals: each group's bar at its total, sorted largest or smallest first (two stages in one frame)
-
-`.dcss-ranked` with `--dcss-bins` (up to 16; up to 32 with the class `dcss-wide`) and `--dcss-desc: 1` for largest first. It holds first G `<b class="dcss-group"><b class="dcss-group-total"></b></b>`, then `<b class="dcss-bars">` holding G `<b>`, then the items with `--dcss-bin` and `--dcss-n`; `--dcss-key` under `--dcss-span` orders items inside a group. Each bar's top is its rank times `--dcss-band` (2 px), its left and right its group's total. `.dcss-bin-max` ranks each group's largest instead. A `<b>` in an item is its segment of its group's bar (a sorted stacked bar). A `<b class="dcss-labels">` after the bars holds a label a group, right-aligned to the box's start at its bar's top. For many items, `.dcss-copy` with `--dcss-copy-width` reads the ranks back once instead of a lookup a segment (up to 16 groups). After the items it takes `<b class="dcss-ranks"><b><div class="dcss-segments">`, holding G `<b class="dcss-group">` and the items again, each with its `<b>`; the first items then hold no `<b>`.
-
-Same frame: yes, with the totals moving. Exact in Chrome, WebKit and Firefox.
-
-#### Grouped sums: each child reads the sum of the earlier children in its group; an item after a group reads its total; with --dcss-n 1, counts
-
-`.dcss-groups` > children with `--dcss-bin` and `--dcss-n` (whole, from 1), a `.dcss-where` in each; what is inside its `<u>` gets `--dcss-y` (the sum before it) and `--dcss-x` (the bin less 1).
-
-Same frame: yes, with two values moving every frame. Exact.
-
-#### The most intervals at one point; each interval's lane (interval colouring, first fit by start)
-
-`.dcss-overlap` > children with `--dcss-i` (start, whole, from 1) and `--dcss-span` (length), a `.dcss-where` in each; a `.dcss-track-count` in the grid gets `--dcss-track-count`, what is inside a child's `.dcss-where` `<u>` gets `--dcss-y` (its lane from 0).
-
-Same frame: yes, with two intervals moving every frame. Exact.
-
-#### Next-fit lines: how many lines a row of widths takes, each child's line and its place on it
-
-`.dcss-lines` with `--dcss-columns` (the row's width) > children with `--dcss-n`, a `.dcss-where` in each; `.dcss-track-count` gets the lines, a child's `.dcss-where` `--dcss-y` (its line from 0) and `--dcss-x` (before it on the line).
-
-Same frame: yes, with a width moving every frame. Exact.
-
-#### Column and row maxima of a matrix, from one grid
-
-`.dcss-array.dcss-xy.dcss-cells` > children with `--dcss-i` (column), `--dcss-r` (row), `--dcss-n` (width) and `--dcss-m` (height); a reader with `--dcss-i` and `--dcss-r` gets the column's widest as `--dcss-value` and the row's tallest as `--dcss-value-y`.
-
-Same frame: yes, with entries moving. Exact.
-
-#### Entries at any depth in a bins max
-
-`.dcss-bins.dcss-bin-max` > `.dcss-nest` wrappers (subgrids over every column, no padding) > ... > `<i>` with `--dcss-bin` and `--dcss-n`.
-
-Same frame: yes. Exact.
-
-#### Search in a sort: how many keys are below a key, up to it, equal to it, and whether any is
-
-`.dcss-sort` with a `.dcss-lo` probe before the entries and a `.dcss-hi` probe after, both with the key; inside `.dcss-lo`'s `.dcss-where` `--dcss-lower`, inside `.dcss-hi`'s `--dcss-upper`, inside a `.dcss-between` in `.dcss-hi` `--dcss-frequency` and `--dcss-member`.
-
-Same frame: yes, with the key moving over absent, present and end keys and an entry moving. Exact.
-
-#### A key range: which entries have a key in [from, to], as a bit mask and the six highest bits; many queries over one row
-
-`.dcss-key-range` > `<i style="--dcss-key: k; --dcss-bit: b">` (b 1 to 19) and queries `<b class="dcss-in" style="--dcss-from: f; --dcss-to: t; --dcss-not: b"><b><u><u></u></u></b></b>`; an entry and its query may share a `<div>` (display: contents); `.dcss-key-range.dcss-mask` for the mask alone (no top bits).
-
-Same frame: yes. Exact, keys and bounds moving, any whole keys, 19 bits.
-
-#### A window: entries counted from a moving start
-
-A `<b class="dcss-window">` with `--dcss-i` and `--dcss-span` in the port of an array; readers inside it (`--dcss-i: 1` its first, `-1` its last, ranges).
-
-Same frame: yes, with the window moving every frame. Exact.
-
-#### A keyed map: the largest number written at any whole key
-
-`.dcss-map` > children with `--dcss-key` and `--dcss-n`; a reader `.dcss-at` with `--dcss-key`.
-
-Same frame: yes, with a key and a value moving every frame. Exact; an unused key, or one outside `--dcss-min-key` .. `--dcss-max-key` (±1000 by default), reads 0; keys to ±20,000 checked.
-
-#### Formulas: sums, maxima, constant factors, min and difference, any depth, over numbers and whole computations
-
-`.dcss-width-sum`, `.dcss-largest`, `.dcss-scale`, `.dcss-width-min` (with `.dcss-rest`), `.dcss-stack`, `.dcss-tallest`, leaves with `--dcss-n`, readers `.dcss-at` in any node; see Formulas.
-
-Same frame: yes (check 46). Exact within 6 digits through `var()`.
-
-#### A second and a third pass in one grid: rows sized from sums of columns, a column from sums of rows
-
-In the port of an array: `<b class="dcss-hop">` with `--dcss-i`, `--dcss-j` (the columns it reads) and `--dcss-r` (its row). Its `<u>` gets `--dcss-value` (the span's sum) and sets `--dcss-put` (any style function of it; unset, the sum itself), and the row is as tall as its largest hop. `<b class="dcss-hop-y">` with `--dcss-i`, `--dcss-j` (rows) and `--dcss-r` (its column after the entries; needs `--dcss-array-length`) does the same in the other axis. The readers are `.dcss-at-y` (rows `--dcss-i` to `--dcss-j`) and `.dcss-at-x` (hop columns).
-
-Same frame: yes, entries moving (check 60). Exact on whole px; a written `--dcss-put` floors to 1/64 px.
-
-#### A sum of whole numbers, a max of sums, f(k) by a lookup table, without a grid
-
-`<b class="dcss-text">` with the author's counters (`counter-reset`) and `--dcss-text: counter(a, dcss-tally) counter(b, dcss-tally)` (`'\\a'` between lines); `dcss-table` and `.dcss-sq`, `.dcss-sqrt` or `--dcss-font` for f; the inner `<u>` of `<u><u></u></u>` gets `--dcss-value`; see Text.
-
-Same frame: yes (check 61). Exact.
-
-#### Prefix sums: each entry the sum so far, and the sum before it
-
-`.dcss-scan` > entries `<i style="--dcss-n: 12"></i>`, then readers `<b class="dcss-at" style="--dcss-i: k"><u></u></b>` (k 1 to the length, whole). The `<u>` gets `--dcss-value`, the sum of entries 1 to k, and `--dcss-before`, the sum of entries 1 to k - 1. A reader whose k never changes can be placed by `style="grid-area: 1 / 1 / span k / span k"` instead.
-
-Same frame: yes (checks 61, 66). Exact, whole numbers.
-
-#### Signed extremes: max(positives) + min(negatives) of any number of signed numbers; laid-out widths times factors in the same collapse, and through scopes two laid-out widths in one (a difference p1 W1 - p2 W2); as a child of a `.dcss-stack` or `.dcss-tallest` it counts there as its value, with no reader
-
-`.dcss-collapse` > formula children (floated: they give the width W and stay out of the margins). They are `<i style="--dcss-n: x">` (signed px) or `--dcss-p: p` (p% of the width it sits in), `<b class="dcss-scope">` (a box with its own margin and its own laid-out width, nesting), and a `<b class="dcss-at"><u></u></b>`. Numbers run from -10,000 up.
-
-Same frame: yes (checks 63, 64). Exact.
-
-#### max(0, A - B) of two laid-out widths as a width, with no reader; so min(a, b) and |a - b| on the width side too
-
-`<div class="dcss-minus">A<b>B</b></div>` (A and B width nodes; B under 2^20 px); `min` = minus(a + b, max(a, b)), `abs` = minus(a, b) + minus(b, a).
-
-Same frame: yes. Exact, inputs moving, in a sum, a collapse, a least, a scale, two deep.
-
-#### A height as a width, live: what a .dcss-width-min, a collapse or a stack is, laid on as a width
-
-`<div class="dcss-width-sum"><b class="dcss-turn"><b><b>H</b></b></b></div>`, with `--dcss-turn-tick` (and `--dcss-turn-tick-2`) on a box around it changing whenever an input under it does.
-
-Same frame: yes. Exact, inputs moving, nested, under .dcss-largest, .dcss-width-min, a collapse; idles at rest.
-
-#### A factor in flow: f x a laid-out size, counted by whatever contains it
-
-`.dcss-zoom` with `--dcss-zoom: f` on a node or a leaf; nests.
-
-Same frame: yes (check 63). To 1/64 px a zoomed length (exact for quarters, eighths ...); f > 0.
-
-#### Baselines: a row of max(a) + max(d), and each item handed max(a) - a_j
-
-`.dcss-baseline` > `<i style="--dcss-n: a; --dcss-m: d">` (a `.dcss-where` inside an item reads `--dcss-y`), a reader for the row.
-
-Same frame: yes (check 63). Exact.
-
-#### The best contiguous split into K parts: the least possible largest part
-
-`.dcss-columns` with `--dcss-parts: K` > `<i style="--dcss-n: h">`; for WebKit two copies in a `.dcss-alternate` with `--dcss-parity` flipped at each change, its reader reading the copy shown.
-
-Same frame: yes (check 63). Exact.
-
-#### Flex shares: weights, shrink, floors and caps in one layout
-
-`.dcss-flex` (a width) > `<i style="--dcss-n: start; --dcss-grow: g; --dcss-shrink: s; --dcss-flex-min: lo; --dcss-flex-max: hi">`; what is inside an `<i>` reads its width.
-
-Same frame: yes (check 63). To 1/64 px.
-
-#### Sliding-window maxima: the largest of the --dcss-span entries ending at entry j
-
-`.dcss-slide` with `--dcss-span` > children with `--dcss-n`, then readers `.dcss-at` with `--dcss-i`.
-
-Same frame: yes, with two entries moving every frame. Exact.
-
-#### Fair shares with floors: each child gets max(floor, weight x level), the level what fills the width
-
-`.dcss-shares` with a width > children with `--dcss-n` (the floor) and `--dcss-w` (a whole weight, 1 by default); what is inside a child gets `--dcss-value`.
-
-Same frame: yes, a floor and the width moving. To 1/32 px.
-
-#### d3's axis and d3-array's ticks, tickIncrement, tickStep and nice: a range's ticks as d3 picks them, drawn and labelled as d3.axisBottom draws them
-
-`.dcss-axis-bottom` (`-top`, `-left`, `-right`) or `.dcss-ticks` (not drawn) with `--start`, `--stop`, `--count`, an `<li>` a tick: each `<li>` gets `--dcss-tick` and `--dcss-tick-at`, the list `--dcss-tick-step`, `--dcss-tick-increment`, `--dcss-tick-count`. `.dcss-nice` with the same three gets `--dcss-nice-start` and `--dcss-nice-stop`.
-
-Same frame: yes: calc(), no layout. Equal to d3's answer on all 254 calls d3-array's tests make with finite numbers; places within 1/32 px of d3's axis and labels the same pixels as d3's text.
+| Names | What it computes | SPEC.md |
+|---|---|---|
+| `.dcss-array`, `--dcss-n`, `.dcss-at`, `--dcss-i`, `.dcss-out` | Entry i of an array of child entries | A1 |
+| `.dcss-track-count` | Counting the entries: negative indices and the end's check without writing `--dcss-array-length` | A7 |
+| `--dcss-i` | Entry -i (from the end) | A1, A10 |
+| `--dcss-i`, `--dcss-j` | The sum of entries i to j, either order; -1 as the end; i = j | A2 |
+| `.dcss-array`, `.dcss-packed`, `--dcss-tracks`, `--dcss-array-length` | Track i of a packed array, any length | A3 |
+| `--dcss-tracks`, `--dcss-of`, `--dcss-i`, `--x`, `--dcss-j` | The i-th slot named x: several arrays in one grid | A4 |
+| `.dcss-array`, `.dcss-xy`, `--dcss-n`, `--dcss-m`, `--dcss-tracks`, `--dcss-tracks-y`, `--dcss-r`, `--dcss-i`, `--dcss-j` | Two numbers per entry: --dcss-value and --dcss-value-y of entry i, or column i and row r | A6, A9 |
+| `.dcss-cycle`, `--dcss-tracks` | Entry i of a cyclic array, round either way | A5 |
+| `.dcss-bins`, `--dcss-bin` | Rank within a bin: 1 for the first child put in a bin, 2 for the next, to 32 | A15 |
+| `.dcss-bins`, `.dcss-bin-max`, `--dcss-bin`, `--dcss-n`, `.dcss-at`, `--dcss-i` | The largest number in a bin | A18 |
+| `.dcss-bins`, `.dcss-track-count` | How many bins hold something | A16 |
+| `.dcss-array`, `.dcss-packed`, `--dcss-tracks` | Water filling: slot k reads min(cap k, level), the level what fills the width | A25 |
+| `.dcss-array`, `.dcss-sort`, `--dcss-key`, `--dcss-n` | A sort: entry i in order of a key; the i-th smallest, the largest (-1), the sum of the smallest few; equal keys in markup order | A19 |
+| `.dcss-bins`, `.dcss-below` | How many bins in use are below a child's bin: its rank among the distinct bins, from 0 | A17 |
+| `.dcss-pack`, `--dcss-columns`, `--dcss-w`, `.dcss-where` | First-fit packing: each child's column and row where it lands, rows from the top | A27 |
+| `.dcss-where` | Where a child is: its offset from the grid's top-left; in an array of child entries, the sum of the entries before it | A24, A28 |
+| `.dcss-sort`, `--dcss-key`, `.dcss-where` | Places in a sort: 1 for the smallest key, equal keys in markup order | A20 |
+| `.dcss-tiles`, `--dcss-columns`, `--dcss-rows`, `--dcss-areas`, `.dcss-where` | A tile map: where each named area is and how big, and whether it is in the map | A29 |
+| `.dcss-tiles`, `.dcss-pack`, `--dcss-w`, `--dcss-h`, `.dcss-where` | 2D packing around walls: each child of w x h tiles where first fit puts it, row by row from the top, around the map's named areas and the children before it; whether it fits in the map | A30 |
+| `.dcss-push`, `--dcss-h`, `--dcss-target`, `.dcss-where` | The push: boxes in order, each at the larger of its target and the end of the box before (1D non-penetration in one layout) | A31 |
+| `.dcss-push`, `.dcss-end`, `--dcss-wall`, `.dcss-nested`, `.dcss-where` | The push from the end: each box at the smaller of its target and the start of the box after less its width, none past the wall | A31, A54 |
+| `.dcss-ranked`, `--dcss-bins`, `.dcss-wide`, `--dcss-desc`, `.dcss-group`, `.dcss-group-total`, `.dcss-bars`, `--dcss-bin`, `--dcss-n`, `--dcss-key`, `--dcss-span`, `--dcss-band`, `.dcss-bin-max`, `.dcss-labels`, `--dcss-gap`, `.dcss-copy`, `--dcss-copy-width`, `.dcss-ranks`, `.dcss-segments` | Groups ranked by their totals: each group's bar at its total, sorted largest or smallest first (two stages in one frame) | A55, A57 |
+| `.dcss-groups`, `--dcss-bin`, `--dcss-n`, `.dcss-where` | Grouped sums: each child reads the sum of the earlier children in its group; an item after a group reads its total; with --dcss-n 1, counts | A32 |
+| `.dcss-overlap`, `--dcss-i`, `--dcss-span`, `.dcss-where`, `.dcss-track-count` | The most intervals at one point; each interval's lane (interval colouring, first fit by start) | A33 |
+| `.dcss-lines`, `--dcss-columns`, `--dcss-n`, `.dcss-where`, `.dcss-track-count` | Next-fit lines: how many lines a row of widths takes, each child's line and its place on it | A34 |
+| `.dcss-array`, `.dcss-xy`, `.dcss-cells`, `--dcss-i`, `--dcss-r`, `--dcss-n`, `--dcss-m` | Column and row maxima of a matrix, from one grid | A36 |
+| `.dcss-bins`, `.dcss-bin-max`, `.dcss-nest`, `--dcss-bin`, `--dcss-n` | Entries at any depth in a bins max | A18 |
+| `.dcss-sort`, `.dcss-lo`, `.dcss-hi`, `.dcss-where`, `.dcss-between` | Search in a sort: how many keys are below a key, up to it, equal to it, and whether any is | A21 |
+| `.dcss-key-range`, `--dcss-key`, `--dcss-bit`, `.dcss-in`, `--dcss-from`, `--dcss-to`, `--dcss-not`, `.dcss-mask` | A key range: which entries have a key in [from, to], as a bit mask and the six highest bits; many queries over one row | A37 |
+| `.dcss-window`, `--dcss-i`, `--dcss-span` | A window: entries counted from a moving start | A11 |
+| `.dcss-map`, `--dcss-key`, `--dcss-n`, `.dcss-at` | A keyed map: the largest number written at any whole key | A22 |
+| `.dcss-width-sum`, `.dcss-largest`, `.dcss-scale`, `.dcss-width-min`, `.dcss-rest`, `.dcss-stack`, `.dcss-tallest`, `--dcss-n`, `.dcss-at` | Formulas: sums, maxima, constant factors, min and difference, any depth, over numbers and whole computations | A38 to A41 |
+| `.dcss-hop`, `--dcss-i`, `--dcss-j`, `--dcss-r`, `--dcss-put`, `.dcss-hop-y`, `--dcss-array-length`, `.dcss-at-y`, `.dcss-at-x`, `.dcss-row`, `.dcss-width-min`, `.dcss-stack`, `.dcss-tallest` | A second and a third pass in one grid: rows sized from sums of columns, a column from sums of rows | A42 |
+| `.dcss-text`, `--dcss-text`, `dcss-table`, `.dcss-sq`, `.dcss-sqrt`, `--dcss-font` | A sum of whole numbers, a max of sums, f(k) by a lookup table, without a grid | A43, A44, A50 |
+| `.dcss-scan`, `--dcss-n`, `.dcss-at`, `--dcss-i` | Prefix sums: each entry the sum so far, and the sum before it | A127 |
+| `.dcss-collapse`, `--dcss-n`, `--dcss-p`, `.dcss-scope`, `.dcss-at` | Signed extremes: max(positives) + min(negatives) of any number of signed numbers; laid-out widths times factors in the same collapse, and through scopes two laid-out widths in one (a difference p1 W1 - p2 W2); as a child of a `.dcss-stack` or `.dcss-tallest` it counts there as its value, with no reader | A45 to A47 |
+| `.dcss-minus` | max(0, A - B) of two laid-out widths as a width, with no reader; so min(a, b) and |a - b| on the width side too | A48 |
+| `.dcss-width-sum`, `.dcss-turn`, `--dcss-turn-tick`, `--dcss-turn-tick-2` | A height as a width, live: what a .dcss-width-min, a collapse or a stack is, laid on as a width | A49 |
+| `.dcss-zoom`, `--dcss-zoom` | A factor in flow: f x a laid-out size, counted by whatever contains it | A45 |
+| `.dcss-baseline`, `--dcss-n`, `--dcss-m`, `.dcss-where` | Baselines: a row of max(a) + max(d), and each item handed max(a) - a_j | A45 |
+| `.dcss-columns`, `--dcss-parts`, `--dcss-n`, `.dcss-alternate`, `--dcss-parity` | The best contiguous split into K parts: the least possible largest part | A45 |
+| `.dcss-flex`, `--dcss-n`, `--dcss-grow`, `--dcss-shrink`, `--dcss-flex-min`, `--dcss-flex-max` | Flex shares: weights, shrink, floors and caps in one layout | A45 |
+| `.dcss-slide`, `--dcss-span`, `--dcss-n`, `.dcss-at`, `--dcss-i` | Sliding-window maxima: the largest of the --dcss-span entries ending at entry j | A35 |
+| `.dcss-shares`, `--dcss-n`, `--dcss-w` | Fair shares with floors: each child gets max(floor, weight x level), the level what fills the width | A26 |
+| `.dcss-axis-bottom`, `.dcss-ticks`, `--start`, `--stop`, `--count`, `--dcss-tick`, `--dcss-tick-at`, `--dcss-tick-step`, `--dcss-tick-increment`, `--dcss-tick-count`, `.dcss-nice`, `--dcss-nice-start`, `--dcss-nice-stop` | d3's axis and d3-array's ticks, tickIncrement, tickStep and nice: a range's ticks as d3 picks them, drawn and labelled as d3.axisBottom draws them | A58, A59 |
+| `.dcss-piles`, `--dcss-span`, `--dcss-bin`, `--dcss-n`, `--dcss-key`, `.dcss-starts` | Items stacked by group, each at the sum of the heights before it in its group; where each group starts (a counting sort) | A56 |
+| `.list`, `--if`, `.pager`, `--page`, `.dcss-size` | A list in plain CSS (order sorts it, its width wraps it), items dropped, a page of it, and its size as numbers | A56 |
 
 <!-- /primitives -->
 
@@ -1234,7 +1141,7 @@ A number can be a CSS counter printed in a font whose glyphs draw nothing and ar
 |---|---|---|
 | a sum | counters on one line | the sum: 52 above |
 | a max | `'\a'` between counters: each line stands alone | the widest line: a max of sums |
-| f(k) by a table | `counter(a, dcss-table)` (k from 0 to 999 as the glyph U+E000 + k) in `.dcss-text.dcss-sq` (round(k^2 / 1000)), `.dcss-sqrt` (round(sqrt(1000 k))) or `style="--dcss-font: dcss-name"` | the sum of f over the line; past 999 `dcss-table` prints the tally, so f = k there |
+| f(k) by a table | `counter(a, dcss-table)` (k from 0 to 999 as the glyph U+E000 + k) in `.dcss-text.dcss-sq` (round(k^2 / 1000)), `.dcss-sqrt` (round(sqrt(1000 k))) or `style="--dcss-font: <font name>"` | the sum of f over the line; past 999 `dcss-table` prints the tally, so f = k there |
 | a table's totals | `<tr style="counter-increment: a 12 b 7">` in a `<table style="counter-reset: a b">`, and texts printing `counter(a, dcss-tally)` | in a row, the total so far; after the rows (a `<tfoot>`), the total |
 | a text in a grid | `<i class="dcss-text" style="...">` as an entry of an `.dcss-array`, `.dcss-bins.dcss-bin-max` or `.dcss-map`, or a leaf of a formula | (no reader of its own) its track or leaf is as wide as its text |
 | two numbers by a table: min, max, a x b, \|a - b\|, a > b | a pair counter `counter-reset: p calc(64 * a + b + 65)` (a, b 0 to 31) printed by `counter(p, dcss-pair-min)`, `dcss-pair-max`, `dcss-pair-product`, `dcss-pair-difference` or `dcss-pair-greater` | g(a, b); pairs on one line add up, any mix of tables |
@@ -1248,11 +1155,11 @@ A number can be a CSS counter printed in a font whose glyphs draw nothing and ar
 - Use whole numbers, 0 or more: counters are integers, so `round()` a computed one. The result fits six digits through `var()` and 33,554,428 px of layout; a table's keys run from 0 to 999.
 - A text keeps its own type: your `letter-spacing` or `text-transform` doesn't reach it.
 - `--dcss-text` can't be registered with `inherits: false`, and a `"` inside `style="..."` ends the attribute, so write `'\a'`.
-- `.dcss-rom` reads f(k) at style time from a variable font, with no text: `<i class="dcss-rom dcss-sqrt" style="--dcss-k: 300"><u></u></i>` gives the `<u>` `--dcss-value: 548`. `.dcss-rom2` reads the five pair tables the same way. Spread many `.dcss-rom2` reads over several pages, or use the pair counters of `.dcss-text` instead: each distinct read is a font variation of its own, and Safari loads a page of many slowly ([Performance](#performance)).
+- `.dcss-rom` reads f(k) at style time from a variable font, with no text: `<i class="dcss-rom dcss-sqrt" style="--dcss-k: 300"><u></u></i>` gives the `<u>` `--dcss-value: 548`. `.dcss-rom2` reads the five pair tables the same way: `<i class="dcss-rom2 dcss-pair-min" style="--dcss-a: 5; --dcss-b: 9"><u></u></i>` gives the `<u>` `--dcss-value: 5`, a and b from 0 to 31, with `.dcss-pair-max`, `.dcss-pair-product`, `.dcss-pair-difference` or `.dcss-pair-greater` for the others. Spread many `.dcss-rom2` reads over several pages, or use the pair counters of `.dcss-text` instead: each distinct read is a font variation of its own, and Safari loads a page of many slowly ([Performance](#performance)).
 
 ### Loops and sheets
 
-These run on dcss-store.css: their numbers are its stored cells (`[data-store]`), read by `[data-store-read]` and `[data-store-read-3]` elements that name the cells by `--store-of`. A loop is a while loop written by hand. Its cells are the items of one `.loop-flow`, which reads all of them, and one more cell under the flow keeps the clock and the total. The markup, with one `.loop-in` per cell:
+These are in `dcss-array-extras.css`: link it beside dcss-store.css. They run on dcss-store.css: their numbers are its stored cells (`[data-store]`), read by `[data-store-read]` and `[data-store-read-3]` elements that name the cells by `--store-of`. A loop is a while loop written by hand. Its cells are the items of one `.loop-flow`, which reads all of them, and one more cell under the flow keeps the clock and the total. The markup, with one `.loop-in` per cell:
 
 ```html
 <div class="loop power">
@@ -1285,7 +1192,7 @@ A sheet is a `<table class="sheet">` whose cells are stored numbers and whose fo
 ```
 
 - Inside a `[data-store-read-3]`, the cells it names are `--in-a`, `--in-b` and `--in-c`; a second one inside it gives `--in-d` to `--in-f`, and a third `--in-g` to `--in-i`.
-- A fold reads a column into one number: elements with the class `sum`, `mean`, `max` or `min` name three cells each, nest up to four deep with the `<output>` innermost, and give `--fold` and `--fold-count`.
+- A fold reads a column into one number: elements with the class `sum`, `mean`, `max` or `min` name three cells each, nest up to four deep with the `<output>` innermost, and give `--fold` and `--fold-count`; a mean's `<output>` may set `--fold-scale` (10 shows a mean of whole numbers in tenths).
 - An `<output>` shows its number in the format its class names: `money` (cents as 12.34), `int`, `pct`, `tenths`, `bp` (basis points as 7.50%) or `grade` (tenths of a point as a letter).
 
 ### Limits
@@ -1296,106 +1203,115 @@ A sheet is a `<table class="sheet">` whose cells are stored numbers and whose fo
 - An `.dcss-xy` array has as many rows as entries; a reader reads one row, and `--dcss-r` takes no range.
 - A reader is placed against its grid, so nothing between them can have a transform, filter, perspective or containment of its own.
 - Bins in use are counted up to the box's width in px. For the smallest number in a bin, take the max of a bound minus the number.
-- A reduction's value is kept to 1/64. In Chrome, a list wider than 262,144 px (2^18) reads without its 64ths, and past 2^24 px without whole pixels. Up to 63 skipped items are counted.
+- A reduction's value is kept to 1/64, and up to 63 skipped items are counted. Water filling, flex shares and `.dcss-zoom` factors are exact to 1/64 px, fair shares to 1/32 px.
+- One call's answer can be another's input, up to the length Browsers gives for Safari.
 - In Firefox, put `.dcss-calc` boxes and the results they name in a container as wide as its content (`width: max-content`): Firefox keeps an `anchor-size()` until the box is laid out again ([QUIRKS.md](QUIRKS.md) Q3).
 
 ## Browsers
 
-Chrome and Safari both run everything: Chrome 155 and WebKit 26.4, headless, pass all 119 requirements in [SPEC.md](SPEC.md). The d3 calls give d3's own answer to 4,670 of the 7,049 calls d3's tests make (66%), and cover 69 of d3's 508 functions in full; SPEC.md's implementation report has the count for each call. Easings and scales come within 1e-12 of d3. A treemap's boxes are within 2/64 px per level of d3's for totals up to 50,000; near a million, WebKit is 0.3 px off and Chrome 0.02 px.
+<!-- browsers -->
 
-Firefox 158 computes `calc()` in 32-bit floats, so the calls that need a double's exact digits (exact sums, dates, colors, most formatting) give wrong answers there, and it has no view timelines, which loops and sheets need. It passes 57 of the 119 requirements. `@function` runs only in Chrome: WebKit 26.4 and Firefox 158 don't parse it, and the classes work everywhere. [QUIRKS.md](QUIRKS.md) has the engine bugs the sheet works around.
+Chrome and Safari's engine both run everything: headless Chrome 155 and WebKit 26.4 (Playwright's build of Safari's engine, not Safari itself) pass all 111 requirements in [SPEC.md](SPEC.md). The d3 calls give d3's own answer to 3,192 of the 7,049 calls d3's tests make (45%), and cover 26 of d3's 508 functions in full and 73 more in part; SPEC.md's implementation report has the count for each call. Easings and scales come within 1e-12 of d3. A treemap's boxes are within 2/64 px per level of d3's for totals up to 50,000; near a million, WebKit is 0.3 px off and Chrome 0.02 px.
+
+In Chrome, a reduction's list wider or taller than 262,144 px (2^18) reads without its 64ths, and past 2^24 px without whole pixels: a sum whose positives or negatives pass 2^18, a mean whose sum and 1024 for each negative value do, or one with 64 negative values or more.
+
+Safari drops an input copied into one formula past 65,535 tokens: a scale's answer is short enough to be another scale's domain stop or exponent, or a projection's point; a scale's inverse copies its stops up to 34 times and its exponent up to 86, and a projection's answer (about 12,000 tokens) is too long for those inputs.
+
+Firefox 158 computes `calc()` in 32-bit floats, so the calls that need a double's exact digits (exact sums, dates, most formatting) give wrong answers there, and it has no view timelines, which loops and sheets need. It passes 71 of the 111 requirements. `@function` runs only in Chrome: WebKit 26.4 and Firefox 158 don't parse it, and the classes work everywhere. [QUIRKS.md](QUIRKS.md) has the engine bugs the sheet works around.
+
+<!-- /browsers -->
 
 ## Performance
 
-The work happens in layout, in the frame a number changes. Chrome loads any one family in 40 ms or less. In WebKit, the median of three cold loads beside the core (2026-10-26):
+The work happens in layout, in the frame a number changes. Chrome loads any one family in 40 ms or less. <!-- performance -->
+
+In WebKit, the median of three cold loads beside the core (2026-10-28):
 
 | File in `families/` | Size | Load in WebKit 26.4 |
 |---|---:|---:|
-| `array.css` | 427 KB | 24 ms |
-| `ticks.css` | 172 KB | 19 ms |
-| `format.css` | 246 KB | 16 ms |
-| `scale.css` | 89 KB | 12 ms |
-| `ease.css` | 37 KB | 11 ms |
-| `hierarchy.css` | 2.7 MB | 59 ms |
-| `aggregate.css` | 4.0 MB | 76 ms |
-| `order.css` | 1.8 MB | 42 ms |
-| `extrema.css` | 956 KB | 27 ms |
-| `color.css` | 3.1 MB | 59 ms |
-| `color-text.css` | 3.7 MB | 75 ms |
-| `date-parse.css` | 1.0 MB | 32 ms |
-| `date-parse-local.css` | 1.1 MB | 30 ms |
-| `time.css` | 1.6 MB | 37 ms |
-| `date-format.css` | 88 KB | 12 ms |
-| `geo.css` | 1.7 MB | 33 ms |
-| `random.css` | 60 KB | 12 ms |
+| `ticks.css` | 128 KB | 14 ms |
+| `array.css` | 262 KB | 15 ms |
+| `hierarchy.css` | 6.5 KB | 10 ms |
+| `scale.css` | 120 KB | 12 ms |
+| `format.css` | 233 KB | 15 ms |
+| `ease.css` | 41 KB | 10 ms |
+| `time.css` | 315 KB | 15 ms |
+| `date-format.css` | 36 KB | 10 ms |
+| `geo.css` | 248 KB | 13 ms |
 
-The core is 308 KB, 76 KB gzipped. Parts, gzipped, the median part of each family against the whole family:
+The core is 284 KB, 73 KB gzipped; `dcss-array-extras.css`, the lists, loops and sheets, 15 KB, 3.8 KB gzipped. Parts, gzipped, the median part of each family against the whole family:
 
 | Family | Parts | A part | The family |
 |---|---:|---:|---:|
-| `array.css` | 35 | 4.4 KB (3.6–16) | 26 KB |
-| `ticks.css` | 8 | 2.9 KB (0.5–8.4) | 13 KB |
-| `format.css` | 9 | 3.3 KB (1.0–12) | 18 KB |
-| `scale.css` | 6 | 2.1 KB (0.5–2.6) | 6.2 KB |
-| `ease.css` | 38 | 0.4 KB | 2.1 KB |
-| `color.css` | 22 | 5.1 KB (0.8–104) | 142 KB |
-| `date-parse.css`, `date-parse-local.css` | 106 | 8.6 KB (0.5–20) | 42, 54 KB |
-| `time.css` | 118 | 0.7 KB (0.5–16) | 90 KB |
-| `date-format.css` | 82 | 5.9 KB | 7.5 KB |
-| `geo.css` | 22 | 1.6 KB (0.5–30) | 76 KB |
-| `aggregate.css` | 6 | 46 KB (44–158) | 223 KB |
-| `order.css` | 6 | 47 KB | 82 KB |
-| `extrema.css` | 12 | 36 KB | 40 KB |
-| `color-text.css` | 3 | 113 KB (12–141) | 155 KB |
+| `ticks.css` | 8 | 2.9 KB (0.5–5.6) | 10 KB |
+| `array.css` | 38 | 1.7 KB (0.7–5.7) | 20 KB |
+| `hierarchy.css` | 4 | 0.6 KB (0.5–0.7) | 0.9 KB |
+| `scale.css` | 6 | 2.3 KB (0.5–3.0) | 7.5 KB |
+| `format.css` | 9 | 3.2 KB (1.0–11.5) | 18 KB |
+| `ease.css` | 37 | 0.6 KB (0.5–1.0) | 2.9 KB |
+| `time.css` | 65 | 0.8 KB (0.7–3.7) | 14 KB |
+| `date-format.css` | 41 | 3.4 KB (3.2–3.4) | 4.1 KB |
+| `geo.css` | 20 | 1.4 KB (0.5–2.1) | 16 KB |
 
-- The typed aggregates compute 20 slots whatever the length. With four values, an fsum update takes 3 ms in Chrome and 6 in WebKit at `data-dcss-capacity="4"`, against 39 and 76 at 20 slots.
+<!-- /performance -->
+
 - SI formatting is too slow for 30 outputs changing every frame.
+- Variance and bins cost what a mean does: 50 figures of 64 values, one value in each moving every frame, take 18 ms a frame in Chrome and 22 in WebKit for variance, 12 and 23 for bins (8 thresholds), against 18 and 34 for means (2026-10-28).
 - Sorting separate results with anchors (Recipes): 32 bars take 1.6 ms an update in Chrome and 2 in WebKit.
 - Put changing numbers on the entries: 1,000 entries each animating its own `--dcss-n` take 13.6 ms a frame in Chrome and 16 in WebKit, against 32.0 and 54 with one changing number inherited from the grid.
+- `.dcss-nested` makes the push 2x (Chrome) to 2.3x (WebKit) faster at 300 boxes.
+- Map projections are costly to move: 300 points moving every frame, a reader each, take 450 ms a frame in Chrome and 680 in WebKit for stereographic, 325 and 470 for mercator, 1,200 and 1,620 for an equirectangular inverse (2026-10-28). A still map costs nothing after its first frame.
+- A call reads its `--value` once, as numbers the browser keeps exactly, so another call's answer works as its input in Safari. That read is part of every update. With 300 calls moving every frame, a reader each, a frame takes: easings 20 ms in Chrome and 24 in WebKit; UTC day floors 24 and 35; linear scales 38 and 65; pow scales 101 and 198; piecewise linear scales 149 and 285 (2026-10-28).
 - On an `.dcss-plain` array (whole indices from 1 to the length, nothing negative or fractional), readers skip the index math: a window max of 298 readers drops from 8.1 to 4.9 ms in Chrome and from 14 to 8 in WebKit.
 - `.dcss-rom2` reads load slowly in Safari: all 5,120 pair-table entries on one page took 53.6 s to load in WebKit 26.4, against 0.5 s in Chrome 155; as five pages of 1,324 reads, each loaded in under 7 s (2026-10-22).
 - A treemap's line drifts with its length: WebKit is 0.29 px off at 1,000 siblings.
 
 Each grid primitive's cost, Chrome then WebKit: a frame's time with 300 readers less the same page without them, divided by 300, the numbers changing every frame, in µs unless written otherwise.
 
+<!-- primitive-costs -->
+
 | Primitive | Cost |
 |---|---|
-| Entry i of an array of child entries | Chrome 6.3-6.5 µs a read, WebKit 9.1-9.6 |
-| Counting the entries: negative indices and the end's check without writing `--dcss-array-length` | Chrome 8.2 µs a read, WebKit 29.3 |
+| Entry i of an array of child entries | Chrome 6.3-6.5 µs per read, WebKit 9.1-9.6 |
+| Counting the entries | Chrome 8.2 µs per read, WebKit 29.3 |
 | Track i of a packed array, any length | Chrome 5.5-5.8, WebKit 9.3-10.0 |
-| The i-th slot named x: several arrays in one grid | Chrome 5.8-6.5, WebKit 6.2-10.6 |
-| Two numbers an entry: --dcss-value and --dcss-value-y of entry i, or column i and row r | Chrome 7.9 µs a read (two numbers), WebKit 9.9 |
+| The i-th slot named x | Chrome 5.8-6.5, WebKit 6.2-10.6 |
+| Two numbers per entry | Chrome 7.9 µs per read (two numbers), WebKit 9.9 |
 | Entry i of a cyclic array, round either way | Chrome 6.1-6.4, WebKit 11.1-12.2 (on these fixed-size tracks) |
-| Rank within a bin: 1 for the first child put in a bin, 2 for the next, to 32 | Chrome 5.6-6.3, WebKit 9.8-10.1 |
+| Rank within a bin | Chrome 5.6-6.3, WebKit 9.8-10.1 |
 | The largest number in a bin | Chrome 16.1 µs a child plus its reader, WebKit 25.9 |
-| Water filling: slot k reads min(cap k, level), the level what fills the width | Chrome 4.2, WebKit 9.5 |
-| A sort: entry i in order of a key; the i-th smallest, the largest (-1), the sum of the smallest few; equal keys in markup order | Chrome 5.5, WebKit 9.5 |
-| How many bins in use are below a child's bin: its rank among the distinct bins, from 0 | Chrome 8.2, WebKit 15.2 |
-| First-fit packing: each child's column and row where it lands, rows from the top | Chrome 19.6 an item with its where, WebKit 42.2 |
-| Places in a sort: 1 for the smallest key, equal keys in markup order | Chrome 17.4 an entry with its where, WebKit 40.9 |
-| A tile map: where each named area is and how big, and whether it is in the map | Chrome 32.5 a child with its where, WebKit 96.3 (the old sheet in the same harness: 124.1 against 118.1) |
-| 2D packing around walls: each child of w x h tiles where first fit puts it, row by row from the top, around the map's named areas and the children before it; whether it fits in the map | Chrome 34.1 an item (25 maps of 12, switching), WebKit 107.3 (one map of 100: 5.9 ms a frame) |
-| The push: boxes in order, each at the larger of its target and the end of the box before (1D non-penetration in one layout) | Chrome 26.8 a box with its where, WebKit 50.2 |
-| The push from the end: each box at the smaller of its target and the start of the box after less its width, none past the wall | Chrome 24.2, WebKit 44.1 |
-| Grouped sums: each child reads the sum of the earlier children in its group; an item after a group reads its total; with --dcss-n 1, counts | Chrome 20.1 an item (19.3 with values to 1,000), WebKit 39.9 (178 with values to 1,000) |
-| The most intervals at one point; each interval's lane (interval colouring, first fit by start) | Chrome 5.3 an item (5.5 at 1,800), WebKit 13.3 (14.0 at 1,800) |
-| Next-fit lines: how many lines a row of widths takes, each child's line and its place on it | Chrome 3.5 an item (3.7 at 1,800), WebKit 9.1 (9.4 at 1,800) |
-| Search in a sort: how many keys are below a key, up to it, equal to it, and whether any is | Chrome 11.2 an element, WebKit 17.0 |
-| A key range: which entries have a key in [from, to], as a bit mask and the six highest bits; many queries over one row | Chrome 3.1 ms for 100 queries over 19 entries, mask only (vs-calc range), WebKit 6 |
-| A window: entries counted from a moving start | Chrome 8.8, WebKit 20.5 (the old sheet in the same harness: 16.2 against 18.8) |
-| A keyed map: the largest number written at any whole key | Chrome 18.0 (300 keys over 20,000, every key in range), WebKit 63.1 (an earlier figure, 32.5, had 271 of 300 keys outside the range) |
-| A second and a third pass in one grid: rows sized from sums of columns, a column from sums of rows | Chrome 7.6 µs a hop at 256, WebKit 23 |
-| A sum of whole numbers, a max of sums, f(k) by a lookup table, without a grid | Chrome 1.13 ms for 256 numbers summed and looked up, WebKit 2.25 |
-| Prefix sums: each entry the sum so far, and the sum before it | Chrome 2.5 ms for 300 entries, every sum read (150 readers, placed by grid-area; vs-calc prefix), WebKit 5.0 |
-| Signed extremes: max(positives) + min(negatives) of any number of signed numbers; laid-out widths times factors in the same collapse, and through scopes two laid-out widths in one (a difference p1 W1 - p2 W2); as a child of a `.dcss-stack` or `.dcss-tallest` it counts there as its value, with no reader | Chrome 1.43 ms a chain of 256, WebKit 2.50 |
-| A height as a width, live: what a .dcss-width-min, a collapse or a stack is, laid on as a width | Chrome 14.6 a turn, WebKit 40.7 |
-| A factor in flow: f x a laid-out size, counted by whatever contains it | Chrome a dot product of 256: 2.57, WebKit 3.62 |
-| Baselines: a row of max(a) + max(d), and each item handed max(a) - a_j | Chrome 1.56 a row of 256, WebKit 5.00 |
-| The best contiguous split into K parts: the least possible largest part | Chrome 1.10 for 256 in 8 parts, WebKit 4.0 |
-| Flex shares: weights, shrink, floors and caps in one layout | Chrome 1.91 for 256, WebKit 4.38 |
-| Sliding-window maxima: the largest of the --dcss-span entries ending at entry j | Chrome 5.2, WebKit 6.4 |
-| Fair shares with floors: each child gets max(floor, weight x level), the level what fills the width | Chrome 10.5 an entry, WebKit 13.4 |
-| d3's axis and d3-array's ticks, tickIncrement, tickStep and nice: a range's ticks as d3 picks them, drawn and labelled as d3.axisBottom draws them | Chrome 0.42 ms a .dcss-ticks of 16, 1.17 a drawn axis, 0.84 a .dcss-nice, WebKit 0.74, 1.62 and 1.51 ms |
+| Water filling | Chrome 4.2, WebKit 9.5 |
+| A sort | Chrome 5.5, WebKit 9.5 |
+| How many bins in use are below a child's bin | Chrome 8.2, WebKit 15.2 |
+| First-fit packing | Chrome 19.6 per item with its where, WebKit 42.2 |
+| Where a child is | Chrome about 10 per read, WebKit about 30 |
+| Places in a sort | Chrome 17.4 per entry with its where, WebKit 40.9 |
+| A tile map | Chrome 32.5 per child with its where, WebKit 96.3 (the old sheet in the same harness: 124.1 against 118.1) |
+| 2D packing around walls | Chrome 34.1 per item (25 maps of 12, switching), WebKit 107.3 (one map of 100: 5.9 ms per frame) |
+| The push | Chrome 26.8 per box with its where, WebKit 50.2 |
+| The push from the end | Chrome 24.2, WebKit 44.1 |
+| Grouped sums | Chrome 20.1 per item (19.3 with values to 1,000), WebKit 39.9 (178 with values to 1,000) |
+| Interval lanes | Chrome 5.3 per item (5.5 at 1,800), WebKit 13.3 (14.0 at 1,800) |
+| Next-fit lines | Chrome 3.5 per item (3.7 at 1,800), WebKit 9.1 (9.4 at 1,800) |
+| Search in a sort | Chrome 11.2 per element, WebKit 17.0 |
+| A key range | Chrome 3.1 ms for 100 queries over 19 entries, mask only (vs-calc range), WebKit 6 |
+| A window | Chrome 8.8, WebKit 20.5 (the old sheet in the same harness: 16.2 against 18.8) |
+| A keyed map | Chrome 18.0 (300 keys over 20,000, every key in range), WebKit 63.1 (an earlier figure, 32.5, had 271 of 300 keys outside the range) |
+| Formulas | see Formulas |
+| A second and a third pass in one grid | Chrome 7.6 µs per hop at 256, WebKit 23 |
+| Sums and lookups in text | Chrome 1.13 ms for 256 numbers summed and looked up, WebKit 2.25 |
+| Prefix sums | Chrome 2.5 ms for 300 entries, every sum read (150 readers, placed by grid-area; vs-calc prefix), WebKit 5.0 |
+| Signed extremes | Chrome 1.43 ms a chain of 256, WebKit 2.50 |
+| A height as a width, live | Chrome 14.6 per turn, WebKit 40.7 |
+| A factor in flow | Chrome a dot product of 256: 2.57, WebKit 3.62 |
+| Baselines | Chrome 1.56 a row of 256, WebKit 5.00 |
+| The best contiguous split into K parts | Chrome 1.10 for 256 in 8 parts, WebKit 4.0 |
+| Flex shares | Chrome 1.91 for 256, WebKit 4.38 |
+| Sliding-window maxima | Chrome 5.2, WebKit 6.4 |
+| Fair shares with floors | Chrome 10.5 per entry, WebKit 13.4 |
+| Ticks and axes | Chrome 0.42 ms a .dcss-ticks of 16, 1.17 a drawn axis, 0.84 a .dcss-nice, WebKit 0.74, 1.62 and 1.51 ms |
+
+<!-- /primitive-costs -->
 
 Formulas, an update forced:
 

@@ -2,7 +2,7 @@
   "noscripting": {
     "dcss-array.css": {
       "__compat": {
-        "description": "dcss-array.css, measured 2026-10-25",
+        "description": "dcss-array.css, measured 2026-10-29",
         "support": {},
         "status": {
           "experimental": true,
@@ -12,7 +12,7 @@
       },
       "A1": {
         "__compat": {
-          "description": "In an `.dcss-array` of `<i>` entries with `--dcss-n`, a reader `.dcss-at` with whole `--dcss-i`, in the port `<b class=\"dcss-out\">` or inside an entry, MUST give what is inside it `--dcss-value` equal to entry i, and entry i from the end for -i, in the frame the entries change, exact for whole numbe",
+          "description": "In an `.dcss-array` of `<i>` entries with `--dcss-n`, a reader `.dcss-at` with whole `--dcss-i`, in the port `<b class=\"dcss-out\">` or inside an entry, MUST give what is inside it `--dcss-value` equal to entry i, and entry i from the end for -i, in the frame the entries change, exact for whole numbers.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -1188,7 +1188,7 @@
       },
       "A66": {
         "__compat": {
-          "description": "Both compiler entries MUST share one formula operation and layout cover, preserving standalone grammar and options. Means and extents of 1–300 whole values in 0–1000 MUST match the reference within 0.01. Existing recipes outside the cover's supported grammar or bounds MUST retain their previous lowe",
+          "description": "Both compiler entries MUST share one formula operation and layout cover, preserving standalone grammar and options. Means and extents of 1–300 whole values in 0–1000 MUST match the reference within 0.01. Existing recipes outside the cover's supported grammar or bounds MUST retain their previous lowering.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -1211,7 +1211,7 @@
       },
       "A53": {
         "__compat": {
-          "description": "Results of separate computations, each an `.dcss-array` as wide as its total and named by `anchor-name`, MUST place their marks in sorted order in the same frame when each mark's `top` sums, over the others, `clamp(0, (anchor-size(--other width) - anchor-size(--own width)) / 1px * 2 + t, 1)` (t 1 fo",
+          "description": "Results of separate computations, each an `.dcss-array` as wide as its total and named by `anchor-name`, MUST place their marks in sorted order in the same frame when each mark's `top` sums, over the others, `clamp(0, (anchor-size(--other width) - anchor-size(--own width)) / 1px * 2 + t, 1)` (t 1 for an earlier result, else 0), for 4 to 32 results.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -1234,7 +1234,7 @@
       },
       "A55": {
         "__compat": {
-          "description": "`.dcss-ranked` with `--dcss-bins` G up to 16 (32 with `dcss-wide`) MUST place bar k at its group's total of `--dcss-n` (`.dcss-bin-max`: its largest), as many `--dcss-band`s down as groups beat it, largest or smallest first, ties to the lower bin; an item's `<b>` on its group's bar after the items b",
+          "description": "`.dcss-ranked` with `--dcss-bins` G up to 16 (32 with `dcss-wide`) MUST place bar k at its group's total of `--dcss-n` (`.dcss-bin-max`: its largest), as many `--dcss-band`s down as groups beat it, largest or smallest first, ties to the lower bin; an item's `<b>` on its group's bar after the items before it; label k at bar k's top.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -1257,7 +1257,7 @@
       },
       "A56": {
         "__compat": {
-          "description": "`.dcss-piles` MUST place each item at the sum of the heights before it in its group; `.dcss-starts` MUST place group k's marker at the sum of `--dcss-n` over earlier groups; a `.list`'s `.dcss-size` MUST read its width and height.",
+          "description": "`.dcss-piles` MUST place each item at the sum of the heights before it in its group; `.dcss-starts` MUST place group k's marker at the sum of `--dcss-n` over earlier groups; with dcss-array-extras.css, a `.list`'s `.dcss-size` MUST read its width and height.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -1303,7 +1303,7 @@
       },
       "A58": {
         "__compat": {
-          "description": "`.dcss-ticks` (or `.dcss-axis-*`) with `--start`, `--stop` and `--count` MUST give `--dcss-tick-increment` and `--dcss-tick-step` equal to d3-array 3.2.4's tickIncrement and tickStep, as many `<li>`s shown as its ticks (the rest `visibility: hidden` and out of flow), and its k-th `<li>` `--dcss-tick",
+          "description": "`.dcss-ticks` (or `.dcss-axis-*`) with `--start`, `--stop` and `--count` MUST give `--dcss-tick-increment` and `--dcss-tick-step` equal to d3-array 3.2.4's tickIncrement and tickStep, as many `<li>`s shown as its ticks (the rest `visibility: hidden` and out of flow), and its k-th `<li>` `--dcss-tick` the k-th tick; `.dcss-nice` with the same three MUST give `--dcss-nice-start` and `--dcss-nice-stop` equal to nice's; for finite start, stop and count.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -1349,7 +1349,7 @@
       },
       "A60": {
         "__compat": {
-          "description": "`.dcss-sum`, `-count`, `-mean`, `-min`, `-max` and `-extent` over `<li>`s with `--value` MUST give the element after the list `--dcss-<name>` (extent: `--dcss-min`, `--dcss-max`) equal to d3-array 3.2.4's, skipping values not 0 or more, `--dcss-err` 1 if one was skipped, 2 for d3's undefined; an emp",
+          "description": "`.dcss-sum`, `-count`, `-mean`, `-min`, `-max` and `-extent` over `<li>`s with `--value` MUST give the element after the list `--dcss-<name>` (extent: `--dcss-min`, `--dcss-max`) equal to d3-array 3.2.4's for signed values on the 1/64 grid (a mean's from -1024, min, max and extent's within ±131,072), skipping what isn't a number with `--dcss-err` 1 (a sum 0), 2 for d3's undefined or a value out of range; an empty `<output>` MUST print it as format(\",\") does, to 6 decimals.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -1361,7 +1361,7 @@
             },
             "firefox": {
               "version_added": false,
-              "notes": "FAIL: 154 of 154 d3 calls, but 190 of 420 seeded reads: layout snaps to 1/60 px, so 64ths and the skipped items' 1/64 px marks are lost"
+              "notes": "FAIL: 160 of 160 d3 calls, but 218 of 420 seeded reads and 120 of 240 moving: layout snaps to 1/60 px, so 64ths and the skipped items' 1/64 px marks are lost (2026-10-28)"
             }
           },
           "status": {
@@ -1373,7 +1373,7 @@
       },
       "A61": {
         "__compat": {
-          "description": "`.dcss-treemap-slice`, `-dice` and `.dcss-partition` over nested `<li>`s, leaves with `--value` (totals 64 to 50,000), and `-slice-dice` with every node's MUST lay each `<li>` within 2/64 px a level of its node's rectangle in d3-hierarchy 3's treemap() with that tile, or partition(), over the figure",
+          "description": "`.dcss-treemap-slice`, `-dice` and `.dcss-partition` over nested `<li>`s, leaves with `--value` (totals 64 to 50,000), and `-slice-dice` with every node's MUST lay each `<li>` within 2/64 px a level of its node's rectangle in d3-hierarchy 3's treemap() with that tile, or partition(), over the figure's box.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -1396,7 +1396,7 @@
       },
       "A62": {
         "__compat": {
-          "description": "`.dcss-scale-linear`, `.dcss-scale-pow` (`--exponent`), `.dcss-scale-sqrt` and `.dcss-scale-log` with `--domain-k`, `--range-k` (k 0 to 7, `--stops` of them), `--clamp`, `--round` and `--value` MUST give `--dcss-scale-<name>` and `--dcss-scale-<name>-invert` equal to d3-scale 4.0.2's scale(value) an",
+          "description": "`.dcss-scale-linear`, `.dcss-scale-pow` (`--exponent`), `.dcss-scale-sqrt` and `.dcss-scale-log` with `--domain-k`, `--range-k` (k 0 and 1; with `.dcss-piecewise`, k 0 to 7, `--stops` of them), `--clamp`, `--round` and `--value` MUST give `--dcss-scale-<name>` and `--dcss-scale-<name>-invert` equal to d3-scale 4.0.2's scale(value) and invert(value) (a log scale within 256 × 2^-52 of it); for the linear, pow and sqrt scales `.dcss-ticks`, `.dcss-nice` and `.dcss-format-*` over the domain's ends MUST give its ticks(count), nice(count) and tickFormat(count, specifier)(x) for specifiers of type f or %; for finite numbers.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -1443,7 +1443,7 @@
       },
       "A64": {
         "__compat": {
-          "description": "`.dcss-format-fixed` and `.dcss-format-percent` with `--value`, `--precision`, `--comma`, `--sign` and `--symbol` MUST print in their `::after` the text d3-format 3.1.2's format prints for that specifier (type f or %, sign - or +, symbol none or $), where |value| x 10^precision is under 2^53; past i",
+          "description": "`.dcss-format-fixed` and `.dcss-format-percent` with `--value`, `--precision`, `--comma`, `--sign` and `--symbol` MUST print in their `::after` the text d3-format 3.1.2's format prints for that specifier (type f or %, sign - or +, symbol none or $), where |value| x 10^precision is under 2^53; past it `--dcss-err` MUST be 1.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -1467,7 +1467,7 @@
       },
       "A65": {
         "__compat": {
-          "description": "`.dcss-ticks-log` and `.dcss-nice-log` with `--start`, `--stop`, `--count` and `--base` MUST give the ticks and the nice domain of d3-scale 4.0.2's scaleLog over that domain, of one sign; a `.dcss-ticks-log-format` inside a `.dcss-ticks-log` MUST print what its tickFormat(count, specifier)(value) pr",
+          "description": "`.dcss-ticks-log` and `.dcss-nice-log` with `--start`, `--stop`, `--count` and `--base` MUST give the ticks and the nice domain of d3-scale 4.0.2's scaleLog over that domain, of one sign; a `.dcss-ticks-log-format` inside a `.dcss-ticks-log` MUST print what its tickFormat(count, specifier)(value) prints, for specifiers A64 or A67 prints.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -1502,8 +1502,8 @@
               "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
             },
             "firefox": {
-              "version_added": null,
-              "notes": "NOTRUN: optimized SI; previous implementation failed in single precision"
+              "version_added": false,
+              "notes": "FAIL: d3-format's tests 121 of 139, seeded 2,011 of 2,939 print d3's text (2026-10-29)"
             }
           },
           "status": {
@@ -1515,7 +1515,7 @@
       },
       "A68": {
         "__compat": {
-          "description": "`.dcss-bisect-left/right` (`.dcss-bisect` aliases right) MUST match d3-array's insertion index for up to 1,024 sorted whole-number keys within ±2^24, finite query `--value`, and whole bounds 0 <= lo <= hi <= length. The result MUST reach reader descendants in the same frame. Invalid searched keys or",
+          "description": "`.dcss-bisect-left/right` (`.dcss-bisect` aliases right) MUST match d3-array's insertion index for up to 1,024 sorted whole-number keys within ±2^24, finite query `--value`, and whole bounds 0 <= lo <= hi <= length. The result MUST reach reader descendants in the same frame. Invalid searched keys or missing query MUST flag an error and suppress the empty output.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -1539,7 +1539,7 @@
       },
       "A69": {
         "__compat": {
-          "description": "`compileComposition(html, options)` MUST reject unavailable numeric bindings and preserve downward sum/scale/format connections. Its sum accepts 1–63 nonnegative items on declared steps that are multiples of 1/64, with maximum total below 2^18; scalar settings are literal except A78's bounded precis",
+          "description": "`compileComposition(html, options)` MUST reject unavailable numeric bindings and preserve downward sum/scale/format connections. Its sum accepts 1–63 nonnegative items on declared steps that are multiples of 1/64, with maximum total below 2^18; scalar settings are literal except A78's bounded precision bindings. Its contract MUST distinguish numeric and text results and name their locations.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -1550,8 +1550,7 @@
               "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
             },
             "firefox": {
-              "version_added": null,
-              "notes": "NOTRUN: compiled composition"
+              "version_added": "≤158"
             }
           },
           "status": {
@@ -1563,7 +1562,7 @@
       },
       "A70": {
         "__compat": {
-          "description": "Contracts MUST name calc/layout/font ROM, count readers/shared fonts and keep unknown cost null. Selection MUST use matching complete-fragment measurements including the default, improving at least one metric without worsening either engine's median or supplied p95. Experimental fonts MUST require o",
+          "description": "Contracts MUST name calc/layout/font ROM, count readers/shared fonts and keep unknown cost null. Selection MUST use matching complete-fragment measurements including the default, improving at least one metric without worsening either engine's median or supplied p95. Experimental fonts MUST require opt-in and permission to wrap leaf outputs.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -1575,7 +1574,7 @@
             },
             "firefox": {
               "version_added": null,
-              "notes": "NOTRUN: compiled composition"
+              "notes": "NOTRUN: the selection compares Chrome's and WebKit's medians"
             }
           },
           "status": {
@@ -1587,7 +1586,7 @@
       },
       "A71": {
         "__compat": {
-          "description": "Compiled scalar and text results MUST propagate upstream readiness and errors through `--dcss-ready` and `--dcss-err`, hiding generated text until ready and error-free. Native form reset MUST preserve computation elements. Delayed or failed fonts MUST leave dependent output unready while independent",
+          "description": "Compiled scalar and text results MUST propagate upstream readiness and errors through `--dcss-ready` and `--dcss-err`, hiding generated text until ready and error-free. Native form reset MUST preserve computation elements. Delayed or failed fonts MUST leave dependent output unready while independent arithmetic outputs remain ready.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -1598,8 +1597,7 @@
               "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
             },
             "firefox": {
-              "version_added": null,
-              "notes": "NOTRUN: compiled composition"
+              "version_added": "≤158"
             }
           },
           "status": {
@@ -1611,7 +1609,7 @@
       },
       "A72": {
         "__compat": {
-          "description": "Compiled `.dcss-scale-threshold` MUST select d3's numeric/text range from 0–1,024 sorted numeric thresholds within ±2^24, agreeing under literal calc/layout lowerings. Missing queries MUST return unknown or error 2; invalid active layout keys MUST flag error 1. Result styles MUST NOT alter computati",
+          "description": "Compiled `.dcss-scale-threshold` MUST select d3's numeric/text range from 0–1,024 sorted numeric thresholds within ±2^24, agreeing under literal calc/layout lowerings. Missing queries MUST return unknown or error 2; invalid active layout keys MUST flag error 1. Result styles MUST NOT alter computation, while descendant numeric reuse, native changes and reset MUST remain correct.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -1622,8 +1620,8 @@
               "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
             },
             "firefox": {
-              "version_added": null,
-              "notes": "NOTRUN: compiled threshold scale"
+              "version_added": false,
+              "notes": "FAIL: threshold layout seeded 65 of 67 (2026-10-29)"
             }
           },
           "status": {
@@ -1635,7 +1633,7 @@
       },
       "A73": {
         "__compat": {
-          "description": "Compiled `.dcss-scale-quantize` MUST match d3’s range value for ascending literal endpoints within ±2^24, zero or magnitudes at least 2^-1006, and 1–1,025 supported numeric/text ranges. Calc and layout MUST preserve d3’s boundary operation order and missing-query behavior. Numeric results MUST prese",
+          "description": "Compiled `.dcss-scale-quantize` MUST match d3’s range value for ascending literal endpoints within ±2^24, zero or magnitudes at least 2^-1006, and 1–1,025 supported numeric/text ranges. Calc and layout MUST preserve d3’s boundary operation order and missing-query behavior. Numeric results MUST preserve descendant reuse, authored result widths, native changes and reset.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -1646,8 +1644,8 @@
               "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
             },
             "firefox": {
-              "version_added": null,
-              "notes": "NOTRUN: compiled quantize scale"
+              "version_added": false,
+              "notes": "FAIL: discrete/check.mjs stops at the threshold scale's seeded values (2026-10-29)"
             }
           },
           "status": {
@@ -1659,7 +1657,7 @@
       },
       "A74": {
         "__compat": {
-          "description": "Compiled quantile/median MUST match d3 within declared 1/64-grid bounds and static probability. Scalar ranks MUST support 64 values, layout 1,024; indexed reads require cumulative width below 2^18. Lowerings MUST preserve author nodes, output position, exact reuse, formatting and reset, flagging inv",
+          "description": "Compiled quantile/median MUST match d3 within declared 1/64-grid bounds and static probability. Scalar ranks MUST support 64 values, layout 1,024; indexed reads require cumulative width below 2^18. Lowerings MUST preserve author nodes, output position, exact reuse, formatting and reset, flagging invalid data as error 1 and empty inputs or missing probability as error 2.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -1670,8 +1668,8 @@
               "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
             },
             "firefox": {
-              "version_added": null,
-              "notes": "NOTRUN: compiled quantile and median"
+              "version_added": false,
+              "notes": "FAIL: quantile 34/43 and median 11/47 read, their fixed text not d3's (2026-10-29)"
             }
           },
           "status": {
@@ -1683,7 +1681,7 @@
       },
       "A75": {
         "__compat": {
-          "description": "Compiled `.dcss-quantile-sorted` MUST match d3's source-position R-7 interpolation within A74's bounds, supporting 1,024 values with direct scalar reads. Indexed layout MUST preserve source order within its cumulative-width bound. Both MUST preserve descendant numeric reuse, native changes, formatti",
+          "description": "Compiled `.dcss-quantile-sorted` MUST match d3's source-position R-7 interpolation within A74's bounds, supporting 1,024 values with direct scalar reads. Indexed layout MUST preserve source order within its cumulative-width bound. Both MUST preserve descendant numeric reuse, native changes, formatting, error meanings and reset.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -1694,8 +1692,8 @@
               "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
             },
             "firefox": {
-              "version_added": null,
-              "notes": "NOTRUN: compiled source-position quantiles"
+              "version_added": false,
+              "notes": "FAIL: 4/4 recorded read, the fixed text not d3's (2026-10-29)"
             }
           },
           "status": {
@@ -1707,7 +1705,7 @@
       },
       "A76": {
         "__compat": {
-          "description": "Compiled `.dcss-scale-quantile` MUST match d3 on declared 1/64-grid data with 0–17 supported ranges. Layout MUST share each captured order statistic within its cumulative-width bound; scalar ranks MUST support 64 values. Both MUST preserve descendant reuse, authored styles, native changes, formattin",
+          "description": "Compiled `.dcss-scale-quantile` MUST match d3 on declared 1/64-grid data with 0–17 supported ranges. Layout MUST share each captured order statistic within its cumulative-width bound; scalar ranks MUST support 64 values. Both MUST preserve descendant reuse, authored styles, native changes, formatting, unknown queries and reset, flagging invalid data as error 1 and empty ranges as error 2.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -1718,8 +1716,8 @@
               "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
             },
             "firefox": {
-              "version_added": null,
-              "notes": "NOTRUN: compiled quantile scale"
+              "version_added": false,
+              "notes": "FAIL: 39/74 recorded read, then a wrong answer (2026-10-29)"
             }
           },
           "status": {
@@ -1742,8 +1740,8 @@
               "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
             },
             "firefox": {
-              "version_added": null,
-              "notes": "NOTRUN: result-container query"
+              "version_added": false,
+              "notes": "FAIL: 39/74 recorded read, then a wrong answer (QUERY_SCOPE=result) (2026-10-29)"
             }
           },
           "status": {
@@ -1755,7 +1753,7 @@
       },
       "A78": {
         "__compat": {
-          "description": "Compiled precisionFixed/Prefix/Round MUST match d3 within declared bounds, nonzero step magnitudes 1e-30 to below 1e31, and target magnitudes below 1e31. Integer results MUST support downward reuse and bounded formatter precision. Native controls, reset and errors MUST preserve author elements; unde",
+          "description": "Compiled precisionFixed/Prefix/Round MUST match d3 within declared bounds, nonzero step magnitudes 1e-30 to below 1e31, and target magnitudes below 1e31. Integer results MUST support downward reuse and bounded formatter precision. Native controls, reset and errors MUST preserve author elements; undefined answers MUST publish CSS NaN with error 2 and suppress dependent text.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -1766,8 +1764,8 @@
               "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
             },
             "firefox": {
-              "version_added": null,
-              "notes": "NOTRUN: compiled precision helpers"
+              "version_added": false,
+              "notes": "FAIL: precisionFixed seeded 635 of 695 (2026-10-29)"
             }
           },
           "status": {
@@ -1779,7 +1777,7 @@
       },
       "A79": {
         "__compat": {
-          "description": "Quantile, median, source-position quantile and quantile-scale results MUST retain their author's available width and natural flow height without requiring an explicit figure height. Literal and dynamic data, captions and following content MUST remain correctly placed in both engines. Contracts MUST ",
+          "description": "Quantile, median, source-position quantile and quantile-scale results MUST retain their author's available width and natural flow height without requiring an explicit figure height. Literal and dynamic data, captions and following content MUST remain correctly placed in both engines. Contracts MUST count the width and validation reads needed to preserve that behavior.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -1790,8 +1788,7 @@
               "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
             },
             "firefox": {
-              "version_added": null,
-              "notes": "NOTRUN: compiled natural flow"
+              "version_added": "≤158"
             }
           },
           "status": {
@@ -1803,7 +1800,7 @@
       },
       "A80": {
         "__compat": {
-          "description": "Compiled cumsum MUST publish 0–128 scoped per-item endpoints with bounds and status in version-two contracts. Within declared 1/64-grid prefix bounds below 2^18, both qualified lowerings MUST match d3, preserve scalar reuse and native reset, and skip missing/NaN values. Invalid inputs MUST invalidat",
+          "description": "Compiled cumsum MUST publish 0–128 scoped per-item endpoints with bounds and status in version-two contracts. Within declared 1/64-grid prefix bounds below 2^18, both qualified lowerings MUST match d3, preserve scalar reuse and native reset, and skip missing/NaN values. Invalid inputs MUST invalidate their prefix and later results while preserving earlier results.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -1814,8 +1811,8 @@
               "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
             },
             "firefox": {
-              "version_added": null,
-              "notes": "NOTRUN: per-item composition"
+              "version_added": false,
+              "notes": "FAIL: calc 22/42 recorded, 60/60 seeded, 13/13 states; layout's text not d3's (2026-10-29)"
             }
           },
           "status": {
@@ -1827,7 +1824,7 @@
       },
       "A81": {
         "__compat": {
-          "description": "The sheet MUST expose bounded discrete scales, quantiles, cumsum and precision helpers without compilation, with authored holders and 17 property-based range values. Quantize MUST derive thresholds from sibling-index. A hand-written median → precisionFixed → format-fixed chain MUST match d3 across e",
+          "description": "The sheet MUST expose bounded discrete scales, quantiles, cumsum and precision helpers without compilation, with plain elements after a list or none and 17 property-based range values. Quantize MUST derive its thresholds from its domain in d3's operation order. A hand-written median → precisionFixed → format-fixed chain MUST match d3 across eight native/reset/viewport states, preserve flow and errors, and remain valid through optional compilation.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -1838,8 +1835,8 @@
               "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
             },
             "firefox": {
-              "version_added": null,
-              "notes": "NOTRUN: bounded drop-in composition"
+              "version_added": false,
+              "notes": "FAIL: 8/8 handwritten states, then a threshold boundary (static/check.mjs) (2026-10-29)"
             }
           },
           "status": {
@@ -1851,7 +1848,7 @@
       },
       "A82": {
         "__compat": {
-          "description": "Authored cumsum holders MUST support arithmetic and shared-grid layout without adding or reparenting author elements, preserving exact per-item results, errors, text and reset. Complete-workload measurements MUST bind source, styling, bounds and emitted artifacts. Selection MUST retain the existing ",
+          "description": "A cumsum's results list MUST support arithmetic and shared-grid layout without adding or reparenting author elements, preserving exact per-item results, errors, text and reset. Complete-workload measurements MUST bind source, styling, bounds and emitted artifacts. Selection MUST retain the existing choice unless neither engine's median nor p95 regresses; stale measurements MUST be rejected, and unknown costs MUST remain null.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -1862,8 +1859,8 @@
               "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
             },
             "firefox": {
-              "version_added": null,
-              "notes": "NOTRUN: measured authored composition"
+              "version_added": false,
+              "notes": "FAIL: an authored prefix reads wrong (authored-check.mjs) (2026-10-29)"
             }
           },
           "status": {
@@ -1875,7 +1872,7 @@
       },
       "A83": {
         "__compat": {
-          "description": "An experimental four-input fold adapter MUST preserve d3 min, downstream math/text, status, native reset and authored structure. Layout-derived or chained inputs MUST be refused; pending or failed fonts MUST leave consumers unready without blocking independent arithmetic. Complete comparisons MUST i",
+          "description": "An experimental four-input fold adapter MUST preserve d3 min, downstream math/text, status, native reset and authored structure. Layout-derived or chained inputs MUST be refused; pending or failed fonts MUST leave consumers with no number (unready or in error, printing nothing) without blocking independent arithmetic. Complete comparisons MUST include live encoding and generated helpers, retaining existing defaults unless both engines qualify an improvement.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -1886,8 +1883,7 @@
               "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
             },
             "firefox": {
-              "version_added": null,
-              "notes": "NOTRUN: complete fold composition"
+              "version_added": "≤158"
             }
           },
           "status": {
@@ -1899,7 +1895,7 @@
       },
       "A84": {
         "__compat": {
-          "description": "`.dcss-share` MUST publish totals exactly and per-item fractions within 1e-9 of d3 sum/division on descendant result holders for 1–64 finite nonnegative 1/64-grid values at most 4,095. Invalid data MUST set error 1, zero totals error 2. Formatting, native changes/reset, nested calls, intervening con",
+          "description": "`.dcss-share` MUST publish totals exactly and per-item fractions within 1e-9 of d3 sum/division on descendant result holders for 1–64 finite nonnegative 1/64-grid values at most 4,095. Invalid data MUST set error 1, zero totals error 2. Formatting, native changes/reset, nested calls, intervening containers and natural row flow MUST preserve results and errors.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -1910,8 +1906,7 @@
               "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
             },
             "firefox": {
-              "version_added": null,
-              "notes": "NOTRUN: bounded share call"
+              "version_added": "≤158"
             }
           },
           "status": {
@@ -1923,7 +1918,7 @@
       },
       "A85": {
         "__compat": {
-          "description": "`.dcss-ascending` and `.dcss-descending` MUST publish d3's -1/0/1 result for their own finite numeric `--a`/`--b` within ±2^24. Missing/NaN arguments MUST publish CSS NaN with error 2; out-of-bound finite arguments MUST give error 1. Native changes/reset and nested argument isolation MUST preserve r",
+          "description": "`.dcss-ascending` and `.dcss-descending` MUST publish d3's -1/0/1 result for their own finite numeric `--a`/`--b` within ±2^24. Missing/NaN arguments MUST publish CSS NaN with error 2; out-of-bound finite arguments MUST give error 1. Native changes/reset and nested argument isolation MUST preserve results.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -1934,8 +1929,8 @@
               "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
             },
             "firefox": {
-              "version_added": null,
-              "notes": "NOTRUN: comparison calls"
+              "version_added": false,
+              "notes": "FAIL: ascending 9 of 14 recorded, then a numeric boundary reads wrong (2026-10-28)"
             }
           },
           "status": {
@@ -1947,7 +1942,7 @@
       },
       "A86": {
         "__compat": {
-          "description": "Finite numeric identity map/invert calls admitted by `scale-extra/check.mjs` MUST match their original d3 returns exactly, independently of domain/range configuration. Proof MUST distinguish NaN from numeric answers and preserve native reset and descendant reuse. Getters, ticks and coercions remain ",
+          "description": "Finite numeric identity map/invert calls admitted by `scale-extra/check.mjs` MUST match their original d3 returns exactly, independently of domain/range configuration. Proof MUST distinguish NaN from numeric answers and preserve native reset and descendant reuse. Getters, ticks and coercions remain unsupported.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -1958,8 +1953,7 @@
               "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
             },
             "firefox": {
-              "version_added": null,
-              "notes": "NOTRUN: identity scale"
+              "version_added": "≤158"
             }
           },
           "status": {
@@ -1971,7 +1965,7 @@
       },
       "A87": {
         "__compat": {
-          "description": "Over 0–64 signed 1/64-grid observations within ±1024, numeric minIndex/maxIndex and default leastIndex/greatestIndex MUST return d3's first winning source position; least/greatest MUST return its value. Nullish/NaN MUST be skipped; empty lists MUST return index -1 or CSS NaN/error 2. Invalid grid/bo",
+          "description": "Over 0–64 signed 1/64-grid observations within ±1024, numeric minIndex/maxIndex and default leastIndex/greatestIndex MUST return d3's first winning source position; least/greatest MUST return its value. Nullish/NaN MUST be skipped; empty lists MUST return index -1 or CSS NaN/error 2. Invalid grid/bounds/count MUST give error 1; native reset and nested reuse MUST preserve results.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -1982,32 +1976,7 @@
               "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
             },
             "firefox": {
-              "version_added": null,
-              "notes": "NOTRUN: index extrema"
-            }
-          },
-          "status": {
-            "experimental": true,
-            "standard_track": false,
-            "deprecated": false
-          }
-        }
-      },
-      "A88": {
-        "__compat": {
-          "description": "Direct finite numeric rgb/hsl/lab/hcl/lch/gray constructors within ±2^24 MUST preserve d3's coordinates and opacity without clamping, defaulting opacity to 1. Missing/non-numeric coordinates MUST give ready 0/error 1; valid sibling components MUST remain available. Native reset and nested argument i",
-          "spec_url": "SPEC.md#2-requirements",
-          "support": {
-            "chrome": {
-              "version_added": "≤155"
-            },
-            "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
-            },
-            "firefox": {
-              "version_added": null,
-              "notes": "NOTRUN: numeric color constructors"
+              "version_added": "≤158"
             }
           },
           "status": {
@@ -2019,7 +1988,7 @@
       },
       "A89": {
         "__compat": {
-          "description": "Numeric boxed-value bisector left/right over 0–64 integer keys within ±2^24 MUST match d3 on ascending search slices. Optional integer bounds MUST satisfy 0 ≤ lo ≤ hi ≤ length; invalid searched keys/bounds MUST hide results with error 1, missing queries with error 2. Raw callback ownership, reset an",
+          "description": "Numeric boxed-value bisector left/right over 0–64 integer keys within ±2^24 MUST match d3 on ascending search slices. Optional integer bounds MUST satisfy 0 ≤ lo ≤ hi ≤ length; invalid searched keys/bounds MUST hide results with error 1, missing queries with error 2. Raw callback ownership, reset and nested/container reuse MUST be checked.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -2030,8 +1999,7 @@
               "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
             },
             "firefox": {
-              "version_added": null,
-              "notes": "NOTRUN: numeric bisectors"
+              "version_added": "≤158"
             }
           },
           "status": {
@@ -2043,7 +2011,7 @@
       },
       "A90": {
         "__compat": {
-          "description": "General formatting with 1–15 significant digits MUST print d3's text when the rounded decimal exponent lies from -6 through precision minus 1. Exponential results and missing/NaN inputs MUST suppress text with error 1. Log filtering, trimming, native reset, nesting and the retained fixed/percent/SI ",
+          "description": "General formatting with 1–15 significant digits MUST print d3's text when the rounded decimal exponent lies from -6 through precision minus 1. Exponential results and missing/NaN inputs MUST suppress text with error 1. Log filtering, trimming, native reset, nesting and the retained fixed/percent/SI printer MUST preserve results.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -2054,8 +2022,8 @@
               "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
             },
             "firefox": {
-              "version_added": null,
-              "notes": "NOTRUN: general labels"
+              "version_added": false,
+              "notes": "FAIL: a rendered label's counter text differs (2026-10-28)"
             }
           },
           "status": {
@@ -2067,7 +2035,7 @@
       },
       "A91": {
         "__compat": {
-          "description": "Each newly added call MUST qualify through direct runtime and compiled output against the same original d3 questions. Compilation MUST preserve authored nodes, reachable field/item result addresses, bounds, readiness, errors and native reset. Serializable contracts MUST name emitted DOM locations; b",
+          "description": "Each newly added call MUST qualify through direct runtime and compiled output against the same original d3 questions. Compilation MUST preserve authored nodes, reachable field/item result addresses, bounds, readiness, errors and native reset. Serializable contracts MUST name emitted DOM locations; both-branch qualification MUST remain source-bound and MUST NOT add a second coverage count.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -2091,7 +2059,7 @@
       },
       "A92": {
         "__compat": {
-          "description": "Numeric ranges MUST compute active item values on the 1/64 grid within ±1024 using authored output slots. Runtime and compiler MUST preserve per-item result addresses and exact values. Zero steps, off-grid or wider inputs, more than 64 results and insufficient slots MUST set an error; unused slots M",
+          "description": "Numeric ranges MUST compute active item values on the 1/64 grid within ±1024 using authored output slots. Runtime and compiler MUST preserve per-item result addresses and exact values. Zero steps, off-grid or wider inputs, more than 64 results and insufficient slots MUST set an error; unused slots MUST have readiness 0.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -2102,8 +2070,7 @@
               "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
             },
             "firefox": {
-              "version_added": null,
-              "notes": "NOTRUN: numeric ranges"
+              "version_added": "≤158"
             }
           },
           "status": {
@@ -2115,7 +2082,7 @@
       },
       "A93": {
         "__compat": {
-          "description": "Fixed UTC day, hour, minute and second calls MUST compute floor, ceil, round, offset and count within ±8×10¹² epoch milliseconds, truncating fractional milliseconds toward zero. Offset steps MUST round down and round ties MUST choose the upper interval. Invalid inputs or wider timestamp results MUST",
+          "description": "Fixed UTC day, hour, minute and second calls MUST compute floor, ceil, round, offset and count within ±8×10¹² epoch milliseconds, truncating fractional milliseconds toward zero. Offset steps MUST round down and round ties MUST choose the upper interval. Invalid inputs or wider timestamp results MUST hide the number and set error 1.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -2126,8 +2093,8 @@
               "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
             },
             "firefox": {
-              "version_added": null,
-              "notes": "NOTRUN: fixed UTC intervals"
+              "version_added": false,
+              "notes": "FAIL: utcDay's recorded calls (2026-10-28)"
             }
           },
           "status": {
@@ -2139,7 +2106,7 @@
       },
       "A94": {
         "__compat": {
-          "description": "UTC weekday intervals MUST compute floor, ceil, round, offset and count within ±8×10¹⁵ epoch milliseconds, aligned to Sunday through Saturday. Negative epochs, midpoint ties, truncation and native reset MUST preserve results in both branches. Invalid inputs or wider timestamp results MUST hide the n",
+          "description": "UTC weekday intervals MUST compute floor, ceil, round, offset and count within ±8×10¹⁵ epoch milliseconds, aligned to Sunday through Saturday. Negative epochs, midpoint ties, truncation and native reset MUST preserve results in both branches. Invalid inputs or wider timestamp results MUST hide the number and set error 1.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -2150,8 +2117,8 @@
               "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
             },
             "firefox": {
-              "version_added": null,
-              "notes": "NOTRUN: UTC weekdays"
+              "version_added": false,
+              "notes": "FAIL: utcSunday's recorded calls (2026-10-28)"
             }
           },
           "status": {
@@ -2163,7 +2130,7 @@
       },
       "A95": {
         "__compat": {
-          "description": "Gregorian UTC month/year calls MUST compute floor, ceil, round, offset and count within ±8×10¹³ epoch milliseconds. Leap/century rules, first-century dates and Date setter overflow MUST match d3; round ties MUST choose the upper interval. Year periods 1–10,000 MUST support floor/ceil/round/offset; c",
+          "description": "Gregorian UTC month/year calls MUST compute floor, ceil, round, offset and count within ±8×10¹³ epoch milliseconds. Leap/century rules, first-century dates and Date setter overflow MUST match d3; round ties MUST choose the upper interval. Year periods 1–10,000 MUST support floor/ceil/round/offset; count requires period 1, and unsupported or wider results MUST error.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -2174,104 +2141,8 @@
               "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
             },
             "firefox": {
-              "version_added": null,
-              "notes": "NOTRUN: Gregorian UTC"
-            }
-          },
-          "status": {
-            "experimental": true,
-            "standard_track": false,
-            "deprecated": false
-          }
-        }
-      },
-      "A96": {
-        "__compat": {
-          "description": "Five-circle packing MUST match d3's front-chain placement and enclosing-circle translation within 1e-6 for numeric radii 0.25–32. Its fifteen coordinate/radius fields MUST remain reusable at the call and descendants through both branches. Invalid or missing radii MUST hide fields with error 1; nativ",
-          "spec_url": "SPEC.md#2-requirements",
-          "support": {
-            "chrome": {
-              "version_added": "≤155"
-            },
-            "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
-            },
-            "firefox": {
-              "version_added": null,
-              "notes": "NOTRUN: five-circle packing"
-            }
-          },
-          "status": {
-            "experimental": true,
-            "standard_track": false,
-            "deprecated": false
-          }
-        }
-      },
-      "A97": {
-        "__compat": {
-          "description": "Numeric color-object copies and conversions MUST match constructor components within 1e-6, preserving opacity, field addresses and source configuration. RGB conversions use 0–255, HSL conversion S/L use 0–1, and other coordinates remain within ±1024. Independent fields MUST remain reusable when othe",
-          "spec_url": "SPEC.md#2-requirements",
-          "support": {
-            "chrome": {
-              "version_added": "≤155"
-            },
-            "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
-            },
-            "firefox": {
-              "version_added": null,
-              "notes": "NOTRUN: numeric object conversion"
-            }
-          },
-          "status": {
-            "experimental": true,
-            "standard_track": false,
-            "deprecated": false
-          }
-        }
-      },
-      "A98": {
-        "__compat": {
-          "description": "Pacific local day/month calls with integer epoch inputs MUST compute numeric floor, ceil, round, offset and count under the explicit America/Los_Angeles 2007–2037 rule. Exact transition boundaries, spring-gap forward disambiguation and autumn-fold earlier disambiguation MUST match d3. Inputs and tim",
-          "spec_url": "SPEC.md#2-requirements",
-          "support": {
-            "chrome": {
-              "version_added": "≤155"
-            },
-            "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
-            },
-            "firefox": {
-              "version_added": null,
-              "notes": "NOTRUN: Pacific local intervals"
-            }
-          },
-          "status": {
-            "experimental": true,
-            "standard_track": false,
-            "deprecated": false
-          }
-        }
-      },
-      "A99": {
-        "__compat": {
-          "description": "Numeric date text supplied as a complete ASCII code vector MUST be parsed in CSS, including digit, delimiter and length validation. Qualified UTC numeric formats and explicit-zone forms MUST match d3's exact epoch; invalid, missing or fractional codes MUST hide the result with an error. Both branche",
-          "spec_url": "SPEC.md#2-requirements",
-          "support": {
-            "chrome": {
-              "version_added": "≤155"
-            },
-            "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
-            },
-            "firefox": {
-              "version_added": null,
-              "notes": "NOTRUN: numeric date text"
+              "version_added": false,
+              "notes": "FAIL: utcMonth 51 of 52, then a decade's utcYear floor (2026-10-28)"
             }
           },
           "status": {
@@ -2294,56 +2165,7 @@
               "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
             },
             "firefox": {
-              "version_added": null,
-              "notes": "NOTRUN: locale formatting"
-            }
-          },
-          "status": {
-            "experimental": true,
-            "standard_track": false,
-            "deprecated": false
-          }
-        }
-      },
-      "A101": {
-        "__compat": {
-          "description": "Qualified numeric ISO/week/quarter ASCII forms MUST compute the same exact epochs as d3 through both branches. Local forms MUST use the explicit 1990–2037 Pacific rules, including the last Sunday of October before 2007. Invalid ISO week zero, syntax/length errors and missing fields MUST hide results",
-          "spec_url": "SPEC.md#2-requirements",
-          "support": {
-            "chrome": {
-              "version_added": "≤155"
-            },
-            "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
-            },
-            "firefox": {
-              "version_added": null,
-              "notes": "NOTRUN: calendar text"
-            }
-          },
-          "status": {
-            "experimental": true,
-            "standard_track": false,
-            "deprecated": false
-          }
-        }
-      },
-      "A102": {
-        "__compat": {
-          "description": "The complete named-color dictionary and qualified hex ASCII forms MUST produce finite reusable RGBA fields in CSS. Active character codes MUST be unrounded integers. Unsupported syntax and zero-alpha hex MUST error; string-constructor compositions MUST consume actual parsed fields through compilatio",
-          "spec_url": "SPEC.md#2-requirements",
-          "support": {
-            "chrome": {
-              "version_added": "≤155"
-            },
-            "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
-            },
-            "firefox": {
-              "version_added": null,
-              "notes": "NOTRUN: color text"
+              "version_added": "≤158"
             }
           },
           "status": {
@@ -2355,7 +2177,7 @@
       },
       "A103": {
         "__compat": {
-          "description": "Identity-scale ticks MUST expose the complete array length and every active item within the qualified bounds and authored capacity. Default labels MUST compute precision from live domain/count inputs and match rendered d3 text. Both branches MUST preserve item/status addresses, integer summary field",
+          "description": "Identity-scale ticks MUST expose the complete array length and every active item within the qualified bounds and authored capacity. Default labels MUST compute precision from live domain/count inputs and match rendered d3 text. Both branches MUST preserve item/status addresses, integer summary fields, changing input/reset and downstream reuse; malformed summary metadata MUST be refused.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -2366,80 +2188,8 @@
               "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
             },
             "firefox": {
-              "version_added": null,
-              "notes": "NOTRUN: identity ticks/labels"
-            }
-          },
-          "status": {
-            "experimental": true,
-            "standard_track": false,
-            "deprecated": false
-          }
-        }
-      },
-      "A104": {
-        "__compat": {
-          "description": "Explicitly seeded LCG sequences MUST compute exact 16-bit state limbs for every authored slot, with honest fractional precision and compiler addresses. Every source-owned invocation sharing a recorder identity MUST pass before that identity counts once. Invalid seeds or excess capacity MUST hide res",
-          "spec_url": "SPEC.md#2-requirements",
-          "support": {
-            "chrome": {
-              "version_added": "≤155"
-            },
-            "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
-            },
-            "firefox": {
-              "version_added": null,
-              "notes": "NOTRUN: LCG sequence"
-            }
-          },
-          "status": {
-            "experimental": true,
-            "standard_track": false,
-            "deprecated": false
-          }
-        }
-      },
-      "A105": {
-        "__compat": {
-          "description": "Qualified Pacific local hour/minute calls MUST match d3's epoch floor, ceil, round and elapsed offset semantics within the documented input/result bounds. Offset steps MUST be finite and rounded down within ±10000. Invalid/missing inputs MUST hide results and publish error status in both branches.",
-          "spec_url": "SPEC.md#2-requirements",
-          "support": {
-            "chrome": {
-              "version_added": "≤155"
-            },
-            "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
-            },
-            "firefox": {
-              "version_added": null,
-              "notes": "NOTRUN: local fixed intervals"
-            }
-          },
-          "status": {
-            "experimental": true,
-            "standard_track": false,
-            "deprecated": false
-          }
-        }
-      },
-      "A106": {
-        "__compat": {
-          "description": "Pacific weekday calls MUST compute floor, ceil, round, offset and count from integer epochs within years −9999 through 19999, using captured IANA history and recurring future Pacific rules. Offset steps MUST round down within ±1000; historical timezone-minute truncation, gap/fold disambiguation, exa",
-          "spec_url": "SPEC.md#2-requirements",
-          "support": {
-            "chrome": {
-              "version_added": "≤155"
-            },
-            "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
-            },
-            "firefox": {
-              "version_added": null,
-              "notes": "NOTRUN: Pacific weekdays"
+              "version_added": false,
+              "notes": "FAIL: a rendered label's text differs (2026-10-28)"
             }
           },
           "status": {
@@ -2451,7 +2201,7 @@
       },
       "A107": {
         "__compat": {
-          "description": "Qualified English date formatting MUST compute text from live integer epochs within years −9999 through 19999. Every frozen call MUST pass every source-owned configuration, including ISO weeks/years, epoch text, padding, names and Pacific historical offsets. Numeric fields MUST remain independently ",
+          "description": "Qualified English date formatting MUST compute text from live integer epochs within years −9999 through 19999. Every frozen call MUST pass every source-owned configuration, including ISO weeks/years, epoch text, padding and names, in UTC. Numeric fields MUST remain independently addressed and reusable through compilation; invalid inputs MUST hide text and publish an error.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -2462,8 +2212,8 @@
               "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
             },
             "firefox": {
-              "version_added": null,
-              "notes": "NOTRUN: date formatting"
+              "version_added": false,
+              "notes": "FAIL: a rendered date's text differs (2026-10-28)"
             }
           },
           "status": {
@@ -2475,7 +2225,7 @@
       },
       "A108": {
         "__compat": {
-          "description": "Qualified geographic points, inverses, distance and scalar configuration getters MUST preserve every frozen source configuration through both branches. Numeric results MUST have independent presence/status checks and meet the documented bounds and tolerances. Null clipping extents MUST retain absent",
+          "description": "Qualified geographic points, inverses, distance and scalar configuration getters MUST preserve every frozen source configuration through both branches. Numeric results MUST have independent presence/status checks and meet the documented bounds and tolerances. Null clipping extents MUST retain absent corners and rectangles MUST expose four corners; native reset, nested missing inputs and downstream reuse MUST preserve results.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -2486,176 +2236,8 @@
               "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
             },
             "firefox": {
-              "version_added": null,
-              "notes": "NOTRUN: geographic points"
-            }
-          },
-          "status": {
-            "experimental": true,
-            "standard_track": false,
-            "deprecated": false
-          }
-        }
-      },
-      "A109": {
-        "__compat": {
-          "description": "Qualified legacy RGB/RGBA ASCII vectors MUST compute record, null and nonpositive-alpha NaN results in CSS through both branches. Parsed fields and kind MUST retain distinct addresses and readiness. Missing/fractional codes or unsupported numeric bounds MUST publish errors; native input/reset, neste",
-          "spec_url": "SPEC.md#2-requirements",
-          "support": {
-            "chrome": {
-              "version_added": "≤155"
-            },
-            "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
-            },
-            "firefox": {
-              "version_added": null,
-              "notes": "NOTRUN: functional color strings"
-            }
-          },
-          "status": {
-            "experimental": true,
-            "standard_track": false,
-            "deprecated": false
-          }
-        }
-      },
-      "A110": {
-        "__compat": {
-          "description": "Qualified date parsing MUST retain every original UTC/local identity and each source-owned factory context through both branches. The vector MUST be at most 24 ASCII characters; 41 fixed English formats (d3's 38 and three ISO ones, held to d3 by `iso-check.mjs`), civil years 100..9999, epoch years −",
-          "spec_url": "SPEC.md#2-requirements",
-          "support": {
-            "chrome": {
-              "version_added": "≤155"
-            },
-            "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
-            },
-            "firefox": {
-              "version_added": null,
-              "notes": "NOTRUN: complete date parser family"
-            }
-          },
-          "status": {
-            "experimental": true,
-            "standard_track": false,
-            "deprecated": false
-          }
-        }
-      },
-      "A111": {
-        "__compat": {
-          "description": "Qualified variance and deviation MUST retain the exact source-owned raw values and accessor recipes through both branches. CSS Welford state MUST use at most 16 slots, MUST NOT clamp inputs, and MUST leave the result absent where d3 returns `undefined` for fewer than two valid observations. Finite a",
-          "spec_url": "SPEC.md#2-requirements",
-          "support": {
-            "chrome": {
-              "version_added": "≤155"
-            },
-            "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
-            },
-            "firefox": {
-              "version_added": null,
-              "notes": "NOTRUN: variance and deviation"
-            }
-          },
-          "status": {
-            "experimental": true,
-            "standard_track": false,
-            "deprecated": false
-          }
-        }
-      },
-      "A112": {
-        "__compat": {
-          "description": "Qualified color constructors MUST preserve all source-owned typed, numeric-string, parsed CSS-color and object routes through both branches. The parser MUST accept bounded legacy RGB/HSL, names and hex while preserving native null/NaN fields. Components MUST remain reusable; formatting and methods a",
-          "spec_url": "SPEC.md#2-requirements",
-          "support": {
-            "chrome": {
-              "version_added": "≤155"
-            },
-            "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
-            },
-            "firefox": {
-              "version_added": null,
-              "notes": "NOTRUN: complete color constructor family"
-            }
-          },
-          "status": {
-            "experimental": true,
-            "standard_track": false,
-            "deprecated": false
-          }
-        }
-      },
-      "A113": {
-        "__compat": {
-          "description": "Qualified typed extrema MUST retain 385 original identities and 389 source contexts in both branches, comparing raw values with source-owned recipes within ten slots and three ASCII characters. CSS MUST preserve lexical/numeric semantics, source indices and reusable typed/object fields. Valid native",
-          "spec_url": "SPEC.md#2-requirements",
-          "support": {
-            "chrome": {
-              "version_added": "≤155"
-            },
-            "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
-            },
-            "firefox": {
-              "version_added": null,
-              "notes": "NOTRUN: typed extrema family"
-            }
-          },
-          "status": {
-            "experimental": true,
-            "standard_track": false,
-            "deprecated": false
-          }
-        }
-      },
-      "A114": {
-        "__compat": {
-          "description": "Typed sum/count/mean/cumsum/fsum/fcumsum MUST match 217 original identities across 219 contexts in both branches. Twenty-slot transport MUST refuse malformed inputs and unsupported numeric spellings; exact sums MUST preserve residuals and ties. Native changes, reset, empty mean and descendant numeri",
-          "spec_url": "SPEC.md#2-requirements",
-          "support": {
-            "chrome": {
-              "version_added": "≤155"
-            },
-            "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
-            },
-            "firefox": {
-              "version_added": null,
-              "notes": "NOTRUN: typed aggregates"
-            }
-          },
-          "status": {
-            "experimental": true,
-            "standard_track": false,
-            "deprecated": false
-          }
-        }
-      },
-      "A115": {
-        "__compat": {
-          "description": "Typed order statistics MUST match all 156 original identities across 158 contexts in runtime and compiler. Raw input validation, typed probability, result absence, source-index ties, native reset, capacity refusal and descendant reuse MUST pass in both engines. Mode MUST preserve the accessor result",
-          "spec_url": "SPEC.md#2-requirements",
-          "support": {
-            "chrome": {
-              "version_added": "≤155"
-            },
-            "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
-            },
-            "firefox": {
-              "version_added": null,
-              "notes": "NOTRUN: typed order family"
+              "version_added": false,
+              "notes": "FAIL: geoIdentity 24 of 24; geoEquirectangular reads 0 px for -30 (2026-10-28)"
             }
           },
           "status": {
@@ -2678,32 +2260,8 @@
               "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
             },
             "firefox": {
-              "version_added": null,
-              "notes": "NOTRUN: list order statistics"
-            }
-          },
-          "status": {
-            "experimental": true,
-            "standard_track": false,
-            "deprecated": false
-          }
-        }
-      },
-      "A117": {
-        "__compat": {
-          "description": "Order, aggregate and extrema calls MUST take `--length`, `--type-N` (0 number, 1 null, 2 undefined, 3 NaN) and `--value-N` on the call element, matching d3. The same names on an ancestor MUST NOT reach a call.",
-          "spec_url": "SPEC.md#2-requirements",
-          "support": {
-            "chrome": {
-              "version_added": "≤155"
-            },
-            "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
-            },
-            "firefox": {
-              "version_added": null,
-              "notes": "NOTRUN: shared typed names"
+              "version_added": false,
+              "notes": "FAIL: a 64-value list read 13,799.995 for d3's 13,800 (2026-10-28)"
             }
           },
           "status": {
@@ -2726,8 +2284,8 @@
               "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
             },
             "firefox": {
-              "version_added": null,
-              "notes": "NOTRUN: parts"
+              "version_added": false,
+              "notes": "FAIL: the parts answer as the families do (25 of 25 checks that load through runtime.mjs give the same result), but 15 of those fail with either (2026-10-29)"
             }
           },
           "status": {
@@ -2739,7 +2297,7 @@
       },
       "A119": {
         "__compat": {
-          "description": "Where the browser parses `@function`, each easing and the two-stop linear scale MUST also be functions (`--dcss-ease-<name>(t, ...)`, `--dcss-scale-linear(x, d0, d1, r0, r1, clamp, round)`) equal to their classes within 1e-12. Elsewhere a declaration calling one MUST fall back to its earlier plain v",
+          "description": "Where the browser parses `@function`, each easing and the two-stop linear scale MUST also be functions (`--dcss-ease-<name>(t, ...)`, `--dcss-scale-linear(x, d0, d1, r0, r1, clamp, round)`) equal to their classes within 1e-12. Elsewhere a declaration calling one MUST fall back to its earlier plain value.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -2750,8 +2308,244 @@
               "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
             },
             "firefox": {
-              "version_added": null,
-              "notes": "NOTRUN: easing functions"
+              "version_added": false,
+              "notes": "FAIL: no @function; easings keep their fallback (1,029 class answers d3's), a log scale's class reads wrong (2026-10-29)"
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A122": {
+        "__compat": {
+          "description": "`.dcss-median`, `.dcss-quantile` and `.dcss-quantile-sorted` with the list written once and three nested elements after it MUST give d3's answer on the innermost element's children, within A116's bounds and for up to 64 values. They MUST refuse an item off the grid, out of range or missing and 65 items with error 1, and an empty list or a missing p with error 2.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": "≤26.4",
+              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+            },
+            "firefox": {
+              "version_added": false,
+              "notes": "FAIL: 83 of 247 calls differ (2026-10-28)"
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A123": {
+        "__compat": {
+          "description": "`.dcss-scale-quantile` with the list written once and four nested elements after it MUST give d3's answer on the innermost element's children, within A116's bounds, for up to 64 values and 1 to 17 ranges, numbers or text, a query on a threshold or one double either side of it included. It MUST refuse with error 1 an item off the grid, out of range or missing, 65 values and 0, 1.5 or 18 ranges, answer `--unknown` for a missing or NaN query, and give error 2 for a missing one with no `--unknown`.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": "≤26.4",
+              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+            },
+            "firefox": {
+              "version_added": false,
+              "notes": "FAIL: 519 of 1,328 calls differ (2026-10-28)"
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A124": {
+        "__compat": {
+          "description": "`.dcss-scale-threshold` with its thresholds in `--domain-0` to `--domain-15`, and `.dcss-scale-quantize`, with no list and no wrappers, MUST give d3's answer to everything inside the call, for 1 to 17 ranges, numbers or text, a query on a threshold or one double either side included. They MUST answer `--unknown` for a missing or NaN query (error 2 with none), and MUST refuse with error 1 0, 1.5 or 18 ranges, a threshold that isn't a number, thresholds out of order or with a gap, and a reversed quantize domain. Compiled, the same markup MUST give the same answers.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": "≤26.4",
+              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+            },
+            "firefox": {
+              "version_added": false,
+              "notes": "FAIL: 349 of 1,149 calls differ (2026-10-28)"
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A125": {
+        "__compat": {
+          "description": "`.dcss-cumsum` with a second, unclassed list after its values MUST give d3's running total to everything inside the matching item of that list, for 0 to 64 values within ±1024 on the 1/64 grid, missing and NaN values adding 0. It MUST refuse a total from a value off the grid or past ±1024 on with error 1, leave a formatter there its own status, and give the same totals compiled.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": "≤26.4",
+              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+            },
+            "firefox": {
+              "version_added": false,
+              "notes": "FAIL: a formatter in each item prints another total than d3's (2026-10-28)"
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A126": {
+        "__compat": {
+          "description": "A call MUST take another call's answer written straight inside it, with nothing between them. A call with no answer (d3's undefined) MUST publish no number, so that a call or formatter given it fails too and prints nothing, while a call answering MUST be read and printed as d3's. A call given the answer of a call of its own kind MUST take it through a plain element between them.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": "≤26.4",
+              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+            },
+            "firefox": {
+              "version_added": "≤158"
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A127": {
+        "__compat": {
+          "description": "`.dcss-scan` of `<i>` entries with `--dcss-n` MUST give a reader `.dcss-at` with whole `--dcss-i` k, after the entries, `--dcss-value`, the sum of entries 1 to k, and `--dcss-before`, the sum of entries 1 to k - 1, in the frame its numbers change; a reader placed by its own `grid-area: 1 / 1 / span k / span k` MUST read the same (A14).",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": "≤26.4",
+              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+            },
+            "firefox": {
+              "version_added": "≤158"
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A128": {
+        "__compat": {
+          "description": "`.dcss-median-index` and `.dcss-quantile-index` (`--p`) with the list written once and three nested elements after it MUST give the third's children d3's index of the value at floor((n - 1) p), for 0 to 64 values on the 1/64 grid within ±131,072, with -1 for no values; with ties at that value, the place of the one sorted last when values ascend and equal ones go last place first (first place first at p 0 or less). Another value or a `--p` that isn't a number MUST leave no answer.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": "≤26.4",
+              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+            },
+            "firefox": {
+              "version_added": "≤158"
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A129": {
+        "__compat": {
+          "description": "`.dcss-bin` with `--domain-0`, `--domain-1`, up to 32 ascending thresholds `--threshold-N` or a `--count`, and up to 64 values MUST give everything inside the second list's `<li>` for bin b d3's `bin().domain().thresholds()` bin b: `--dcss-bin-length`, `--dcss-bin-x0` and `--dcss-bin-x1`, thresholds outside the domain dropped as d3 drops them, a count's ticks as d3's `ticks()` gives them. No domain, a domain backwards, more than 64 values or a count giving more than 32 ticks MUST leave no answer.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": "≤26.4",
+              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+            },
+            "firefox": {
+              "version_added": "≤158"
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A130": {
+        "__compat": {
+          "description": "`.dcss-variance` and `.dcss-deviation` with up to 64 values in 64ths from -1024 to 1024 MUST give everything inside the third plain element after the list `--dcss-variance`, the true variance of the numbers rounded once (an item with none skipped), and `--dcss-deviation`, its square root; fewer than two numbers, more than 64 items or a value outside the range MUST leave no answer.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": "≤26.4",
+              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+            },
+            "firefox": {
+              "version_added": false,
+              "notes": "FAIL: 34 of 632 (its calc() in 32-bit floats; the reads give 244, layout in 1/60 px) (2026-10-28)"
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A120": {
+        "__compat": {
+          "description": "A call MUST copy its `--value` into each of its answers at most once, and each answer MUST stay under 65,535 tokens with plain inputs, so that another call's answer given as `--value` reads in WebKit, which drops what one `var()` brings past 65,535 tokens (`facts/var-token-limit.mjs`).",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": "≤26.4",
+              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+            },
+            "firefox": {
+              "version_added": false,
+              "notes": "FAIL: 478 of 478 at most once; the date chain 81,600,000 ms off (32-bit `calc()`)"
             }
           },
           "status": {
@@ -2763,7 +2557,7 @@
       },
       "A51": {
         "__compat": {
-          "description": "A loop (`.loop`, `.loop-flow`, `.loop-in`, `.loop-cell`, `.loop-core`) MUST have dcss-store.css on the page; its cells, read through `[data-store-read]` and `[data-store-read-3]` naming them by `--store-of`, MUST settle on the iteration's fixed point: a 12-cell power iteration's vector and eigenval",
+          "description": "A loop (`.loop`, `.loop-flow`, `.loop-in`, `.loop-cell`, `.loop-core`) MUST have dcss-store.css and dcss-array-extras.css on the page; its cells, read through `[data-store-read]` and `[data-store-read-3]` naming them by `--store-of`, MUST settle on the iteration's fixed point: a 12-cell power iteration's vector and eigenvalue equal NumPy's, as a flow and as a table row.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -2787,7 +2581,7 @@
       },
       "A52": {
         "__compat": {
-          "description": "A `<table class=\"sheet\">` on dcss-store.css's board MUST show every cell and fold equal to the sheet's own model as written and after each change to its inputs.",
+          "description": "A `<table class=\"sheet\">` on dcss-store.css's board, with dcss-array-extras.css, MUST show every cell and fold equal to the sheet's own model as written and after each change to its inputs.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {

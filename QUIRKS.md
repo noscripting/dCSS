@@ -1,6 +1,6 @@
 # dcss-array.css: QUIRKS
 
-The engine bugs dcss-array.css meets when it computes with layout, and what the sheet does about each.
+The engine bugs dcss-array.css meets when it computes with layout, and what the sheet does about each. The reftest pages and scripts named below are in the noscript.ing repository ([github.com/noscripting/noscript.ing](https://github.com/noscripting/noscript.ing)), under `libraries/dcss/`.
 
 Measured 2026-10-22, headless: Chrome 155.0.8059.86, WebKit 26.4, Firefox 158.0.
 
@@ -113,6 +113,16 @@ Measured 2026-10-22, headless: Chrome 155.0.8059.86, WebKit 26.4, Firefox 158.0.
 - Bug: none found
 - Workaround: ticks past the last one are `visibility: hidden; position: absolute`, never `display: none`, so their counters exist from the first layout (`src/ticks.mjs`). A page printing `--dcss-tick` with its own `counter()` needs nothing more.
 - Affects: A58
+
+### Q12 Chrome: a product whose factor holds the sheet's exact division rounds away from the IEEE double
+
+- Feature: none
+- Spec: [CSS Values 4 §10.10.1](https://drafts.csswg.org/css-values-4/#calc-simplification) lets an engine reorder a calculation; measured against IEEE doubles.
+- Engines: Chrome FAIL: `low + (high - low) * f` is off d3's double in 29 of 200 quantile scale thresholds, where f, written in the same `calc()` with the exact division (`cssDiv`), equals it alone · WebKit PASS · Firefox FAIL: f alone is off in 135 of 200 (32-bit `calc()`)
+- Repro: `quirks/calc-product-of-division.html`
+- Bug: none found
+- Workaround: f goes through a length, `(f * 1px) / 1px`, which rounds as d3 in all 200 and in 3,000 more (src/static.mjs, the quantile scale's thresholds).
+- Affects: A123
 
 ## Shared
 

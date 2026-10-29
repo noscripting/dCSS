@@ -13,5 +13,5 @@
 
 @property --dcss-identity-present{syntax:'<integer>';inherits:false;initial-value:0}
 @property --dcss-identity-error{syntax:'<integer>';inherits:false;initial-value:1}
-.dcss-scale-identity{--dcss-scale-identity:calc(var(--value));--dcss-scale-identity-invert:calc(var(--value));--dcss-identity-present:calc(var(--dcss-scale-identity) * 0 + 1);--dcss-identity-error:calc(1 - var(--dcss-identity-present));--dcss-ready:var(--dcss-identity-present);--dcss-err:var(--dcss-identity-error);--dcss-scale-identity-ready:var(--dcss-identity-present);--dcss-scale-identity-error:var(--dcss-identity-error);--dcss-static-input-ready:var(--dcss-identity-present);--dcss-static-input-error:var(--dcss-identity-error);--dcss-static-input-gate:var(--dcss-identity-present);}
+.dcss-scale-identity{--dcss-scale-identity:calc(var(--value));--dcss-scale-identity-invert:calc(var(--value));--dcss-identity-present:calc(var(--dcss-scale-identity) * 0 + 1);--dcss-identity-error:calc(1 - var(--dcss-identity-present));--dcss-ready:var(--dcss-identity-present);--dcss-err:var(--dcss-identity-error);--dcss-scale-identity-ready:var(--dcss-identity-present);--dcss-scale-identity-error:var(--dcss-identity-error);}
 :where(.dcss-scale-identity)>*{--value:initial}

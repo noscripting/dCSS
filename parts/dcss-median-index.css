@@ -1,0 +1,52 @@
+/* DCSS array: parts/dcss-median-index.css, the dcss-median-index call alone (parts.mjs)
+   SPDX-License-Identifier: MIT
+   SPDX-FileCopyrightText: 2026 noscript.ing contributors */
+@property --dcss-ready { syntax: '<integer>'; inherits: true; initial-value: 0; }
+@property --dcss-err { syntax: '<integer>'; inherits: true; initial-value: 0; }
+/* DCSS reductions: d3.sum, count, mean, min, max, extent and the list's length, in a figure (reduce.mjs). */
+
+/* DCSS bisect, on dcss.css's sort and collection-reader kernel (bisect.mjs, search.mjs). */
+
+/* Bounded drop-in calls: a list read through plain elements after it, or none (static.mjs). */
+@property --dcss-static-count{syntax:'<integer>';inherits:true;initial-value:0}
+@property --dcss-static-k{syntax:'<integer>';inherits:true;initial-value:0}
+@property --dcss-static-has{syntax:'<integer>';inherits:false;initial-value:0}
+@property --dcss-static-ok{syntax:'<integer>';inherits:false;initial-value:0}
+@property --dcss-static-p-has{syntax:'<integer>';inherits:true;initial-value:0}
+@property --dcss-static-own-error{syntax:'<integer>';inherits:true;initial-value:0}
+@property --dcss-static-tie{syntax:'<integer>';inherits:true;initial-value:0}
+@property --dcss-static-index-h{syntax:'<integer>';inherits:false;initial-value:0}
+@property --dcss-static-n{syntax:'<integer>';inherits:true;initial-value:0}
+@property --dcss-static-item{syntax:'<integer>';inherits:true;initial-value:0}
+@property --dcss-static-rows{syntax:'<integer>';inherits:true;initial-value:0}
+@property --dcss-static-pad-1{syntax:'<integer>';inherits:true;initial-value:0}
+@property --dcss-static-count-digit-0{syntax:'<integer>';inherits:false;initial-value:0}@property --dcss-static-count-digit-1{syntax:'<integer>';inherits:false;initial-value:0}@property --dcss-static-count-digit-2{syntax:'<integer>';inherits:false;initial-value:0}@property --dcss-static-count-digit-3{syntax:'<integer>';inherits:false;initial-value:0}@property --dcss-static-count-digit-4{syntax:'<integer>';inherits:false;initial-value:0}@property --dcss-static-count-digit-5{syntax:'<integer>';inherits:false;initial-value:0}@property --dcss-static-count-digit-6{syntax:'<integer>';inherits:false;initial-value:0}@property --dcss-static-count-digit-over{syntax:'<integer>';inherits:false;initial-value:0}
+:is(.dcss-median-index:not([data-dcss-compiled])){--dcss-static-n:calc(var(--dcss-static-count));--dcss-static-p:var(--p,calc(NaN));--dcss-static-p-has:calc(var(--dcss-static-p) * 0 + 1);--dcss-static-k:calc(clamp(0,round(down,(var(--dcss-static-n) - 1) * clamp(0,var(--dcss-static-p),1),1),max(0,var(--dcss-static-n) - 1)));--dcss-static-tie:calc(1 - 2 * clamp(0,sign(var(--dcss-static-p)),1));--dcss-static-rows:calc(max(var(--dcss-static-k) + 1,var(--dcss-static-n) - var(--dcss-static-k),2));--dcss-static-pad-1:calc(var(--dcss-static-rows) - var(--dcss-static-k) - 1);display:grid;grid-template-columns:minmax(0,1fr);min-width:0;align-content:start;align-items:start;position:relative;anchor-scope:--dcss-static-list}
+.dcss-median-index:not([data-dcss-compiled]){--dcss-static-p:0.5}
+:is(.dcss-median-index:not([data-dcss-compiled]))>figcaption{grid-row:1}
+:is(.dcss-median-index:not([data-dcss-compiled]))>:is(ol,ul){display:grid;grid-row:2;grid-auto-flow:column;grid-auto-columns:0px;grid-template-rows:repeat(calc(var(--dcss-static-rows) - 1),0px) auto;justify-self:start;gap:0;margin:0;padding:0;border:0;list-style:none;visibility:hidden;anchor-name:--dcss-static-list}
+:where(:is(.dcss-median-index:not([data-dcss-compiled]))>:is(ol,ul)>li){--value:initial}
+:is(.dcss-median-index:not([data-dcss-compiled]))>:is(ol,ul)>li{display:contents;--dcss-static-item:calc(sibling-index());}
+:is(.dcss-median-index:not([data-dcss-compiled]))>:is(ol,ul)>li::before{content:'';display:block;width:0;--dcss-static-has:calc(var(--value) * 0 + 1);--dcss-static-ok:calc((var(--dcss-static-has) * (1 - clamp(0,sign(abs(var(--value)) - 131072),1)) * (1 - abs(sign(rem(var(--value),1/64) - 0)))));height:calc(var(--dcss-static-ok) * var(--dcss-static-item) * 1px + (1 - var(--dcss-static-ok)) * 1048576px);grid-row:span calc(1 + (1 - var(--dcss-static-ok)) * (var(--dcss-static-rows) - 1));order:calc(var(--dcss-static-ok) * (round(var(--value) * 64) * 64 + var(--dcss-static-tie) * var(--dcss-static-item)) + (1 - var(--dcss-static-ok)) * 600000000)}
+:is(.dcss-median-index:not([data-dcss-compiled]))>:is(ol,ul)::before{content:'';display:block;width:0;height:0;grid-row:span max(1,var(--dcss-static-pad-1));order:calc(clamp(0,sign(var(--dcss-static-pad-1)),1) * -600000000 + (1 - clamp(0,sign(var(--dcss-static-pad-1)),1)) * 700000000)}
+:is(.dcss-median-index:not([data-dcss-compiled]))>:is(ol,ul)+*{grid-row:3;container-type:inline-size;min-width:0;min-height:1lh}
+:is(.dcss-median-index:not([data-dcss-compiled]))>:is(ol,ul)+*>*{position:absolute;left:0;top:0;width:100%;height:anchor-size(--dcss-static-list height)}
+:is(.dcss-median-index:not([data-dcss-compiled]))>:is(ol,ul)+*>*>*{position:absolute;inset:0;container-type:size}
+:is(.dcss-median-index:not([data-dcss-compiled]))>:is(ol,ul)+*>*>*>*{--dcss-static-index-h:calc(round(100cqh / 1px));--dcss-static-own-error:calc(max(clamp(0,sign(var(--dcss-static-index-h) - 64),1),clamp(0,sign(var(--dcss-static-n) - 64),1),2 * (1 - var(--dcss-static-p-has))));--dcss-ready:1;--dcss-err:var(--dcss-static-own-error)}
+.dcss-median-index:not([data-dcss-compiled])>:is(ol,ul)+*>*>*>*{--dcss-median-index:calc((1 - min(1,var(--dcss-static-own-error))) / (1 - min(1,var(--dcss-static-own-error))) * (var(--dcss-static-index-h) - 1))}
+:is(.dcss-median-index:not([data-dcss-compiled])):has(>:is(ol,ul)>li:last-child:is(:nth-child(2n+1))){--dcss-static-count-digit-0:1}
+:is(.dcss-median-index:not([data-dcss-compiled])):has(>:is(ol,ul)>li:last-child:is(:nth-child(4n+2),:nth-child(4n+3))){--dcss-static-count-digit-1:1}
+:is(.dcss-median-index:not([data-dcss-compiled])):has(>:is(ol,ul)>li:last-child:is(:nth-child(8n+4),:nth-child(8n+5),:nth-child(8n+6),:nth-child(8n+7))){--dcss-static-count-digit-2:1}
+:is(.dcss-median-index:not([data-dcss-compiled])):has(>:is(ol,ul)>li:last-child:is(:nth-child(n+8):nth-child(-n+15),:nth-child(n+24):nth-child(-n+31),:nth-child(n+40):nth-child(-n+47),:nth-child(n+56):nth-child(-n+63))){--dcss-static-count-digit-3:1}
+:is(.dcss-median-index:not([data-dcss-compiled])):has(>:is(ol,ul)>li:last-child:is(:nth-child(n+16):nth-child(-n+31),:nth-child(n+48):nth-child(-n+63))){--dcss-static-count-digit-4:1}
+:is(.dcss-median-index:not([data-dcss-compiled])):has(>:is(ol,ul)>li:last-child:is(:nth-child(n+32):nth-child(-n+63))){--dcss-static-count-digit-5:1}
+:is(.dcss-median-index:not([data-dcss-compiled])):has(>:is(ol,ul)>li:last-child:is(:nth-child(n+64):nth-child(-n+64))){--dcss-static-count-digit-6:1}
+:is(.dcss-median-index:not([data-dcss-compiled])):has(>:is(ol,ul)>li:nth-child(65)){--dcss-static-count-digit-over:1}
+:is(.dcss-median-index:not([data-dcss-compiled])){--dcss-static-count:calc((1 - var(--dcss-static-count-digit-over)) * (1 * var(--dcss-static-count-digit-0) + 2 * var(--dcss-static-count-digit-1) + 4 * var(--dcss-static-count-digit-2) + 8 * var(--dcss-static-count-digit-3) + 16 * var(--dcss-static-count-digit-4) + 32 * var(--dcss-static-count-digit-5) + 64 * var(--dcss-static-count-digit-6)) + 65 * var(--dcss-static-count-digit-over))}
+
+/* DCSS shares: one list, a hidden sum lane, and one descendant result per item (share.mjs). */
+
+/* DCSS bisect, on dcss.css's sort and collection-reader kernel (bisect.mjs, search.mjs). */
+
+/* DCSS index extrema: numeric d3.minIndex/maxIndex and natural numeric least/greatestIndex (index-extrema.mjs). */
+@property --dcss-range-ready{syntax:'<integer>';inherits:true;initial-value:0}

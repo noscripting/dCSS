@@ -1184,22 +1184,6 @@
 .dcss-text > u { position: absolute; inset: 0; container-type: inline-size; text-decoration: none; }
 .dcss-text > u > u { display: block; --dcss-value: calc(100cqw / 1px); text-decoration: none; }
 .dcss-array > i.dcss-text, .dcss-bins.dcss-bin-max > i.dcss-text, .dcss-map > i.dcss-text, .dcss-width-sum > i.dcss-text, .dcss-largest > i.dcss-text, .dcss-scale > i.dcss-text, .dcss-times > i.dcss-text, .dcss-cap > b > i.dcss-text { width: max-content; }
-/* Lists. A list is plain CSS: order sorts it, its width wraps it, grid-column
-   groups it. dcss-array.css adds the two things CSS cannot say:
-     <div class="pager" style="height: 480px; --page: 2">        page 2: the pager's height is one page
-       <div class="list" style="width: 300px">
-         <div style="--if: 0; order: 512">...</div>             --if: 0 drops the item (v-if): it takes no space
-   An item of a .list is a wrapper with no padding, border or margin of its own: it is as big as what is inside it, and
-   spacing goes inside (a list's gap would stay for a dropped item). */
-.list { display: flex; flex-wrap: wrap; align-items: flex-start; align-content: flex-start; }
-.list > * { max-width: calc(var(--if, 1) * 100000px); max-height: calc(var(--if, 1) * 100000px); overflow: clip; }
-.pager { overflow: clip; }
-.pager > .list { position: relative; top: calc(var(--page, 0) * -100%); }
-/* A list's size as numbers: a <b class="dcss-size"><u></u></b> in it gets --dcss-width and --dcss-height, the
-   list's (its rows, when its items are 1 px tall). */
-.list { position: relative; }
-.list > .dcss-size { position: absolute; inset: 0; max-width: none; max-height: none; container-type: size; }
-.list > .dcss-size > u { display: block; --dcss-width: calc(100cqw / 1px); --dcss-height: calc(100cqh / 1px); text-decoration: none; }
 /* Nested arrays: <div class="dcss-rows"> of <b>, an inner array each, holding its elements <i style="--dcss-n:
    width; --dcss-key: order">: a row is as wide as its elements end to end (its sum; .dcss-bin-max: its largest, every
    element in one cell), each element at the widths before it in its row, sorted by --dcss-key inside its row. */
@@ -1232,112 +1216,6 @@
 .dcss-starts > * { flex: none; height: 0; margin: 0; padding: 0; border: 0; }
 .dcss-starts > b { width: 0; order: calc(2 * sibling-index() - 2); }
 .dcss-starts > i { width: calc(max(0, var(--dcss-n)) * 1px); order: calc(2 * max(1, var(--dcss-bin)) - 1); }
-/* Loops (README "Loops and sheets"): a while loop on dcss-store.css's board cells, written by hand. The cells are the
-   items of one flow, which is also the loop's one shared reader; one more cell under the flow keeps the clock and the
-   total. A page writes its cells, its neighbours' names, and its step as a rule:
-     <div class="loop power">
-       <div class="loop-flow" data-store-read>
-         <div data-store-read-3 class="loop-in" style="--store-of: --x2; --store-of-2: --x4">
-           <output id="--x3" for="--x2 --x4" aria-live="off" data-store class="loop-cell" style="--store-name: --x3; --store-start: 6000; --d: 3"></output>
-         </div>
-         ...one a cell...
-         <b class="loop-measure"><i data-store class="loop-core"></i></b>
-       </div>
-     </div>
-     .power .loop-cell { --next: round(80000 * (var(--in-a) + var(--d) * var(--store-value) + var(--in-b)) / max(1, var(--loop-total)));
-                         --measure: calc(var(--in-a) + var(--d) * var(--store-value) + var(--in-b)); }
-   --next is the cell's next value; --measure what it adds to the total. Each cell is as wide as its --measure, so the
-   flow's width is the total, and as tall as how much it would still change (|--next - value|), so the flow's height is
-   the largest change. The core cell (published as --loop) keeps the total in its first number and the clock in its
-   second: iteration k = floor(t / --loop-period) (10), phase t mod period. It takes the flow's width in phases
-   --loop-settle (5) onwards; a cell stores --next once an iteration, in phases 0 to --loop-compute - 1 (3), and only
-   when the loop's read has arrived (its second number is the board's: it remembers k + 1). The clock starts at
-   --loop-settle (the total measures the start before any cell moves) and stops for good when, at an iteration's end,
-   the largest change is at most --loop-tolerance (0), after three iterations and with the total below a cell's
-   ceiling: then nothing computes again and the cells rest. Inside .loop-flow: --loop-total, --loop-t, --loop-ok; inside a
-   .loop-in, -in-2, -in-3: --in-a ... --in-i, the values of the names it reads (fill the slots in order: WebKit 26.4
-   reads a stray value in an unnamed first slot). One loop a page: the name --loop is fixed. */
-.loop { --loop-period: 10; --loop-compute: 3; --loop-settle: 5; --loop-tolerance: 0; }
-.loop-flow { position: relative; display: flex; align-items: flex-start; width: max-content;
-  --store-of: --loop; --loop-total: var(--store-value); --loop-t: var(--store-y); --loop-ok: var(--store-ready); }
-.loop-flow > * { flex: none; }
-/* a loop can be a table: <table class="loop">, the row <tr class="loop-flow" data-store-read>, a <td> a cell (and one
-   for the core cell): a row is as wide as its cells added up and as tall as its tallest, as the flow is */
-table.loop { border-collapse: collapse; border-spacing: 0; } table.loop td { padding: 0; } tr.loop-flow { display: table-row; }
-.loop-in { --in-a: var(--store-value); --in-b: var(--store-value-2); --in-c: var(--store-value-3); }
-.loop-in-2 { --in-d: var(--store-value); --in-e: var(--store-value-2); --in-f: var(--store-value-3); }
-.loop-in-3 { --in-g: var(--store-value); --in-h: var(--store-value-2); --in-i: var(--store-value-3); }
-.loop-cell { display: block; --store-start-y: 0;
-  --loop-k: round(down, var(--loop-t) / var(--loop-period));
-  --loop-go: calc(sign(max(0, var(--loop-compute) - mod(var(--loop-t), var(--loop-period)))) * sign(abs(var(--loop-k) + 1 - var(--store-y))) * var(--loop-ok));
-  --store-next: calc(var(--loop-go) * (var(--next)) + (1 - var(--loop-go)) * var(--store-value));
-  --store-next-y: calc(var(--loop-go) * (var(--loop-k) + 1) + (1 - var(--loop-go)) * var(--store-y));
-  width: calc(max(0, var(--measure, 0)) * 1px); height: calc(abs(var(--next) - var(--store-value)) * 1px); }
-.loop-measure { position: absolute; inset: 0; container-type: size; }
-.loop-core { display: block; --store-name: --loop; --store-start-y: var(--loop-settle, 5);
-  --loop-phase: mod(var(--store-y), var(--loop-period));
-  --loop-win: sign(max(0, var(--loop-phase) - var(--loop-settle) + 1));
-  --loop-done: calc((1 - sign(abs(var(--loop-phase) - var(--loop-period) + 1))) * (1 - sign(max(0, round(100cqh / 1px) - var(--loop-tolerance))))
-    * sign(max(0, var(--store-y) - 3 * var(--loop-period))) * sign(max(0, 999000 - var(--store-value))));
-  --store-next: calc(var(--loop-win) * round(100cqw / 1px) + (1 - var(--loop-win)) * var(--store-value));
-  --store-next-y: calc(var(--store-y) + 1 - var(--loop-done)); }
-
-/* Sheets (README "Loops and sheets"): a <table class="sheet"> whose cells compute on dcss-store.css's board, as a
-   spreadsheet does. A cell is a stored number with a name; a formula is a rule on a class, written once a column (fill
-   down); a reader around a cell names what it reads ([data-store-read] one name, [data-store-read-3] up to three), and
-   inside it they are --in-a, --in-b, --in-c (a reader inside
-   that one: --in-d, --in-e, --in-f; one more: --in-g ...). A number shows in an <output>, in the format its class names.
-     <td data-store-read-3 style="--store-of: --e2; --store-of-2: --rate">
-       <b data-store class="interest" style="--store-name: --c3"><output class="money"></output></b></td>
-     .interest { --store-next: round(var(--in-a) * var(--in-b) / 120000); }
-   A cell read only by cells after it in the page is a frame faster with the board's --store-name-scope: following.
-   A fold reads a column into one number: readers with class sum, mean, max or min, three names each, nested up to four
-   deep (twelve names), the <output> innermost; it reads --fold (and --fold-count, the names that have arrived):
-     <span data-store-read-3 class="sum" style="--store-of: --c1; --store-of-2: --c2; --store-of-3: --c3">
-       <span data-store-read-3 class="sum" style="--store-of: --c4"><output class="money"></output></span></span>
-   A cell inside a fold can keep it (--store-next: var(--fold)) for formulas to read. A lookup is the board's
-   [data-store-table] with a [data-store-at] reader; in a sheet the value it found is --found.
-   A mean's output may set --fold-scale (10 shows whole numbers' mean in tenths). Formats: money (cents as 12.34), int,
-   pct (12%), tenths (123 as 12.3), bp (basis points as 7.50%), grade (tenths of a point as a letter: A from 90.0, B 80.0,
-   C 70.0, D 60.0, else F). Typed inputs are the board's [data-store-input]. */
-@property --fold { syntax: '<number>'; inherits: true; initial-value: 0; }
-@property --fold-count { syntax: '<number>'; inherits: true; initial-value: 0; }
-@property --sheet-v { syntax: '<number>'; inherits: false; initial-value: 0; }
-@property --sheet-g { syntax: '<number>'; inherits: false; initial-value: 0; }
-@counter-style sheet-grade { system: fixed; symbols: F D C B A; }
-:is(.sheet, .sheet :not(:is([data-store-read], [data-store-read-3]))) > :is([data-store-read], [data-store-read-3]) { --in-a: var(--store-value); --in-b: var(--store-value-2); --in-c: var(--store-value-3); }
-:is(.sheet, .sheet :not(:is([data-store-read], [data-store-read-3]))) > :is([data-store-read], [data-store-read-3]) > :is([data-store-read], [data-store-read-3]) { --in-d: var(--store-value); --in-e: var(--store-value-2); --in-f: var(--store-value-3); }
-:is(.sheet, .sheet :not(:is([data-store-read], [data-store-read-3]))) > :is([data-store-read], [data-store-read-3]) > :is([data-store-read], [data-store-read-3]) > :is([data-store-read], [data-store-read-3]) { --in-g: var(--store-value); --in-h: var(--store-value-2); --in-i: var(--store-value-3); }
-:is(.sheet, .sheet :not(:is(.sum, .mean, .max, .min))) > :is(.sum, .mean) { --sheet-f1: calc(0 + var(--store-value) + var(--store-value-2) + var(--store-value-3)); }
-:is(.sheet, .sheet :not(:is(.sum, .mean, .max, .min))) > .max { --sheet-f1: max(-10000000, var(--store-value) - (1 - var(--store-ready)) * 10000000, var(--store-value-2) - (1 - var(--store-ready-2)) * 10000000, var(--store-value-3) - (1 - var(--store-ready-3)) * 10000000); }
-:is(.sheet, .sheet :not(:is(.sum, .mean, .max, .min))) > .min { --sheet-f1: min(10000000, var(--store-value) + (1 - var(--store-ready)) * 10000000, var(--store-value-2) + (1 - var(--store-ready-2)) * 10000000, var(--store-value-3) + (1 - var(--store-ready-3)) * 10000000); }
-:is(.sheet, .sheet :not(:is(.sum, .mean, .max, .min))) > :is(.sum, .mean, .max, .min) { --sheet-c1: calc(0 + var(--store-ready) + var(--store-ready-2) + var(--store-ready-3)); --fold: var(--sheet-f1); --fold-count: var(--sheet-c1); }
-:is(.sheet, .sheet :not(:is(.sum, .mean, .max, .min))) > :is(.sum, .mean, .max, .min) > :is(.sum, .mean) { --sheet-f2: calc(var(--sheet-f1) + var(--store-value) + var(--store-value-2) + var(--store-value-3)); }
-:is(.sheet, .sheet :not(:is(.sum, .mean, .max, .min))) > :is(.sum, .mean, .max, .min) > .max { --sheet-f2: max(var(--sheet-f1), var(--store-value) - (1 - var(--store-ready)) * 10000000, var(--store-value-2) - (1 - var(--store-ready-2)) * 10000000, var(--store-value-3) - (1 - var(--store-ready-3)) * 10000000); }
-:is(.sheet, .sheet :not(:is(.sum, .mean, .max, .min))) > :is(.sum, .mean, .max, .min) > .min { --sheet-f2: min(var(--sheet-f1), var(--store-value) + (1 - var(--store-ready)) * 10000000, var(--store-value-2) + (1 - var(--store-ready-2)) * 10000000, var(--store-value-3) + (1 - var(--store-ready-3)) * 10000000); }
-:is(.sheet, .sheet :not(:is(.sum, .mean, .max, .min))) > :is(.sum, .mean, .max, .min) > :is(.sum, .mean, .max, .min) { --sheet-c2: calc(var(--sheet-c1) + var(--store-ready) + var(--store-ready-2) + var(--store-ready-3)); --fold: var(--sheet-f2); --fold-count: var(--sheet-c2); }
-:is(.sheet, .sheet :not(:is(.sum, .mean, .max, .min))) > :is(.sum, .mean, .max, .min) > :is(.sum, .mean, .max, .min) > :is(.sum, .mean) { --sheet-f3: calc(var(--sheet-f2) + var(--store-value) + var(--store-value-2) + var(--store-value-3)); }
-:is(.sheet, .sheet :not(:is(.sum, .mean, .max, .min))) > :is(.sum, .mean, .max, .min) > :is(.sum, .mean, .max, .min) > .max { --sheet-f3: max(var(--sheet-f2), var(--store-value) - (1 - var(--store-ready)) * 10000000, var(--store-value-2) - (1 - var(--store-ready-2)) * 10000000, var(--store-value-3) - (1 - var(--store-ready-3)) * 10000000); }
-:is(.sheet, .sheet :not(:is(.sum, .mean, .max, .min))) > :is(.sum, .mean, .max, .min) > :is(.sum, .mean, .max, .min) > .min { --sheet-f3: min(var(--sheet-f2), var(--store-value) + (1 - var(--store-ready)) * 10000000, var(--store-value-2) + (1 - var(--store-ready-2)) * 10000000, var(--store-value-3) + (1 - var(--store-ready-3)) * 10000000); }
-:is(.sheet, .sheet :not(:is(.sum, .mean, .max, .min))) > :is(.sum, .mean, .max, .min) > :is(.sum, .mean, .max, .min) > :is(.sum, .mean, .max, .min) { --sheet-c3: calc(var(--sheet-c2) + var(--store-ready) + var(--store-ready-2) + var(--store-ready-3)); --fold: var(--sheet-f3); --fold-count: var(--sheet-c3); }
-:is(.sheet, .sheet :not(:is(.sum, .mean, .max, .min))) > :is(.sum, .mean, .max, .min) > :is(.sum, .mean, .max, .min) > :is(.sum, .mean, .max, .min) > :is(.sum, .mean) { --sheet-f4: calc(var(--sheet-f3) + var(--store-value) + var(--store-value-2) + var(--store-value-3)); }
-:is(.sheet, .sheet :not(:is(.sum, .mean, .max, .min))) > :is(.sum, .mean, .max, .min) > :is(.sum, .mean, .max, .min) > :is(.sum, .mean, .max, .min) > .max { --sheet-f4: max(var(--sheet-f3), var(--store-value) - (1 - var(--store-ready)) * 10000000, var(--store-value-2) - (1 - var(--store-ready-2)) * 10000000, var(--store-value-3) - (1 - var(--store-ready-3)) * 10000000); }
-:is(.sheet, .sheet :not(:is(.sum, .mean, .max, .min))) > :is(.sum, .mean, .max, .min) > :is(.sum, .mean, .max, .min) > :is(.sum, .mean, .max, .min) > .min { --sheet-f4: min(var(--sheet-f3), var(--store-value) + (1 - var(--store-ready)) * 10000000, var(--store-value-2) + (1 - var(--store-ready-2)) * 10000000, var(--store-value-3) + (1 - var(--store-ready-3)) * 10000000); }
-:is(.sheet, .sheet :not(:is(.sum, .mean, .max, .min))) > :is(.sum, .mean, .max, .min) > :is(.sum, .mean, .max, .min) > :is(.sum, .mean, .max, .min) > :is(.sum, .mean, .max, .min) { --sheet-c4: calc(var(--sheet-c3) + var(--store-ready) + var(--store-ready-2) + var(--store-ready-3)); --fold: var(--sheet-f4); --fold-count: var(--sheet-c4); }
-.sheet [data-store] { display: block; }
-.sheet [data-store-at] { --found: var(--store-value); }
-.sheet output { --sheet-v: var(--store-value); }
-.sheet :is(.sum, .max, .min) > output { --sheet-v: var(--fold); }
-.sheet .mean > output { --sheet-v: round(var(--fold) * var(--fold-scale, 1) / max(1, var(--fold-count))); }
-.sheet output.money { counter-reset: dol round(to-zero, var(--sheet-v) / 100) cen abs(rem(var(--sheet-v), 100)); }
-.sheet output.money::after { content: counter(dol) "." counter(cen, decimal-leading-zero); }
-:is(.sheet output.int, .sheet output.pct) { counter-reset: num round(var(--sheet-v)); } .sheet output.int::after { content: counter(num); } .sheet output.pct::after { content: counter(num) "%"; }
-.sheet output.tenths { counter-reset: whole round(down, var(--sheet-v) / 10) dec mod(var(--sheet-v), 10); }
-.sheet output.tenths::after { content: counter(whole) "." counter(dec); }
-.sheet output.bp { counter-reset: pct round(down, var(--sheet-v) / 100) bps mod(var(--sheet-v), 100); }
-.sheet output.bp::after { content: counter(pct) "." counter(bps, decimal-leading-zero) "%"; }
-.sheet output.grade { --sheet-g: clamp(1, round(down, var(--sheet-v) / 100) - 4, 5); counter-reset: grade round(var(--sheet-g)); }
-.sheet output.grade::after { content: counter(grade, sheet-grade); }
 
 @counter-style dcss-tick-none { system: fixed -1; symbols: "" ""; }
 @counter-style dcss-tick-int { system: extends decimal; range: 0 infinite; fallback: dcss-tick-none; }

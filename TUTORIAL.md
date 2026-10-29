@@ -8,7 +8,7 @@ You need Chrome or Safari, and from this folder `dcss-array.css` and the `famili
 
 ## 1. Total and average
 
-Each calculation is an element whose class is d3's function name. `.dcss-sum` goes on a `<figure>`; the `<ul>` inside it is the data, one `<li>` per value, each saying its number as `--value`. The browser lays that list out, and the layout is the answer. Elements in the `<div>` after the list read it as `--dcss-sum`, and also `--dcss-mean` and `--dcss-count`, since one sum gives all three.
+Each calculation is an element whose class is d3's function name. `.dcss-mean` goes on a `<figure>`; the `<ul>` inside it is the data, one `<li>` per value, each saying its number as `--value`. The browser lays that list out, and the layout is the answer. Elements in the `<div>` after the list read it as `--dcss-mean`, and also `--dcss-sum` and `--dcss-count`, since one mean's list gives all three.
 
 The months' numbers are set once, on `.sales`, so later steps can reuse them. `.dcss-format-fixed` prints a number the way d3.format does, with `--precision` decimals. The figure is one line tall and clips the rest: the list itself is drawn one pixel per unit, which you don't want to see. `aria-hidden` keeps a screen reader from announcing that drawing as six empty list items.
 
@@ -26,7 +26,7 @@ The months' numbers are set once, on `.sales`, so later steps can reuse them. `.
 </style>
 
 <section class="sales">
-  <figure class="dcss-sum">
+  <figure class="dcss-mean">
     <ul aria-hidden="true">
       <li style="--value: var(--jan)"></li> <li style="--value: var(--feb)"></li> <li style="--value: var(--mar)"></li>
       <li style="--value: var(--apr)"></li> <li style="--value: var(--may)"></li> <li style="--value: var(--jun)"></li>
@@ -115,7 +115,7 @@ The numbers are custom properties, so a selector can change them. Two radio butt
     <label><input type="radio" name="year" id="y2025" checked> 2025</label>
     <label><input type="radio" name="year" id="y2026"> 2026</label>
   </p>
-  <figure class="dcss-sum">
+  <figure class="dcss-mean">
     <ul aria-hidden="true">
       <li style="--value: var(--jan)"></li> <li style="--value: var(--feb)"></li> <li style="--value: var(--mar)"></li>
       <li style="--value: var(--apr)"></li> <li style="--value: var(--may)"></li> <li style="--value: var(--jun)"></li>

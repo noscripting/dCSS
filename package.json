@@ -1,7 +1,7 @@
 {
   "name": "dcss-array.css",
   "version": "1.0.0",
-  "description": "d3's data work as CSS: sums, medians, quantiles, extents, scales, ticks, number and date formats, color parsing and more, computed by the stylesheet in the same frame, with no script.",
+  "description": "d3's data work as CSS: sums, medians, quantiles, extents, scales, ticks, number and UTC date formats, time intervals, treemaps and map projections, computed by the stylesheet in the same frame, with no script.",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -31,6 +31,7 @@
   "files": [
     "dcss-array.css",
     "dcss-array-all.css",
+    "dcss-array-extras.css",
     "families/",
     "parts/",
     "families.json",
