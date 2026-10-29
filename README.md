@@ -1278,7 +1278,7 @@ In WebKit, the median of three cold loads beside the core (2026-10-28):
 | `array.css` | 267 KB | 15 ms |
 | `hierarchy.css` | 6.6 KB | 10 ms |
 | `scale.css` | 120 KB | 12 ms |
-| `format.css` | 235 KB | 15 ms |
+| `format.css` | 237 KB | 15 ms |
 | `ease.css` | 41 KB | 10 ms |
 | `time.css` | 315 KB | 15 ms |
 | `date-format.css` | 36 KB | 10 ms |
@@ -1292,7 +1292,7 @@ The core is 284 KB, 73 KB gzipped; `dcss-array-extras.css`, the lists, loops and
 | `array.css` | 38 | 1.7 KB (0.8–5.8) | 20 KB |
 | `hierarchy.css` | 4 | 0.6 KB (0.6–0.7) | 0.9 KB |
 | `scale.css` | 6 | 2.3 KB (0.5–3.0) | 7.5 KB |
-| `format.css` | 9 | 3.4 KB (1.0–11.6) | 18 KB |
+| `format.css` | 9 | 3.7 KB (1.3–11.9) | 18 KB |
 | `ease.css` | 37 | 0.7 KB (0.5–1.0) | 2.9 KB |
 | `time.css` | 65 | 0.8 KB (0.8–3.7) | 15 KB |
 | `date-format.css` | 41 | 3.4 KB (3.3–3.5) | 4.2 KB |
