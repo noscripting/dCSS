@@ -1,6 +1,7 @@
 /* DCSS array: families/format.css
    SPDX-License-Identifier: MIT
    SPDX-FileCopyrightText: 2026 noscript.ing contributors */
+:where([class*="dcss-"]) { writing-mode: horizontal-tb; }
 /* DCSS d3.format, types f, % and s: toFixed's exact rounding, unround's parts (format.mjs). */
 @property --dcss-fmt-boundary-power { syntax: '<integer>'; inherits: true; initial-value: 0; }
 @property --dcss-fmt-boundary-lo-e { syntax: '<number>'; inherits: true; initial-value: 0; }

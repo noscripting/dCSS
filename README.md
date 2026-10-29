@@ -50,8 +50,8 @@ A page that uses many calls can link the core, `dcss-array.css`, and the familie
 | `scale.css` | linear, pow, sqrt, log, band and identity scales | 7.5 KB |
 | `format.css` | format types f, %, s and general; a log scale's ticks and labels; an Arabic locale | 18 KB |
 | `ease.css` | every d3-ease function | 2.9 KB |
-| `time.css` | UTC time intervals: day, week, month, year, hour, minute, second | 14 KB |
-| `date-format.css` | utcFormat in 41 formats | 4.1 KB |
+| `time.css` | UTC time intervals: day, week, month, year, hour, minute, second | 15 KB |
+| `date-format.css` | utcFormat in 41 formats | 4.2 KB |
 | `geo.css` | identity, equirectangular, mercator, transverse mercator and stereographic projections, rotation, distance | 16 KB |
 
 <!-- /families -->
@@ -64,7 +64,9 @@ Every call in the families works the same way. The class goes on a `<figure>`, n
 
 ### The data
 
-The data is the `<ul>` or `<ol>` inside the figure, one `<li>` per datum, each with its number as `--value`. Where d3 groups data, `--key` gives the group, a whole number from 1. A hierarchy is nested lists. Give each datum its own `--value`: it never takes its parent's. An item without one is skipped, as d3 skips a missing value: the sum, variance, bins and median skip it quietly, as does the quantile at `--p` 0, 0.5 and 1; the mean, count, min, max and extent skip it and set `--dcss-err` to 1 beside their answer; the quantile at any other `--p` and the median and quantile indexes give no answer.
+The data is the `<ul>` or `<ol>` inside the figure, one `<li>` per datum, each with its number as `--value`. A hierarchy is nested lists. Give each datum its own `--value`: it never takes its parent's. An item without one is skipped, as d3 skips a missing value, and the call answers as d3 does with `--dcss-err` 0: the sum, mean, count, min, max, extent, variance, bins and median, and the quantile at `--p` 0, 0.5 and 1. The quantile at any other `--p` and the median and quantile indexes give no answer. A value they can't take exactly, off the 1/64 grid (12.3 is not a 64th; 12.25 is) or past a call's range, leaves no answer and `--dcss-err` 1, never a rounded one: give tenths or cents as whole numbers and scale the answer.
+
+A call lays its list out and measures it, so it sets the boxes of the list and its items itself. In a page that orders its CSS with `@layer`, link dcss unlayered or in the last layer: a rule on lists in a later layer (`ol { padding-inline-start: 1rem }`) beats dcss's and changes the answers with no error. A call measures across and down whatever the page's `writing-mode`, so in a vertical page its printed answer reads across.
 
 ```html
 <figure class="dcss-sum">
@@ -92,7 +94,7 @@ Beside each result, `--dcss-ready` is 0 until the number is read, and `--dcss-er
 
 #### When a call can't answer
 
-A call that can't answer sets `--dcss-err` to 1 (an input it can't take) or 2 (d3 has no answer, as for the mean of nothing). The mean, count, min, max and extent also set 1 beside an answer when they skipped an item with no number, and an `<output>` or formatter in error prints nothing. With no answer to give, a call publishes no number, so a call or formatter that takes its answer fails too, with nothing written between them. A number read straight from a result in error isn't d3's answer: a `counter()` of an index in error shows 0. To show a message instead, wrap the reading in one element inside the result and query its `--dcss-err`:
+A call that can't answer sets `--dcss-err` to 1 (an input it can't take: a value off the 1/64 grid or past its range) or 2 (d3 has no answer, as for the mean of nothing), and an `<output>` or formatter in error prints nothing. An item with no number is not an error: it is skipped, as d3 skips it. With no answer to give, a call publishes no number, so a call or formatter that takes its answer fails too, with nothing written between them. A number read straight from a result in error isn't d3's answer: a `counter()` of an index in error shows 0. To show a message instead, wrap the reading in one element inside the result and query its `--dcss-err`:
 
 ```html
 <style>
@@ -106,7 +108,7 @@ A call that can't answer sets `--dcss-err` to 1 (an input it can't take) or 2 (d
 </figure>
 ```
 
-The page shows "Highest: item 1". Set an item past the call's range, `--value: 9000`, and it shows "no answer".
+The page shows "Highest: item 1". Set an item past the call's range, `--value: 9000`, and it shows "no answer". Show the answer by default and hide it in error, as here. The other way round, hiding it until the call is ready and then showing it with a style query, leaves the number blank in Chrome ([Q11](QUIRKS.md#q11-chrome-counter-text-stays-empty-on-an-item-a-style-query-shows-again-inside-a-container-result)).
 
 To test a page from script, read the number a call gives (`getComputedStyle(el).getPropertyValue('--dcss-sum')`) and its `--dcss-err`, or compare a screenshot. The printed text is generated content, and script reads it back as `counter()` expressions, not digits.
 
@@ -209,6 +211,35 @@ Cumsum takes a second list after its values, one item per value: everything insi
 Bins (`.dcss-bin`) take a second list the same way, one item per bin, each reading its bin's count and bounds.
 
 To give a call the answer of a call of its own kind (a precision helper on another's result), set the input on a plain element between them: written on the call itself, it would read that call's own answer.
+
+## Writing a call in MathML
+
+A call can also be written in Content MathML, the W3C's markup for what a formula means, and compiled before the page is served by `mathml.mjs`, a Node script beside the sheets that needs nothing else: `node mathml.mjs page.html > built.html`, or `import { toDcss } from 'dcss-array.css/mathml.mjs'` in a program. Browsers don't draw Content MathML and CSS can't read it, so the build turns each formula into the call it names, and CSS computes the answer in the browser as above.
+
+```html
+<math display="block" class="dcss-format-fixed" style="--precision: 1">
+  <apply><median/><cn>4</cn><cn>1</cn><cn>3</cn><ci>jan</ci></apply>
+</math>
+```
+
+The build writes a figure whose caption is the formula, median(4, 1, 3, jan), in Presentation MathML, which browsers draw and screen readers read, with the Content MathML kept as its annotation; then the `.dcss-median` call, one `<li>` an argument, and its `<output>` with the formatter and settings the `<math>` gave (a median with none prints up to six decimals). `<ci>jan</ci>` becomes `--value: var(--jan, 0.001)`: set `--jan` on an ancestor and the answer follows it; a name the page never sets leaves no answer and `--dcss-err` 1. Each number is written once, and the page keeps the formula.
+
+| Content MathML | Call |
+|---|---|
+| `<median/>`, `<csymbol cd="s_data1">median</csymbol>` | `.dcss-median` |
+| `<mean/>`, `<csymbol cd="s_data1">mean</csymbol>` | `.dcss-mean` |
+| `<min/>`, `<max/>`, or `<csymbol cd="minmax1">min</csymbol>` (`max`) of one `<csymbol cd="set1">set</csymbol>` | `.dcss-min`, `.dcss-max` |
+| `<plus/>`, `<csymbol cd="arith1">plus</csymbol>`, two arguments or more | `.dcss-sum` |
+
+Arguments are `<cn>` numbers (decimal; `type` integer, real, double, e-notation or rational) and `<ci>` names. The build stops with the file, line and reason, rather than write a page that shows a wrong or blank answer, on:
+
+- an operator with no call: `<sum/>` binds a variable over limits, `<variance/>` and `<sdev/>` divide by n where d3 divides by n - 1, `<card/>` and a `set1` set drop repeated values;
+- a nested `<apply>`, a qualifier (`<bvar>`, `<condition>`, `<lowlimit>`), `definitionURL`, or Content MathML outside an annotation that it can't compile, which browsers would show as nothing;
+- a number off the 1/64 grid or past the call's range, or a list of numbers too long to read exactly (Performance);
+- one `<ci>` alone, which MathML reads as a data set, and a name dcss reads itself (`value`, `dcss-*`);
+- a formula beside text in a `<p>`, since the call's list would end the paragraph (a `<p>` holding only the formula is replaced).
+
+A `<math>` without an `<apply>` is left as it is, the rest of the page is copied byte for byte, and the build run on its own output changes nothing. It links the families the calls need beside the page's link to dcss. Not yet: formulas inside formulas, the quantile, variance and deviation, extent.
 
 ## The grid primitives
 
@@ -366,7 +397,7 @@ Adds the list's numbers, of any sign: the positives are laid out across and the 
 
 Output: `--dcss-sum`.
 
-An item that isn't a number is skipped, as d3 skips it; a sum says nothing of it.
+An item that isn't a number is skipped, as d3 skips it; a sum says nothing of it. A value off the 1/64 grid leaves no answer (error 1): the sum can't take it exactly.
 
 #### `.dcss-mean`
 
@@ -385,7 +416,7 @@ Averages the list's numbers. The same list gives their sum, count and length. So
 
 Output: `--dcss-mean`; `--dcss-sum`, `--dcss-count`, `--dcss-length`.
 
-Each negative value is offset by 1024 and counted apart, up to 4,095 values. A value below -1024 leaves no answer (error 2), where d3 would count it. An item that isn't a number is skipped, as d3 skips it, with `--dcss-err` 1; no numbers at all is d3's undefined, error 2.
+Each negative value is offset by 1024 and counted apart, up to 4,095 values. A value below -1024, or off the 1/64 grid, leaves no answer (error 1). An item that isn't a number is skipped, as d3 skips it; no numbers at all is d3's undefined, error 2.
 
 #### `.dcss-count`
 
@@ -404,7 +435,7 @@ Counts the list's numbers. Source: [d3.count](https://d3js.org/d3-array/summariz
 
 Output: `--dcss-count`.
 
-An item that isn't a number is skipped, with `--dcss-err` 1.
+An item that isn't a number is skipped, as d3 skips it.
 
 #### `.dcss-length`
 
@@ -433,7 +464,7 @@ The least and greatest number of the list, or both. Source: [d3.min](https://d3j
 
 Output: `--dcss-min`, `--dcss-max`: an extent gives both, and its `<output>` prints `3–40`.
 
-A value below -131,072 leaves no answer (error 2). An item that isn't a number is skipped, with `--dcss-err` 1; no numbers is error 2.
+A value below -131,072, or off the 1/64 grid, leaves no answer (error 1). An item that isn't a number is skipped, as d3 skips it; no numbers is error 2.
 
 #### `.dcss-ascending`, `.dcss-descending`
 
@@ -1213,13 +1244,13 @@ A sheet is a `<table class="sheet">` whose cells are stored numbers and whose fo
 
 <!-- browsers -->
 
-Chrome and Safari's engine both run everything: headless Chrome 155 and WebKit 26.4 (Playwright's build of Safari's engine, not Safari itself) pass all 111 requirements in [SPEC.md](SPEC.md). The d3 calls give d3's own answer to 3,206 of the 7,049 calls d3's tests make (45%), and cover 26 of d3's 508 functions in full and 73 more in part; SPEC.md's implementation report has the count for each call. Easings and scales come within 1e-12 of d3. A treemap's boxes are within 2/64 px per level of d3's for totals up to 50,000; near a million, WebKit is 0.3 px off and Chrome 0.02 px.
+Chrome and Safari's engine both run everything: headless Chrome 155 and WebKit 26.4 (Playwright's build of Safari's engine, not Safari itself) pass all 112 requirements in [SPEC.md](SPEC.md). The d3 calls give d3's own answer to 3,206 of the 7,049 calls d3's tests make (45%), and cover 26 of d3's 508 functions in full and 73 more in part; SPEC.md's implementation report has the count for each call. Easings and scales come within 1e-12 of d3. A treemap's boxes are within 2/64 px per level of d3's for totals up to 50,000; near a million, WebKit is 0.3 px off and Chrome 0.02 px.
 
 In Chrome, a reduction's list wider or taller than 262,144 px (2^18) reads without its 64ths, and past 2^24 px without whole pixels: a sum whose positives or negatives pass 2^18, a mean whose sum and 1024 for each negative value do, or one with 64 negative values or more.
 
 Safari drops an input copied into one formula past 65,535 tokens: a scale's answer is short enough to be another scale's domain stop or exponent, or a projection's point; a scale's inverse copies its stops up to 34 times and its exponent up to 86, and a projection's answer (about 12,000 tokens) is too long for those inputs.
 
-Firefox 158 computes `calc()` in 32-bit floats, so the calls that need a double's exact digits (exact sums, dates, most formatting) give wrong answers there, and it has no view timelines, which loops and sheets need. It passes 71 of the 111 requirements. `@function` runs only in Chrome: WebKit 26.4 and Firefox 158 don't parse it, and the classes work everywhere. [QUIRKS.md](QUIRKS.md) has the engine bugs the sheet works around.
+Firefox 158 computes `calc()` in 32-bit floats, so the calls that need a double's exact digits (exact sums, dates, most formatting) give wrong answers there, and it has no view timelines, which loops and sheets need. It passes 71 of the 112 requirements. `@function` runs only in Chrome: WebKit 26.4 and Firefox 158 don't parse it, and the classes work everywhere. [QUIRKS.md](QUIRKS.md) has the engine bugs the sheet works around.
 
 <!-- /browsers -->
 
@@ -1233,7 +1264,7 @@ In WebKit, the median of three cold loads beside the core (2026-10-28):
 |---|---:|---:|
 | `ticks.css` | 128 KB | 14 ms |
 | `array.css` | 263 KB | 15 ms |
-| `hierarchy.css` | 6.5 KB | 10 ms |
+| `hierarchy.css` | 6.6 KB | 10 ms |
 | `scale.css` | 120 KB | 12 ms |
 | `format.css` | 233 KB | 15 ms |
 | `ease.css` | 41 KB | 10 ms |
@@ -1245,15 +1276,15 @@ The core is 284 KB, 73 KB gzipped; `dcss-array-extras.css`, the lists, loops and
 
 | Family | Parts | A part | The family |
 |---|---:|---:|---:|
-| `ticks.css` | 8 | 2.9 KB (0.5–5.6) | 10 KB |
-| `array.css` | 38 | 1.7 KB (0.7–5.7) | 20 KB |
-| `hierarchy.css` | 4 | 0.6 KB (0.5–0.7) | 0.9 KB |
+| `ticks.css` | 8 | 2.9 KB (0.5–5.7) | 10 KB |
+| `array.css` | 38 | 1.7 KB (0.8–5.8) | 20 KB |
+| `hierarchy.css` | 4 | 0.6 KB (0.6–0.7) | 0.9 KB |
 | `scale.css` | 6 | 2.3 KB (0.5–3.0) | 7.5 KB |
-| `format.css` | 9 | 3.2 KB (1.0–11.5) | 18 KB |
-| `ease.css` | 37 | 0.6 KB (0.5–1.0) | 2.9 KB |
-| `time.css` | 65 | 0.8 KB (0.7–3.7) | 14 KB |
-| `date-format.css` | 41 | 3.4 KB (3.2–3.4) | 4.1 KB |
-| `geo.css` | 20 | 1.4 KB (0.5–2.1) | 16 KB |
+| `format.css` | 9 | 3.3 KB (1.0–11.5) | 18 KB |
+| `ease.css` | 37 | 0.7 KB (0.5–1.0) | 2.9 KB |
+| `time.css` | 65 | 0.8 KB (0.8–3.7) | 15 KB |
+| `date-format.css` | 41 | 3.4 KB (3.3–3.5) | 4.2 KB |
+| `geo.css` | 20 | 1.5 KB (0.6–2.1) | 16 KB |
 
 <!-- /performance -->
 

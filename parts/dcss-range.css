@@ -3,6 +3,7 @@
    SPDX-FileCopyrightText: 2026 noscript.ing contributors */
 @property --dcss-ready { syntax: '<integer>'; inherits: true; initial-value: 0; }
 @property --dcss-err { syntax: '<integer>'; inherits: true; initial-value: 0; }
+:where([class*="dcss-"]) { writing-mode: horizontal-tb; }
 /* DCSS reductions: d3.sum, count, mean, min, max, extent and the list's length, in a figure (reduce.mjs). */
 
 /* DCSS bisect, on dcss.css's sort and collection-reader kernel (bisect.mjs, search.mjs). */

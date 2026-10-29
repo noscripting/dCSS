@@ -37,9 +37,9 @@
         "dcss-nice",
         "dcss-ticks"
       ],
-      "raw": 128319,
-      "gzip9": 10288,
-      "sha256": "6fbec21b4f64c479e0fcd7981dce5698675f4ac39439830f898309f4bc59e6fc"
+      "raw": 128377,
+      "gzip9": 10345,
+      "sha256": "0a19e5dec078c4686bf8ad0c2e47939bb8cdb4720400c8eabfce1852ae3f9d1e"
     },
     "array": {
       "file": "families/array.css",
@@ -84,9 +84,9 @@
         "dcss-sum",
         "dcss-variance"
       ],
-      "raw": 263074,
-      "gzip9": 19825,
-      "sha256": "5c0c6cfe19f319bda25e35124ea0ca841df49dc3865b0e3b4bb3aa57f491313e"
+      "raw": 262748,
+      "gzip9": 19910,
+      "sha256": "d1d557280f4f42c7d867195df688ff996762f4bfb95d11d32979fddd893ec35b"
     },
     "hierarchy": {
       "file": "families/hierarchy.css",
@@ -97,9 +97,9 @@
         "dcss-treemap-slice",
         "dcss-treemap-slice-dice"
       ],
-      "raw": 6537,
-      "gzip9": 860,
-      "sha256": "d61d6ff8373aae5bd59b3345e7a03a932bc661728eb02b256a94abf1b1268173"
+      "raw": 6595,
+      "gzip9": 903,
+      "sha256": "de6e243cb5c4ba04d9f96254670206c9dc6e537bd929612c01d789737686414f"
     },
     "scale": {
       "file": "families/scale.css",
@@ -112,9 +112,9 @@
         "dcss-scale-pow",
         "dcss-scale-sqrt"
       ],
-      "raw": 119799,
-      "gzip9": 7468,
-      "sha256": "3e9c82e22bce8fec1d7424072d385fb1b255e0680a48426d0de9886bc8201cbd"
+      "raw": 119857,
+      "gzip9": 7513,
+      "sha256": "b9fec4e2d937c390198e9975247df94eec5f19b73a31284547e2afb0b635b66f"
     },
     "format": {
       "file": "families/format.css",
@@ -130,9 +130,9 @@
         "dcss-ticks-log",
         "dcss-ticks-log-format"
       ],
-      "raw": 232722,
-      "gzip9": 17612,
-      "sha256": "acca84d352d296f094564f71c4bc9e798938574b84d48afbe234d595f6b91b51"
+      "raw": 232780,
+      "gzip9": 17660,
+      "sha256": "b1735068a8c755c92ca549033346800014b5b571752cc9187b846d32d99ec654"
     },
     "ease": {
       "file": "families/ease.css",
@@ -176,9 +176,9 @@
         "dcss-ease-sin-in-out",
         "dcss-ease-sin-out"
       ],
-      "raw": 41399,
-      "gzip9": 2871,
-      "sha256": "74511031c89725be22832be68189d7f952de21235eaaf02deca731b6fdbfd127"
+      "raw": 41457,
+      "gzip9": 2920,
+      "sha256": "281d216f4bdd9f46a7deffa04aa49457bb8738e0c768db179c036f5bb443bbab"
     },
     "time": {
       "file": "families/time.css",
@@ -250,9 +250,9 @@
         "dcss-utc-year-offset",
         "dcss-utc-year-round"
       ],
-      "raw": 315398,
-      "gzip9": 14449,
-      "sha256": "cd69233d88f36318dcd640ec573ecd23878d331a5cfa16f6db414f9d43615852"
+      "raw": 315456,
+      "gzip9": 14500,
+      "sha256": "37835f153ae29767b4bcfdf138d7c7e8549ca25f513db7edd30c7e783a1a3b02"
     },
     "date-format": {
       "file": "families/date-format.css",
@@ -300,9 +300,9 @@
         "dcss-date-format-8",
         "dcss-date-format-9"
       ],
-      "raw": 35950,
-      "gzip9": 4107,
-      "sha256": "8136db70c79d5f6af7ea6baebc71055e60236d3f891c40bf2c7d215a4a715b9e"
+      "raw": 36008,
+      "gzip9": 4153,
+      "sha256": "ad85b72ec25a51fdc572c75779a56ab6dd3ee498db673e54c0d1f4148bd17b83"
     },
     "geo": {
       "file": "families/geo.css",
@@ -329,9 +329,9 @@
         "dcss-geo-transverse-mercator-extent",
         "dcss-geo-transverse-mercator-invert"
       ],
-      "raw": 248023,
-      "gzip9": 16190,
-      "sha256": "aaff2505dcc710464cafa6a4df16476deaa79ead31da8b01c60fc4d3eb71b537"
+      "raw": 248081,
+      "gzip9": 16243,
+      "sha256": "1efb3c571ccc7279ef2a69853fe0e8dabd48acfe8eb20405d8a65ecc48aae202"
     }
   },
   "owners": {

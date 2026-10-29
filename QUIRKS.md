@@ -111,7 +111,7 @@ Measured 2026-10-22, headless: Chrome 155.0.8059.86, WebKit 26.4, Firefox 158.0.
 - Engines: Chrome FAIL: ticks 100 to 600 compute but lay out 0 px wide, and an axis's labels beside them go blank · WebKit PASS · Firefox PASS
 - Repro: `quirks/cq-counter-unhidden.html`
 - Bug: none found
-- Workaround: ticks past the last one are `visibility: hidden; position: absolute`, never `display: none`, so their counters exist from the first layout (`src/ticks.mjs`). A page printing `--dcss-tick` with its own `counter()` needs nothing more.
+- Workaround: ticks past the last one are `visibility: hidden; position: absolute`, never `display: none`, so their counters exist from the first layout (`src/ticks.mjs`). A page printing `--dcss-tick` with its own `counter()` needs nothing more. A page's own message around an answer: show the answer by default and hide it in error; hiding it until `--dcss-ready` is 1 and then showing it leaves a mean's, min's or max's number blank in Chrome (README's error section; a review, 2026-10-29).
 - Affects: A58
 
 ### Q12 Chrome: a product whose factor holds the sheet's exact division rounds away from the IEEE double

@@ -8,6 +8,7 @@
 @counter-style dcss-tick-dot { system: additive; additive-symbols: 1 ".", 0 ""; }
 @counter-style dcss-tick-sign { system: additive; additive-symbols: 1 "\2212", 0 ""; }
 @counter-style dcss-tick-none { system: fixed -1; symbols: "" ""; }
+:where([class*="dcss-"]) { writing-mode: horizontal-tb; }
 /* DCSS ticks and axes: d3-array's ticks, tickIncrement, tickStep and nice in calc(), d3-axis's drawing (ticks.mjs). */
 @property --dcss-t0-p0 { syntax: '<integer>'; inherits: false; initial-value: 0; }
 @property --dcss-t0-p { syntax: '<integer>'; inherits: false; initial-value: 0; }

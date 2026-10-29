@@ -1,6 +1,7 @@
 /* DCSS array: parts/dcss-ease-back-in.css, the dcss-ease-back-in call alone (parts.mjs)
    SPDX-License-Identifier: MIT
    SPDX-FileCopyrightText: 2026 noscript.ing contributors */
+:where([class*="dcss-"]) { writing-mode: horizontal-tb; }
 /* DCSS d3-ease: every easing as .dcss-ease-<name>, --value in, --dcss-ease-<name> out (ease.mjs). */
 @property --dcss-p-ease-t-e { syntax: '<number>'; inherits: false; initial-value: 0; }
 @property --dcss-p-ease-t-a { syntax: '<number>'; inherits: false; initial-value: 0; }

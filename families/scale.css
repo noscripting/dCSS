@@ -1,6 +1,7 @@
 /* DCSS array: families/scale.css
    SPDX-License-Identifier: MIT
    SPDX-FileCopyrightText: 2026 noscript.ing contributors */
+:where([class*="dcss-"]) { writing-mode: horizontal-tb; }
 /* DCSS bar chart: d3.scaleBand and d3.scaleLinear([0, max]) over a list (scale.mjs). */
 @property --dcss-plot-h { syntax: '<length>'; inherits: true; initial-value: 0px; }
 @property --dcss-plot-w { syntax: '<length>'; inherits: true; initial-value: 0px; }

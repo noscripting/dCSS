@@ -26,7 +26,8 @@
     "./families/*.css": "./families/*.css",
     "./parts/*.css": "./parts/*.css",
     "./families.json": "./families.json",
-    "./package.json": "./package.json"
+    "./package.json": "./package.json",
+    "./mathml.mjs": "./mathml.mjs"
   },
   "files": [
     "dcss-array.css",
@@ -35,6 +36,7 @@
     "families/",
     "parts/",
     "families.json",
+    "mathml.mjs",
     "dcss-preload.html",
     "README.md",
     "TUTORIAL.md",

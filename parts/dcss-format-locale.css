@@ -3,6 +3,7 @@
    SPDX-FileCopyrightText: 2026 noscript.ing contributors */
 @property --dcss-ready { syntax: '<integer>'; inherits: true; initial-value: 0; }
 @property --dcss-err { syntax: '<integer>'; inherits: true; initial-value: 0; }
+:where([class*="dcss-"]) { writing-mode: horizontal-tb; }
 /* DCSS d3.format, types f, % and s: toFixed's exact rounding, unround's parts (format.mjs). */
 @property --dcss-fmt-p { syntax: '<number>'; inherits: true; initial-value: 0; }
 @property --dcss-fmt-neg { syntax: '<number>'; inherits: true; initial-value: 0; }

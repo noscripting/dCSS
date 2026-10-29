@@ -1,6 +1,7 @@
 /* DCSS array: parts/dcss-treemap-slice-dice.css, the dcss-treemap-slice-dice call alone (parts.mjs)
    SPDX-License-Identifier: MIT
    SPDX-FileCopyrightText: 2026 noscript.ing contributors */
+:where([class*="dcss-"]) { writing-mode: horizontal-tb; }
 /* DCSS hierarchies: d3.treemapSlice, treemapDice, treemapSliceDice and partition over nested lists (hierarchy.mjs). */
 :is( .dcss-treemap-slice-dice) { display: flex; flex-direction: column; }
 :is( .dcss-treemap-slice-dice) > :not(:is(ul, ol)) { flex: none; }

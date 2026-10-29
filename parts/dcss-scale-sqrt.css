@@ -1,6 +1,7 @@
 /* DCSS array: parts/dcss-scale-sqrt.css, the dcss-scale-sqrt call alone (parts.mjs)
    SPDX-License-Identifier: MIT
    SPDX-FileCopyrightText: 2026 noscript.ing contributors */
+:where([class*="dcss-"]) { writing-mode: horizontal-tb; }
 /* DCSS bar chart: d3.scaleBand and d3.scaleLinear([0, max]) over a list (scale.mjs). */
 
 /* DCSS d3.scaleLinear: up to 8 stops, clamp, rangeRound (linear.mjs). */

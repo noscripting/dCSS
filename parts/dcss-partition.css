@@ -1,6 +1,7 @@
 /* DCSS array: parts/dcss-partition.css, the dcss-partition call alone (parts.mjs)
    SPDX-License-Identifier: MIT
    SPDX-FileCopyrightText: 2026 noscript.ing contributors */
+:where([class*="dcss-"]) { writing-mode: horizontal-tb; }
 /* DCSS hierarchies: d3.treemapSlice, treemapDice, treemapSliceDice and partition over nested lists (hierarchy.mjs). */
 :is( .dcss-partition) { display: flex; flex-direction: column; }
 :is( .dcss-partition) > :not(:is(ul, ol)) { flex: none; }

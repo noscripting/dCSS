@@ -4,6 +4,7 @@
 @property --dcss-k { syntax: '*'; inherits: false; initial-value: 1fr; }
 @property --dcss-ready { syntax: '<integer>'; inherits: true; initial-value: 0; }
 @property --dcss-err { syntax: '<integer>'; inherits: true; initial-value: 0; }
+:where([class*="dcss-"]) { writing-mode: horizontal-tb; }
 /* DCSS ticks and axes: d3-array's ticks, tickIncrement, tickStep and nice in calc(), d3-axis's drawing (ticks.mjs). */
 @property --dcss-t0-p0 { syntax: '<integer>'; inherits: false; initial-value: 0; }
 @property --dcss-t0-p { syntax: '<integer>'; inherits: false; initial-value: 0; }

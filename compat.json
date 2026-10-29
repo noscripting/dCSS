@@ -1349,7 +1349,7 @@
       },
       "A60": {
         "__compat": {
-          "description": "`.dcss-sum`, `-count`, `-mean`, `-min`, `-max` and `-extent` over `<li>`s with `--value` MUST give the element after the list `--dcss-<name>` (extent: `--dcss-min`, `--dcss-max`) equal to d3-array 3.2.4's for signed values on the 1/64 grid (a mean's from -1024, min, max and extent's within ±131,072), skipping what isn't a number with `--dcss-err` 1 (a sum 0), 2 for d3's undefined or a value out of range; an empty `<output>` MUST print it as format(\",\") does, to 6 decimals.",
+          "description": "`.dcss-sum`, `-count`, `-mean`, `-min`, `-max` and `-extent` over `<li>`s with `--value` MUST give the element after the list `--dcss-<name>` (extent: `--dcss-min`, `--dcss-max`) equal to d3-array 3.2.4's for signed values on the 1/64 grid (a mean's from -1024, min, max and extent's within ±131,072), skipping what isn't a number with `--dcss-err` 0, as d3 skips it; a value off the grid or out of range MUST leave no answer with error 1, and d3's undefined error 2; an empty `<output>` MUST print the answer as format(\",\") does, to 6 decimals.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -1789,6 +1789,30 @@
             },
             "firefox": {
               "version_added": "≤158"
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A131": {
+        "__compat": {
+          "description": "`mathml.mjs` MUST compile each `<math>` whose one element child is an `<apply>` of `<median/>`, `<mean/>`, `<min/>`, `<max/>` or `<plus/>` (or their `s_data1`, `minmax1` over one `set1` set, and `arith1` symbols) with `<cn>` and `<ci>` arguments into that call, one `<li>` an argument, `<ci>name</ci>` as `--value: var(--name, 0.001)`, the formula kept as Presentation MathML with its Content MathML as the annotation, so the page gives d3's answer, and an unset name `--dcss-err` 1. It MUST stop with the file, line and reason on any other Content MathML outside an annotation, a number off the 1/64 grid or past the call's range, a list of numbers Chrome reads without its 64ths, one `<ci>` alone, and a formula beside text in a `<p>`; it MUST leave the rest of the page byte for byte and change nothing run on its own output.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": "≤26.4",
+              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+            },
+            "firefox": {
+              "version_added": false,
+              "notes": "FAIL: 21 of 240 differ (layout in 1/60 px) (2026-10-29)"
             }
           },
           "status": {

@@ -1,6 +1,7 @@
 /* DCSS array: parts/dcss-ticks-log.css, the dcss-ticks-log call alone (parts.mjs)
    SPDX-License-Identifier: MIT
    SPDX-FileCopyrightText: 2026 noscript.ing contributors */
+:where([class*="dcss-"]) { writing-mode: horizontal-tb; }
 /* DCSS d3.format, types f, % and s: toFixed's exact rounding, unround's parts (format.mjs). */
 /* white-space: WebKit wraps a shrink-to-fit output after the point otherwise (0.005 as "0." and "005") */
 /* General notation reuses significant rounding, with no SI prefix. Only the

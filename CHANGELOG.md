@@ -6,6 +6,7 @@ All notable changes to dcss-array.css are written here. The format follows [Keep
 
 ### Added
 
+- `mathml.mjs`, a build step in Node beside the sheets, the package's one script (never loaded by a page): a call written in Content MathML (`<apply><median/><cn>4</cn><ci>jan</ci></apply>`) is compiled to the call, the formula kept in the page as Presentation MathML with its Content MathML as annotation; median, mean, min, max and plus, with refusals for what it can't give exactly.
 - `.dcss-bin`, d3.bin() on the grid with a domain and thresholds, or `--count` for d3's tick thresholds: one `<li>` per bin in a second list, each reading its count, x0 and x1.
 - `.dcss-variance` and `.dcss-deviation`, d3.variance() and d3.deviation() on the grid: each value's square as two exact halves, read through two anchors, so 64 values in 64ths to ±1024 give the true variance rounded once.
 - `.dcss-median-index` and `.dcss-quantile-index` on the grid, written as the median is: the list sorted once, the index of the value at k read as the list's height. 0 to 64 values within ±131,072; with ties, the copy the order picks.
@@ -16,6 +17,8 @@ All notable changes to dcss-array.css are written here. The format follows [Keep
 
 ### Changed
 
+- The sum, mean, min, max and extent no longer round a value off the 1/64 grid to the nearest 64th: it leaves no answer, `--dcss-err` 1, as the median and variance already did (12.3 and 7.85 summed to 20.140625). An item with no number is skipped quietly by them too (`--dcss-err` 0, their `<output>` printing the answer), and a value past a call's range is error 1, not 2.
+- Every call measures across and down whatever the page's `writing-mode` (in `vertical-rl` a median read -64,895.5).
 - The median skips an item with no number, as d3 does, and so does the quantile at `--p` 0, 0.5 and 1; quantileSorted answers unless it reads one. Compiled, the median and the quantile at any `--p` skip it too (the compiler drops it from the literal data). Each item is laid out twice and a missing one sends a copy to each end, so the middle of the copies is the middle of the numbers. Their 1/64 steps now end at 131,071 (whole numbers still reach 8,257,535).
 - Lists (`.list`, `.pager`), loops (`.loop-*`) and sheets (`.sheet` and its folds and formats) moved out of `dcss-array.css` into `dcss-array-extras.css`: their names have no `dcss-` prefix, so a page's own `.list` or `.sum` no longer gets their rules. A page that uses them links `dcss-array-extras.css`.
 - The reductions take signed numbers. A sum lays its positives out across and its negatives down, so it takes any, with no offset. A mean takes values from -1024, each negative one offset by 1024; min, max and extent take values within ±131,072, or whole numbers to 8,257,535. An empty `<output>` prints d3.format's minus (U+2212). The sum's list no longer gives the count, mean and length, since its height holds the negatives: a mean's list gives the sum, count and length. A sum says nothing of an item it skips (d3 doesn't either).
