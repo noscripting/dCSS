@@ -224,7 +224,7 @@ A call can also be written in Content MathML, the W3C's markup for what a formul
 </apply></math>
 ```
 
-The build writes a figure whose caption is the formula, median(mean(120, 80.5), mean(90, feb), 100), in Presentation MathML, which browsers draw and screen readers read, with the Content MathML kept as its annotation; then an `<output>` whose `--value` is the formula as one `calc()`, printed by the formatter the `<math>` names (its class and settings, as in [Format](#format-familiesformatcss)), or to six decimals with commas, as the calls print their own (d3.format(",.6~f")). `<ci>feb</ci>` reads `--feb` (a name is any CSS identifier, `𝑚` included): set it on an ancestor and the answer follows in the same frame. A name the page doesn't set, or sets to something that isn't a number, leaves no answer and `--dcss-err` 1.
+The build writes a figure whose caption is the formula, median(mean(120, 80.5), mean(90, feb), 100), in Presentation MathML, which browsers draw and screen readers read, with the Content MathML kept as its annotation; then an `<output>` whose `--value` is the formula as one `calc()`, printed by the formatter the `<math>` names (its class and settings, as in [Format](#format-familiesformatcss)), or to six decimals with commas, as the calls print their own (d3.format(",.6~f")). `<ci>feb</ci>` reads `--feb` (a name is any CSS identifier, `𝑚` included; a formula LaTeXML converted from LaTeX has its ambiguous superscript read as a power and a subscripted name, x₁, read as one name, `--x_1`): set it on an ancestor and the answer follows in the same frame. A name the page doesn't set, or sets to something that isn't a number, leaves no answer and `--dcss-err` 1.
 
 | Content MathML | computes as |
 |---|---|

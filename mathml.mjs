@@ -150,7 +150,10 @@ function call(apply) {
   if (!head) throw refusal(apply.start, 'an empty <apply>');
   if (head.name === 'apply') throw refusal(head.start, 'a nested <apply> as the operator: one operator applied to numbers');
   let op, args = kids.slice(1), degree = 2;
-  if (head.name === 'csymbol') {
+  if (head.name === 'csymbol' && head.attrs.cd === 'ambiguous' && textOf(head).trim() === 'superscript') op = 'power'; // LaTeXML's x^2, read as a power
+  else if (head.name === 'csymbol' && head.attrs.cd === 'ambiguous' && textOf(head).trim() === 'subscript') throw refusal(head.start, 'a subscript as the operator (an indexed function): this build has no definition for it');
+  else if (head.name === 'ci') throw refusal(head.start, `<ci>${textOf(head).trim()}</ci> as the operator (a function the page names): this build has no definition for it`);
+  else if (head.name === 'csymbol') {
     const cd = head.attrs.cd, name = textOf(head).trim();
     if (!SYMBOLS[cd]?.includes(name)) throw refusal(head.start, `<csymbol cd="${cd}">${name}</csymbol> is not an operator this build takes (s_data1 median and mean, minmax1 min and max, arith1 plus, minus, unary_minus, times, divide, power, root and abs, rounding1 floor and ceiling)`);
     op = name === 'unary_minus' ? 'minus' : name;
@@ -180,6 +183,14 @@ function call(apply) {
   if (args.length < lo || args.length > hi) throw refusal(apply.start, `${op} of ${args.length} argument${args.length === 1 ? '' : 's'}: it takes ${lo === hi ? lo : hi === Infinity ? `${lo} or more` : `${lo} or ${hi}`}`);
   if (args.length === 1 && args[0].name === 'ci' && !ARITY[op]) throw refusal(args[0].start, `one <ci> alone: MathML reads it as a data set (MathML 4, §4.3.5.13), not one value`);
   const items = args.map((a) => {
+    const sub = a.name === 'apply' && elements(a)[0]?.name === 'csymbol' && elements(a)[0].attrs.cd === 'ambiguous' && textOf(elements(a)[0]).trim() === 'subscript';
+    if (sub) { // LaTeXML's x_1: one name, x_1, read from --x_1 and drawn as a subscript
+      const [, base, index, ...more] = elements(a);
+      if (!base || !index || more.length || base.name !== 'ci' || !['ci', 'cn'].includes(index.name) || elements(base).length || elements(index).length) throw refusal(a.start, 'a subscript other than a name and one name or number (x_1, x_i): this build reads those as one name');
+      const id = `${textOf(base).trim()}_${textOf(index).trim()}`;
+      if (!/^-?[_a-zA-Z\u0080-\u{10FFFF}][-_a-zA-Z0-9\u0080-\u{10FFFF}]*$/u.test(id)) throw refusal(a.start, `the subscripted name ${id} is no CSS identifier`);
+      return { ci: id, sub: [textOf(base).trim(), textOf(index).trim(), index.name] };
+    }
     if (a.name === 'apply') return { node: call(a) };
     if (a.name === 'cn') return number(a);
     if (elements(a).length) throw refusal(a.start, '<ci> with markup inside: a name is text');
@@ -291,7 +302,7 @@ function write({ root, value, decls: own, ints }, math, src) {
   const pres = (node, arg = '') => {
     const { op, items } = node, ids = items.map((_, i) => `$a${i + 1}`).join(',');
     const show = (i, need = 0) => { const x = items[i], a = ` arg="a${i + 1}"`;
-      const m = x.node ? pres(x.node, a) : x.ci ? `<mi${a}>${esc(x.ci)}</mi>`
+      const m = x.node ? pres(x.node, a) : x.sub ? `<msub${a}><mi>${esc(x.sub[0])}</mi><${x.sub[2] === 'cn' ? 'mn' : 'mi'}>${esc(x.sub[1])}</${x.sub[2] === 'cn' ? 'mn' : 'mi'}></msub>` : x.ci ? `<mi${a}>${esc(x.ci)}</mi>`
         : !x.neg ? (x.mag.startsWith('<mn>') && x.mag.indexOf('<', 1) === x.mag.indexOf('</mn>') ? `<mn${a}>${x.mag.slice(4)}` : `<mrow${a}>${x.mag}</mrow>`)
         : `<mrow${a}><mo>−</mo>${x.mag}</mrow>`;
       return prec(x) < need ? `<mrow><mo>(</mo>${m}<mo>)</mo></mrow>` : m; };
