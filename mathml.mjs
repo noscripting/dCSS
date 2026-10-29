@@ -138,12 +138,48 @@ const QUALIFIERS = new Set(['bvar', 'condition', 'domainofapplication', 'lowlimi
 // a <ci> name dcss reads or writes itself: the formula would read that, not the page's value
 const RESERVED = /^(value|dcss-.*)$/;
 
+// relations (MathML 4, 4.3.5.10): an equation with a name alone on one side, or LaTeXML's := , defines that name: the
+// page prints the other side's value, and every later formula on the page that names it computes that side in its place
+// (a formula's answer reaches only what is inside it, so the build carries it); an inequality, or a chain of them,
+// prints true or false as JavaScript's <, <=, > and >= decide on the two doubles, and nothing when a side has no answer.
+// An equation between two formulas is refused: whether it holds depends on the digits compared (0.1 + 0.2 === 0.3 is
+// false in JavaScript), and a review (2026-10-29, four readers) split four ways on what to print for it
+const RELS = { lt: '<', leq: '≤', gt: '>', geq: '≥' };
+let DEFS = new Map(), LATER = new Map(); // the page's definitions before the formula being compiled, and after it
+const isAssign = (h) => h?.name === 'csymbol' && h.attrs.cd === 'latexml' && textOf(h).trim() === 'assign';
+const subName = (a) => a?.name === 'apply' && elements(a)[0]?.name === 'csymbol' && elements(a)[0].attrs.cd === 'ambiguous' && textOf(elements(a)[0]).trim() === 'subscript';
+const loneName = (a) => (a?.name === 'ci' && !elements(a).length ? textOf(a).trim() : subName(a) && elements(a).length === 3 && ['ci', 'cn'].includes(elements(a)[2].name) ? `${textOf(elements(a)[1]).trim()}_${textOf(elements(a)[2]).trim()}` : null);
+// what a formula defines: [name, the side that defines it], or null
+function definition(top) {
+  const [head, ...args] = elements(top);
+  if (!(head?.name === 'eq' || isAssign(head)) || args.length !== 2) return null;
+  const l = loneName(args[0]), r = isAssign(head) ? null : loneName(args[1]);
+  return l ? [l, args[1], args[0]] : r ? [r, args[0], args[1]] : null;
+}
 function compile(math) {
   if ('cdgroup' in math.attrs) throw refusal(math.start, 'a cdgroup could rename the symbols');
-  const root = call(elements(math)[0]), out = emit(root);
+  const top = elements(math)[0], [head, ...args] = elements(top), assign = isAssign(head), def = definition(top);
+  let out;
+  if (head?.name === 'eq' || assign) {
+    if (args.length !== 2) throw refusal(top.start, `an equation of ${args.length} sides: this build reads an equation as a definition, a name alone on one side`);
+    if (!def) throw refusal(top.start, "an equation between two formulas: whether it holds depends on the digits compared (JavaScript's 0.1 + 0.2 === 0.3 is false); this build reads an equation as a definition, a name alone on one side");
+    const [name, side, nameAt] = def, mentions = (n) => loneName(n) === name || elements(n).some(mentions);
+    if (mentions(side)) throw refusal(side.start, `${name} is defined in terms of itself`);
+    const nameItem = item(nameAt, true), sideNode = asNode(item(side));
+    out = { kind: 'define', name, root: { op: assign ? 'assign' : 'eq', call: 'relation', items: [nameItem, { node: sideNode }] }, ...emit(sideNode) };
+  } else if (head?.name in RELS || head?.name === 'and') {
+    const pairs = [], chain = (h, as, at) => { if (!(h?.name in RELS)) throw refusal(at, `<and/> of <${h?.name}/>: this build takes an <and/> of inequalities (<lt/>, <leq/>, <gt/>, <geq/>)`);
+      if (as.length < 2) throw refusal(at, `<${h.name}/> of ${as.length} argument: an inequality compares two or more`);
+      const its = as.map((a) => item(a)); for (let k = 0; k + 1 < its.length; k++) pairs.push([h.name, its[k], its[k + 1]]); return { op: h.name, call: 'relation', items: its }; };
+    const shown = head.name === 'and' ? { op: 'and', call: 'relation', items: args.map((a) => { if (a.name !== 'apply') throw refusal(a.start, 'an <and/> of something not a relation'); const [h, ...as] = elements(a); return { node: chain(h, as, a.start) }; }) } : chain(head, args, top.start);
+    out = { kind: 'truth', root: shown, ...emitTruth(pairs) };
+  } else { const root = call(top); out = { kind: 'value', root, ...emit(root) }; }
   if (out.compares > MAX_COMPARES) throw refusal(math.start, `this formula's medians compare ${out.compares.toLocaleString('en-US')} pairs of values the page sets, past the ${MAX_COMPARES.toLocaleString('en-US')} this build writes: give a long list as a .dcss-median call (README, Writing a call)`);
-  return { root, ...out };
+  if (out.decls.join('').length + out.value.length > 1048576) throw refusal(math.start, `this formula's calc() would be ${Math.round((out.decls.join('').length + out.value.length) / 1024)} KB of style: definitions used inside each other grow it; past 1 MB this build refuses`);
+  return out;
 }
+// an item as a node: a number or a name alone becomes the identity of it
+const asNode = (x) => x.node ?? { op: 'id', call: 'id', items: [x] };
 // one <apply>: its call and its items, each a number ({ x }), a name ({ ci }) or another <apply> ({ node })
 function call(apply) {
   const kids = elements(apply), head = kids[0];
@@ -182,14 +218,19 @@ function call(apply) {
   const [lo, hi] = ARITY[op] ?? [1, Infinity];
   if (args.length < lo || args.length > hi) throw refusal(apply.start, `${op} of ${args.length} argument${args.length === 1 ? '' : 's'}: it takes ${lo === hi ? lo : hi === Infinity ? `${lo} or more` : `${lo} or ${hi}`}`);
   if (args.length === 1 && args[0].name === 'ci' && !ARITY[op]) throw refusal(args[0].start, `one <ci> alone: MathML reads it as a data set (MathML 4, §4.3.5.13), not one value`);
-  const items = args.map((a) => {
+  const items = args.map((a) => item(a));
+  return { op, call: CALLS[op], items, degree, start: apply.start };
+}
+// one argument: a number ({ x }), a name ({ ci }, with the page's definition of it, { def }), or another <apply> ({ node })
+function item(a, defining = false) {
+  {
     const sub = a.name === 'apply' && elements(a)[0]?.name === 'csymbol' && elements(a)[0].attrs.cd === 'ambiguous' && textOf(elements(a)[0]).trim() === 'subscript';
     if (sub) { // LaTeXML's x_1: one name, x_1, read from --x_1 and drawn as a subscript
       const [, base, index, ...more] = elements(a);
       if (!base || !index || more.length || base.name !== 'ci' || !['ci', 'cn'].includes(index.name) || elements(base).length || elements(index).length) throw refusal(a.start, 'a subscript other than a name and one name or number (x_1, x_i): this build reads those as one name');
       const id = `${textOf(base).trim()}_${textOf(index).trim()}`;
       if (!/^-?[_a-zA-Z\u0080-\u{10FFFF}][-_a-zA-Z0-9\u0080-\u{10FFFF}]*$/u.test(id)) throw refusal(a.start, `the subscripted name ${id} is no CSS identifier`);
-      return { ci: id, sub: [textOf(base).trim(), textOf(index).trim(), index.name] };
+      return named({ ci: id, sub: [textOf(base).trim(), textOf(index).trim(), index.name] }, a, defining);
     }
     if (a.name === 'apply') return { node: call(a) };
     if (a.name === 'cn') return number(a);
@@ -199,9 +240,15 @@ function call(apply) {
     // a CSS identifier: letters past ASCII too (𝑚)
     if (!/^-?[_a-zA-Z\u0080-\u{10FFFF}][-_a-zA-Z0-9\u0080-\u{10FFFF}]*$/u.test(id)) throw refusal(a.start, `<ci>${id}</ci>: a name must be a CSS identifier`);
     if (RESERVED.test(id)) throw refusal(a.start, `<ci>${id}</ci>: --${id} is a name dcss itself reads or writes`);
-    return { ci: id };
-  });
-  return { op, call: CALLS[op], items, degree, start: apply.start };
+    return named({ ci: id }, a, defining);
+  }
+}
+// a name the page defines: the definition's side in its place; one it defines further down is refused
+function named(x, a, defining) {
+  if (defining) return x;
+  if (DEFS.has(x.ci)) return { ...x, def: DEFS.get(x.ci) };
+  if (LATER.has(x.ci)) throw refusal(a.start, `${x.ci} is defined further down the page (line ${LATER.get(x.ci)}): define it before the formulas that use it`);
+  return x;
 }
 // a root's degree: a whole number from 2
 function degreeOf(cn) { const { x } = number(cn); if (!Number.isInteger(x) || x < 2) throw refusal(cn.start, `a root of degree ${x}: this build takes whole degrees from 2`); return x; }
@@ -233,18 +280,21 @@ const D3 = {
   power: (xs) => Math.pow(xs[0], xs[1]), root: (xs, n) => (n.degree === 2 ? Math.sqrt(xs[0]) : Math.pow(xs[0], 1 / n.degree)),
   abs: (xs) => Math.abs(xs[0]), floor: (xs) => Math.floor(xs[0]), ceiling: (xs) => Math.ceil(xs[0]),
   sum: (xs) => xs.reduce((s, x) => s + x, 0), mean: (xs) => xs.reduce((s, x) => s + x, 0) / xs.length,
-  min: (xs) => Math.min(...xs), max: (xs) => Math.max(...xs),
+  min: (xs) => Math.min(...xs), max: (xs) => Math.max(...xs), id: (xs) => xs[0],
   median: (xs) => { const s = [...xs].sort((a, b) => a - b), i0 = Math.floor((s.length - 1) / 2); return s.length % 2 ? s[i0] : s[i0] + (s[i0 + 1] - s[i0]) * 0.5; },
 };
-const valueOf = (node) => { const xs = node.items.map((x) => (x.node ? valueOf(x.node) : x.ci ? null : x.x)); return xs.includes(null) ? null : D3[node.call](xs, node); };
+const valueOf = (node) => { const xs = node.items.map((x) => (x.node ? valueOf(x.node) : x.def ? valueOf(x.def) : x.ci ? null : x.x)); return xs.includes(null) ? null : D3[node.call](xs, node); };
 // a median of n values the page sets compares n · (n - 1) pairs: 2,048 is a median of 45 names, 93 KB of style, a change
 // 0.1 ms of style work in Chrome and WebKit (2026-10-29)
 const MAX_COMPARES = 2048;
 // the formula in one form of division: the answer's expression and the registered steps before it, as [name, expression]
-function form(root, divide) {
-  const decls = [], names = new Set(); let id = 0, compares = 0;
-  const expr = (node) => {
-    const k = ++id, xs = node.items.map((x) => (x.node ? expr(x.node) : x.ci ? (names.add(x.ci), `var(--${x.ci})`) : String(x.x)));
+// the CSS of formulas in one form of division: expr(node) is a node's expression; the registered steps it needs collect in
+// decls, as [name, expression], and the names the page sets in names
+function former(divide) {
+  const decls = [], names = new Set(), f = { decls, names, compares: 0 }; let id = 0;
+  const expr = f.expr = (node) => {
+    const k = ++id, xs = node.items.map((x) => (x.node ? expr(x.node) : x.def ? expr(x.def) : x.ci ? (names.add(x.ci), `var(--${x.ci})`) : String(x.x)));
+    if (node.call === 'id') return xs[0];
     const total = () => xs.reduce((a, b) => F(`${a} + ${b}`));
     if (node.call === 'sum') return total();
     if (node.call === 'mean') return divide(total(), xs.length);
@@ -257,14 +307,14 @@ function form(root, divide) {
     if (node.call === 'floor' || node.call === 'ceiling') return `round(${node.call === 'floor' ? 'down' : 'up'}, ${xs[0]}, 1)`;
     if (node.call !== 'median') return `${node.call}(${xs.join(', ')})`;
     const n = xs.length; if (n === 1) return xs[0];
-    const known = node.items.map((x) => (x.node ? valueOf(x.node) : x.ci ? null : x.x));
+    const known = node.items.map((x) => (x.node ? valueOf(x.node) : x.def ? valueOf(x.def) : x.ci ? null : x.x));
     const live = known.includes(null); // with every value known the order is the build's, and nothing is compared in CSS
-    const ref = xs.map((x, i) => { if (!live || !node.items[i].node) return x; const p = `--dcss-dcss-m${k}-${i}`; for (const q of 'eabc') decls.push([`${p}-${q}`, SPLIT[q](p, x)]); return join(p); });
+    const ref = xs.map((x, i) => { if (!live || !(node.items[i].node || node.items[i].def)) return x; const p = `--dcss-dcss-m${k}-${i}`; for (const q of 'eabc') decls.push([`${p}-${q}`, SPLIT[q](p, x)]); return join(p); });
     // j goes before i when it is smaller, or equal and earlier
     const rank = xs.map((_, i) => { let c = 0; const terms = [];
       for (let j = 0; j < n; j++) if (j !== i) {
         if (known[i] !== null && known[j] !== null) c += (j < i ? known[j] <= known[i] : known[j] < known[i]) ? 1 : 0;
-        else { compares++; terms.push(j < i ? `(1 - sign(max(0, ${ref[j]} - ${ref[i]})))` : `sign(max(0, ${ref[i]} - ${ref[j]}))`); } }
+        else { f.compares++; terms.push(j < i ? `(1 - sign(max(0, ${ref[j]} - ${ref[i]})))` : `sign(max(0, ${ref[i]} - ${ref[j]}))`); } }
       if (!terms.length) return c;
       const r = `--dcss-dcss-r${k}-${i}`; decls.push([r, `calc(${[c, ...terms].join(' + ')})`]); return r; });
     const pick = (t) => { const hits = rank.map((r, i) => (typeof r === 'number' ? (r === t ? ref[i] : null) : `${ref[i]} * (1 - abs(sign(var(${r}) - ${t})))`)).filter(Boolean);
@@ -273,23 +323,40 @@ function form(root, divide) {
     // every expression stands alone (a fenced sum, a function, a parenthesis), so what is written around it can't regroup it
     return n % 2 ? pick(i0) : F(`${F(pick(i0))} + ${F(`${F(`${pick(i0 + 1)} - ${pick(i0)}`)} * 0.5`)}`);
   };
-  const value = expr(root);
-  // a name the page doesn't set (or sets to no number) leaves no answer: --value fails with it, and so does a registered
-  // step that took it (its initial 0 would be a number): 0 / 0 then
-  if (names.size) decls.push(['--dcss-dcss-ok', `calc(${[...names].map((n) => `var(--${n}) * 0`).join(' + ')} + 1)`]);
-  return { value: `${value}${names.size ? ' + 0 / var(--dcss-dcss-ok)' : ''}`, decls, compares };
+  return f;
 }
-function emit(root) {
-  const plain = form(root, DIVIDE.plain), length = form(root, DIVIDE.length);
-  return { value: `calc(${either(plain.value, length.value)})`, decls: plain.decls.map(([k, v], i) => `${k}: calc(${either(v, length.decls[i][1])});`),
-    ints: plain.decls.map(([k]) => k), compares: plain.compares };
+// a name the page doesn't set (or sets to no number) leaves no answer: --value fails with it, and so does a registered
+// step that took it (its initial 0 would be a number): 0 / 0 then
+const okDecl = (names) => ['--dcss-dcss-ok', `calc(${[...names].map((n) => `var(--${n}) * 0`).join(' + ')} + 1)`];
+function form(root, divide) {
+  const f = former(divide), value = f.expr(root);
+  if (f.names.size) f.decls.push(okDecl(f.names));
+  return { value: `${value}${f.names.size ? ' + 0 / var(--dcss-dcss-ok)' : ''}`, decls: f.decls, compares: f.compares };
 }
+// each declaration in both forms of division, the engine's flag picking one
+const both = (plain, length) => ({ value: `calc(${either(plain.value, length.value)})`, decls: plain.decls.map(([k, v], i) => `${k}: calc(${either(v, length.decls[i][1])});`),
+  ints: plain.decls.map(([k]) => k), compares: plain.compares });
+const emit = (root) => both(form(root, DIVIDE.plain), form(root, DIVIDE.length));
+// inequalities: each pair's truth as JavaScript's operator gives it on the two doubles (the sign of a fenced difference,
+// exact for finite doubles), the chain's the least of them; --dcss-dcss-fin is 0 when a side is NaN or infinite or
+// a name is unset, and then nothing prints
+const HOLDS = { lt: (a, b) => `max(0, sign(${F(`${b} - ${a}`)}))`, gt: (a, b) => `max(0, sign(${F(`${a} - ${b}`)}))`,
+  leq: (a, b) => `(1 - max(0, sign(${F(`${a} - ${b}`)})))`, geq: (a, b) => `(1 - max(0, sign(${F(`${b} - ${a}`)})))` };
+function truthForm(pairs, divide) {
+  const f = former(divide), sides = pairs.map(([op, a, b]) => [op, f.expr(asNode(a)), f.expr(asNode(b))]);
+  const fin = `calc(${sides.flatMap(([, a, b]) => [`${a} * 0`, `${b} * 0`]).join(' + ')} + 1)`;
+  const holds = sides.map(([op, a, b]) => HOLDS[op](a, b)), t = holds.length === 1 ? holds[0] : `min(${holds.join(', ')})`;
+  if (f.names.size) f.decls.push(okDecl(f.names));
+  f.decls.push(['--dcss-dcss-fin', fin], ['--dcss-dcss-t', t]);
+  return { value: f.names.size ? 'var(--dcss-dcss-ok)' : '1', decls: f.decls, compares: f.compares };
+}
+const emitTruth = (pairs) => both(truthForm(pairs, DIVIDE.plain), truthForm(pairs, DIVIDE.length));
 
 // --- what the page gets
 const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
 const FORMAT_SETTINGS = /^--(precision|comma|symbol|sign|trim|type|currency|locale|base|grouping|zero|fill|align|width|percent)$/;
 const splitStyle = (s) => (s ?? '').split(';').map((d) => d.trim()).filter(Boolean).map((d) => { const k = d.indexOf(':'); return [d.slice(0, k).trim(), d.slice(k + 1).trim()]; });
-function write({ root, value, decls: own, ints }, math, src) {
+function write({ kind, root, value, decls: own, ints }, math, src) {
   const classes = (math.attrs.class ?? '').split(/\s+/).filter(Boolean), fmt = classes.filter((c) => c.startsWith('dcss-format-')), keep = classes.filter((c) => !c.startsWith('dcss-format-'));
   const decls = splitStyle(math.attrs.style), fmtDecls = decls.filter(([k]) => FORMAT_SETTINGS.test(k)), varDecls = decls.filter(([k]) => k.startsWith('--') && !FORMAT_SETTINGS.test(k)), mathDecls = decls.filter(([k]) => !k.startsWith('--'));
   const css = (ds) => ds.map(([k, v]) => `${k}: ${v}`).join('; ');
@@ -307,6 +374,9 @@ function write({ root, value, decls: own, ints }, math, src) {
         : `<mrow${a}><mo>−</mo>${x.mag}</mrow>`;
       return prec(x) < need ? `<mrow><mo>(</mo>${m}<mo>)</mo></mrow>` : m; };
     const infix = (sign, need) => items.map((x, i) => show(i, prec(x) === 3 ? 4 : need(i))).join(`<mo>${sign}</mo>`);
+    if (op === 'eq' || op === 'assign') return `<mrow${arg} intent="${op === 'eq' ? 'equals' : 'assign'}(${ids})">${show(0)}<mo>${op === 'eq' ? '=' : '≔'}</mo>${show(1)}</mrow>`;
+    if (op in RELS) return `<mrow${arg} intent="${{ lt: 'less-than', leq: 'less-than-or-equal', gt: 'greater-than', geq: 'greater-than-or-equal' }[op]}(${ids})">${infix(RELS[op], () => 0)}</mrow>`;
+    if (op === 'and') return `<mrow${arg} intent="and(${ids})">${items.map((_, i) => show(i)).join('<mo>,</mo><mspace width="0.5em"/>')}</mrow>`;
     if (op === 'plus') return `<mrow${arg} intent="plus(${ids})">${infix('+', () => 2)}</mrow>`;
     if (op === 'times') return `<mrow${arg} intent="times(${ids})">${infix('×', () => 2)}</mrow>`;
     if (op === 'minus') return items.length === 1 ? `<mrow${arg} intent="minus(${ids})"><mo>−</mo>${show(0, 4)}</mrow>` : `<mrow${arg} intent="minus(${ids})">${infix('−', (i) => (i ? 2 : 1))}</mrow>`;
@@ -324,15 +394,19 @@ function write({ root, value, decls: own, ints }, math, src) {
   // the answer prints through a formatter: the author's, or d3.format(",.6~f"), as the calls print their own (format-general,
   // d3.format(","), cost 80 ms a frame for 20 moving means in WebKit, fixed 17, the formula itself 3: 2026-10-29)
   const f = fmt.length ? fmt.join(' ') : 'dcss-format-fixed', st = fmt.length || fmtDecls.length ? css(fmtDecls) : '--precision: 6; --trim: 1; --comma: 1';
-  const props = ints.length ? `<style>${ints.map((n) => `@property ${n} { syntax: '<integer>'; inherits: false; initial-value: 0; }`).join(' ')}</style>` : '';
-  const answer = `<output class="${f}" style="${own.length ? own.join(' ') + ' ' : ''}--value: ${value}${st ? '; ' + st : ''}"></output>`;
+  // a relation's truth prints through a counter style: nothing, false or true
+  const truth = kind === 'truth' ? '@counter-style dcss-dcss-truth { system: fixed 0; symbols: "" "false" "true"; } [data-dcss-truth]::after { content: counter(dcss-dcss-truth, dcss-dcss-truth); }' : '';
+  const props = ints.length || truth ? `<style>${ints.map((n) => `@property ${n} { syntax: '<integer>'; inherits: false; initial-value: 0; }`).join(' ')}${truth ? ' ' + truth : ''}</style>` : '';
+  const answer = kind === 'truth'
+    ? `<output data-dcss-truth style="${own.join(' ')} counter-reset: dcss-dcss-truth calc(${value} * var(--dcss-dcss-fin) * (1 + var(--dcss-dcss-t))); --dcss-err: calc(1 - ${value} * var(--dcss-dcss-fin))"></output>`
+    : `<output class="${f}" style="${own.length ? own.join(' ') + ' ' : ''}--value: ${value}${st ? '; ' + st : ''}"></output>`;
   return `<figure data-dcss-mathml${varDecls.length ? ` style="${esc(css(varDecls))}"` : ''}>${caption}${props}<div>${answer}</div></figure>`;
 }
 
 // --- the page: each <math> the parser would build, compiled when it is one <apply> of an operator
 const lineOf = (src, at) => src.slice(0, at).split('\n').length;
 export function toDcss(src, { file = 'page.html' } = {}) {
-  const edits = [], calls = new Set(); let i = 0, pOpen = null; // pOpen: the start of an open <p>, or null
+  const found = [], calls = new Set(); let i = 0, pOpen = null; // pOpen: the start of an open <p>, or null
   while (i < src.length) {
     const lt = src.indexOf('<', i); if (lt < 0) break;
     if (src.startsWith('<!--', lt)) { const e = src.indexOf('-->', lt + 4); i = e < 0 ? src.length : e + 3; continue; }
@@ -355,8 +429,6 @@ export function toDcss(src, { file = 'page.html' } = {}) {
       if (loose(math)) throw new Error(`${file}:${lineOf(src, math.start)}: Content MathML outside an annotation draws nothing in Chrome and Safari; this build compiles a <math> whose one element is an <apply>`);
       continue;
     }
-    let compiled;
-    try { compiled = compile(math); } catch (e) { if (e instanceof Refusal) throw new Error(`${file}:${lineOf(src, e.at)}: ${e.message}`); throw e; }
     let from = math.start, to = math.end;
     if (pOpen) { // a formula alone in a paragraph takes the paragraph's place; beside text the figure's list would close it
       const before = src.slice(pOpen.end, math.start), after = src.slice(math.end), close = /^\s*<\/p\s*>/i.exec(after), next = /^\s*<([a-z][a-z0-9]*)/i.exec(after);
@@ -364,8 +436,26 @@ export function toDcss(src, { file = 'page.html' } = {}) {
       if (!alone) throw new Error(`${file}:${lineOf(src, math.start)}: a formula beside text in a paragraph: the call's list would close the paragraph; give the formula its own line`);
       from = pOpen.start; to = close ? math.end + close[0].length : math.end; pOpen = null;
     }
-    edits.push({ from, to, html: write(compiled, math, src) }); const each = (n) => { calls.add(n.call); n.items.forEach((x) => x.node && each(x.node)); }; each(compiled.root);
+    found.push({ from, to, math });
   }
+  // the page's definitions, in document order: each name once, and never one the page sets itself
+  const defs = found.map((f) => definition(elements(f.math)[0])), where = new Map();
+  defs.forEach((d, k) => { if (!d) return; const at = found[k].math.start, line = lineOf(src, at);
+    if (where.has(d[0])) throw new Error(`${file}:${line}: ${d[0]} is defined twice (line ${where.get(d[0]).line} first)`);
+    const outside = src.slice(0, found[0].from) + found.map((f, j) => src.slice(f.to, found[j + 1]?.from ?? src.length)).join('');
+    if (new RegExp(`--${d[0].replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\s*:`).test(outside)) throw new Error(`${file}:${line}: the page sets --${d[0]} itself, which this definition would hide from the formulas after it`);
+    where.set(d[0], { k, line }); });
+  const edits = found.map((f, k) => {
+    DEFS = new Map(); LATER = new Map();
+    for (const [name, w] of where) if (w.k < k) DEFS.set(name, null); else if (w.k > k) LATER.set(name, w.line);
+    let compiled;
+    try {
+      for (const [name, w] of where) if (w.k < k) DEFS.set(name, found[w.k].compiled.root.items[1].node);
+      compiled = f.compiled = compile(f.math);
+    } catch (e) { if (e instanceof Refusal) throw new Error(`${file}:${lineOf(src, e.at)}: ${e.message}`); throw e; }
+    const each = (n) => { calls.add(n.call); n.items.forEach((x) => x.node && each(x.node)); }; each(compiled.root);
+    return { from: f.from, to: f.to, html: write(compiled, f.math, src) };
+  });
   let out = '', at = 0;
   for (const e of edits) { out += src.slice(at, e.from) + e.html; at = e.to; }
   out += src.slice(at);

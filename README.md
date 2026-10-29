@@ -238,9 +238,11 @@ The build writes a figure whose caption is the formula, median(mean(120, 80.5), 
 
 A formula is not laid out: the build sees every number, so the page's number is d3's own double, or JavaScript's for arithmetic, with no 1/64 grid and no range but a double's. 12.3 is 12.3, the mean of 1, 2 and 4 is 2.3333333333333335, and a formula inside a formula takes it as d3 composes calls. The build adds in d3's order, divides as IEEE does in each engine, and ranks a median's values against each other where the page sets them. With that default an answer from 9,007,199,255 up prints nothing, with error 1 (its millionths pass 2^53): give it `.dcss-format-si`.
 
+An equation with a name alone on one side, `<apply><eq/><ci>y</ci>…</apply>` or LaTeXML's `:=`, defines that name: the page prints the other side's value, and every later formula on the page that names y computes that side in its place, where it stands (a formula's answer reaches only what is inside it, so the build carries it). A name is defined once, before the formulas that use it, not in terms of itself, and not one the page sets itself. An inequality (`<lt/>`, `<leq/>`, `<gt/>`, `<geq/>`), a chain of them such as 0 < x < 1, or an `<and/>` of them prints true or false as JavaScript's `<`, `<=`, `>` and `>=` decide on the two numbers (0.1 + 0.2 ≤ 0.3 is false, as in JavaScript), and nothing, with `--dcss-err` 1, when a side has no answer.
+
 Arguments are `<cn>` numbers (decimal; `type` integer, real, double, e-notation or rational) and `<ci>` names. The build stops with the file, line and reason, rather than write a page that shows a wrong or blank answer, on:
 
-- an equation or a relation (`<eq/>`, `<lt/>`, `<and/>`): it says something about numbers rather than computing one;
+- an equation between two formulas (whether it holds depends on how many digits are compared), an equation of three sides or more, `<neq/>`, `<approx/>`, `<in/>`;
 - `<exp/>`, `<ln/>`, `<log/>` and the trigonometric functions: CSS's `exp()`, `log()` and `sin()` round otherwise than JavaScript's `Math`, so the page's number wouldn't be the one a script computes; `<factorial/>`, which CSS doesn't have;
 - an operator with no d3 call: `<sum/>` binds a variable over limits, `<variance/>` and `<sdev/>` divide by n where d3 divides by n - 1, `<card/>` and a `set1` set drop repeated values;
 - a qualifier (`<bvar>`, `<condition>`, `<lowlimit>`), `definitionURL`, or Content MathML outside an annotation that it can't compile, which browsers would show as nothing;
