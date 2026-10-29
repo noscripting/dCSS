@@ -129,6 +129,9 @@ Measured 2026-10-22, headless: Chrome 155.0.8059.86, WebKit 26.4, Firefox 158.0.
 - `calc()` computes in doubles in Chrome and WebKit, in 32-bit floats in Firefox
 - A registered `<number>` read through `var()` keeps 6 significant digits in Chrome and Firefox
 - `mod(A, B)` of a negative exact multiple of B is B in WebKit, not 0
+- A registered `<integer>` from 1,000,000 reaches `var()` with 6 significant digits in Chrome, so a reduction's item travels as three integers of 6 digits at most
+- Chrome lays a grid whose tracks add up past 2^25 px out 0 px wide, so a sum's and a mean's list hold a 1 px `::before` to tell
+- Chrome reads a number token from 3.4e38 up as 3.4e38, so the MathML build refuses such a `<cn>` and a name set that large has no answer
 - `tan(atan2(L, 1px))` is wrong in WebKit
 - Firefox's `style()` never sees a value set by an animation
 - Firefox 158 has no view timelines by default

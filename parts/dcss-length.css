@@ -11,11 +11,11 @@
 @counter-style dcss-tick-none { system: fixed -1; symbols: "" ""; }
 :where([class*="dcss-"]) { writing-mode: horizontal-tb; }
 /* DCSS reductions: d3.sum, count, mean, min, max, extent and the list's length, in a figure (reduce.mjs). */
-@property --dcss-dcss-v { syntax: '<number>'; inherits: false; initial-value: 0; }
 @property --dcss-dcss-has { syntax: '<number>'; inherits: false; initial-value: 0; }
 @property --dcss-dcss-ok { syntax: '<number>'; inherits: false; initial-value: 0; }
 @property --dcss-dcss-out { syntax: '<number>'; inherits: false; initial-value: 0; }
 @property --dcss-dcss-off { syntax: '<number>'; inherits: false; initial-value: 0; }
+@property --dcss-dcss-vh { syntax: '<integer>'; inherits: false; initial-value: 0; }
 @property --dcss-dcss-vi { syntax: '<integer>'; inherits: false; initial-value: 0; }
 @property --dcss-dcss-vf { syntax: '<integer>'; inherits: false; initial-value: 0; }
 @property --dcss-dcss-s { syntax: '<integer>'; inherits: true; initial-value: 0; }
@@ -36,9 +36,9 @@
 :is( .dcss-length) > figcaption:first-child ~ :is(ul, ol),:is( .dcss-length) > figcaption:first-child ~ :is(ul, ol) + * { grid-row: 2; }
 :where(:is( .dcss-length) > :is(ul, ol) > li) { --value: initial; }
 :is( .dcss-length) > :is(ul, ol) > li { box-sizing: border-box; min-width: 0; min-height: 0; margin: 0; padding: 0; border: 0;
-  --dcss-dcss-v: var(--value); --dcss-dcss-has: calc(var(--value) * 0 + 1);
+  --dcss-dcss-has: calc(var(--value) * 0 + 1);
   --dcss-dcss-ok: var(--dcss-dcss-has); --dcss-dcss-out: 0; --dcss-dcss-off: calc(var(--dcss-dcss-has) * sign(abs(rem(var(--value) * 64, 1))));
-  --dcss-dcss-vi: round(down, var(--value), 1); --dcss-dcss-vf: round((var(--value) - round(down, var(--value), 1)) * 64); }
+  --dcss-dcss-vh: round(down, var(--value) / 65536, 1); --dcss-dcss-vi: calc(round(down, var(--value), 1) - round(down, var(--value) / 65536, 1) * 65536); --dcss-dcss-vf: round((var(--value) - round(down, var(--value), 1)) * 64); }
 :is( .dcss-length) > :is(ul, ol) > li { grid-area: calc(sibling-index() - (sibling-index() - 1) * var(--dcss-dcss-out)) / calc(sibling-index() - (sibling-index() - 1) * var(--dcss-dcss-out)); width: 0; height: calc(var(--dcss-dcss-ok) * 1px + (1 - var(--dcss-dcss-ok)) * 0.015625px); }
 .dcss-length > :is(ul, ol) + * > *,.dcss-length > :is(ul, ol) + *::before,.dcss-length > :is(ul, ol) + *::after { --dcss-dcss-s: sign(max(0, 0 - (round(down, round(100cqh / 1px, 0.015625), 1) + round((round(100cqh / 1px, 0.015625) - round(down, round(100cqh / 1px, 0.015625), 1)) * 64)))); --dcss-dcss-m: round(down, abs(round(down, round(100cqh / 1px, 0.015625), 1) + round((round(100cqh / 1px, 0.015625) - round(down, round(100cqh / 1px, 0.015625), 1)) * 64)) / 1000000, 1); --dcss-dcss-i: mod(round(down, abs(round(down, round(100cqh / 1px, 0.015625), 1) + round((round(100cqh / 1px, 0.015625) - round(down, round(100cqh / 1px, 0.015625), 1)) * 64)), 1), 1000000); --dcss-dcss-f: round((abs(round(down, round(100cqh / 1px, 0.015625), 1) + round((round(100cqh / 1px, 0.015625) - round(down, round(100cqh / 1px, 0.015625), 1)) * 64)) - round(down, abs(round(down, round(100cqh / 1px, 0.015625), 1) + round((round(100cqh / 1px, 0.015625) - round(down, round(100cqh / 1px, 0.015625), 1)) * 64)), 1)) * 1000000);
    --dcss-dcss-ready: 1; --dcss-dcss-err: 0; --dcss-length: calc((1 - min(1, var(--dcss-dcss-err))) / (1 - min(1, var(--dcss-dcss-err))) * calc((1 - 2 * var(--dcss-dcss-s)) * (var(--dcss-dcss-m) * 1000000 + var(--dcss-dcss-i) + var(--dcss-dcss-f) / 1000000))); --dcss-ready: var(--dcss-dcss-ready); --dcss-err: var(--dcss-dcss-err); }

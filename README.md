@@ -143,7 +143,7 @@ Results only travel inward, to what is inside them, in the same frame. A call ne
 - Where both calls publish the same name, copy the outer one to a name of your own on an element between them: `--first: var(--dcss-median)`.
 - In a form, keep calls outside an `<output>`. A form's reset [replaces an output's children with text](https://html.spec.whatwg.org/multipage/form-elements.html#the-output-element). Radios and checkboxes can pick values written in CSS; what someone types in an input doesn't reach CSS.
 
-Numbers are kept as pixels: whole numbers up to 2^24, fractions to 1/64, totals under 33 million. Give money in whole cents and divide for printing with `.dcss-scale-linear` (see [Format](#format-familiesformatcss)), since 19.99 isn't a multiple of 1/64. In cents the mean takes nothing below -1024, -$10.24: for larger refunds, take the sum and divide it by the count with a scale.
+Numbers are kept as pixels: whole numbers up to 2^24, fractions to 1/64, totals to 16,777,214 (past it, error 1). Give money in whole cents and divide for printing with `.dcss-scale-linear` (see [Format](#format-familiesformatcss)), since 19.99 isn't a multiple of 1/64. In cents the mean takes nothing below -1024, -$10.24: for larger refunds, take the sum and divide it by the count with a scale.
 
 ### Medians, quantiles and the discrete scales
 
@@ -414,11 +414,11 @@ Adds the list's numbers, of any sign: the positives are laid out across and the 
 
 | Input | Takes | Default |
 |---|---|---|
-| `--value`, on each `<li>` | a number on the 1/64 grid |  |
+| `--value`, on each `<li>` | a number on the 1/64 grid, the positives and the negatives each totalling at most 16,777,214 |  |
 
 Output: `--dcss-sum`.
 
-An item that isn't a number is skipped, as d3 skips it; a sum says nothing of it. A value off the 1/64 grid leaves no answer (error 1): the sum can't take it exactly.
+An item that isn't a number is skipped, as d3 skips it; a sum says nothing of it. A value off the 1/64 grid, or a total past 16,777,214, leaves no answer (error 1): the sum can't take it exactly.
 
 #### `.dcss-mean`
 
@@ -433,11 +433,11 @@ Averages the list's numbers. The same list gives their sum, count and length. So
 
 | Input | Takes | Default |
 |---|---|---|
-| `--value`, on each `<li>` | a number on the 1/64 grid, -1024 or more |  |
+| `--value`, on each `<li>` | a number on the 1/64 grid, -1024 or more; the values and 1024 for each negative one totalling at most 16,777,214 |  |
 
 Output: `--dcss-mean`; `--dcss-sum`, `--dcss-count`, `--dcss-length`.
 
-Each negative value is offset by 1024 and counted apart, up to 4,095 values. A value below -1024, or off the 1/64 grid, leaves no answer (error 1). An item that isn't a number is skipped, as d3 skips it; no numbers at all is d3's undefined, error 2.
+Each negative value is offset by 1024 and counted apart, up to 4,095 values. A value below -1024, off the 1/64 grid, or past the total, leaves no answer (error 1). An item that isn't a number is skipped, as d3 skips it; no numbers at all is d3's undefined, error 2.
 
 #### `.dcss-count`
 
@@ -1267,7 +1267,7 @@ A sheet is a `<table class="sheet">` whose cells are stored numbers and whose fo
 
 Chrome and Safari's engine both run everything: headless Chrome 155 and WebKit 26.4 (Playwright's build of Safari's engine, not Safari itself) pass all 112 requirements in [SPEC.md](SPEC.md). The d3 calls give d3's own answer to 3,206 of the 7,049 calls d3's tests make (45%), and cover 26 of d3's 508 functions in full and 73 more in part; SPEC.md's implementation report has the count for each call. Easings and scales come within 1e-12 of d3. A treemap's boxes are within 2/64 px per level of d3's for totals up to 50,000; near a million, WebKit is 0.3 px off and Chrome 0.02 px.
 
-A reduction's list wider or taller than 262,144 px (2^18) can read without its 64ths, in Chrome and in Safari, so a sum, mean, min, max or extent whose list passes that size gives no answer, `--dcss-err` 1, when an item may hold a fraction or none: one whose style attribute has a decimal point, an exponent, `var()` or `calc()`, or that has no style attribute. Whole numbers written in the items stay exact to 2^24 px (a sum of cents to $167,772.15). The sizes: a sum whose positives or negatives pass 2^18, a mean whose sum and 1024 for each negative value do, or one with 64 negative values or more, a min, max or extent whose values spread past 131,072.
+A reduction's list wider or taller than 262,144 px (2^18) can read without its 64ths, in Chrome and in Safari, so a sum, mean, min, max or extent whose list passes that size gives no answer, `--dcss-err` 1, when an item may hold a fraction or none: one whose style attribute has a decimal point, an exponent, `var()` or `calc()`, or that has no style attribute. Whole numbers written in the items stay exact while the list is under 2^24 px (a sum of cents to $167,772.14); a list that size gives no answer, error 1, whatever its items hold. The sizes: a sum's and a mean's list are 1 px more than what they hold, so a sum whose positives or negatives reach 262,143, a mean whose sum and 1024 for each negative value do, or whose count and 4,096 for each negative value do (64 negative values), a min, max or extent whose values spread past 131,072.
 
 Chrome reads a number from 3.4e38 up, written or brought by `var()`, as 3.4e38, a 32-bit float's largest; a value inside a calculation keeps a double's range. Safari reads it as written. A MathML formula refuses a larger `<cn>` and gives no answer for a name set that large.
 
@@ -1286,7 +1286,7 @@ In WebKit, the median of three cold loads beside the core (2026-10-28):
 | File in `families/` | Size | Load in WebKit 26.4 |
 |---|---:|---:|
 | `ticks.css` | 128 KB | 14 ms |
-| `array.css` | 267 KB | 15 ms |
+| `array.css` | 268 KB | 15 ms |
 | `hierarchy.css` | 6.6 KB | 10 ms |
 | `scale.css` | 120 KB | 12 ms |
 | `format.css` | 237 KB | 15 ms |

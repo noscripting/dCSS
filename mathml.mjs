@@ -279,9 +279,14 @@ const sel = (g, x) => `clamp(-1 * (pow(2, 2000 * ${g}) - 1), ${x}, pow(2, 2000 *
 // twice, every division a number's and every division a length's, and the engine's flag picks one whole form
 const DIVIDE = { plain: (a, b) => `((${a}) / (${b}))`, length: (a, b) => `(((${a}) * 1px) / ((${b}) * 1px))` };
 const either = (plain, length) => (plain === length ? plain : `${sel(`(1 - ${W})`, plain)} + ${sel(W, length)}`);
-const SPLIT = { e: (n, v) => `round(down, log(max(abs(${v}), pow(2, -1006)), 2))`, a: (n, v) => `round(to-zero, ${v} * pow(2, 17 - var(${n}-e)))`,
-  b: (n, v) => `round(to-zero, rem(${v} * pow(2, 17 - var(${n}-e)), 1) * 524288)`, c: (n, v) => `calc(rem(${v} * pow(2, 17 - var(${n}-e)) * 524288, 1) * 524288)` };
-const join = (n) => `((var(${n}-a) + var(${n}-b) / 524288 + var(${n}-c) / 274877906944) * pow(2, var(${n}-e) - 17))`;
+// a double as its exponent and three integers of 19 bits at most, scaled by two powers of 2 each way, so that no pow()
+// passes a double's range for a value down to 2^-1074 (one pow(2, 17 - e) lost the values under 2^-1006: a median of
+// 1e-310 read 0 in Chrome)
+const half = (k) => `round(down, (${k}) / 2, 1)`, by2 = (x, k) => `(${x} * pow(2, ${half(k)}) * pow(2, ${k} - ${half(k)}))`;
+const scaled = (n, v) => by2(v, `17 - var(${n}-e)`);
+const SPLIT = { e: (n, v) => `round(down, log(max(abs(${v}), pow(2, -1074)), 2))`, a: (n, v) => `round(to-zero, ${scaled(n, v)})`,
+  b: (n, v) => `round(to-zero, rem(${scaled(n, v)}, 1) * 524288)`, c: (n, v) => `calc(rem(${scaled(n, v)} * 524288, 1) * 524288)` };
+const join = (n) => by2(`(var(${n}-a) + var(${n}-b) / 524288 + var(${n}-c) / 274877906944)`, `var(${n}-e) - 17`);
 // d3's answer in JavaScript's doubles (JavaScript's Math where d3 has no call), when every number under it is written
 // (null with a <ci> under it); CSS's pow() and sqrt() are Math.pow's and Math.sqrt's to the bit (300 of 300 each, both engines)
 const D3 = {
