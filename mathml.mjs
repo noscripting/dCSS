@@ -1,14 +1,13 @@
-// node libraries/dcss/mathml.mjs <page.html>: a page whose dcss calls are written in Content MathML, with today's dcss
-// markup in their place, on stdout; exits 1 with file:line and the reason on a formula it can't take.
+// node libraries/dcss/mathml.mjs <page.html>: a page whose formulas are written in Content MathML, each compiled to a
+// calc() the page computes, on stdout; exits 1 with file:line and the reason on a formula it can't take.
 // Content MathML (MathML 4, chapter 4) says what a formula means; Chrome and Safari draw none of it and CSS can't read a
-// <cn>'s text, so a page can't compute on it: this build writes each formula as the call dcss computes in the browser,
-// and keeps the formula, as Presentation MathML with the author's Content MathML as its annotation, for readers.
-//   <math><apply><median/><cn>4</cn><cn>1</cn><ci>jan</ci></apply></math>
-// becomes a figure with the formula as its caption and a .dcss-median call: <li style="--value: 4">, ... and
-// --value: var(--jan, 0.001) for the <ci> (a name the page never sets is off the 1/64 grid, so no answer, not a list one
-// short). An <apply> inside another is its own call, computed first, its answer the outer call's item. Only a <math>
-// whose one element child is an <apply> of a dcss operator is compiled; the rest of the page is copied byte for byte, so
-// the build run on its own output changes nothing.
+// <cn>'s text, so a page can't compute on it: this build writes each formula as the calc() of d3's own operations, and
+// keeps the formula, as Presentation MathML with the author's Content MathML as its annotation, for readers.
+//   <math><apply><median/><apply><mean/><cn>4</cn><cn>1.5</cn></apply><ci>jan</ci></apply></math>
+// becomes a figure with the formula as its caption and an <output> whose --value is d3.median([d3.mean([4, 1.5]),
+// jan]) to the bit, jan read from --jan on an ancestor (unset: no answer, --dcss-err 1). Only a <math> whose one element
+// child is an <apply> of an operator it takes is compiled; the rest of the page is copied byte for byte, so the build
+// run on its own output changes nothing.
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 const manifest = JSON.parse(readFileSync(new URL('families.json', import.meta.url), 'utf8')), families = manifest.families;
@@ -88,16 +87,9 @@ const elements = (n) => n.children.filter((c) => c.name);
 const textOf = (n) => n.children.map((c) => (c.name ? textOf(c) : c.text)).join('');
 const blank = (n) => n.children.every((c) => c.name || !c.text.trim());
 
-// --- numbers: exact, as a fraction of BigInts
-const gcd = (a, b) => { a = a < 0n ? -a : a; b = b < 0n ? -b : b; while (b) [a, b] = [b, a % b]; return a; };
-const frac = (n, d = 1n) => { if (d < 0n) { n = -n; d = -d; } const g = gcd(n, d) || 1n; return { n: n / g, d: d / g }; };
-const decimal = (s) => { const m = /^([+-]?)(\d*)(?:\.(\d*))?(?:[eE]([+-]?\d+))?$/.exec(s); if (!m || !(m[2] || m[3])) return null;
-  let n = BigInt((m[2] || '0') + (m[3] || '')) * (m[1] === '-' ? -1n : 1n), d = 10n ** BigInt((m[3] || '').length);
-  const e = +(m[4] || 0); if (e > 0) n *= 10n ** BigInt(e); else if (e < 0) d *= 10n ** BigInt(-e); return frac(n, d); };
-const plain = ({ n, d }) => { // a fraction whose denominator divides 64, as the shortest exact decimal
-  const neg = n < 0n, a = neg ? -n : n, whole = a / d, rest = a % d;
-  let f = ''; if (rest) { f = ((rest * 1000000n) / d).toString().padStart(6, '0').replace(/0+$/, ''); }
-  return (neg ? '-' : '') + whole + (f ? '.' + f : ''); };
+// --- numbers: each <cn> as the double JavaScript reads from its text, what d3 would be given, and its magnitude as
+// Presentation MathML (the sign apart)
+const MAX = 2 ** 53;
 function number(cn) {
   const type = cn.attrs.type ?? 'real', base = cn.attrs.base;
   if (base !== undefined && base.trim() !== '10') throw refusal(cn.start, `<cn base="${base}">: this build reads numbers in base 10 only`);
@@ -106,21 +98,24 @@ function number(cn) {
   for (const c of cn.children) { if (c.name === 'sep') { parts.push(cur); cur = ''; } else if (c.name) throw refusal(c.start, `<${c.name}> inside a <cn>: a number is text`); else cur += c.text; }
   parts.push(cur); const p = parts.map((x) => x.trim());
   const bad = () => refusal(cn.start, `<cn${type === 'real' ? '' : ` type="${type}"`}>${p.join('<sep/>')}</cn> is not a number this build reads`);
-  let v;
+  const digits = (t) => t.replace(/^[+-]/, '');
+  let x, mag;
   if (['real', 'integer', 'double'].includes(type)) {
     if (p.length !== 1) throw bad();
     if (type === 'integer' ? !/^[+-]?\d+$/.test(p[0]) : !/^[+-]?(\d+\.?\d*|\.\d+)([eE][+-]?\d+)?$/.test(p[0]) || (type !== 'double' && /[eE]/.test(p[0]))) throw bad();
-    v = decimal(p[0]);
+    x = Number(p[0]); mag = `<mn>${digits(p[0])}</mn>`;
   } else if (type === 'e-notation') {
     if (p.length !== 2 || !/^[+-]?(\d+\.?\d*|\.\d+)$/.test(p[0]) || !/^[+-]?\d+$/.test(p[1])) throw bad();
-    v = decimal(`${p[0]}e${p[1]}`);
+    const e = Number(p[1]); x = Number(`${p[0]}e${p[1]}`);
+    mag = `<mn>${digits(p[0])}</mn><mo>×</mo><msup><mn>10</mn>${e < 0 ? `<mrow><mo>−</mo><mn>${-e}</mn></mrow>` : `<mn>${e}</mn>`}</msup>`;
   } else if (type === 'rational') {
     if (p.length !== 2 || !/^[+-]?\d+$/.test(p[0]) || !/^[+-]?\d+$/.test(p[1]) || /^[+-]?0+$/.test(p[1])) throw bad();
-    v = frac(BigInt(p[0]), BigInt(p[1]));
+    const [n, d] = p.map(Number);
+    if (Math.abs(n) > MAX || Math.abs(d) > MAX) throw refusal(cn.start, `<cn type="rational">${p.join('<sep/>')}</cn>: a numerator or denominator past 2^53 isn't one double`);
+    x = n / d; mag = `<mfrac><mn>${digits(p[0])}</mn><mn>${digits(p[1])}</mn></mfrac>`;
   } else throw refusal(cn.start, `<cn type="${type}">: this build reads integer, real, double, e-notation and rational numbers`);
-  if (!v) throw bad();
-  v.text = p.join(type === 'rational' ? '/' : 'e');
-  return v;
+  if (!Number.isFinite(x)) throw refusal(cn.start, `<cn>${p.join('<sep/>')}</cn> is past the largest double`);
+  return { x, neg: x < 0 || Object.is(x, -0), mag };
 }
 
 // --- the operators: Content MathML's elements and their OpenMath symbols (MathML 4, appendix E; F.8.3 for s_data1)
@@ -132,21 +127,16 @@ const WHY = {
   mode: 'dcss has no mode', moment: 'dcss has no moment', card: "a set's size drops repeated values, which d3.count counts",
 };
 const QUALIFIERS = new Set(['bvar', 'condition', 'domainofapplication', 'lowlimit', 'uplimit', 'degree', 'momentabout', 'interval']);
-// a <ci> name the sheet itself sets on the items or their call: the item would read that, not the page's value
+// a <ci> name dcss reads or writes itself: the formula would read that, not the page's value
 const RESERVED = /^(value|dcss-.*)$/;
-const RANGE = { // the call's inputs (README's tables), as exact checks
-  median: (v) => onGrid(v) && (whole(v) ? v.n >= -131072n && v.n <= 8257535n : v.n >= -131072n * v.d && v.n <= 131071n * v.d),
-  min: (v) => onGrid(v) && (whole(v) ? v.n >= -131072n && v.n <= 8257535n : v.n >= -131072n * v.d && v.n <= 131072n * v.d),
-  mean: (v) => onGrid(v) && v.n >= -1024n * v.d, sum: (v) => onGrid(v) };
-RANGE.max = RANGE.min;
-const onGrid = (v) => 64n % v.d === 0n, whole = (v) => v.d === 1n;
 
 function compile(math) {
   if ('cdgroup' in math.attrs) throw refusal(math.start, 'a cdgroup could rename the symbols');
-  return call(elements(math)[0]);
+  const root = call(elements(math)[0]), out = emit(root);
+  if (out.compares > MAX_COMPARES) throw refusal(math.start, `this formula's medians compare ${out.compares.toLocaleString('en-US')} pairs of values the page sets, past the ${MAX_COMPARES.toLocaleString('en-US')} this build writes: give a long list as a .dcss-median call (README, Writing a call)`);
+  return { root, ...out };
 }
-// one <apply>: its call and its items, each a number ({ v }), a name ({ ci }) or another <apply> ({ node }, with its
-// exact value { v } when every number under it is written)
+// one <apply>: its call and its items, each a number ({ x }), a name ({ ci }) or another <apply> ({ node })
 function call(apply) {
   const kids = elements(apply), head = kids[0];
   if (!head) throw refusal(apply.start, 'an empty <apply>');
@@ -172,13 +162,9 @@ function call(apply) {
   if (!args.length) throw refusal(apply.start, `${op} of nothing`);
   if (op === 'plus' && args.length < 2) throw refusal(apply.start, 'plus of one argument');
   if (args.length === 1 && args[0].name === 'ci') throw refusal(args[0].start, `one <ci> alone: MathML reads it as a data set (MathML 4, §4.3.5.13), not one value`);
-  const name = CALLS[op], items = args.map((a) => {
-    if (a.name === 'apply') { // computed first; its answer is this call's item, so it must be one this call takes
-      const node = call(a), v = valueOf(node);
-      if (v && !RANGE[name](v)) throw refusal(a.start, `${node.op}(…) is ${v.text}, which ${name === 'sum' ? 'a sum' : 'the ' + name} can't take: ${onGrid(v) ? rangeWhy(name, v) : 'it is not on the 1/64 grid'}`);
-      return { node, v };
-    }
-    if (a.name === 'cn') { const v = number(a); if (!RANGE[name](v)) throw refusal(a.start, rangeWhy(name, v)); return { v }; }
+  const items = args.map((a) => {
+    if (a.name === 'apply') return { node: call(a) };
+    if (a.name === 'cn') return number(a);
     if (elements(a).length) throw refusal(a.start, '<ci> with markup inside: a name is text');
     if ('type' in a.attrs) throw refusal(a.start, `<ci type="${a.attrs.type}"> names a collection or another kind of value`);
     const id = textOf(a).trim();
@@ -186,37 +172,82 @@ function call(apply) {
     if (RESERVED.test(id)) throw refusal(a.start, `<ci>${id}</ci>: --${id} is a name dcss itself reads or writes`);
     return { ci: id };
   });
-  if (name === 'median' && items.length > 64) throw refusal(apply.start, `a median of ${items.length} items: the sheet takes 64`);
-  const known = items.filter((x) => x.v);
-  if (known.length === items.length) { // a list of numbers only: what Chrome reads exactly (README, Performance), 64ths below 2^18 px
-    const vs = known.map((x) => Number(x.v.n) / Number(x.v.d)), part = known.some((x) => !whole(x.v)), limit = part ? 2 ** 18 : 2 ** 24;
-    const pos = vs.reduce((s, x) => s + Math.max(0, x), 0), neg = vs.reduce((s, x) => s + Math.max(0, -x), 0), negs = vs.filter((x) => x < 0).length;
-    const lost = name === 'sum' ? Math.max(pos, neg) >= limit
-      : name === 'mean' ? pos - neg + 1024 * negs >= limit || (part && negs >= 64)
-      : name === 'min' || name === 'max' ? 2 * (Math.max(...vs) - Math.min(...vs)) + 1 >= limit : false;
-    if (lost) throw refusal(apply.start, `Chrome reads this ${name} without its ${part ? '64ths' : 'whole numbers'}: ${name === 'sum' ? 'its positive or negative values add up' : name === 'mean' ? 'its values and 1024 for each negative one add up' : 'twice its spread is'} past ${part ? '262,144' : '16,777,216'}${name === 'mean' && negs >= 64 ? ', or it has 64 negative values' : ''}`);
-  }
-  return { op, call: name, items, start: apply.start };
+  return { op, call: CALLS[op], items, start: apply.start };
 }
-// a call's exact answer, as d3 gives it, when every number under it is written; null with a <ci> under it
-const cmp = (a, b) => (a.n * b.d < b.n * a.d ? -1 : a.n * b.d > b.n * a.d ? 1 : 0);
-const add = (a, b) => frac(a.n * b.d + b.n * a.d, a.d * b.d);
-function valueOf({ call, items }) {
-  if (items.some((x) => !x.v)) return null;
-  const vs = items.map((x) => x.v), sorted = [...vs].sort(cmp), total = vs.reduce(add, frac(0n));
-  const v = call === 'sum' ? total : call === 'mean' ? frac(total.n, total.d * BigInt(vs.length)) : call === 'min' ? sorted[0] : call === 'max' ? sorted.at(-1)
-    : sorted.length % 2 ? sorted[(sorted.length - 1) / 2] : frac(add(sorted[sorted.length / 2 - 1], sorted[sorted.length / 2]).n, add(sorted[sorted.length / 2 - 1], sorted[sorted.length / 2]).d * 2n);
-  let d = v.d; while (d % 2n === 0n) d /= 2n; while (d % 5n === 0n) d /= 5n;   // a decimal ends when the denominator is 2s and 5s
-  return { ...v, text: d === 1n && 1000000n % v.d === 0n ? plain(v) : `${v.n}/${v.d}` };
+
+// --- what CSS computes: the formula as one calc(), d3's operations in d3's order, so the page's number is d3's double
+// (read back to the bit in Chrome and WebKit: mathml-check.mjs). A sum adds left to right, each step fenced by
+// min(…, infinity) (Chrome reassociates sums and products across plain parentheses: basicss/compile/number.mjs SCALE);
+// a mean divides as IEEE does, by the division each engine does exactly (number.mjs cssDiv: Chrome's of numbers,
+// WebKit's of lengths); min and max are CSS's own; a median ranks its items (each one's place among the others, equal
+// ones in source order) and reads d3.quantile's value0 + (value1 - value0) * 0.5. Two numbers the build knows are
+// compared at build time; the rest in CSS, on registered integer ranks, and an <apply> a median compares is kept as
+// four registered integers (number.mjs splitDecl: a registered <number> keeps 6 digits through var() in Chrome).
+// No 1/64 grid and no layout: the build sees every operand, so nothing has to be laid out to be summed or ordered.
+const F = (x) => `min(${x}, infinity)`;
+const W = 'abs(sign(3 / 10 - 0.3))'; // 1 in WebKit, whose division of numbers isn't IEEE's (number.mjs ENGINE_W)
+const sel = (g, x) => `clamp(-1 * (pow(2, 2000 * ${g}) - 1), ${x}, pow(2, 2000 * ${g}) - 1)`;
+// Chrome divides numbers exactly and lengths as a · (1/b), WebKit the other way round (number.mjs cssDiv), and in Chrome a
+// length anywhere under a division makes it a length's (a mean of means read 1 ulp off): so each declaration is written
+// twice, every division a number's and every division a length's, and the engine's flag picks one whole form
+const DIVIDE = { plain: (a, n) => `((${a}) / ${n})`, length: (a, n) => `(((${a}) * 1px) / (${n} * 1px))` };
+const either = (plain, length) => (plain === length ? plain : `${sel(`(1 - ${W})`, plain)} + ${sel(W, length)}`);
+const SPLIT = { e: (n, v) => `round(down, log(max(abs(${v}), pow(2, -1006)), 2))`, a: (n, v) => `round(to-zero, ${v} * pow(2, 17 - var(${n}-e)))`,
+  b: (n, v) => `round(to-zero, rem(${v} * pow(2, 17 - var(${n}-e)), 1) * 524288)`, c: (n, v) => `calc(rem(${v} * pow(2, 17 - var(${n}-e)) * 524288, 1) * 524288)` };
+const join = (n) => `((var(${n}-a) + var(${n}-b) / 524288 + var(${n}-c) / 274877906944) * pow(2, var(${n}-e) - 17))`;
+// d3's answer in JavaScript's doubles, when every number under it is written (null with a <ci> under it)
+const D3 = {
+  sum: (xs) => xs.reduce((s, x) => s + x, 0), mean: (xs) => xs.reduce((s, x) => s + x, 0) / xs.length,
+  min: (xs) => Math.min(...xs), max: (xs) => Math.max(...xs),
+  median: (xs) => { const s = [...xs].sort((a, b) => a - b), i0 = Math.floor((s.length - 1) / 2); return s.length % 2 ? s[i0] : s[i0] + (s[i0 + 1] - s[i0]) * 0.5; },
+};
+const valueOf = (node) => { const xs = node.items.map((x) => (x.node ? valueOf(x.node) : x.ci ? null : x.x)); return xs.includes(null) ? null : D3[node.call](xs); };
+// a median of n values the page sets compares n · (n - 1) pairs: 2,048 is a median of 45 names, 93 KB of style, a change
+// 0.1 ms of style work in Chrome and WebKit (2026-10-29)
+const MAX_COMPARES = 2048;
+// the formula in one form of division: the answer's expression and the registered steps before it, as [name, expression]
+function form(root, divide) {
+  const decls = [], names = new Set(); let id = 0, compares = 0;
+  const expr = (node) => {
+    const k = ++id, xs = node.items.map((x) => (x.node ? expr(x.node) : x.ci ? (names.add(x.ci), `var(--${x.ci})`) : String(x.x)));
+    const total = () => xs.reduce((a, b) => F(`${a} + ${b}`));
+    if (node.call === 'sum') return total();
+    if (node.call === 'mean') return divide(total(), xs.length);
+    if (node.call !== 'median') return `${node.call}(${xs.join(', ')})`;
+    const n = xs.length; if (n === 1) return xs[0];
+    const known = node.items.map((x) => (x.node ? valueOf(x.node) : x.ci ? null : x.x));
+    const live = known.includes(null); // with every value known the order is the build's, and nothing is compared in CSS
+    const ref = xs.map((x, i) => { if (!live || !node.items[i].node) return x; const p = `--dcss-dcss-m${k}-${i}`; for (const q of 'eabc') decls.push([`${p}-${q}`, SPLIT[q](p, x)]); return join(p); });
+    // j goes before i when it is smaller, or equal and earlier
+    const rank = xs.map((_, i) => { let c = 0; const terms = [];
+      for (let j = 0; j < n; j++) if (j !== i) {
+        if (known[i] !== null && known[j] !== null) c += (j < i ? known[j] <= known[i] : known[j] < known[i]) ? 1 : 0;
+        else { compares++; terms.push(j < i ? `(1 - sign(max(0, ${ref[j]} - ${ref[i]})))` : `sign(max(0, ${ref[i]} - ${ref[j]}))`); } }
+      if (!terms.length) return c;
+      const r = `--dcss-dcss-r${k}-${i}`; decls.push([r, `calc(${[c, ...terms].join(' + ')})`]); return r; });
+    const pick = (t) => { const hits = rank.map((r, i) => (typeof r === 'number' ? (r === t ? ref[i] : null) : `${ref[i]} * (1 - abs(sign(var(${r}) - ${t})))`)).filter(Boolean);
+      return hits.length === 1 ? hits[0] : `(${hits.join(' + ')})`; };
+    const i0 = Math.floor((n - 1) / 2);
+    // every expression stands alone (a fenced sum, a function, a parenthesis), so what is written around it can't regroup it
+    return n % 2 ? pick(i0) : F(`${F(pick(i0))} + ${F(`${F(`${pick(i0 + 1)} - ${pick(i0)}`)} * 0.5`)}`);
+  };
+  const value = expr(root);
+  // a name the page doesn't set (or sets to no number) leaves no answer: --value fails with it, and so does a registered
+  // step that took it (its initial 0 would be a number): 0 / 0 then
+  if (names.size) decls.push(['--dcss-dcss-ok', `calc(${[...names].map((n) => `var(--${n}) * 0`).join(' + ')} + 1)`]);
+  return { value: `${value}${names.size ? ' + 0 / var(--dcss-dcss-ok)' : ''}`, decls, compares };
 }
-const rangeWhy = (call, v) => !onGrid(v) ? `${v.text} is not on the 1/64 grid (12.25 is, 12.3 isn't): give tenths or cents as whole numbers and scale the answer`
-  : call === 'mean' ? 'the mean takes values from -1024' : call === 'sum' ? '' : 'past the median, min and max range: 64ths within ±131,072, whole numbers from -131,072 to 8,257,535';
+function emit(root) {
+  const plain = form(root, DIVIDE.plain), length = form(root, DIVIDE.length);
+  return { value: `calc(${either(plain.value, length.value)})`, decls: plain.decls.map(([k, v], i) => `${k}: calc(${either(v, length.decls[i][1])});`),
+    ints: plain.decls.map(([k]) => k), compares: plain.compares };
+}
 
 // --- what the page gets
 const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
 const FORMAT_SETTINGS = /^--(precision|comma|symbol|sign|trim|type|currency|locale|base|grouping|zero|fill|align|width|percent)$/;
 const splitStyle = (s) => (s ?? '').split(';').map((d) => d.trim()).filter(Boolean).map((d) => { const k = d.indexOf(':'); return [d.slice(0, k).trim(), d.slice(k + 1).trim()]; });
-function write(root, math, src) {
+function write({ root, value, decls: own, ints }, math, src) {
   const classes = (math.attrs.class ?? '').split(/\s+/).filter(Boolean), fmt = classes.filter((c) => c.startsWith('dcss-format-')), keep = classes.filter((c) => !c.startsWith('dcss-format-'));
   const decls = splitStyle(math.attrs.style), fmtDecls = decls.filter(([k]) => FORMAT_SETTINGS.test(k)), varDecls = decls.filter(([k]) => k.startsWith('--') && !FORMAT_SETTINGS.test(k)), mathDecls = decls.filter(([k]) => !k.startsWith('--'));
   const css = (ds) => ds.map(([k, v]) => `${k}: ${v}`).join('; ');
@@ -228,8 +259,8 @@ function write(root, math, src) {
       const a = ` arg="a${i + 1}"`;
       if (x.node) return pres(x.node, a, op === 'plus');
       if (x.ci) return `<mi${a}>${esc(x.ci)}</mi>`;
-      const s = plain(x.v);
-      return s.startsWith('-') ? (op === 'plus' ? `<mrow${a}><mo>(</mo><mo>−</mo><mn>${s.slice(1)}</mn><mo>)</mo></mrow>` : `<mrow${a}><mo>−</mo><mn>${s.slice(1)}</mn></mrow>`) : `<mn${a}>${s}</mn>`;
+      if (!x.neg) return x.mag.startsWith('<mn>') && x.mag.indexOf('<', 1) === x.mag.indexOf('</mn>') ? `<mn${a}>${x.mag.slice(4)}` : `<mrow${a}>${x.mag}</mrow>`;
+      return op === 'plus' ? `<mrow${a}><mo>(</mo><mo>−</mo>${x.mag}<mo>)</mo></mrow>` : `<mrow${a}><mo>−</mo>${x.mag}</mrow>`;
     });
     const intent = `${op}(${items.map((_, i) => `$a${i + 1}`).join(',')})`;
     return op === 'plus' ? `<mrow${arg} intent="${intent}">${inSum ? '<mo>(</mo>' : ''}${shown.join('<mo>+</mo>')}${inSum ? '<mo>)</mo>' : ''}</mrow>`
@@ -239,33 +270,11 @@ function write(root, math, src) {
     + (keep.length ? ` class="${esc(keep.join(' '))}"` : '') + (mathDecls.length ? ` style="${esc(css(mathDecls))}"` : '');
   const annotation = src.slice(elements(math)[0].start, elements(math)[0].end);
   const caption = `<figcaption style="overflow-x: auto"><math${mathAttrs}><semantics>${pres(root)}<annotation-xml encoding="application/mathml-content+xml">${annotation}</annotation-xml></semantics></math></figcaption>`;
-  // the calls in the order they compute, an <apply> inside another first. A call's answer reaches only what is inside
-  // the element after its list, so each inner call's figure holds the next, and its answer is copied there to a name of
-  // its own (README, Using two calls together): --dcss-dcss-arg-k for the k-th, read by the item it is
-  const order = [], line = (n) => { const items = n.items.map((x) => (x.node ? { arg: line(x.node) } : x)); order.push({ ...n, items }); return order.length; };
-  line(root);
-  const inner = order.slice(0, -1), last = order.at(-1), nested = inner.length > 0;
-  const lis = (c) => c.items.map((x) => `<li style="--value: ${x.arg ? `var(--dcss-dcss-arg-${x.arg})` : x.ci ? `var(--${x.ci}, 0.001)` : plain(x.v)}"></li>`).join('');
-  // where a call's answer is: in the children of the element after its list; the median's, of the third of three
-  const reach = (c) => (c === 'median' ? ['<div><div><div><div>', '</div></div></div></div>'] : ['<div><div>', '</div></div>']);
-  // the first figure is one line, clipped; the ones inside it take no height and the page's width, so the last answer
-  // prints on that line however narrow the lists before it are (each figure clips across at its own width)
-  let open = '', close = '';
-  inner.forEach((c, i) => { const k = i + 1, [o, cl] = reach(c.call);
-    open += `<figure class="dcss-${c.call}" style="${i ? 'margin: 0; height: 0; width: 100vw' : 'margin: 0; height: 1lh; overflow: clip'}"><ol aria-hidden="true">${lis(c)}</ol>${o}<div data-dcss-arg="${k}" style="--dcss-dcss-arg-${k}: var(--dcss-${c.call})">`;
-    close = `</div>${cl}</figure>${close}`; });
-  // an inner call with no answer gives the call that takes it none: its copy becomes 0.001, off the 1/64 grid (an item
-  // with no number would be skipped, giving another list's answer)
-  const voids = nested ? `<style>${[1, 2].map((e) => `@container style(--dcss-err: ${e}) { ${inner.map((_, i) => `[data-dcss-arg="${i + 1}"] { --dcss-dcss-arg-${i + 1}: 0.001 !important; }`).join(' ')} }`).join(' ')}</style>` : '';
-  const result = `--dcss-${last.call}`;
-  let answer;
-  if (last.call === 'median') { // the median prints through a formatter: the author's, or d3.format(",") as the other calls print
-    const f = fmt.length ? fmt.join(' ') : 'dcss-format-general', st = fmt.length ? css(fmtDecls) : fmtDecls.length ? css(fmtDecls) : '--comma: 1';
-    answer = `<div><div><div><output class="${f}" style="--value: var(${result})${st ? '; ' + st : ''}"></output></div></div></div>`;
-  } else if (fmt.length) answer = `<div><output class="${fmt.join(' ')}" style="--value: var(${result})${fmtDecls.length ? '; ' + css(fmtDecls) : ''}"></output></div>`;
-  else answer = '<output></output>'; // the call prints its own answer, as d3.format(",") does, when the <output> follows its list
-  const callStyle = (last.call === 'median' ? 'margin: 0' : 'margin: 0; height: 1lh; overflow: clip') + (nested ? '; width: 100vw' : '');
-  return `<figure data-dcss-mathml${varDecls.length ? ` style="${esc(css(varDecls))}"` : ''}>${caption}${voids}${open}<figure class="dcss-${last.call}" style="${callStyle}"><ol aria-hidden="true">${lis(last)}</ol>${answer}</figure>${close}</figure>`;
+  // the answer prints through a formatter: the author's, or d3.format(",") (format-general with commas)
+  const f = fmt.length ? fmt.join(' ') : 'dcss-format-general', st = fmt.length || fmtDecls.length ? css(fmtDecls) : '--comma: 1';
+  const props = ints.length ? `<style>${ints.map((n) => `@property ${n} { syntax: '<integer>'; inherits: false; initial-value: 0; }`).join(' ')}</style>` : '';
+  const answer = `<output class="${f}" style="${own.length ? own.join(' ') + ' ' : ''}--value: ${value}${st ? '; ' + st : ''}"></output>`;
+  return `<figure data-dcss-mathml${varDecls.length ? ` style="${esc(css(varDecls))}"` : ''}>${caption}${props}<div>${answer}</div></figure>`;
 }
 
 // --- the page: each <math> the parser would build, compiled when it is one <apply> of an operator
@@ -303,7 +312,7 @@ export function toDcss(src, { file = 'page.html' } = {}) {
       if (!alone) throw new Error(`${file}:${lineOf(src, math.start)}: a formula beside text in a paragraph: the call's list would close the paragraph; give the formula its own line`);
       from = pOpen.start; to = close ? math.end + close[0].length : math.end; pOpen = null;
     }
-    edits.push({ from, to, html: write(compiled, math, src) }); const each = (n) => { calls.add(n.call); n.items.forEach((x) => x.node && each(x.node)); }; each(compiled);
+    edits.push({ from, to, html: write(compiled, math, src) }); const each = (n) => { calls.add(n.call); n.items.forEach((x) => x.node && each(x.node)); }; each(compiled.root);
   }
   let out = '', at = 0;
   for (const e of edits) { out += src.slice(at, e.from) + e.html; at = e.to; }

@@ -214,44 +214,37 @@ To give a call the answer of a call of its own kind (a precision helper on anoth
 
 ## Writing a call in MathML
 
-A call can also be written in Content MathML, the W3C's markup for what a formula means, and compiled before the page is served by `mathml.mjs`, a Node script beside the sheets that needs nothing else: `node mathml.mjs page.html > built.html`, or `import { toDcss } from 'dcss-array.css/mathml.mjs'` in a program. Browsers don't draw Content MathML and CSS can't read it, so the build turns each formula into the call it names, and CSS computes the answer in the browser as above.
+A call can also be written in Content MathML, the W3C's markup for what a formula means, and compiled before the page is served by `mathml.mjs`, a Node script beside the sheets that needs nothing else: `node mathml.mjs page.html > built.html`, or `import { toDcss } from 'dcss-array.css/mathml.mjs'` in a program. Browsers don't draw Content MathML and CSS can't read it, so the build writes each formula as a `calc()` the browser computes.
 
 ```html
-<math display="block" class="dcss-format-fixed" style="--precision: 1">
-  <apply><median/><cn>4</cn><cn>1</cn><cn>3</cn><ci>jan</ci></apply>
-</math>
-```
-
-The build writes a figure whose caption is the formula, median(4, 1, 3, jan), in Presentation MathML, which browsers draw and screen readers read, with the Content MathML kept as its annotation; then the `.dcss-median` call, one `<li>` an argument, and its `<output>` with the formatter and settings the `<math>` gave (a median with none prints as d3.format(",") does, as the other calls print their own). `<ci>jan</ci>` becomes `--value: var(--jan, 0.001)`: set `--jan` on an ancestor and the answer follows it; a name the page never sets leaves no answer and `--dcss-err` 1. Each number is written once, and the page keeps the formula.
-
-| Content MathML | Call |
-|---|---|
-| `<median/>`, `<csymbol cd="s_data1">median</csymbol>` | `.dcss-median` |
-| `<mean/>`, `<csymbol cd="s_data1">mean</csymbol>` | `.dcss-mean` |
-| `<min/>`, `<max/>`, or `<csymbol cd="minmax1">min</csymbol>` (`max`) of one `<csymbol cd="set1">set</csymbol>` | `.dcss-min`, `.dcss-max` |
-| `<plus/>`, `<csymbol cd="arith1">plus</csymbol>`, two arguments or more | `.dcss-sum` |
-
-Arguments are `<cn>` numbers (decimal; `type` integer, real, double, e-notation or rational) and `<ci>` names. The build stops with the file, line and reason, rather than write a page that shows a wrong or blank answer, on:
-
-- an operator with no call: `<sum/>` binds a variable over limits, `<variance/>` and `<sdev/>` divide by n where d3 divides by n - 1, `<card/>` and a `set1` set drop repeated values;
-- a qualifier (`<bvar>`, `<condition>`, `<lowlimit>`), `definitionURL`, or Content MathML outside an annotation that it can't compile, which browsers would show as nothing;
-- a number off the 1/64 grid or past the call's range, or a list of numbers too long to read exactly (Performance);
-- one `<ci>` alone, which MathML reads as a data set, and a name dcss reads itself (`value`, `dcss-*`);
-- a formula beside text in a `<p>`, since the call's list would end the paragraph (a `<p>` holding only the formula is replaced).
-
-A formula can hold formulas, as d3's calls take each other's answers:
-
-```html
-<math><apply><median/>
-  <apply><mean/><cn>120</cn><cn>80</cn></apply>
+<math display="block"><apply><median/>
+  <apply><mean/><cn>120</cn><cn>80.5</cn></apply>
   <apply><mean/><cn>90</cn><ci>feb</ci></apply>
   <cn>100</cn>
 </apply></math>
 ```
 
-The build writes the inner calls first, each one's figure holding the next, since an answer reaches only what is inside it, and copies each answer to a name of its own for the item that reads it. An inner answer is an item like any other, so the call taking it has to be able to take it: min, max and sums of 64ths always are, a mean or the median of an even count may not be. The mean of 1, 2 and 4 is 7/3, off the 1/64 grid: the build refuses it when every number under it is written, and with a `<ci>` under it the page shows no answer, `--dcss-err` 1. An inner call with no answer leaves the one taking it none.
+The build writes a figure whose caption is the formula, median(mean(120, 80.5), mean(90, feb), 100), in Presentation MathML, which browsers draw and screen readers read, with the Content MathML kept as its annotation; then an `<output>` whose `--value` is the formula as one `calc()`, printed by the formatter the `<math>` names (its class and settings, as in [Format](#format-familiesformatcss)) or as d3.format(",") prints. `<ci>feb</ci>` reads `--feb`: set it on an ancestor and the answer follows in the same frame. A name the page doesn't set, or sets to something that isn't a number, leaves no answer and `--dcss-err` 1.
 
-A `<math>` without an `<apply>` is left as it is, the rest of the page is copied byte for byte, and the build run on its own output changes nothing. It links the families the calls need beside the page's link to dcss. Not yet: the quantile, variance and deviation, extent.
+| Content MathML | d3 |
+|---|---|
+| `<median/>`, `<csymbol cd="s_data1">median</csymbol>` | d3.median |
+| `<mean/>`, `<csymbol cd="s_data1">mean</csymbol>` | d3.mean |
+| `<min/>`, `<max/>`, or `<csymbol cd="minmax1">min</csymbol>` (`max`) of one `<csymbol cd="set1">set</csymbol>` | d3.min, d3.max |
+| `<plus/>`, `<csymbol cd="arith1">plus</csymbol>`, two arguments or more | d3.sum |
+
+A formula is not laid out: the build sees every number, so the page's number is d3's own double, with no 1/64 grid and no range but a double's. 12.3 is 12.3, the mean of 1, 2 and 4 is 2.3333333333333335, and a formula inside a formula takes it as d3 composes calls. The build adds in d3's order, divides as IEEE does in each engine, and ranks a median's values against each other where the page sets them. Numbers d3.format(",") writes with an exponent (under 0.000001, from 1e21) print nothing, with error 1.
+
+Arguments are `<cn>` numbers (decimal; `type` integer, real, double, e-notation or rational) and `<ci>` names. The build stops with the file, line and reason, rather than write a page that shows a wrong or blank answer, on:
+
+- an operator with no d3 call: `<sum/>` binds a variable over limits, `<variance/>` and `<sdev/>` divide by n where d3 divides by n - 1, `<card/>` and a `set1` set drop repeated values;
+- a qualifier (`<bvar>`, `<condition>`, `<lowlimit>`), `definitionURL`, or Content MathML outside an annotation that it can't compile, which browsers would show as nothing;
+- a number that is no double: `INF`, past the largest double, a base other than 10, a rational whose parts pass 2^53;
+- one `<ci>` alone, which MathML reads as a data set, and a name dcss reads itself (`value`, `dcss-*`);
+- medians comparing more than 2,048 pairs of values the page sets, a median of 46 names or more: a list that long is a `.dcss-median` call ([Writing a call](#writing-a-call));
+- a formula beside text in a `<p>`, since the figure would end the paragraph (a `<p>` holding only the formula is replaced).
+
+A `<math>` without an `<apply>` is left as it is, the rest of the page is copied byte for byte, and the build run on its own output changes nothing. It links the sheets the formatter needs beside the page's link to dcss. Not yet: the quantile, variance and deviation, extent.
 
 ## The grid primitives
 
