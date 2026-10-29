@@ -22,11 +22,13 @@
 @property --dcss-dcss-m { syntax: '<integer>'; inherits: true; initial-value: 0; }
 @property --dcss-dcss-i { syntax: '<integer>'; inherits: true; initial-value: 0; }
 @property --dcss-dcss-f { syntax: '<integer>'; inherits: true; initial-value: 0; }
+@property --dcss-dcss-part { syntax: '<integer>'; inherits: true; initial-value: 0; }
 @property --dcss-dcss-ready { syntax: '<integer>'; inherits: true; initial-value: 0; }
 @property --dcss-dcss-err { syntax: '<integer>'; inherits: true; initial-value: 0; }
 @property --dcss-dcss-room { syntax: '<length>'; inherits: true; initial-value: 0px; }
 :is( .dcss-length) { --dcss-dcss-room: 1lh; overflow-x: clip; contain: inline-size; contain-intrinsic-inline-size: 12em; display: grid; grid-template-columns: max-content 1fr; align-content: start; justify-items: stretch; align-items: stretch; }
 :is( .dcss-length) > * { grid-column: 1 / -1; }
+:is( .dcss-length):has(> :is(ul, ol) > li:is(:not([style]), [style*="."], [style*="e-"], [style*="E-"], [style*="var("], [style*="calc("], [style*="attr("], [style*="env("], [style*="if("])) { --dcss-dcss-part: 1; }
 :is( .dcss-length) > :is(ul, ol) + * { white-space: nowrap; }
 :is( .dcss-length) > :is(ul, ol) { grid-area: 1 / 1; display: grid; justify-content: start; align-content: start; gap: 0; margin: 0; padding: 0; border: 0; list-style: none; }
 :is( .dcss-length) > :is(ul, ol) + * { grid-area: 1 / 1; display: block; container-type: size; min-width: 0; min-height: 0; margin: 0; padding: 0; border: 0; }

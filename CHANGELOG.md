@@ -47,6 +47,8 @@ All notable changes to dcss-array.css are written here. The format follows [Keep
 
 ### Fixed
 
+- A sum, mean, min, max or extent whose list passes 262,144 px with fractions gives no answer (`--dcss-err` 1): Chrome read sum(262144, 0.015625) as 262,144 with no error, and Safari a min 1/64 low. Whole numbers written in the items stay exact to 2^24 px.
+- `--dcss-mean` is d3's mean to the bit: it was rounded to millionths (mean(1, 2, 4) gave 2.333333, d3 2.3333333333333335).
 - `--trim: 1` on `.dcss-format-fixed` and `.dcss-format-percent` drops trailing zeros as d3's `~` does (5 at `--precision: 6` prints 5); it did nothing there, only in SI and general.
 - A scale's answer given to another scale as a domain stop or exponent gave no value in Safari (it passed Safari's 65,535 tokens a `var()`); a scale's answer is now about 400 tokens. Moving scales cost up to a fifth more in Safari for it, nothing more in Chrome.
 - A formatter whose `--precision` came from a call that failed printed the number with no decimals; it prints nothing and sets `--dcss-err: 1`.

@@ -1349,7 +1349,7 @@
       },
       "A60": {
         "__compat": {
-          "description": "`.dcss-sum`, `-count`, `-mean`, `-min`, `-max` and `-extent` over `<li>`s with `--value` MUST give the element after the list `--dcss-<name>` (extent: `--dcss-min`, `--dcss-max`) equal to d3-array 3.2.4's for signed values on the 1/64 grid (a mean's from -1024, min, max and extent's within ±131,072), skipping what isn't a number with `--dcss-err` 0, as d3 skips it; a value off the grid or out of range MUST leave no answer with error 1, and d3's undefined error 2; an empty `<output>` MUST print the answer as format(\",\") does, to 6 decimals.",
+          "description": "`.dcss-sum`, `-count`, `-mean`, `-min`, `-max` and `-extent` over `<li>`s with `--value` MUST give the element after the list `--dcss-<name>` (extent: `--dcss-min`, `--dcss-max`) equal to d3-array 3.2.4's for signed values on the 1/64 grid (a mean's from -1024, min, max and extent's within ±131,072), skipping what isn't a number with `--dcss-err` 0, as d3 skips it; a value off the grid or out of range MUST leave no answer with error 1, and d3's undefined error 2; a list wider or taller than 2^18 px with an item whose style attribute holds a decimal point, an exponent, `var()` or `calc()`, or no style attribute, MUST leave no answer with error 1; an empty `<output>` MUST print the answer as format(\",\") does, to 6 decimals.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
