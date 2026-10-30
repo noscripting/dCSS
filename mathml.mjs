@@ -648,7 +648,7 @@ function former(divide) {
     const [zh, zl0] = fast('z', YH, LO), zl = mac('zl', zl0);
     decls.push([`${P}-pf`, `var(${P}-d) * var(${P}-rh-f) * var(${P}-rl-f) * var(${P}-s-f) * var(${P}-p0-f)${often ? ` * var(${P}-yh-f) * var(${P}-lo-f)` : ''}`]); // the pair is fine
     return { P, zh, zl }; };
-  const liveExp = (xe) => { const { P, zh, zl } = expCore(xe);
+  const liveExp = (xe) => { const { P, zh, zl } = expCore(xe, true); // stored stage-3 inputs: 40.9k tokens against 42.8k
     // halfway, on zl's side: zh is in [0.99, 2), so half an ulp is 2^-54 below 1 and 2^-53 from 1 up, but 2^-54 again at
     // zh = 1 with zl below it (the doubles under 1 are twice as close); |zl| must be 2^-72 short of it
     const above = `(1 - sign(max(0, 1 + (-1 * ${zh}))))`, atOneDown = `(1 - abs(sign(${zh} + -1))) * sign(max(0, -1 * ${zl}))`;

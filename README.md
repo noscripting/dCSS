@@ -1413,7 +1413,7 @@ Formulas, an update forced:
 
 Share a result through a reader rather than copy a computation into each formula, and keep stages few.
 
-A MathML sin or cos of a name the page sets costs 8.1 ms a change in Chrome and 16 in WebKit (2026-10-30). A MathML ln, log10 or log2 of a name the page sets costs 6.9 ms a change in Chrome and 13 in WebKit (one exp and a series, 2026-10-30). A MathML factorial of a name the page sets costs 0.8 ms a change in Chrome and 1.0 in WebKit, a binomial of two names 1.9 and 3.0 (2026-10-30). A MathML exp of a name the page sets writes 118 registered or written steps; a change of x, style and layout forced (2026-10-30): 3.7 ms in Chrome, 8 ms in WebKit 26.4, against 0.4 and 1.0 for x · 2.
+A MathML sin or cos of a name the page sets costs 8.1 ms a change in Chrome and 16 in WebKit (2026-10-30). A MathML ln, log10 or log2 of a name the page sets costs 6.9 ms a change in Chrome and 13 in WebKit (one exp and a series, 2026-10-30). A MathML factorial of a name the page sets costs 0.8 ms a change in Chrome and 1.0 in WebKit, a binomial of two names 1.9 and 3.0 (2026-10-30). A MathML exp of a name the page sets writes 131 registered or written steps; a change of x, style and layout forced (2026-10-30): 3.2 ms in Chrome, 6 ms in WebKit 26.4, against 0.4 and 1.0 for x · 2.
 
 A MathML sum to a bound the page sets, min(n, C), writes each term out with seven registered steps; a change of n, style and layout forced (2026-10-30): C = 10, 60, 100 and 360 take 0.9, 3.6, 4.2 and 13.5 ms in Chrome, 2, 7, 9 and 36 ms in WebKit 26.4. The build takes C up to 100.
 
