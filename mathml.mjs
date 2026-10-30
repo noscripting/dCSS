@@ -131,9 +131,15 @@ const SYMBOLS = { s_data1: ['median', 'mean'], minmax1: ['min', 'max'], arith1: 
 const ARITY = { brackets: [1, 1], quotient: [2, 2], rem: [2, 2], minus: [1, 2], divide: [2, 2], power: [2, 2], root: [1, 1], abs: [1, 1], floor: [1, 1], ceiling: [1, 1], times: [2, Infinity], plus: [2, Infinity] };
 // CSS's exp(), log() and trigonometric functions round otherwise than JavaScript's Math (to the bit, 300 values each,
 // 2026-10-29: sin() 95 the same in Chrome, tan() 85 in WebKit, log(x, 10) 175 and 131, exp() 266 in both)
-const INEXACT = "CSS's exp(), log() and trigonometric functions don't give JavaScript's Math to the bit (sin(): 95 of 300 values in Chrome; tan(): 85 in WebKit)";
+const INEXACT = "CSS's exp(), log() and trigonometric functions don't give JavaScript's Math to the bit (sin(): 95 of 300 values in Chrome; tan(): 85 in WebKit), and JavaScript's own double for them isn't one value (V8 on Apple silicon fuses multiply-adds)";
+// exp, ln, log and the trigonometric and hyperbolic functions of numbers the build knows: computed when the page is built,
+// by Node's Math, and written in as a number (log's base 10 unless a <logbase> says, sec as 1 / cos and so on)
+const MATHFN = { exp: Math.exp, ln: Math.log, log: (x, b) => (b === 10 ? Math.log10(x) : b === 2 ? Math.log2(x) : Math.log(x) / Math.log(b)),
+  sin: Math.sin, cos: Math.cos, tan: Math.tan, sec: (x) => 1 / Math.cos(x), csc: (x) => 1 / Math.sin(x), cot: (x) => 1 / Math.tan(x),
+  arcsin: Math.asin, arccos: Math.acos, arctan: Math.atan, arcsec: (x) => Math.acos(1 / x), arccsc: (x) => Math.asin(1 / x), arccot: (x) => Math.atan(1 / x),
+  sinh: Math.sinh, cosh: Math.cosh, tanh: Math.tanh, sech: (x) => 1 / Math.cosh(x), csch: (x) => 1 / Math.sinh(x), coth: (x) => 1 / Math.tanh(x),
+  arcsinh: Math.asinh, arccosh: Math.acosh, arctanh: Math.atanh, arcsech: (x) => Math.acosh(1 / x), arccsch: (x) => Math.asinh(1 / x), arccoth: (x) => Math.atanh(1 / x) };
 const WHY = {
-  ...Object.fromEntries(['exp', 'ln', 'log', 'sin', 'cos', 'tan', 'sec', 'csc', 'cot', 'arcsin', 'arccos', 'arctan', 'arcsec', 'arccsc', 'arccot', 'sinh', 'cosh', 'tanh', 'sech', 'csch', 'coth', 'arcsinh', 'arccosh', 'arctanh'].map((k) => [k, INEXACT])),
   factorial: 'CSS has no factorial, and d3 none',
   sum: '<sum/> binds a variable over limits; a list of numbers is added with <plus/>',
   variance: "MathML doesn't say it divides by n - 1, as d3 and dcss do", sdev: "MathML doesn't say it divides by n - 1, as d3 and dcss do",
@@ -202,6 +208,9 @@ function call(apply) {
   else if (head.name === 'csymbol' && head.attrs.cd === 'latexml' && textOf(head).trim() === 'delimited-[]') { // LaTeXML's [x]: brackets as grouping
     if (args.length !== 1) throw refusal(head.start, `LaTeXML's [ ] around ${args.length} things: [a, b] is an interval or a commutator, not a number`);
     op = 'brackets';
+  } else if (head.name === 'csymbol' && head.attrs.cd === 'transc1' && textOf(head).trim() in MATHFN) { // OpenMath's log takes its base first
+    const name = textOf(head).trim(); if (name === 'log' && args.length !== 2) throw refusal(apply.start, `transc1 log of ${args.length} arguments: it takes the base and a number`);
+    return folded(name, head.start, name === 'log' ? [args[1], { name: 'logbase', start: args[0].start, children: [args[0]] }] : args, apply);
   } else if (head.name === 'csymbol') {
     const cd = head.attrs.cd, name = textOf(head).trim();
     if (!SYMBOLS[cd]?.includes(name)) throw refusal(head.start, `<csymbol cd="${cd}">${name}</csymbol> is not an operator this build takes (s_data1 median and mean, minmax1 min and max, arith1 plus, minus, unary_minus, times, divide, power, root and abs, rounding1 floor and ceiling)`);
@@ -219,6 +228,7 @@ function call(apply) {
   } else {
     if (!blank(head) || elements(head).length) throw refusal(head.start, `<${head.name}> is an operator: write it empty, <${head.name}/>`);
     for (const k of ['definitionurl', 'encoding']) if (k in head.attrs) throw refusal(head.start, `<${head.name} ${k}="…">: the operator would mean another function`);
+    if (head.name in MATHFN) return folded(head.name, head.start, args, apply);
     if (!(head.name in CALLS)) throw refusal(head.start, WHY[head.name] ?? `<${head.name}/> is not an operator this build takes (median, mean, min, max, plus, minus, times, divide, power, root, abs, floor and ceiling)`);
     op = head.name;
   }
@@ -235,6 +245,8 @@ function call(apply) {
   if (op === 'quotient' || op === 'rem') { const [a, b] = items.map(itemValue);
     if (a !== null && b !== null && !wholeArgs(a, b)) throw refusal(apply.start, `${op} of ${a} and ${b}: MathML's integer division takes whole numbers, within ±2^26 here, and a divisor that isn't 0`); }
   // e to a power is exp(x) (MathML 4: power of exponentiale), not Math.pow(Math.E, x), another double for 92 of 100 x
+  if (op === 'power' && (items[0].konst === 'e' || (items[0].ci === 'e' && !items[0].def))) { const seen = new Set(), x = itemValue(items[1], seen);
+    if (x !== null) return fixed('power', Math.exp(x), items, apply.start, items[0].ci ? seen.add('e') : seen, items[0].ci && { op, call: CALLS[op], items }); }
   if (op === 'power' && (items[0].konst === 'e' || (items[0].ci === 'e' && !items[0].def))) throw refusal(args[0].start, 'e to a power is exp(x): CSS\'s exp() doesn\'t give JavaScript\'s Math.exp, and Math.pow(Math.E, x) is another double for 92 of 100 x; if e is a quantity of your own, define it in a formula before this one');
   return { op, call: CALLS[op], items, degree, start: apply.start };
 }
@@ -262,7 +274,7 @@ function item(a, defining = false) {
     if (!/^-?[_a-zA-Z\u0080-\u{10FFFF}][-_a-zA-Z0-9\u0080-\u{10FFFF}]*$/u.test(id)) throw refusal(a.start, `<ci>${id}</ci>: a name must be a CSS identifier`);
     if (RESERVED.test(id)) throw refusal(a.start, `<ci>${id}</ci>: --${id} is a name dcss itself reads or writes`);
     if (INDEX.has(id) && INDEX.get(id) !== null) { const v = INDEX.get(id); return { x: v, neg: v < 0, mag: `<mn>${Math.abs(v)}</mn>` }; } // a sum's index
-    if (id === 'π' && !defining && !DEFS.has(id) && !LATER.has(id)) return { ci: 'π', fallback: String(Math.PI) }; // π, or the page's --π
+    if ((id === 'π' || id === 'e') && !defining && !DEFS.has(id) && !LATER.has(id)) return { ci: id, fallback: String(id === 'π' ? Math.PI : Math.E) }; // π and e, or the page's --π and --e
     return named({ ci: id }, a, defining);
   }
 }
@@ -322,6 +334,23 @@ function indexed(ix, apply) {
   for (let v = lo; v <= hi; v++) terms.push(withIndex(ix.name, v, () => item(ix.body)));
   const call = ix.op === 'sum' ? 'isum' : 'iproduct';
   return { op: call, call, items: terms, display, index: ix.name, loItem, hiItem, start: apply.start };
+}
+function folded(name, at, args, apply) {
+  const base = args.filter((a) => a.name === 'logbase'), rest = args.filter((a) => a.name !== 'logbase');
+  if (base.length && (name !== 'log' || base.length > 1 || elements(base[0]).length !== 1)) throw refusal(base[0].start, '<logbase> belongs to <log/>, once, holding its base');
+  if (rest.length !== 1) throw refusal(apply.start, `${name} of ${rest.length} arguments: it takes 1`);
+  for (const a of rest) if (!['cn', 'ci', 'apply', 'piecewise'].includes(a.name) && !constantOf(a)) throw refusal(a.start, `<${a.name}> as an argument: only <cn> numbers, <ci> names, π, e and another <apply>`);
+  const seen = new Set(), items = [item(rest[0]), ...(base.length ? [item(elements(base[0])[0])] : [])], [x, b] = items.map((i) => itemValue(i, seen));
+  if (x === null || (base.length && b === null)) throw refusal(at, `${name} of a name the page sets: ${INEXACT}. Of numbers the build knows it is computed when the page is built`);
+  return fixed(name, MATHFN[name](x, base.length ? b : 10), items, apply.start, seen);
+}
+// a value the build computed (Node's Math): written in as a number, drawn as the formula it came from. Where it took 𝜋 or
+// 𝑒 as Math.PI or Math.E, it holds while the page sets no --π or --e (unless); where it sets one, the page shows no
+// answer, or, for 𝑒 to a power where --e is set, live: the power of the page's e
+function fixed(op, v, items, start, seen, live) {
+  if (!Number.isFinite(v)) throw refusal(start, `${op} here is ${v}: no number to show`);
+  if (Math.abs(v) >= FMAX) throw refusal(start, `${op} here is ${v}: Chrome reads a number from 3.4e38 up as 3.4e38`);
+  return { op, call: 'fixed', value: v, items, start, unless: seen?.size ? [...seen] : undefined, live };
 }
 // MathML 4's <piecewise> (4.3.10.5): the first <piece> whose condition holds gives the value, else <otherwise>, as
 // JavaScript's if/else chain does; with none holding and no <otherwise>, no answer. A condition is a relation (<lt/>,
@@ -403,14 +432,16 @@ const D3 = {
   min: (xs) => Math.min(...xs), max: (xs) => Math.max(...xs), id: (xs) => xs[0],
   median: (xs) => { const s = [...xs].sort((a, b) => a - b), i0 = Math.floor((s.length - 1) / 2); return s.length % 2 ? s[i0] : s[i0] + (s[i0 + 1] - s[i0]) * 0.5; },
 };
-const itemValue = (x) => (x.node ? valueOf(x.node) : x.def ? valueOf(x.def) : x.ci ? null : x.x);
+// a value the build knows, or null; given a set, a name with a fallback (LaTeXML's 𝜋 and 𝑒) is its fallback, noted in the set
+const itemValue = (x, seen) => (x.node ? valueOf(x.node, seen) : x.def ? valueOf(x.def, seen) : x.ci ? (seen && x.fallback ? (seen.add(x.ci), +x.fallback) : null) : x.x);
 const OPS = { lt: (a, b) => a < b, leq: (a, b) => a <= b, gt: (a, b) => a > b, geq: (a, b) => a >= b, eq: (a, b) => a === b, neq: (a, b) => a !== b };
-const condValue = (c) => { if (c.parts) { const vs = c.parts.map(condValue); return vs.includes(null) ? null : c.op === 'and' ? vs.every(Boolean) : vs.some(Boolean); }
-  const xs = c.items.map(itemValue); return xs.includes(null) ? null : xs.slice(1).every((b, i) => OPS[c.op](xs[i], b)); };
+const condValue = (c, seen) => { if (c.parts) { const vs = c.parts.map((q) => condValue(q, seen)); return vs.includes(null) ? null : c.op === 'and' ? vs.every(Boolean) : vs.some(Boolean); }
+  const xs = c.items.map((x) => itemValue(x, seen)); return xs.includes(null) ? null : xs.slice(1).every((b, i) => OPS[c.op](xs[i], b)); };
 const wholeArgs = (a, b) => Number.isInteger(a) && Number.isInteger(b) && Math.abs(a) <= 2 ** 26 && Math.abs(b) <= 2 ** 26 && b !== 0;
-const valueOf = (node) => { const xs = node.items.map(itemValue); if (xs.includes(null)) return null;
+const valueOf = (node, seen) => { if (node.call === 'fixed') { if (!node.unless) return node.value; if (!seen) return null; node.unless.forEach((n) => seen.add(n)); return node.value; }
+  const xs = node.items.map((x) => itemValue(x, seen)); if (xs.includes(null)) return null;
   if (node.call !== 'piecewise') return D3[node.call](xs, node);
-  for (let j = 0; j < node.conds.length; j++) { const t = condValue(node.conds[j]); if (t === null) return null; if (t) return xs[j]; }
+  for (let j = 0; j < node.conds.length; j++) { const t = condValue(node.conds[j], seen); if (t === null) return null; if (t) return xs[j]; }
   return node.otherwise ? xs.at(-1) : NaN; };
 // a median of n values the page sets compares n · (n - 1) pairs: 2,048 is a median of 45 names, 93 KB of style, a change
 // 0.1 ms of style work in Chrome and WebKit (2026-10-29)
@@ -421,6 +452,10 @@ const MAX_COMPARES = 2048;
 function former(divide) {
   const decls = [], names = new Set(), f = { decls, names, compares: 0 }; let id = 0;
   const expr = f.expr = (node) => {
+    if (node.call === 'fixed' && node.unless) { // as a piecewise: the live power where --e is set, no answer where another is
+      const others = node.unless.filter((n) => !(node.live && n === 'e')), conds = [...(node.live ? [{ set: ['e'] }] : []), ...(others.length ? [{ set: others }] : [])];
+      return expr({ call: 'piecewise', conds, otherwise: true, items: [...(node.live ? [{ node: node.live }] : []), ...(others.length ? [{ x: NaN }] : []), { x: node.value }] }); }
+    if (node.call === 'fixed') return Object.is(node.value, -0) ? '(-1 * 0)' : String(node.value);
     // a number as JavaScript reads it: -0 kept (String(-0) is "0", and 1 / -0 is -Infinity); a name with a fallback (LaTeXML's
     // 𝜋) reads the page's value when it sets one, else the fallback, so an unset one is no missing name
     const k = ++id, xs = node.items.map((x) => (x.node ? expr(x.node) : x.def ? expr(x.def) : x.ci ? (x.fallback ? `var(--${x.ci}, ${x.fallback})` : (names.add(x.ci), `var(--${x.ci})`)) : Object.is(x.x, -0) ? '(-1 * 0)' : String(x.x)));
@@ -430,7 +465,10 @@ function former(divide) {
       // finiteness: an unchosen piece that is NaN or infinite then adds exactly 0 (a registered integer's NaN is 0, and
       // the value is clamped to ±2^1023 before it is split); the chosen value comes back to the bit
       const P = `--dcss-dcss-w${k}`, m = node.conds.length, v = (n) => `var(${P}-${n})`;
-      const cond = (c) => { if (c.parts) { const ps = c.parts.map(cond); return { t: `${c.op === 'and' ? 'min' : 'max'}(${ps.map((q) => q.t).join(', ')})`, sides: ps.flatMap((q) => q.sides) }; }
+      // a page's name set or not: 1 or, where it is unset, the registered integer's initial 0, one step per name (an unset
+      // var() voids the whole declaration); a NaN one is caught by its side
+      let sets = 0; const cond = (c) => { if (c.set) return { t: `max(${c.set.map((n) => { const q = `${P}-s${sets++}`; decls.push([q, `sign(abs(var(--${n})) + 1)`]); return `var(${q})`; }).join(', ')})`, sides: c.set.map((n) => `var(--${n}, 0)`) };
+        if (c.parts) { const ps = c.parts.map(cond); return { t: `${c.op === 'and' ? 'min' : 'max'}(${ps.map((q) => q.t).join(', ')})`, sides: ps.flatMap((q) => q.sides) }; }
         const ss = c.items.map((x) => expr(asNode(x))), hs = ss.slice(1).map((b, i) => CHECK[c.op](ss[i], b));
         return { t: hs.length === 1 ? hs[0] : `min(${hs.join(', ')})`, sides: ss }; };
       node.conds.forEach((c, j) => { const { t, sides } = cond(c); decls.push([`${P}-t${j}`, t], [`${P}-cf${j}`, `${sides.map((x) => `${x} * 0`).join(' + ')} + 1`]); });
@@ -566,6 +604,7 @@ function write({ kind, root, value, decls: own, ints, sides }, math, src) {
     if (op === 'root') return node.degree === 2 ? `<msqrt${arg} intent="square-root(${ids})">${show(0)}</msqrt>` : `<mroot${arg} intent="root($a1,$a2)">${show(0)}<mn arg="a2">${node.degree}</mn></mroot>`;
     if (op === 'abs' || op === 'floor' || op === 'ceiling') { const [l, r] = { abs: ['|', '|'], floor: ['⌊', '⌋'], ceiling: ['⌈', '⌉'] }[op];
       return `<mrow${arg} intent="${op === 'abs' ? 'absolute-value' : op}(${ids})"><mo>${l}</mo>${show(0)}<mo>${r}</mo></mrow>`; }
+    if (op === 'log' && items.length === 2) return `<mrow${arg} intent="log(${ids})"><msub><mi>log</mi>${show(1)}</msub><mo>⁡</mo><mrow><mo>(</mo>${show(0)}<mo>)</mo></mrow></mrow>`;
     return `<mrow${arg} intent="${op}(${ids})"><mi>${op}</mi><mo>⁡</mo><mrow><mo>(</mo>${items.map((_, i) => show(i)).join('<mo>,</mo>')}<mo>)</mo></mrow></mrow>`;
   };
   const mathAttrs = Object.entries(math.attrs).filter(([k]) => !['class', 'style'].includes(k)).map(([k, v]) => ` ${k}="${esc(v)}"`).join('')

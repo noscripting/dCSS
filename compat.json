@@ -1823,7 +1823,7 @@
       },
       "A131": {
         "__compat": {
-          "description": "`mathml.mjs` MUST compile each `<math>` whose one element child is an `<apply>` of `<median/>`, `<mean/>`, `<min/>`, `<max/>`, `<plus/>`, `<minus/>`, `<times/>`, `<divide/>`, `<power/>`, `<root/>`, `<abs/>`, `<floor/>`, `<ceiling/>`, `<quotient/>` or `<rem/>` (or their `s_data1`, `minmax1` over one `set1` set, `arith1` and `rounding1` symbols, and LaTeXML's brackets, `delimited-[]` around one argument, as grouping), with `<cn>`, `<ci>`, `<apply>` and π and e (`<pi/>`, `<exponentiale/>`, `nums1`'s `pi` and `e`, LaTeXML's 𝜋 the page doesn't define, as Math.PI and Math.E) arguments, e to a power refused, into an `<output>` whose `--value` is d3-array's answer to the bit (a -0 answer of a formula with a division 0 in Chrome) (d3.median, mean, min, max, sum; JavaScript's operators and Math.pow, sqrt, abs, floor and ceil for the arithmetic, a root's degree a power of 2, Math.trunc(a / b) and % of whole numbers within ±2^26 for quotient and rem; composed as the calls compose; `<cn>` read as JavaScript reads it, `<ci>name</ci>` as `--name` from an ancestor), with the formula kept as Presentation MathML and its Content MathML as the annotation; a name the page doesn't set, or sets to no number, MUST leave no answer with `--dcss-err` 1. An `<eq/>` with a name alone on one side, or LaTeXML's `assign`, MUST print the other side's value and put that side in the name's place in every later formula on the page; an `<lt/>`, `<leq/>`, `<gt/>` or `<geq/>`, a chain of them or an `<and/>` of them, MUST print true or false as JavaScript's operators decide on the two doubles, and nothing with error 1 when a side has no answer; an `<eq/>` between formulas MUST show each side's value and no verdict. It MUST stop with the file, line and reason on a name defined twice, after a formula that uses it, in terms of itself or set by the page itself, any other Content MathML outside an annotation, a number that is no double, one `<ci>` alone, medians comparing more than 2,048 pairs of values the page sets, and a formula beside text in a `<p>`; it MUST leave the rest of the page byte for byte and change nothing run on its own output.",
+          "description": "`mathml.mjs` MUST compile each `<math>` whose one element child is an `<apply>` of `<median/>`, `<mean/>`, `<min/>`, `<max/>`, `<plus/>`, `<minus/>`, `<times/>`, `<divide/>`, `<power/>`, `<root/>`, `<abs/>`, `<floor/>`, `<ceiling/>`, `<quotient/>` or `<rem/>` (or their `s_data1`, `minmax1` over one `set1` set, `arith1` and `rounding1` symbols, and LaTeXML's brackets, `delimited-[]` around one argument, as grouping), with `<cn>`, `<ci>`, `<apply>` and π and e (`<pi/>`, `<exponentiale/>`, `nums1`'s `pi` and `e`, LaTeXML's 𝜋 and 𝑒 the page doesn't define, as Math.PI and Math.E) arguments, e to a power the page sets refused, into an `<output>` whose `--value` is d3-array's answer to the bit (a -0 answer of a formula with a division 0 in Chrome) (d3.median, mean, min, max, sum; JavaScript's operators and Math.pow, sqrt, abs, floor and ceil for the arithmetic, a root's degree a power of 2, Math.trunc(a / b) and % of whole numbers within ±2^26 for quotient and rem; composed as the calls compose; `<cn>` read as JavaScript reads it, `<ci>name</ci>` as `--name` from an ancestor), with the formula kept as Presentation MathML and its Content MathML as the annotation; a name the page doesn't set, or sets to no number, MUST leave no answer with `--dcss-err` 1. An `<eq/>` with a name alone on one side, or LaTeXML's `assign`, MUST print the other side's value and put that side in the name's place in every later formula on the page; an `<lt/>`, `<leq/>`, `<gt/>` or `<geq/>`, a chain of them or an `<and/>` of them, MUST print true or false as JavaScript's operators decide on the two doubles, and nothing with error 1 when a side has no answer; an `<eq/>` between formulas MUST show each side's value and no verdict. It MUST stop with the file, line and reason on a name defined twice, after a formula that uses it, in terms of itself or set by the page itself, any other Content MathML outside an annotation, a number that is no double, one `<ci>` alone, medians comparing more than 2,048 pairs of values the page sets, and a formula beside text in a `<p>`; it MUST leave the rest of the page byte for byte and change nothing run on its own output.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -1871,6 +1871,29 @@
       "A134": {
         "__compat": {
           "description": "`mathml.mjs` MUST compile a `<sum/>` or `<product/>` over an index (`<bvar>` with `<lowlimit>` and `<uplimit>` or a closed `<interval>`, or LaTeXML's ∑ and ∏ with i = lo below and hi above) to JavaScript's loop over i from lo to hi, s = 0, s += term (p = 1, p *= term), to the bit, with i a number in the term and x_i read from `--x_<i>`. Its bounds MUST be whole numbers known when the page is built, at most 1,000 terms apart. An infinite bound, or one the page sets at run time, MUST stop the build with its reason.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
+            },
+            "firefox": {
+              "version_added": null
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A135": {
+        "__compat": {
+          "description": "`mathml.mjs` MUST compute `<exp/>`, `<ln/>`, `<log/>` (base 10, or its `<logbase>`), the trigonometric and hyperbolic functions and their inverses, OpenMath's `transc1` symbols, and e to a power, of numbers known when the page is built, with Node's `Math` then, and write that double in (sec x as 1 / Math.cos(x), arcsec x as Math.acos(1 / x), and so on). Of a name the page sets, or with no finite value below 3.4e38, it MUST stop the build with its reason. LaTeXML's 𝑒 MUST read `--e` as 𝜋 reads `--π`, and a value computed through either MUST hold while the page sets neither, MUST be the page's e to that power where it sets `--e` alone among them, and MUST be no answer, error 1, where it sets another.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
