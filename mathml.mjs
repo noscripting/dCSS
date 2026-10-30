@@ -138,7 +138,7 @@ const INEXACT = "CSS's exp(), log() and trigonometric functions don't give the d
 // that double for exp, log, log10, log2, sin, cos, tan, asin, acos and cbrt in Chrome (200,000 of 200,000, 2026-10-30;
 // probes/dcss/exact-check.mjs), not Node's (exp 993 of 20,000 off) nor Safari's (sin 842).
 // The true value is computed in BigInt fixed point, Q bits past an argument's own binary exponent, then rounded.
-const Q = 640n, QMAX = Q + 1200n;
+const Q = 640n, QMAX = Q + 2000n;
 const ONEM = 1n << QMAX, atanhInv = (k) => { let s = 0n, t = ONEM / k, n = 1n; while (t) { s += t / n; t /= k * k; n += 2n; } return s; };
 const atanInv = (k) => { let s = 0n, t = ONEM / k, n = 1n, sg = 1n; while (t) { s += sg * t / n; t /= k * k; n += 2n; sg = -sg; } return s; };
 const LN2M = 2n * atanhInv(3n), PIM = 4n * (4n * atanInv(5n) - atanInv(239n)), LN10M = 3n * LN2M + 2n * atanhInv(9n); // ln 10 = 3 ln 2 + 2 atanh(1/9)
@@ -173,12 +173,21 @@ const nearest = (v, P, k = 0n) => { if (v === 0n) return 0; const neg = v < 0n; 
   const q = sh - P + k, y = q > 900n ? Number(m) * 2 ** 900 * 2 ** Number(q - 900n) : q < -900n ? Number(m) * 2 ** -900 * 2 ** Number(q + 900n) : Number(m) * 2 ** Number(q); return neg ? -y : y; };
 // a true value from BigInt steps (f gets the context and x fixed; it returns null where the function has no value), at
 // the precision the argument's size asks for (exp's argument is never tiny or huge where the answer is finite)
+// Each value is computed twice, at P and P + 192 bits, and taken only where both round to the same double (Ziv's way: an
+// error the 2^64 bound misses, from a reduction or a division that amplifies one, shrinks by 2^192 in the second)
+const twice = (P, g) => { const a = g(at(P)), b = g(at(P + 192n)); return Object.is(a, b) ? a : NaN; };
+// The precision starts at Q bits past the argument's own exponent and grows until the value itself has Q bits (sech of
+// a large x is far smaller than x); a value of exactly 0 is taken only at x = 0 (the odd functions, -0 kept) or ±1 (ln 1,
+// arccos 1); a 0 anywhere else is a value smaller than the precision, which grows for it, refused past QMAX
 const trueOf = (f, wide = true) => (x, b) => { if (!Number.isFinite(x) || (b !== undefined && !Number.isFinite(b))) return NaN;
-  const e = x === 0 ? 0n : (({ mant, e }) => BigInt(mant.toString(2).length) - 1n + e)(bitsOf(x)), c = at(Q + (wide ? (e < 0n ? -e : e) : 16n));
-  const v = f(c, c.fix(x), b === undefined ? undefined : c.fix(b)); return v === null ? NaN : v === 0n ? (Object.is(x, -0) ? -0 : 0) : nearest(v, c.P); }; // 0 at -0: the odd ones
+  const e = x === 0 ? 0n : (({ mant, e }) => BigInt(mant.toString(2).length) - 1n + e)(bitsOf(x)), of = (c) => f(c, c.fix(x), b === undefined ? undefined : c.fix(b));
+  let P = Q + (wide ? (e < 0n ? -e : e) : 16n);
+  for (;;) { const v = of(at(P)); if (v === null) return NaN; if (v === 0n && (x === 0 || Math.abs(x) === 1)) return x === 0 ? x : 0;
+    const got = v === 0n ? 0n : BigInt((v < 0n ? -v : v).toString(2).length); if (got >= Q) break; P += Q - got + 64n; if (P > QMAX - 256n) return NaN; }
+  return twice(P, (c) => { const v = of(c); return v === null || v === 0n ? NaN : nearest(v, c.P); }); };
 const pos = (X) => X > 0n, unit = (c, X) => X >= -c.ONE && X <= c.ONE, nz = (X) => X !== 0n;
 export const MATHFN = {
-  exp: (x) => { if (Number.isNaN(x)) return NaN; if (x > 710) return Infinity; if (x < -746) return 0; const c = at(Q + 16n), [s, k] = c.exk(c.fix(x)); return nearest(s, c.P, k); },
+  exp: (x) => { if (Number.isNaN(x)) return NaN; if (x > 710) return Infinity; if (x < -746) return 0; return twice(Q + 16n, (c) => { const [s, k] = c.exk(c.fix(x)); return nearest(s, c.P, k); }); },
   ln: trueOf((c, X) => (pos(X) ? c.ln(X) : null)),
   log: trueOf((c, X, B) => (pos(X) && pos(B) && B !== c.ONE ? (B === 10n * c.ONE ? c.div(c.ln(X), c.LN10) : B === 2n * c.ONE ? c.div(c.ln(X), c.LN2) : c.div(c.ln(X), c.ln(B))) : null)),
   sin: trueOf((c, X) => c.sin(X)), cos: trueOf((c, X) => c.cos(X)), tan: trueOf((c, X) => c.div(c.sin(X), c.cos(X))),
