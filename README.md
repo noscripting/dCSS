@@ -233,7 +233,7 @@ A call can also be written in Content MathML, the W3C's markup for what a formul
 
 `<ci>feb</ci>` reads `--feb`: set it on an ancestor and the answer follows in the same frame. A name is any CSS identifier, `𝑚` included; a mathematical letter is its plain one (LaTeXML's 𝑥 reads `--x`). A name the page doesn't set, or sets to something that isn't a number, leaves no answer and `--dcss-err` 1.
 
-A formula converted from LaTeX by LaTeXML is taken as LaTeXML writes it: its Content MathML in an `annotation-xml` inside `<semantics>`, the ambiguous superscript read as a power and a subscripted name, x₁, as one name, `--x_1`.
+A formula converted from LaTeX by LaTeXML is taken as LaTeXML writes it: its Content MathML in an `annotation-xml` inside `<semantics>`, the ambiguous superscript read as a power, a subscripted name, x₁, as one name, `--x_1`, and square brackets around one thing as parentheses (`[x + 1]`; around two, `[a, b]`, they are no number and the build stops).
 
 | Content MathML | computes as |
 |---|---|
@@ -242,7 +242,8 @@ A formula converted from LaTeX by LaTeXML is taken as LaTeXML writes it: its Con
 | `<min/>`, `<max/>`, or `<csymbol cd="minmax1">min</csymbol>` (`max`) of one `<csymbol cd="set1">set</csymbol>` | d3.min, d3.max |
 | `<plus/>`, `<csymbol cd="arith1">plus</csymbol>`, two arguments or more | d3.sum |
 | `<minus/>` (one argument or two), `<times/>`, `<divide/>`, `<power/>`, and arith1's `minus`, `unary_minus`, `times`, `divide`, `power` | JavaScript's `-`, `*`, `/` and `Math.pow` |
-| `<root/>`, with a `<degree>` holding a whole `<cn>` from 2, or arith1's `root` | `Math.sqrt`, or `Math.pow(x, 1 / n)` |
+| `<pi/>`, `<exponentiale/>`, OpenMath's `nums1` `pi` and `e`, and LaTeXML's 𝜋 where the page defines no π | `Math.PI`, `Math.E`; e to a power stops the build, as it is exp(x), which CSS doesn't compute to JavaScript's double (`Math.pow(Math.E, x)` is another number for 92 of 100 x): a quantity of your own named e can be defined in a formula first |
+| `<root/>`, with a `<degree>` holding 2, 4, 8 or another power of 2, or arith1's `root` | `Math.sqrt`, or `Math.pow(x, 1 / n)`; a cube root, or any other degree, stops the build: `Math.pow(64, 1 / 3)` is 3.9999999999999996 |
 | `<abs/>`, `<floor/>`, `<ceiling/>`, and rounding1's `floor`, `ceiling` | `Math.abs`, `Math.floor`, `Math.ceil` |
 
 A formula is not laid out: the build sees every number, so the page's number is d3's own double, or JavaScript's for arithmetic, with no 1/64 grid. 12.3 is 12.3, the mean of 1, 2 and 4 is 2.3333333333333335, and a formula inside a formula takes it as d3 composes calls. The build adds in d3's order, divides as IEEE does in each engine (so the advice in Format against `/` is about a `calc()` you write yourself, not a formula), and ranks a median's values against each other where the page sets them. Numbers stay below 3.4e38, a 32-bit float's largest ([Browsers](#browsers)): the build refuses a larger `<cn>`, a name the page sets that large leaves no answer, and so does an answer past the largest double. With that default an answer from 9,007,199,255 up prints nothing, with error 1 (its millionths pass 2^53): give it `.dcss-format-si`.

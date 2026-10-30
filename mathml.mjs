@@ -124,11 +124,11 @@ function number(cn) {
 }
 
 // --- the operators: Content MathML's elements and their OpenMath symbols (MathML 4, appendix E; F.8.3 for s_data1)
-const CALLS = { median: 'median', mean: 'mean', min: 'min', max: 'max', plus: 'sum',
+const CALLS = { brackets: 'id', median: 'median', mean: 'mean', min: 'min', max: 'max', plus: 'sum',
   minus: 'minus', times: 'times', divide: 'divide', power: 'power', root: 'root', abs: 'abs', floor: 'floor', ceiling: 'ceiling' };
 const SYMBOLS = { s_data1: ['median', 'mean'], minmax1: ['min', 'max'], arith1: ['plus', 'minus', 'unary_minus', 'times', 'divide', 'power', 'root', 'abs'], rounding1: ['floor', 'ceiling'] };
 // how many arguments each takes, past the statistics' lists
-const ARITY = { minus: [1, 2], divide: [2, 2], power: [2, 2], root: [1, 1], abs: [1, 1], floor: [1, 1], ceiling: [1, 1], times: [2, Infinity], plus: [2, Infinity] };
+const ARITY = { brackets: [1, 1], minus: [1, 2], divide: [2, 2], power: [2, 2], root: [1, 1], abs: [1, 1], floor: [1, 1], ceiling: [1, 1], times: [2, Infinity], plus: [2, Infinity] };
 // CSS's exp(), log() and trigonometric functions round otherwise than JavaScript's Math (to the bit, 300 values each,
 // 2026-10-29: sin() 95 the same in Chrome, tan() 85 in WebKit, log(x, 10) 175 and 131, exp() 266 in both)
 const INEXACT = "CSS's exp(), log() and trigonometric functions don't give JavaScript's Math to the bit (sin(): 95 of 300 values in Chrome; tan(): 85 in WebKit)";
@@ -198,7 +198,10 @@ function call(apply) {
   if (head.name === 'csymbol' && head.attrs.cd === 'ambiguous' && textOf(head).trim() === 'superscript') op = 'power'; // LaTeXML's x^2, read as a power
   else if (head.name === 'csymbol' && head.attrs.cd === 'ambiguous' && textOf(head).trim() === 'subscript') throw refusal(head.start, 'a subscript as the operator (an indexed function): this build has no definition for it');
   else if (head.name === 'ci') throw refusal(head.start, `<ci>${textOf(head).trim()}</ci> as the operator (a function the page names): this build has no definition for it`);
-  else if (head.name === 'csymbol') {
+  else if (head.name === 'csymbol' && head.attrs.cd === 'latexml' && textOf(head).trim() === 'delimited-[]') { // LaTeXML's [x]: brackets as grouping
+    if (args.length !== 1) throw refusal(head.start, `LaTeXML's [ ] around ${args.length} things: [a, b] is an interval or a commutator, not a number`);
+    op = 'brackets';
+  } else if (head.name === 'csymbol') {
     const cd = head.attrs.cd, name = textOf(head).trim();
     if (!SYMBOLS[cd]?.includes(name)) throw refusal(head.start, `<csymbol cd="${cd}">${name}</csymbol> is not an operator this build takes (s_data1 median and mean, minmax1 min and max, arith1 plus, minus, unary_minus, times, divide, power, root and abs, rounding1 floor and ceiling)`);
     op = name === 'unary_minus' ? 'minus' : name;
@@ -222,12 +225,14 @@ function call(apply) {
     if (q.length > 1) throw refusal(q[1].start, 'two <degree>s');
     if (q.length) { const k = elements(q[0]); if (k.length !== 1 || k[0].name !== 'cn') throw refusal(q[0].start, '<degree> holds one <cn>, the root\'s degree'); degree = degreeOf(k[0]); args = args.filter((a) => a !== q[0]); } }
   for (const a of args) if (QUALIFIERS.has(a.name)) throw refusal(a.start, `<${a.name}>: qualifiers aren't taken, only numbers`);
-  for (const a of args) if (!['cn', 'ci', 'apply'].includes(a.name)) throw refusal(a.start, `<${a.name}> as an argument: only <cn> numbers, <ci> names and another <apply>`);
+  for (const a of args) if (!['cn', 'ci', 'apply'].includes(a.name) && !constantOf(a)) throw refusal(a.start, `<${a.name}> as an argument: only <cn> numbers, <ci> names, π, e and another <apply>`);
   if (!args.length) throw refusal(apply.start, `${op} of nothing`);
   const [lo, hi] = ARITY[op] ?? [1, Infinity];
   if (args.length < lo || args.length > hi) throw refusal(apply.start, `${op} of ${args.length} argument${args.length === 1 ? '' : 's'}: it takes ${lo === hi ? lo : hi === Infinity ? `${lo} or more` : `${lo} or ${hi}`}`);
   if (args.length === 1 && args[0].name === 'ci' && !ARITY[op]) throw refusal(args[0].start, `one <ci> alone: MathML reads it as a data set (MathML 4, §4.3.5.13), not one value`);
   const items = args.map((a) => item(a));
+  // e to a power is exp(x) (MathML 4: power of exponentiale), not Math.pow(Math.E, x), another double for 92 of 100 x
+  if (op === 'power' && (items[0].konst === 'e' || (items[0].ci === 'e' && !items[0].def))) throw refusal(args[0].start, 'e to a power is exp(x): CSS\'s exp() doesn\'t give JavaScript\'s Math.exp, and Math.pow(Math.E, x) is another double for 92 of 100 x; if e is a quantity of your own, define it in a formula before this one');
   return { op, call: CALLS[op], items, degree, start: apply.start };
 }
 // one argument: a number ({ x }), a name ({ ci }, with the page's definition of it, { def }), or another <apply> ({ node })
@@ -243,14 +248,24 @@ function item(a, defining = false) {
     }
     if (a.name === 'apply') return { node: call(a) };
     if (a.name === 'cn') return number(a);
+    const k = constantOf(a); if (k) return k;
     if (elements(a).length) throw refusal(a.start, '<ci> with markup inside: a name is text');
     if ('type' in a.attrs) throw refusal(a.start, `<ci type="${a.attrs.type}"> names a collection or another kind of value`);
     const id = textOf(a).trim().normalize('NFKC'); // LaTeXML's mathematical italic 𝑥 is the page's x
     // a CSS identifier: letters past ASCII too (𝑚)
     if (!/^-?[_a-zA-Z\u0080-\u{10FFFF}][-_a-zA-Z0-9\u0080-\u{10FFFF}]*$/u.test(id)) throw refusal(a.start, `<ci>${id}</ci>: a name must be a CSS identifier`);
     if (RESERVED.test(id)) throw refusal(a.start, `<ci>${id}</ci>: --${id} is a name dcss itself reads or writes`);
+    if (id === 'π' && !defining && !DEFS.has(id) && !LATER.has(id)) return CONSTANTS.pi;
     return named({ ci: id }, a, defining);
   }
+}
+// π and e as numbers: MathML 4's <pi/> and <exponentiale/>, OpenMath's nums1 symbols, and LaTeXML's 𝜋 (a <ci>) where
+// the page defines no π of its own; Math.PI and Math.E written out, the same double a <cn> of their digits gives
+const CONSTANTS = { pi: { x: Math.PI, neg: false, mag: '<mi>π</mi>', konst: 'pi' }, e: { x: Math.E, neg: false, mag: '<mi>e</mi>', konst: 'e' } };
+function constantOf(a) {
+  if ((a.name === 'pi' || a.name === 'exponentiale') && blank(a) && !elements(a).length) return CONSTANTS[a.name === 'pi' ? 'pi' : 'e'];
+  if (a.name === 'csymbol' && a.attrs.cd === 'nums1' && ['pi', 'e'].includes(textOf(a).trim())) return CONSTANTS[textOf(a).trim()];
+  return null;
 }
 // a name the page defines: the definition's side in its place; one it defines further down is refused
 function named(x, a, defining) {
@@ -259,8 +274,11 @@ function named(x, a, defining) {
   if (LATER.has(x.ci)) throw refusal(a.start, `${x.ci} is defined further down the page (line ${LATER.get(x.ci)}): define it before the formulas that use it`);
   return x;
 }
-// a root's degree: a whole number from 2
-function degreeOf(cn) { const { x } = number(cn); if (!Number.isInteger(x) || x < 2) throw refusal(cn.start, `a root of degree ${x}: this build takes whole degrees from 2`); return x; }
+// a root's degree: 2 (sqrt), or a power of 2, where pow(x, 1/n) has an exact exponent; any other misses whole roots
+// (pow(64, 1/3) is 3.9999999999999996, so a floor of it is 3; pow(-8, 1/3) is NaN where the cube root is -2)
+function degreeOf(cn) { const { x } = number(cn); if (!Number.isInteger(x) || x < 2) throw refusal(cn.start, `a root of degree ${x}: this build takes whole degrees from 2`);
+  if (x & (x - 1)) throw refusal(cn.start, `a root of degree ${x}: CSS has no such root, and pow(x, 1/${x}) misses whole roots (the cube root of 64 comes out 3.9999999999999996, of -8 nothing); this build takes degrees 2, 4, 8 and so on`);
+  return x; }
 
 // --- what CSS computes: the formula as one calc(), d3's operations in d3's order, so the page's number is d3's double
 // (read back to the bit in Chrome and WebKit: mathml-check.mjs). A sum adds left to right, each step fenced by
@@ -288,7 +306,8 @@ const SPLIT = { e: (n, v) => `round(down, log(max(abs(${v}), pow(2, -1074)), 2))
   b: (n, v) => `round(to-zero, rem(${scaled(n, v)}, 1) * 524288)`, c: (n, v) => `calc(rem(${scaled(n, v)} * 524288, 1) * 524288)` };
 const join = (n) => by2(`(var(${n}-a) + var(${n}-b) / 524288 + var(${n}-c) / 274877906944)`, `var(${n}-e) - 17`);
 // d3's answer in JavaScript's doubles (JavaScript's Math where d3 has no call), when every number under it is written
-// (null with a <ci> under it); CSS's pow() and sqrt() are Math.pow's and Math.sqrt's to the bit (300 of 300 each, both engines)
+// (null with a <ci> under it); CSS's pow() and sqrt() are Math.pow's and Math.sqrt's to the bit (sqrt 300 of 300; pow 50,000 of 50,000, random and
+// compound-interest pairs, both engines on macOS, 2026-10-30; other systems' pow() not measured)
 const D3 = {
   minus: (xs) => (xs.length === 1 ? -xs[0] : xs[0] - xs[1]), times: (xs) => xs.reduce((a, b) => a * b), divide: (xs) => xs[0] / xs[1],
   power: (xs) => Math.pow(xs[0], xs[1]), root: (xs, n) => (n.degree === 2 ? Math.sqrt(xs[0]) : Math.pow(xs[0], 1 / n.degree)),
@@ -398,6 +417,7 @@ function write({ kind, root, value, decls: own, ints, sides }, math, src) {
     if (op === 'times') return `<mrow${arg} intent="times(${ids})">${infix('×', () => 2)}</mrow>`;
     if (op === 'minus') return items.length === 1 ? `<mrow${arg} intent="minus(${ids})"><mo>−</mo>${show(0, 4)}</mrow>` : `<mrow${arg} intent="minus(${ids})">${infix('−', (i) => (i ? 2 : 1))}</mrow>`;
     if (op === 'divide') return `<mfrac${arg} intent="divide(${ids})">${show(0)}${show(1)}</mfrac>`;
+    if (op === 'brackets') return `<mrow${arg} intent="$a1"><mo>[</mo>${show(0)}<mo>]</mo></mrow>`;
     if (op === 'power') return `<msup${arg} intent="power(${ids})">${show(0, 5)}${show(1)}</msup>`;
     if (op === 'root') return node.degree === 2 ? `<msqrt${arg} intent="square-root(${ids})">${show(0)}</msqrt>` : `<mroot${arg} intent="root($a1,$a2)">${show(0)}<mn arg="a2">${node.degree}</mn></mroot>`;
     if (op === 'abs' || op === 'floor' || op === 'ceiling') { const [l, r] = { abs: ['|', '|'], floor: ['⌊', '⌋'], ceiling: ['⌈', '⌉'] }[op];
