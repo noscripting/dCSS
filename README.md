@@ -145,6 +145,7 @@ One list, several answers:
   <div><div><div>
     <output class="dcss-format-fixed" style="--value: var(--dcss-mean); --precision: 1"></output>   <!-- 75.6 -->
     <output class="dcss-format-fixed" style="--value: var(--dcss-max); --precision: 1"></output>    <!-- 95.0 -->
+    <output class="dcss-format-fixed" style="--value: var(--dcss-deviation); --precision: 1"></output>  <!-- 21.3 -->
   </div></div></div>
 </figure>
 ```
@@ -165,7 +166,7 @@ Each call gives its answer as `--dcss-` and its name, with `--dcss-ready` and `-
 ### Array: families/array.css
 
 - [`.dcss-sum`](https://d3js.org/d3-array/summarize#sum), [`.dcss-mean`](https://d3js.org/d3-array/summarize#mean), [`.dcss-count`](https://d3js.org/d3-array/summarize#count), `.dcss-length`, [`.dcss-min`](https://d3js.org/d3-array/summarize#min), [`.dcss-max`](https://d3js.org/d3-array/summarize#max), [`.dcss-extent`](https://d3js.org/d3-array/summarize#extent): of the list; length counts its items.
-- `.dcss-summarize`: sum, count, length, mean, min and max of one list, three elements deep.
+- `.dcss-summarize`: sum, count, length, mean, min, max, variance and deviation of one list.
 - [`.dcss-min-index`](https://d3js.org/d3-array/summarize#minIndex), [`.dcss-max-index`](https://d3js.org/d3-array/summarize#maxIndex), [`.dcss-least-index`](https://d3js.org/d3-array/summarize#leastIndex), [`.dcss-greatest-index`](https://d3js.org/d3-array/summarize#greatestIndex), [`.dcss-least`](https://d3js.org/d3-array/summarize#least), [`.dcss-greatest`](https://d3js.org/d3-array/summarize#greatest): where the least or greatest is, or its value.
 - [`.dcss-median`](https://d3js.org/d3-array/summarize#median), [`.dcss-quantile`](https://d3js.org/d3-array/summarize#quantile), [`.dcss-quantile-sorted`](https://d3js.org/d3-array/summarize#quantileSorted), [`.dcss-median-index`](https://d3js.org/d3-array/summarize#medianIndex), [`.dcss-quantile-index`](https://d3js.org/d3-array/summarize#quantileIndex), [`.dcss-variance`](https://d3js.org/d3-array/summarize#variance), [`.dcss-deviation`](https://d3js.org/d3-array/summarize#deviation): read three elements deep; `--p` places a quantile.
 - [`.dcss-scale-quantile`](https://d3js.org/d3-scale/quantile#scaleQuantile), [`.dcss-scale-threshold`](https://d3js.org/d3-scale/threshold#scaleThreshold), [`.dcss-scale-quantize`](https://d3js.org/d3-scale/quantize#scaleQuantize): `--value` to `--range-0` to `--range-16` (`--ranges` of them) or `--unknown`, by the list four elements deep or by `--domain-0` to `--domain-15`.
