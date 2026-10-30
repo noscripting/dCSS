@@ -5,6 +5,8 @@
 @property --dcss-err { syntax: '<integer>'; inherits: true; initial-value: 0; }
 :where([class*="dcss-"]) { writing-mode: horizontal-tb; }
 /* DCSS reductions: d3.sum, count, mean, min, max, extent and the list's length, in a figure (reduce.mjs). */
+/* the reader out of flow, placed in the list's cell: in flow, grid lays it out several times a frame, and what it holds
+   is restyled each time (a printed mean, 20 moving: 40.8 ms a frame to 11.2 in Chrome, 49 to 41.3 in WebKit, 2026-10-30) */
 
 /* DCSS bisect, on dcss.css's sort and collection-reader kernel (bisect.mjs, search.mjs). */
 
@@ -20,7 +22,7 @@
 @property --dcss-static-item{syntax:'<integer>';inherits:true;initial-value:0}
 @property --dcss-static-sum-h{syntax:'<integer>';inherits:true;initial-value:0}
 @property --dcss-static-sum-l{syntax:'<integer>';inherits:true;initial-value:0}
-@property --dcss-static-scan-error{syntax:'<integer>';inherits:true;initial-value:0}
+@property --dcss-static-scan-error{syntax:'<integer>';inherits:true;initial-value:0}@property --dcss-sum{syntax:'*';inherits:false}@property --dcss-count{syntax:'*';inherits:false}@property --dcss-length{syntax:'*';inherits:false}@property --dcss-mean{syntax:'*';inherits:false}@property --dcss-min{syntax:'*';inherits:false}@property --dcss-max{syntax:'*';inherits:false}@property --dcss-variance{syntax:'*';inherits:false}@property --dcss-deviation{syntax:'*';inherits:false}
 @property --dcss-static-count-digit-0{syntax:'<integer>';inherits:false;initial-value:0}@property --dcss-static-count-digit-1{syntax:'<integer>';inherits:false;initial-value:0}@property --dcss-static-count-digit-2{syntax:'<integer>';inherits:false;initial-value:0}@property --dcss-static-count-digit-3{syntax:'<integer>';inherits:false;initial-value:0}@property --dcss-static-count-digit-4{syntax:'<integer>';inherits:false;initial-value:0}@property --dcss-static-count-digit-5{syntax:'<integer>';inherits:false;initial-value:0}@property --dcss-static-count-digit-6{syntax:'<integer>';inherits:false;initial-value:0}@property --dcss-static-count-digit-over{syntax:'<integer>';inherits:false;initial-value:0}
 .dcss-cumsum:not([data-dcss-compiled]){display:grid;grid-template-columns:repeat(max(1,var(--dcss-static-count)),max-content);container-type:inline-size;min-width:0;overflow:clip}
 .dcss-cumsum:not([data-dcss-compiled])>figcaption{grid-column:1/-1;grid-row:1}

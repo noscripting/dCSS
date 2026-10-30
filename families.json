@@ -85,9 +85,9 @@
         "dcss-summarize",
         "dcss-variance"
       ],
-      "raw": 294690,
-      "gzip9": 22859,
-      "sha256": "f062d4073bccf41aa145a1d41f36f05e2cbe4465cc89eeb544cac97d4cb116f4"
+      "raw": 310979,
+      "gzip9": 23368,
+      "sha256": "57a94a8dbc4d5791884bb88b3b522c2c3e109fb4c3bf23293ea75db8c069a921"
     },
     "hierarchy": {
       "file": "families/hierarchy.css",
@@ -113,9 +113,9 @@
         "dcss-scale-pow",
         "dcss-scale-sqrt"
       ],
-      "raw": 119857,
-      "gzip9": 7513,
-      "sha256": "b9fec4e2d937c390198e9975247df94eec5f19b73a31284547e2afb0b635b66f"
+      "raw": 119905,
+      "gzip9": 7532,
+      "sha256": "a309d306c194384fa4260e6253f13a1615cd040bc6620614180178d7beaf681e"
     },
     "format": {
       "file": "families/format.css",
@@ -131,9 +131,9 @@
         "dcss-ticks-log",
         "dcss-ticks-log-format"
       ],
-      "raw": 136194,
-      "gzip9": 10951,
-      "sha256": "61d0c2887e0ad0bbc41b14deff4ec8b42fddd84e8c03f09a349d3c1f554ce3ad"
+      "raw": 161976,
+      "gzip9": 11582,
+      "sha256": "02a7a45031925d8676212ba5598ada2a2d61c3d084e9b0c7b440585d4fdd5581"
     },
     "ease": {
       "file": "families/ease.css",

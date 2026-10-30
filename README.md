@@ -36,7 +36,7 @@ latexmlmath --cmml=- 'M = \frac{P r}{1 - (1 + r)^{-n}}'
 
 ## Without the build
 
-Each call is a class, and a file in `parts/`. One class per figure (two answer wrong); `.dcss-summarize` gives several from one list. A sum is a `<figure>` around a list: the browser lays the list out, and its size is the answer. This page links two parts that come to 6 KB gzipped:
+Each call is a class, and a file in `parts/`. One class per figure; `.dcss-summarize` gives several from one list. A sum is a `<figure>` around a list: the browser lays the list out, and its size is the answer. This page links two parts that come to 7 KB gzipped:
 
 ```html
 <!doctype html>
@@ -52,7 +52,7 @@ Each call is a class, and a file in `parts/`. One class per figure (two answer w
 </figure>
 ```
 
-One `--value` per item; what follows the list reads `--dcss-sum`, `--dcss-mean` and `--dcss-count`. Change a `--value` and they follow.
+One `--value` per item; the outputs read `--dcss-sum`, `--dcss-mean` and `--dcss-count`, and follow a changed `--value`.
 
 Or link `dcss.css` and the families [Reference](#reference) names, or `dcss-all.css`:
 
@@ -127,7 +127,7 @@ An axis on a nice domain reads `.dcss-nice`'s `--dcss-nice-start` and `--dcss-ni
 </figure>
 ```
 
-A median, quantile, variance or summary reads its list through three nested elements; read it in the innermost:
+A median, quantile, variance or summary reads its list through three nested elements:
 
 ```html
 <figure class="dcss-median">
@@ -153,7 +153,7 @@ One list, several answers:
 
 ## Reference
 
-Each call gives its answer as `--dcss-` and its name, with `--dcss-ready` and `--dcss-err`. [SPEC.md](SPEC.md) has each input's range.
+Each call gives its answer as `--dcss-` and its name to the elements directly inside the one it reads into, not deeper; `--dcss-ready` and `--dcss-err` inherit. [SPEC.md](SPEC.md) has each input's range.
 
 <!-- calls -->
 
@@ -245,7 +245,7 @@ Headless Chrome 155 and WebKit 26.4, Safari's engine, pass all 161 requirements 
 
 <!-- performance -->
 
-Layout does the work, in the frame a number changes. A family is at most 23 KB gzipped and loads in 15 ms or less in WebKit 26.4 (2026-10-28). Twenty printed medians, a value moving: 7.6 ms a frame in Chrome, 14.3 in WebKit; variance 22.3, 12.4 (2026-10-30).
+Layout does the work, in the frame a number changes. A family is at most 23 KB gzipped and loads in 15 ms or less in WebKit 26.4 (2026-10-28). Twenty printed medians, a value moving: 7.6 ms a frame in Chrome, 14.3 in WebKit; variance 10.8, 13.6 (2026-10-30).
 
 <!-- /performance -->
 

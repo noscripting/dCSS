@@ -5,6 +5,8 @@
 @property --dcss-err { syntax: '<integer>'; inherits: true; initial-value: 0; }
 :where([class*="dcss-"]) { writing-mode: horizontal-tb; }
 /* DCSS reductions: d3.sum, count, mean, min, max, extent and the list's length, in a figure (reduce.mjs). */
+/* the reader out of flow, placed in the list's cell: in flow, grid lays it out several times a frame, and what it holds
+   is restyled each time (a printed mean, 20 moving: 40.8 ms a frame to 11.2 in Chrome, 49 to 41.3 in WebKit, 2026-10-30) */
 
 /* DCSS bisect, on dcss.css's sort and collection-reader kernel (bisect.mjs, search.mjs). */
 
@@ -32,7 +34,7 @@
 @property --dcss-static-mid{syntax:'<integer>';inherits:true;initial-value:0}
 @property --dcss-static-skip{syntax:'<integer>';inherits:true;initial-value:0}
 @property --dcss-static-end{syntax:'<integer>';inherits:true;initial-value:0}
-@property --dcss-static-p-pos{syntax:'<integer>';inherits:true;initial-value:0}
+@property --dcss-static-p-pos{syntax:'<integer>';inherits:true;initial-value:0}@property --dcss-sum{syntax:'*';inherits:false}@property --dcss-count{syntax:'*';inherits:false}@property --dcss-length{syntax:'*';inherits:false}@property --dcss-mean{syntax:'*';inherits:false}@property --dcss-min{syntax:'*';inherits:false}@property --dcss-max{syntax:'*';inherits:false}@property --dcss-variance{syntax:'*';inherits:false}@property --dcss-deviation{syntax:'*';inherits:false}
 :is(.dcss-quantile:not([data-dcss-compiled])){--dcss-static-sorted:0;--dcss-static-p:var(--p,calc(NaN));--dcss-static-p-has:calc(var(--dcss-static-p) * 0 + 1);--dcss-static-n:calc(var(--dcss-static-count));--dcss-static-at-0:calc((1 - var(--dcss-static-sorted)) * (1 - abs(sign(clamp(0,var(--dcss-static-p),1) - 0))));--dcss-static-at-1:calc((1 - var(--dcss-static-sorted)) * (1 - abs(sign(clamp(0,var(--dcss-static-p),1) - 1))));--dcss-static-mid:calc((1 - var(--dcss-static-sorted)) * (1 - abs(sign(clamp(0,var(--dcss-static-p),1) - 0.5))));--dcss-static-skip:calc(var(--dcss-static-at-0) + var(--dcss-static-at-1) + var(--dcss-static-mid));--dcss-static-p-pos:calc(clamp(0,sign(clamp(0,var(--dcss-static-p),1)),1));--dcss-static-fraction:calc(var(--dcss-static-mid) * 0.5 + (1 - var(--dcss-static-mid)) * rem((var(--dcss-static-n) - 1) * clamp(0,var(--dcss-static-p),1),1));--dcss-static-k:calc(clamp(0,round(down,(var(--dcss-static-n) - 1) * clamp(0,var(--dcss-static-p),1),1),max(0,var(--dcss-static-n) - 1)));--dcss-static-end:calc(var(--dcss-static-mid) * (var(--dcss-static-n) - 1) + (1 - var(--dcss-static-mid)) * (2 * var(--dcss-static-k) + 1));--dcss-static-pad-1:calc(max(2,2 * var(--dcss-static-n) - 2 * var(--dcss-static-end) - 2));--dcss-static-rows:calc(var(--dcss-static-pad-1) + var(--dcss-static-end) + 1);display:grid;grid-template-columns:max-content max-content minmax(0,1fr);grid-template-rows:auto auto minmax(1lh,auto);container-type:inline-size;min-width:0;overflow:clip;align-content:start;align-items:start;position:relative;anchor-scope:--dcss-static-up}
 :is(.dcss-quantile:not([data-dcss-compiled]))>figcaption{grid-column:1/-1;grid-row:2}
 :is(.dcss-quantile:not([data-dcss-compiled]))>:is(ol,ul){display:grid;grid-column:1/-2;grid-row:1;grid-template-columns:subgrid;grid-auto-flow:column;grid-template-rows:auto auto repeat(max(1,var(--dcss-static-rows) - 2),0px);height:0;gap:0;margin:0;padding:0;border:0;list-style:none;visibility:hidden}

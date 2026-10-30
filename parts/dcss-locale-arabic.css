@@ -9,7 +9,11 @@
 @counter-style dcss-fmt-none { system: fixed -1; symbols: "";  }
 @counter-style dcss-fmt-sign { system: fixed -1; symbols: "" "" "\2212" "+"; fallback: dcss-fmt-none; }
 /* white-space: WebKit wraps a shrink-to-fit output after the point otherwise (0.005 as "0." and "005") */
-@property --dcss-fmt-on { syntax: '<integer>'; inherits: false; initial-value: 1; }
+@property --dcss-fmt-on { syntax: '<integer>'; inherits: true; initial-value: 1; }
+/* fixed and percent do their work on their ::after: an element reading a container (a call's answer printed in place)
+   is restyled in each of the call's container passes, its ::after only when what it inherits changes (2026-10-30, the
+   summary printed 24.4 to 9.5 ms a frame in Chrome). The element keeps what other sheets read of it: |x|'s parts and big. Nothing on the ::after says inherit:
+   Chrome restyles a box that does whenever its parent is restyled (--dcss-fmt-on, set on the element, inherits instead) */
 /* General notation reuses significant rounding, with no SI prefix. Only the
    non-exponential toPrecision range is admitted; unsupported results print nothing. */
 /* General notation (d3's none type, toPrecision) on fixed's exact rounding: toPrecision(s) rounds as toFixed does at
@@ -20,6 +24,7 @@
 /* d3: with "$" the suffix is the currency's (none), not "%" */
 
 /* DCSS d3.scaleLog's ticks, nice and tickFormat's labels (ticks.mjs). */
+/* fixed and percent compute on their ::after (format.mjs), so their precision is set there */
 
 @counter-style dcss-locale-ar-none{system: fixed -1; symbols: "";}
 @counter-style dcss-locale-ar-lead{system: numeric; symbols: "٠" "١" "٢" "٣" "٤" "٥" "٦" "٧" "٨" "٩"; range: 0 infinite; fallback: dcss-locale-ar-none;}

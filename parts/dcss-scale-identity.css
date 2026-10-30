@@ -5,6 +5,7 @@
 @property --dcss-err { syntax: '<integer>'; inherits: true; initial-value: 0; }
 :where([class*="dcss-"]) { writing-mode: horizontal-tb; }
 /* DCSS bar chart: d3.scaleBand and d3.scaleLinear([0, max]) over a list (scale.mjs). */
+@property --dcss-max{syntax:'*';inherits:false}
 
 /* DCSS d3.scaleLinear: up to 8 stops, clamp, rangeRound (linear.mjs). */
 

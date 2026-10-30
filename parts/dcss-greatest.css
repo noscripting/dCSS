@@ -5,10 +5,12 @@
 @property --dcss-err { syntax: '<integer>'; inherits: true; initial-value: 0; }
 :where([class*="dcss-"]) { writing-mode: horizontal-tb; }
 /* DCSS reductions: d3.sum, count, mean, min, max, extent and the list's length, in a figure (reduce.mjs). */
+/* the reader out of flow, placed in the list's cell: in flow, grid lays it out several times a frame, and what it holds
+   is restyled each time (a printed mean, 20 moving: 40.8 ms a frame to 11.2 in Chrome, 49 to 41.3 in WebKit, 2026-10-30) */
 
 /* DCSS bisect, on dcss.css's sort and collection-reader kernel (bisect.mjs, search.mjs). */
 
-/* Bounded drop-in calls: a list read through plain elements after it, or none (static.mjs). */
+/* Bounded drop-in calls: a list read through plain elements after it, or none (static.mjs). */@property --dcss-sum{syntax:'*';inherits:false}@property --dcss-count{syntax:'*';inherits:false}@property --dcss-length{syntax:'*';inherits:false}@property --dcss-mean{syntax:'*';inherits:false}@property --dcss-min{syntax:'*';inherits:false}@property --dcss-max{syntax:'*';inherits:false}@property --dcss-variance{syntax:'*';inherits:false}@property --dcss-deviation{syntax:'*';inherits:false}
 
 /* DCSS shares: one list, a hidden sum lane, and one descendant result per item (share.mjs). */
 

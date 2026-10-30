@@ -1349,7 +1349,7 @@
       },
       "A60": {
         "__compat": {
-          "description": "`.dcss-sum`, `-count`, `-mean`, `-min`, `-max` and `-extent` over `<li>`s with `--value` MUST give the element after the list `--dcss-<name>` (extent: `--dcss-min`, `--dcss-max`) equal to d3-array 3.2.4's for signed values on the 1/64 grid (a mean's from -1024, min, max and extent's within ±131,072 or whole to 8,257,535), skipping what isn't a number with `--dcss-err` 0, as d3 skips it; a value off the grid or out of range MUST leave no answer with error 1, and d3's undefined error 2; a sum's or mean's list reaching 2^24 px (1 px more than its values) MUST leave no answer with error 1; a list wider or taller than 2^18 px with an item whose style attribute holds a decimal point, an exponent, `var()` or `calc()`, or no style attribute, MUST leave no answer with error 1; an empty `<output>` MUST print the answer as format(\",\") does, to 6 decimals.",
+          "description": "`.dcss-sum`, `-count`, `-mean`, `-min`, `-max` and `-extent` over `<li>`s with `--value` MUST give each element directly inside the element after the list (not their descendants) `--dcss-<name>` (extent: `--dcss-min`, `--dcss-max`) equal to d3-array 3.2.4's for signed values on the 1/64 grid (a mean's from -1024, min, max and extent's within ±131,072 or whole to 8,257,535), skipping what isn't a number with `--dcss-err` 0, as d3 skips it; a value off the grid or out of range MUST leave no answer with error 1, and d3's undefined error 2; a sum's or mean's list reaching 2^24 px (1 px more than its values) MUST leave no answer with error 1; a list wider or taller than 2^18 px with an item whose style attribute holds a decimal point, an exponent, `var()` or `calc()`, or no style attribute, MUST leave no answer with error 1; an empty `<output>` MUST print the answer as format(\",\") does, to 6 decimals.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -1916,7 +1916,7 @@
       },
       "A180": {
         "__compat": {
-          "description": "`.dcss-summarize` with up to 64 items, each a value in 64ths from -1024 to 65535 or none, MUST give everything inside the third plain element after the list `--dcss-sum`, `--dcss-count`, `--dcss-length`, `--dcss-mean`, `--dcss-min`, `--dcss-max`, `--dcss-variance` and `--dcss-deviation`: the doubles d3-array's `sum`, `count`, `mean`, `min` and `max` give for the list (an item with none skipped), its number of items, and the true variance rounded once and its square root (A130's), from the one list. With no number, the mean, min and max MUST be no number, error 2; with fewer than two numbers, or one past ±1024, the variance and deviation MUST be no number. More than 64 items, a value outside the range or off the 64ths, or one of a list holding a fraction whose values passed 2^18 between them (A130's reads) MUST leave no answer, error 1.",
+          "description": "`.dcss-summarize` with up to 64 items, each a value in 64ths from -1024 to 65535 or none, MUST give each element directly inside the third plain element after the list (not their descendants) `--dcss-sum`, `--dcss-count`, `--dcss-length`, `--dcss-mean`, `--dcss-min`, `--dcss-max`, `--dcss-variance` and `--dcss-deviation`: the doubles d3-array's `sum`, `count`, `mean`, `min` and `max` give for the list (an item with none skipped), its number of items, and the true variance rounded once and its square root (A130's), from the one list. With no number, the mean, min and max MUST be no number, error 2; with fewer than two numbers, or one past ±1024, the variance and deviation MUST be no number. More than 64 items, a value outside the range or off the 64ths, or one of a list holding a fraction whose values passed 2^18 between them (A130's reads) MUST leave no answer, error 1.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -3661,7 +3661,7 @@
       },
       "A130": {
         "__compat": {
-          "description": "`.dcss-variance` and `.dcss-deviation` with up to 64 values in 64ths from -1024 to 1024 MUST give everything inside the third plain element after the list `--dcss-variance`, the true variance of the numbers rounded once (an item with none skipped), and `--dcss-deviation`, its square root; fewer than two numbers, more than 64 items or a value outside the range MUST leave no answer.",
+          "description": "`.dcss-variance` and `.dcss-deviation` with up to 64 values in 64ths from -1024 to 1024 MUST give each element directly inside the third plain element after the list (not their descendants) `--dcss-variance`, the true variance of the numbers rounded once (an item with none skipped), and `--dcss-deviation`, its square root; fewer than two numbers, more than 64 items or a value outside the range MUST leave no answer.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {

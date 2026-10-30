@@ -5,6 +5,8 @@
 @property --dcss-err { syntax: '<integer>'; inherits: true; initial-value: 0; }
 :where([class*="dcss-"]) { writing-mode: horizontal-tb; }
 /* DCSS reductions: d3.sum, count, mean, min, max, extent and the list's length, in a figure (reduce.mjs). */
+/* the reader out of flow, placed in the list's cell: in flow, grid lays it out several times a frame, and what it holds
+   is restyled each time (a printed mean, 20 moving: 40.8 ms a frame to 11.2 in Chrome, 49 to 41.3 in WebKit, 2026-10-30) */
 
 /* DCSS bisect, on dcss.css's sort and collection-reader kernel (bisect.mjs, search.mjs). */
 
@@ -43,7 +45,7 @@
 @property --dcss-static-cut-13{syntax:'<integer>';inherits:false;initial-value:0}
 @property --dcss-static-cut-14{syntax:'<integer>';inherits:false;initial-value:0}
 @property --dcss-static-cut-15{syntax:'<integer>';inherits:false;initial-value:0}
-@property --dcss-static-cut-16{syntax:'<integer>';inherits:false;initial-value:0}
+@property --dcss-static-cut-16{syntax:'<integer>';inherits:false;initial-value:0}@property --dcss-sum{syntax:'*';inherits:false}@property --dcss-count{syntax:'*';inherits:false}@property --dcss-length{syntax:'*';inherits:false}@property --dcss-mean{syntax:'*';inherits:false}@property --dcss-min{syntax:'*';inherits:false}@property --dcss-max{syntax:'*';inherits:false}@property --dcss-variance{syntax:'*';inherits:false}@property --dcss-deviation{syntax:'*';inherits:false}
 @property --dcss-static-count-digit-0{syntax:'<integer>';inherits:false;initial-value:0}@property --dcss-static-count-digit-1{syntax:'<integer>';inherits:false;initial-value:0}@property --dcss-static-count-digit-2{syntax:'<integer>';inherits:false;initial-value:0}@property --dcss-static-count-digit-3{syntax:'<integer>';inherits:false;initial-value:0}@property --dcss-static-count-digit-4{syntax:'<integer>';inherits:false;initial-value:0}@property --dcss-static-count-digit-5{syntax:'<integer>';inherits:false;initial-value:0}@property --dcss-static-count-digit-6{syntax:'<integer>';inherits:false;initial-value:0}@property --dcss-static-count-digit-over{syntax:'<integer>';inherits:false;initial-value:0}
 .dcss-scale-quantile:not([data-dcss-compiled]){--dcss-static-ranges-ok:calc((var(--ranges,2) * 0 + 1) * (1 - abs(sign(var(--ranges,2) - round(var(--ranges,2),1)))));--dcss-static-query:var(--value);--dcss-static-query-has:calc(sign(var(--value)) * 0 + 1);--dcss-static-query-ok:calc(var(--dcss-static-query-has));--dcss-static-total:calc(var(--dcss-static-count));display:grid;grid-template-columns:repeat(calc(var(--dcss-static-total) + 1),max-content) minmax(0,1fr);container-type:inline-size;overflow:clip;min-width:0;position:relative;anchor-scope:--dcss-static-hi,--dcss-static-rows}
 .dcss-scale-quantile:not([data-dcss-compiled])>figcaption{grid-column:1/-1;grid-row:1}
