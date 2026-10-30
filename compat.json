@@ -1914,6 +1914,75 @@
           }
         }
       },
+      "A146": {
+        "__compat": {
+          "description": "`mathml.mjs` MUST compute a `<root/>` of whole degree n from 3 to 1,000, other than a power of 2, of a formula the page sets, on the page, to the double nearest the true n-th root, the root of ±0 as ±0 and of x below 0 for odd n as −(the root of |x|). Where n is even and x below 0, or x is unset or not a number, or the computed value lies too close to halfway between two doubles to round from, there MUST be no answer, error 1; it MUST NOT give another double. A degree past 1,000 of a formula the page sets MUST be refused when the page is built.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
+            },
+            "firefox": {
+              "version_added": null
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A145": {
+        "__compat": {
+          "description": "`mathml.mjs` MUST compute `<sec/>` and `<csc/>` of a formula the page sets, on the page, to the double nearest the true value of 1/cos x and 1/sin x (not 1 over the rounded cosine or sine). Where |x| passes 2^20, x is unset, not a number or (for csc) ±0, or the computed value lies too close to halfway between two doubles to round from, there MUST be no answer, error 1; it MUST NOT give another double.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
+            },
+            "firefox": {
+              "version_added": null
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A144": {
+        "__compat": {
+          "description": "`mathml.mjs` MUST take LaTeXML's Content MathML as it writes it, compiling each form as its MathML: `cases` as `<piecewise>`, a subscripted `<log/>` applied as `<log/>` with that `<logbase>`, a function to a whole power from 2 applied as that power of the function, to the power −1 as its inverse, `modulo` as `<rem/>`, `<ci>⋅</ci>` applied as `<times/>`, `<cn type=\"float\">` as a double, and its italic-ϕ as ϕ. Formulas typed in LaTeX and converted by latexmlmath MUST give the double the same formula written as JavaScript gives.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
+            },
+            "firefox": {
+              "version_added": null
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
       "A143": {
         "__compat": {
           "description": "`mathml.mjs` MUST compute `<tan/>` and `<cot/>` of a formula the page sets, on the page, to the double nearest the true value, tan(±0) as ±0. Where |x| passes 2^20, x is unset or not a number, cot's x is 0, or the computed value lies too close to halfway between two doubles to round from, there MUST be no answer, error 1; it MUST NOT give another double.",

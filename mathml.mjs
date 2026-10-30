@@ -94,7 +94,7 @@ const MAX = 2 ** 53;
 // a value inside a calculation stays a double): measured 2026-10-29, Chrome 155; WebKit doesn't
 const FMAX = 3.4028234663852886e38;
 function number(cn) {
-  const type = cn.attrs.type ?? 'real', base = cn.attrs.base;
+  const type = cn.attrs.type === 'float' ? 'double' : cn.attrs.type ?? 'real', base = cn.attrs.base; // LaTeXML's float, a double
   if (base !== undefined && base.trim() !== '10') throw refusal(cn.start, `<cn base="${base}">: this build reads numbers in base 10 only`);
   for (const k of Object.keys(cn.attrs)) if (!['type', 'base', 'id', 'xref', 'class', 'style', 'href', 'encoding'].includes(k)) throw refusal(cn.start, `<cn ${k}="…">: an attribute this build doesn't take`);
   const parts = []; let cur = '';
@@ -218,7 +218,7 @@ export const EXPK = (() => { const c = at(1200n), dbl = (v) => nearest(v, c.P), 
   const T = Array.from({ length: 64 }, (_, j) => { const v = c.ex((c.LN2 * BigInt(j)) / 64n), h = dbl(v); return [h, dbl(v - c.fix(h)), ...halves(h)].map(splitInts); });
   const C = [3, 4, 5, 6, 7, 8].map((n) => { let f = 1n; for (let i = 2n; i <= BigInt(n); i++) f *= i; return dbl(c.ONE / f); });
   return { L1: dbl(L1), L2: dbl(L2), L3: dbl(L - L1 - L2), INV: dbl((c.ONE << c.P) / L), T, C }; })();
-// sin and cos of a name the page sets (TRIGK): π/512 in three 25-bit parts and the rest (k times each part is exact for
+// sin, cos, sec and csc of a name the page sets (TRIGK): π/512 in three 25-bit parts and the rest (k times each part is exact for
 // |k| < 2^28), 512/π, and sin and cos of iπ/512 for i = 0..256 as pairs, as the split's integers
 export const TRIGK = (() => { const c = at(1600n), dbl = (v) => nearest(v, c.P), pair = (v) => { const h = dbl(v); return [h, dbl(v - c.fix(h))]; };
   const keep = (v, n) => { const drop = BigInt(v.toString(2).length) - BigInt(n); return drop > 0n ? (v >> drop) << drop : v; };
@@ -301,15 +301,30 @@ function call(apply) {
   const kids = elements(apply), head = kids[0];
   if (!head) throw refusal(apply.start, 'an empty <apply>');
   const ix = indexForm(head, kids); if (ix) return indexed(ix, apply);
+  // LaTeXML's log_b x and f^n x as an <apply> of a sub- or superscripted function: log to base b; (f x)^n for a whole n
+  // from 2 (sin² x); f^{-1} x the inverse function (sin^{-1} x is arcsin x)
+  if (head.name === 'apply') { const [h0, f, n, ...more] = elements(head), fn = f && f.name in MATHFN ? f.name : null;
+    if (h0?.name === 'csymbol' && h0.attrs.cd === 'ambiguous' && fn && n && !more.length) { const scr = textOf(h0).trim();
+      if (scr === 'subscript' && fn === 'log') return folded('log', f.start, [...kids.slice(1), { name: 'logbase', start: n.start, children: [n] }], apply);
+      const neg1 = n.name === 'apply' && elements(n).length === 2 && elements(n)[0].name === 'minus' && elements(n)[1].name === 'cn' && number(elements(n)[1]).x === 1;
+      if (scr === 'superscript' && (neg1 || (n.name === 'cn' && number(n).x === -1)) && `arc${fn}` in MATHFN) return folded(`arc${fn}`, f.start, kids.slice(1), apply);
+      if (scr === 'superscript' && n.name === 'cn' && Number.isInteger(number(n).x) && number(n).x >= 2) return { op: 'power', call: CALLS.power, items: [{ node: folded(fn, f.start, kids.slice(1), apply) }, item(n)], start: apply.start }; } }
+  // LaTeXML's \begin{cases}: value, condition, value, condition…, a last value with "otherwise" (or none), as <piecewise>
+  if (head.name === 'csymbol' && head.attrs.cd === 'latexml' && textOf(head).trim() === 'cases') { const xs = kids.slice(1), parts = [];
+    for (let i = 0; i < xs.length; i += 2) { const v = xs[i], c = xs[i + 1];
+      if (!c || (c.name === 'ci' && textOf(c).trim() === 'otherwise')) parts.push({ name: 'otherwise', start: v.start, children: [v] }); else parts.push({ name: 'piece', start: v.start, children: [v, c] }); }
+    return piecewise({ name: 'piecewise', start: head.start, children: parts }); }
   if (head.name === 'apply') throw refusal(head.start, 'a nested <apply> as the operator: one operator applied to numbers');
   let op, args = kids.slice(1), degree = 2;
   if (head.name === 'csymbol' && head.attrs.cd === 'ambiguous' && textOf(head).trim() === 'superscript') op = 'power'; // LaTeXML's x^2, read as a power
   else if (head.name === 'csymbol' && head.attrs.cd === 'ambiguous' && textOf(head).trim() === 'subscript') throw refusal(head.start, 'a subscript as the operator (an indexed function): this build has no definition for it');
+  else if (head.name === 'ci' && ['⋅', '·', '×', '∗'].includes(textOf(head).trim())) op = 'times'; // LaTeXML's \cdot, a <ci> it doesn't name
   else if (head.name === 'ci') throw refusal(head.start, `<ci>${textOf(head).trim()}</ci> as the operator (a function the page names): this build has no definition for it`);
   else if (head.name === 'csymbol' && head.attrs.cd === 'latexml' && textOf(head).trim() === 'delimited-[]') { // LaTeXML's [x]: brackets as grouping
     if (args.length !== 1) throw refusal(head.start, `LaTeXML's [ ] around ${args.length} things: [a, b] is an interval or a commutator, not a number`);
     op = 'brackets';
   } else if (head.name === 'csymbol' && ['latexml', 'combinat1', 'dlmf'].includes(head.attrs.cd) && textOf(head).trim() === 'binomial') { op = 'binomial'; // \binom{n}{k}
+  } else if (head.name === 'csymbol' && head.attrs.cd === 'latexml' && textOf(head).trim() === 'modulo') { op = 'rem'; // \bmod, as MathML's rem: the sign of the first
   } else if (head.name === 'csymbol' && head.attrs.cd === 'transc1' && textOf(head).trim() in MATHFN) { // OpenMath's log takes its base first
     const name = textOf(head).trim(); if (name === 'log' && args.length !== 2) throw refusal(apply.start, `transc1 log of ${args.length} arguments: it takes the base and a number`);
     return folded(name, head.start, name === 'log' ? [args[1], { name: 'logbase', start: args[0].start, children: [args[0]] }] : args, apply);
@@ -373,10 +388,11 @@ function call(apply) {
     if (x !== null) return fixed('power', MATHFN.exp(x), items, apply.start, items[0].ci ? seen.add('e') : seen, items[0].ci && { op, call: CALLS[op], items }); }
   // e to a power the page sets: exp computed on the page; LaTeXML's 𝑒 is the page's --e where it sets one (Math.pow then)
   if (op === 'power' && (items[0].konst === 'e' || (items[0].ci === 'e' && !items[0].def))) return { op, call: items[0].konst ? 'exp' : 'eset', items, start: apply.start };
-  // a root of a degree other than a power of 2: of a number the build knows, the double nearest the true root (∛64 is 4);
-  // of a name the page sets, refused, as CSS has no such root and pow(x, 1/3) misses whole roots
+  // a root of a degree other than a power of 2: of a number the build knows, the double nearest the true root (∛64 is 4),
+  // and of a name the page sets the same double computed on the page (liveRoot), for degrees up to 1,000
   if (op === 'root' && degree & (degree - 1)) { const x = itemValue(items[0]);
-    if (x === null) throw refusal(apply.start, `a root of degree ${degree} of a name the page sets: CSS has no such root, and pow(x, 1/${degree}) misses whole roots (the cube root of 64 comes out 3.9999999999999996, of -8 nothing); of a number the build knows it is computed when the page is built, and of a name, degrees 2, 4, 8 and so on are taken`);
+    if (x === null && degree > 1000) throw refusal(apply.start, `a root of degree ${degree} of a name the page sets: degrees from 3 to 1,000 are computed on the page (y^n is a pair squared once a bit of n); of a number the build knows it is computed when the page is built`);
+    if (x === null) return { op, call: 'nroot', items, degree, start: apply.start };
     return Object.assign(fixed('root', rootOf(x, degree), items, apply.start), { degree }); }
   return { op, call: CALLS[op], items, degree, start: apply.start };
 }
@@ -388,10 +404,10 @@ function item(a, defining = false) {
       const [, base, index, ...more] = elements(a);
       if (!base || !index || more.length || base.name !== 'ci' || !['ci', 'cn'].includes(index.name) || elements(base).length || elements(index).length) throw refusal(a.start, 'a subscript other than a name and one name or number (x_1, x_i): this build reads those as one name');
       const iv = index.name === 'ci' ? INDEX.get(textOf(index).trim().normalize('NFKC')) : undefined; // x_i inside a sum over i
-      if (iv !== undefined && iv !== null) return named({ ci: `${textOf(base).trim()}_${iv}`.normalize('NFKC'), sub: [textOf(base).trim().normalize('NFKC'), String(iv), 'cn'] }, a, defining);
-      const id = `${textOf(base).trim()}_${textOf(index).trim()}`.normalize('NFKC');
+      if (iv !== undefined && iv !== null) return named({ ci: `${letterOf(base)}_${iv}`, sub: [letterOf(base), String(iv), 'cn'] }, a, defining);
+      const id = `${letterOf(base)}_${letterOf(index)}`;
       if (!/^-?[_a-zA-Z\u0080-\u{10FFFF}][-_a-zA-Z0-9\u0080-\u{10FFFF}]*$/u.test(id)) throw refusal(a.start, `the subscripted name ${id} is no CSS identifier`);
-      return named({ ci: id, sub: [textOf(base).trim().normalize('NFKC'), textOf(index).trim().normalize('NFKC'), index.name] }, a, defining);
+      return named({ ci: id, sub: [letterOf(base), letterOf(index), index.name] }, a, defining);
     }
     if (a.name === 'apply') return { node: call(a) };
     if (a.name === 'piecewise') return { node: piecewise(a) };
@@ -399,7 +415,7 @@ function item(a, defining = false) {
     const k = constantOf(a); if (k) return k;
     if (elements(a).length) throw refusal(a.start, '<ci> with markup inside: a name is text');
     if ('type' in a.attrs) throw refusal(a.start, `<ci type="${a.attrs.type}"> names a collection or another kind of value`);
-    const id = textOf(a).trim().normalize('NFKC'); // LaTeXML's mathematical italic 𝑥 is the page's x
+    const id = letterOf(a); // LaTeXML's mathematical italic 𝑥 is the page's x
     // a CSS identifier: letters past ASCII too (𝑚)
     if (!/^-?[_a-zA-Z\u0080-\u{10FFFF}][-_a-zA-Z0-9\u0080-\u{10FFFF}]*$/u.test(id)) throw refusal(a.start, `<ci>${id}</ci>: a name must be a CSS identifier`);
     if (RESERVED.test(id)) throw refusal(a.start, `<ci>${id}</ci>: --${id} is a name dcss itself reads or writes`);
@@ -485,13 +501,13 @@ function folded(name, at, args, apply) {
   for (const a of rest) if (!['cn', 'ci', 'apply', 'piecewise'].includes(a.name) && !constantOf(a)) throw refusal(a.start, `<${a.name}> as an argument: only <cn> numbers, <ci> names, π, e and another <apply>`);
   const seen = new Set(), items = [item(rest[0]), ...(base.length ? [item(elements(base[0])[0])] : [])], [x, b] = items.map((i) => itemValue(i, seen));
   if (name === 'exp' && (x === null || seen.size)) return { op: 'exp', call: 'exp', items, start: apply.start }; // computed in calc(), exactly
-  if ((name === 'sin' || name === 'cos') && (x === null || seen.size)) return { op: name, call: 'trig', items, start: apply.start }; // computed in calc()
+  if (['sin', 'cos', 'sec', 'csc'].includes(name) && (x === null || seen.size)) return { op: name, call: 'trig', items, start: apply.start }; // computed in calc()
   if (name === 'arctan' && (x === null || seen.size)) return { op: name, call: 'atan', items, start: apply.start };
   if ((name === 'tan' || name === 'cot') && (x === null || seen.size)) return { op: name, call: 'tan', items, start: apply.start };
   if ((name === 'arcsin' || name === 'arccos') && (x === null || seen.size)) return { op: name, call: 'asin', items, start: apply.start };
   const lb = name === 'ln' ? 'e' : name === 'log' ? (base.length ? b : 10) : null; // ln, and log to a base the build knows: computed in calc()
   if ((name === 'ln' || name === 'log') && (x === null || seen.size) && (lb === 'e' || (Number.isFinite(lb) && lb > 0 && lb !== 1))) return { op: name, call: 'log', base: lb, items, start: apply.start };
-  if (x === null || (base.length && b === null)) throw refusal(at, `${name} of a name the page sets: ${INEXACT}. Of numbers the build knows it is computed when the page is built; exp, ln, log, sin, cos, tan, cot, arcsin, arccos and arctan of a name are computed on the page`);
+  if (x === null || (base.length && b === null)) throw refusal(at, `${name} of a name the page sets: ${INEXACT}. Of numbers the build knows it is computed when the page is built; exp, ln, log, sin, cos, tan, sec, csc, cot, arcsin, arccos and arctan of a name are computed on the page`);
   return fixed(name, MATHFN[name](x, name === 'log' ? (base.length ? b : 10) : undefined), items, apply.start, seen);
 }
 // a value the build computed (the double nearest the true value): written in as a number, drawn as the formula it came from. Where it took 𝜋 or
@@ -505,6 +521,8 @@ function fixed(op, v, items, start, seen, live) {
 // JavaScript's if/else chain does; with none holding and no <otherwise>, no answer. A condition is a relation (<lt/>,
 // <leq/>, <gt/>, <geq/>, <eq/>, <neq/>, a chain of one) or an <and/> or <or/> of them
 const CONDS = { ...RELS, eq: '=', neq: '≠' };
+// a name's text: LaTeXML's mathematical italic 𝑥 is x (NFKC), and its italic-ϕ (\phi, against \varphi's φ) is ϕ
+const letterOf = (el) => textOf(el).trim().normalize('NFKC').replace(/^italic-(.)$/u, '$1');
 function piecewise(el) {
   const items = [], conds = []; let otherwise = false;
   for (const k of elements(el)) {
@@ -625,8 +643,10 @@ function former(divide) {
   // transformations (TwoSum, FastTwoSum, Veltkamp's halves, Dekker's TwoProduct) and pairs (double-doubles) added and multiplied
   const kit = () => { const k = ++id, P = `--dcss-dcss-x${k}`, named = new Set();
     const mac = (n, v) => { if (named.has(n)) throw new Error(`macro ${n} twice`); named.add(n); decls.push([`--dcss-dcss-y${k}-${n}`, `(${v})`]); return `var(--dcss-dcss-y${k}-${n})`; };
-    // a stored step's −0 flag is 0: no step of these functions passes a sign of zero on (sin's answer takes x's)
-    const store = (n, v) => { const q = `${P}-${n}`; for (const z of 'eabc') decls.push([`${q}-${z}`, SPLIT[z](q, `clamp(-1 * pow(2, 1023), ${v}, pow(2, 1023))`)]); decls.push([`${q}-z`, '0'], [`${q}-f`, `${v} * 0 + 1`]); return join(q); };
+    // a stored step's −0 flag is 0: no step of these functions passes a sign of zero on (sin's answer takes x's). Its
+    // finiteness flag is checked only on an answer (checked): every step between is bounded, and a NaN or infinite x is
+    // caught by the function's own domain flag, so a fifth reading of each step's expression would buy nothing
+    const store = (n, v, checked) => { const q = `${P}-${n}`; for (const z of 'eabc') decls.push([`${q}-${z}`, SPLIT[z](q, `clamp(-1 * pow(2, 1023), ${v}, pow(2, 1023))`)]); decls.push([`${q}-z`, '0'], [`${q}-f`, checked ? `${v} * 0 + 1` : '1']); return join(q); };
     const add = (a, b) => F(`${a} + ${b}`), sub = (a, b) => F(`${a} + (-1 * ${b})`), mul = (a, b) => F(`${a} * ${b}`), num = (v) => (Object.is(v, -0) ? '(-1 * 0)' : String(v));
     const twoSum = (n, a, b) => { const s = mac(`${n}s`, add(a, b)), bb = mac(`${n}b`, sub(s, a)); return [s, add(sub(a, sub(s, bb)), sub(b, bb))]; };
     const fast = (n, a, b) => { const s = mac(`${n}s`, add(a, b)); return [s, sub(b, sub(s, a))]; };
@@ -687,7 +707,7 @@ function former(divide) {
     const near = `var(${P}-near)`, pickd = (a, b) => `(${sel(near, a)} + ${sel(`(1 - ${near})`, b)})`;
     let y = [store('yh', pickd(ah, bh)), store('yl', pickd(al, bl))];
     if (base !== 'e') { const m = ddMul('m', y, logInv(base).map(num)); y = [store('wh', m[0]), store('wl', m[1])]; }
-    const [zh0, zl0] = fast('z', y[0], y[1]), zh = mac('zh', store('zh', zh0)), zl = mac('zl', zl0);
+    const [zh0, zl0] = fast('z', y[0], y[1]), zh = mac('zh', store('zh', zh0, true)), zl = mac('zl', zl0);
     // halfway on zl's side: zh's exponent from CSS's log2, corrected by two comparisons; half an ulp is 2^(ez − 53), half that
     // at a power of 2 with zl toward 0; ln 1 = 0 is exact
     const az = `abs(${zh})`; decls.push([`${P}-z0`, `round(down, log(max(${az}, ${2 ** -1074}), 2), 1)`]);
@@ -703,7 +723,7 @@ function former(divide) {
   // turn, turned by the quadrant; sin(a + r) = S + C r − S r²/2 − C r³/6 + S r⁴/24 + C r⁵/120 − S r⁶/720 − C r⁷/5040, the
   // first three as pairs. The halfway test leaves 2^-73 |y| + 2^-50 |r|³ (measured: 2^-75 relative, 2^-78.4 absolute where
   // |r| is 2^-8.4) + 2^-50 |k P4| + 2^-100 |r| for the reduction, so sin(29π) answers. No answer past |x| = 2^20. sin(±0) is ±0, kept by the stored answer's zero flag
-  const liveTrig = (xe, fn) => { const { P, mac, store, add, sub, mul, num, twoSum, fast, twoProd } = kit(), { PP, P4, INV, S: TS, C: TC } = TRIGK, off = fn === 'cos' ? 256 : 0;
+  const liveTrig = (xe, fn) => { const K = kit(), { P, mac, store, add, sub, mul, num, twoSum, fast, twoProd } = K, { PP, P4, INV, S: TS, C: TC } = TRIGK, off = fn === 'cos' || fn === 'sec' ? 256 : 0;
     const x = mac('x', xe), k = mac('k', `round(${x} * ${num(INV)}, 1)`), ge = (a, b) => `(1 - sign(max(0, ${b} + (-1 * ${a}))))`, two = (e) => `pow(2, ${e})`;
     decls.push([`${P}-d`, `${ge(num(2 ** 20), `abs(${x})`)} * (${x} * 0 + 1)`], [`${P}-j`, `${k} + ${off} + -1024 * round(down, (${k} + ${off}) / 1024, 1)`]);
     decls.push([`${P}-q`, `round(down, var(${P}-j) / 256, 1)`], [`${P}-i`, `var(${P}-j) + -256 * var(${P}-q)`]);
@@ -729,17 +749,16 @@ function former(divide) {
     // stored before they are summed: each is read several times below
     const P1 = store('p1', p1), P2 = store('p2', p2), EE = store('ee', sub(e3, e4)), SM = store('sm', small);
     const [a1, b1] = twoSum('s', Sh, P1), [a2, b2] = twoSum('t', a1, `(-1 * ${P2})`), [zh0, zl0] = fast('z', a2, add(add(b1, b2), add(Sl, add(EE, SM))));
-    const xzero = `(1 - abs(sign(${x})))`, ZH = store('zh', zh0); // sin(±0) is ±0: the zero flag from x itself
-    if (fn === 'sin') decls.push([`${P}-zh-z`, `${xzero} * max(0, -1 * sign(1 / ${x}))`]);
-    const zh = mac('zh', ZH), zl = mac('zl', zl0), az = `abs(${zh})`;
-    decls.push([`${P}-z0`, `round(down, log(max(${az}, ${2 ** -1074}), 2), 1)`]);
-    const sc = `(${az} * ${two(`(-1 * var(${P}-z0))`)})`; decls.push([`${P}-ez`, `var(${P}-z0) + ${ge(sc, 2)} + (-1 * (1 - ${ge(sc, 1)}))`]);
-    const atPow2 = `(1 - abs(sign(${az} + (-1 * ${two(`var(${P}-ez)`)}))))`, toward0 = `abs(sign(${zl})) * (1 - abs(sign(sign(${zl}) + sign(${zh}))))`;
-    // the reduction's own error: the last part's rounding times k, and its sum's rounding, which scales with r (the TwoSums'
-    // errors are 2^-53 of what they round) and |k P4|
-    const half = `(${two(`(var(${P}-ez) + -53)`)} / (1 + ${atPow2} * ${toward0}))`, B = `(${num(2 ** -73)} * ${az} + ${num(2 ** -50)} * abs(${RH}) * abs(${RH}) * abs(${RH}) + ${num(2 ** -50)} * abs(${k}) * ${num(Math.abs(P4))} + ${num(2 ** -100)} * abs(${RH}))`;
-    decls.push([`${P}-ok`, `var(${P}-d) * var(${P}-rh-f) * var(${P}-rl-f) * var(${P}-sm-f) * var(${P}-ee-f) * var(${P}-zh-f) * max(${xzero}, sign(max(0, ${half} + (-1 * abs(${zl})) + (-1 * ${B}))))`]);
-    return `(${zh} * (1 + 0 / var(${P}-ok)))`; };
+    // the margin for a value y of sin or cos: 2^-73 |y|, the tail's rounding (2^-50 |r|³), and the reduction's own error (the
+    // last part's rounding times k, and its sum's rounding, which scales with r: the TwoSums' errors are 2^-53 of what they round)
+    const Btrig = (ay) => `(${num(2 ** -73)} * ${ay} + ${num(2 ** -50)} * abs(${RH}) * abs(${RH}) * abs(${RH}) + ${num(2 ** -50)} * abs(${k}) * ${num(Math.abs(P4))} + ${num(2 ** -100)} * abs(${RH}))`;
+    const flags = `var(${P}-d) * var(${P}-rh-f) * var(${P}-rl-f) * var(${P}-sm-f) * var(${P}-ee-f)`;
+    if (fn === 'sin' || fn === 'cos') return answer(K, x, zh0, zl0, Btrig, flags, fn === 'sin');
+    // sec and csc: 1 / the pair (cos's or sin's), by one corrected division; the relative error is the pair's, so the margin
+    // is |q| (Btrig(|y|) / |y| + 2^-100); sec(x) of a cos and csc(0), infinite, leave no answer
+    const YH = store('yh', zh0), YL = store('yl', zl0), q0 = mac('q0', `(1 / ${YH})`), [m, me] = twoProd('w', q0, YH);
+    const [qh, ql] = fast('v', q0, store('rq', `(${sub(sub(sub('1', m), me), mul(q0, YL))} / ${YH})`));
+    return answer(K, x, qh, ql, (az) => `(${az} * (${Btrig(`abs(${YH})`)} / max(abs(${YH}), ${2 ** -1074}) + ${num(2 ** -100)}))`, flags, false); };
   // arctan of a pair t from 0 to 1 (TH, TL, stored): c = j/256 nearest t, u = (t − c)/(1 + t c) as a pair (a guess,
   // corrected by TwoProduct), atan t = A_j + u − u³/3 + … to u¹¹; the pair stored, and u's high part for the margin
   const atanOf = (K, TH, TL) => { const { P, mac, store, add, sub, mul, num, fast, twoProd, ddAdd } = K, { A } = ATANK;
@@ -756,7 +775,7 @@ function former(divide) {
   // the answer from a pair (zh0, zl0): stored, with x's sign of zero where x is ±0 (keepZero); ok where the pair is clear of
   // halfway on zl's side by B, or is exactly 0
   const answer = (K, x, zh0, zl0, B, flags, keepZero) => { const { P, mac, store } = K, ge = (u, v) => `(1 - sign(max(0, ${v} + (-1 * ${u}))))`, two = (e) => `pow(2, ${e})`;
-    const ZH = store('zh', zh0); if (keepZero) decls.push([`${P}-zh-z`, `(1 - abs(sign(${x}))) * max(0, -1 * sign(1 / ${x}))`]);
+    const ZH = store('zh', zh0, true); if (keepZero) decls.push([`${P}-zh-z`, `(1 - abs(sign(${x}))) * max(0, -1 * sign(1 / ${x}))`]);
     const zh = mac('zh', ZH), zl = mac('zl', zl0), az = `abs(${zh})`;
     decls.push([`${P}-z0`, `round(down, log(max(${az}, ${2 ** -1074}), 2), 1)`]);
     const sc = `(${az} * ${two(`(-1 * var(${P}-z0))`)})`; decls.push([`${P}-ez`, `var(${P}-z0) + ${ge(sc, 2)} + (-1 * (1 - ${ge(sc, 1)}))`]);
@@ -821,6 +840,25 @@ function former(divide) {
     const q0 = mac('q0', `(${UH} / ${VH})`), [m, me] = twoProd('m', q0, VH), REM = store('rem', `(${add(sub(sub(UH, m), me), sub(UL, mul(q0, VL)))} / ${VH})`), [qh, ql] = fast('q', q0, REM), sg = `(1 - 2 * ${flip})`;
     const B = (az) => `(${az} * (${num(2 ** -74)} + (${num(2 ** -49)} * abs(${RH}) * abs(${RH}) * abs(${RH}) + ${num(2 ** -49)} * abs(${k}) * ${num(Math.abs(P4))} + ${num(2 ** -99)} * abs(${RH})) / max(min(abs(${N[0]}), abs(${D[0]})), ${2 ** -1000})))`;
     return answer(K, x, `(${qh} * ${sg})`, `(${ql} * ${sg})`, B, `var(${P}-d) * var(${P}-rh-f) * var(${P}-nh-f) * var(${P}-dh-f) * var(${P}-uh-f) * var(${P}-vh-f) * var(${P}-rem-f)`, fn === 'tan'); };
+  // a root of whole degree n (3 to 1,000, not a power of 2) of a value the page sets, to the double nearest the true root
+  // (probes/dcss/root-check.mjs runs these steps in JavaScript and in the engines): |x| times 2^(−n k), exact in two
+  // factors, to a' within 2^±n/2 of 1; y0 = CSS's pow(a', 1/n) as a guess; y0^n as a pair by squaring; one Newton step,
+  // δ = (a' − y0^n) y0 / (n y0^n). The halfway test leaves 2^-97 |y| + 2^-50 |δ| + n δ²/|y| (Newton's own error is
+  // (n − 1) δ²/2|y|; the pair's error measured at most 2^-3.7 of it). The answer is ±(y0 + δ) 2^k; none for an even n of x
+  // below 0 or for an x not finite; ±0 is ±0
+  const liveRoot = (xe, n) => { const K = kit(), { P, mac, store, add, sub, mul, num, fast, twoProd } = K, two = (e) => `pow(2, ${e})`;
+    const x = mac('x', xe), a = mac('a', `abs(${x})`), ge = (u, v) => `(1 - sign(max(0, ${v} + (-1 * ${u}))))`;
+    decls.push([`${P}-d`, `(${x} * 0 + 1)${n % 2 ? '' : ` * ${ge(x, 0)}`}`], [`${P}-e0`, `round(down, log(max(${a}, ${2 ** -1074}), 2), 1)`],
+      [`${P}-k`, `round(var(${P}-e0) / ${n}, 1)`], [`${P}-h`, `round(var(${P}-k) * ${-n / 2}, 1)`]);
+    const a1 = store('a1', mul(mul(a, two(`var(${P}-h)`)), two(`(var(${P}-k) * ${-n} + (-1 * var(${P}-h)))`))), y0 = store('y0', `pow(${a1}, ${num(1 / n)})`);
+    // y0^n: a pair squared, and times y0 where n's bit is 1 (a zero low part adds nothing, so its terms are left out)
+    const times = (nm, [ah, al], [bh, bl]) => { const [p, e] = twoProd(`${nm}m`, ah, bh), cross = [bl !== '0' && mul(ah, bl), al !== '0' && mul(al, bh)].filter(Boolean);
+      const [h, l] = fast(`${nm}b`, p, cross.length ? add(e, cross.reduce(add)) : e); return [store(`${nm}h`, h), store(`${nm}l`, l)]; };
+    let pw = [y0, '0']; [...n.toString(2).slice(1)].forEach((bit, i) => { pw = times(`s${i}`, pw, pw); if (bit === '1') pw = times(`t${i}`, pw, [y0, '0']); });
+    const r = mac('r', sub(sub(a1, pw[0]), pw[1])), D = store('dl', `(${mul(r, y0)} / ${mul(num(n), `max(${pw[0]}, ${2 ** -1000})`)})`);
+    const [zh, zl] = fast('z', y0, D), sg = `(1 - 2 * sign(max(0, -1 * ${x})))`;
+    const y = answer(K, x, `(${zh} * ${sg})`, `(${zl} * ${sg})`, (az) => `(${num(2 ** -97)} * ${az} + ${num(2 ** -50)} * abs(${D}) + ${n} * ${D} * ${D} / max(${az}, ${2 ** -1000}))`, `var(${P}-d)`, true);
+    return `(${y} * ${two(`var(${P}-k)`)})`; };
   // n! of a value the page sets: picked from FACTK by round(n), an answer only for a whole n from 0 to 170
   const liveFactorial = (ne) => { const { P, mac, pickers } = kit(), n = mac('n', ne);
     decls.push([`${P}-n`, `round(${n}, 1)`], [`${P}-ok`, `(1 - abs(sign(${n} + (-1 * var(${P}-n))))) * (1 - sign(max(0, -1 * ${n}))) * (1 - sign(max(0, ${n} + -170)))`]);
@@ -843,6 +881,7 @@ function former(divide) {
     if (node.call === 'atan') return liveAtan(arg(node.items[0]));
     if (node.call === 'tan') return liveTan(arg(node.items[0]), node.op);
     if (node.call === 'asin') return liveAsin(arg(node.items[0]), node.op);
+    if (node.call === 'nroot') return liveRoot(arg(node.items[0]), node.degree);
     if (node.call === 'eset') return expr({ call: 'piecewise', conds: [{ set: ['e'] }], otherwise: true, items: [{ node: { call: 'power', items: node.items } }, { node: { call: 'exp', items: node.items.slice(1) } }] });
     if (node.call === 'fixed' && node.unless) { // as a piecewise: the live power where --e is set, no answer where another is
       const others = node.unless.filter((n) => !(node.live && n === 'e')), conds = [...(node.live ? [{ set: ['e'] }] : []), ...(others.length ? [{ set: others }] : [])];

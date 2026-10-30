@@ -17,7 +17,7 @@
 .list { position: relative; }
 .list > .dcss-size { position: absolute; inset: 0; max-width: none; max-height: none; container-type: size; }
 .list > .dcss-size > u { display: block; --dcss-width: calc(100cqw / 1px); --dcss-height: calc(100cqh / 1px); text-decoration: none; }
-/* Loops (README "Loops and sheets"): a while loop on dcss-store.css's board cells, written by hand. The cells are the
+/* Loops (SPEC.md A51): a while loop on dcss-store.css's board cells, written by hand. The cells are the
    items of one flow, which is also the loop's one shared reader; one more cell under the flow keeps the clock and the
    total. A page writes its cells, its neighbours' names, and its step as a rule:
      <div class="loop power">
@@ -67,7 +67,7 @@ table.loop { border-collapse: collapse; border-spacing: 0; } table.loop td { pad
   --store-next: calc(var(--loop-win) * round(100cqw / 1px) + (1 - var(--loop-win)) * var(--store-value));
   --store-next-y: calc(var(--store-y) + 1 - var(--loop-done)); }
 
-/* Sheets (README "Loops and sheets"): a <table class="sheet"> whose cells compute on dcss-store.css's board, as a
+/* Sheets (SPEC.md A52): a <table class="sheet"> whose cells compute on dcss-store.css's board, as a
    spreadsheet does. A cell is a stored number with a name; a formula is a rule on a class, written once a column (fill
    down); a reader around a cell names what it reads ([data-store-read] one name, [data-store-read-3] up to three), and
    inside it they are --in-a, --in-b, --in-c (a reader inside

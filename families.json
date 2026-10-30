@@ -2,15 +2,15 @@
   "version": 1,
   "core": {
     "file": "dcss-array.css",
-    "raw": 284282,
-    "gzip9": 72637,
-    "sha256": "35b19c21562bdff4bc1618593160d67c6eb5ab2e31b5332686793d0850da93a2"
+    "raw": 284253,
+    "gzip9": 72613,
+    "sha256": "f32ed01ffed4d444923c222f397a9c32bf07b9c070f09e2371bddead07e18538"
   },
   "extras": {
     "file": "dcss-array-extras.css",
-    "raw": 15134,
-    "gzip9": 3751,
-    "sha256": "67f10a767c8a0fea562ba959c7d58c34e6443c02df48179f6c68d2e90c067814"
+    "raw": 15106,
+    "gzip9": 3752,
+    "sha256": "49ed2227446d642b0cef81fbd28c9ed043fc4523e1029825f750e802278beb5d"
   },
   "order": [
     "ticks",
