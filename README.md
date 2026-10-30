@@ -111,7 +111,7 @@ A median, quantile or variance reads its list through three nested elements. Put
 </section>
 ```
 
-`node mathml.mjs page.html built.html` writes a page that shows the formula = 100.00, and follows `--feb`. [SPEC.md](SPEC.md) A131 to A146 list what it takes, LaTeXML's output included.
+`node mathml.mjs page.html built.html` writes a page that shows the formula = 100.00, and follows `--feb`. [SPEC.md](SPEC.md) A131 to A148 list what it takes, LaTeXML's output included.
 
 ## Grid primitives
 
@@ -217,7 +217,7 @@ Each call gives its answer as `--dcss-` and its name, with `--dcss-ready` and `-
 
 <!-- browsers -->
 
-Headless Chrome 155 and WebKit 26.4, Safari's engine, pass all 127 requirements of [SPEC.md](SPEC.md), and the calls match d3 on 3,206 of the 7,049 calls in d3's tests. Firefox 158 computes `calc()` in 32-bit floats, so exact sums, dates and most formatting go wrong there: it passes 71. [QUIRKS.md](QUIRKS.md) has the engine bugs.
+Headless Chrome 155 and WebKit 26.4, Safari's engine, pass all 129 requirements of [SPEC.md](SPEC.md), and the calls match d3 on 3,206 of the 7,049 calls in d3's tests. Firefox 158 computes `calc()` in 32-bit floats, so exact sums, dates and most formatting go wrong there: it passes 71. [QUIRKS.md](QUIRKS.md) has the engine bugs.
 
 <!-- /browsers -->
 

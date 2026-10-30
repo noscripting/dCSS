@@ -1914,6 +1914,52 @@
           }
         }
       },
+      "A148": {
+        "__compat": {
+          "description": "`mathml.mjs` MUST compute `<arcsinh/>`, `<arccosh/>` and `<arctanh/>` of a formula the page sets, on the page, to the double nearest the true value, arcsinh(±0) and arctanh(±0) as ±0, arccosh(1) as 0. Where x is below 1 for arccosh, |x| is 1 or more for arctanh, |x| passes about 1.5e307 (ln's guess past 708), x is unset or not a number, or the computed value lies too close to halfway between two doubles to round from, there MUST be no answer, error 1; it MUST NOT give another double.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
+            },
+            "firefox": {
+              "version_added": null
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A147": {
+        "__compat": {
+          "description": "`mathml.mjs` MUST compute `<sinh/>`, `<cosh/>` and `<tanh/>` of a formula the page sets, on the page, to the double nearest the true value, sinh(±0) and tanh(±0) as ±0, tanh of an infinite x as ±1. Where |x| passes 709 for sinh or cosh, x is unset or not a number, or the computed value lies too close to halfway between two doubles to round from, there MUST be no answer, error 1; it MUST NOT give another double.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
+            },
+            "firefox": {
+              "version_added": null
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
       "A146": {
         "__compat": {
           "description": "`mathml.mjs` MUST compute a `<root/>` of whole degree n from 3 to 1,000, other than a power of 2, of a formula the page sets, on the page, to the double nearest the true n-th root, the root of ±0 as ±0 and of x below 0 for odd n as −(the root of |x|). Where n is even and x below 0, or x is unset or not a number, or the computed value lies too close to halfway between two doubles to round from, there MUST be no answer, error 1; it MUST NOT give another double. A degree past 1,000 of a formula the page sets MUST be refused when the page is built.",

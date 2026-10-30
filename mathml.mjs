@@ -225,6 +225,11 @@ export const TRIGK = (() => { const c = at(1600n), dbl = (v) => nearest(v, c.P),
   const Q = c.PI / 512n, P1 = keep(Q, 25), P2 = keep(Q - P1, 25), P3 = keep(Q - P1 - P2, 25);
   const S = [], C = []; for (let i = 0; i <= 256; i++) { const a = (c.PI * BigInt(i)) / 512n; S[i] = pair(c.sin(a)).map(splitInts); C[i] = pair(c.cos(a)).map(splitInts); }
   return { PP: [P1, P2, P3].map(dbl), P4: dbl(Q - P1 - P2 - P3), INV: dbl((c.ONE << c.P) / Q), S, C }; })();
+// 1/6 as a pair: sinh's series takes x³/6 to 2^-104
+export const SIXTH = (() => { const c = at(400n), h = nearest(c.ONE / 6n, c.P); return [h, nearest(c.ONE / 6n - c.fix(h), c.P)]; })();
+// num/den and ln 2 as pairs, for the inverse hyperbolic functions' series and their ln
+export const PAIROF = (num, den) => { const c = at(400n), v = (c.ONE * BigInt(num)) / BigInt(den), h = nearest(v, c.P); return [h, nearest(v - c.fix(h), c.P)]; };
+export const LN2PAIR = (() => { const c = at(400n), h = nearest(c.LN2, c.P); return [h, nearest(c.LN2 - c.fix(h), c.P)]; })();
 // tan and cot of a name the page sets (TANK): tan(iπ/512) for i = 0..128 as pairs, as the split's integers
 export const TANK = (() => { const c = at(1600n), dbl = (v) => nearest(v, c.P), pair = (v) => { const h = dbl(v); return [h, dbl(v - c.fix(h))]; };
   return Array.from({ length: 129 }, (_, i) => { const a = (c.PI * BigInt(i)) / 512n; return pair(c.div(c.sin(a), c.cos(a))).map(splitInts); }); })();
@@ -505,9 +510,11 @@ function folded(name, at, args, apply) {
   if (name === 'arctan' && (x === null || seen.size)) return { op: name, call: 'atan', items, start: apply.start };
   if ((name === 'tan' || name === 'cot') && (x === null || seen.size)) return { op: name, call: 'tan', items, start: apply.start };
   if ((name === 'arcsin' || name === 'arccos') && (x === null || seen.size)) return { op: name, call: 'asin', items, start: apply.start };
+  if (['sinh', 'cosh', 'tanh'].includes(name) && (x === null || seen.size)) return { op: name, call: 'hyp', items, start: apply.start };
+  if (['arcsinh', 'arccosh', 'arctanh'].includes(name) && (x === null || seen.size)) return { op: name, call: 'ahyp', items, start: apply.start };
   const lb = name === 'ln' ? 'e' : name === 'log' ? (base.length ? b : 10) : null; // ln, and log to a base the build knows: computed in calc()
   if ((name === 'ln' || name === 'log') && (x === null || seen.size) && (lb === 'e' || (Number.isFinite(lb) && lb > 0 && lb !== 1))) return { op: name, call: 'log', base: lb, items, start: apply.start };
-  if (x === null || (base.length && b === null)) throw refusal(at, `${name} of a name the page sets: ${INEXACT}. Of numbers the build knows it is computed when the page is built; exp, ln, log, sin, cos, tan, sec, csc, cot, arcsin, arccos and arctan of a name are computed on the page`);
+  if (x === null || (base.length && b === null)) throw refusal(at, `${name} of a name the page sets: ${INEXACT}. Of numbers the build knows it is computed when the page is built; exp, ln, log, sin, cos, tan, sec, csc, cot, arcsin, arccos, arctan, sinh, cosh, tanh, arcsinh, arccosh and arctanh of a name are computed on the page`);
   return fixed(name, MATHFN[name](x, name === 'log' ? (base.length ? b : 10) : undefined), items, apply.start, seen);
 }
 // a value the build computed (the double nearest the true value): written in as a number, drawn as the formula it came from. Where it took 𝜋 or
@@ -691,10 +698,12 @@ function former(divide) {
   // exact exp's pair (2^-76 of it); ln x = y0 + δ − δ²/2. Within 2^-10 of 1, where that leaves too little of ln x, the
   // series of u = x − 1 (exact) instead: u − u²/2 (a pair) + u³/3 − … . Both are computed, each from clamped inputs so
   // neither turns the other to NaN, and one is picked; times 1/ln 10 or 1/ln 2 as a pair; no answer for x not above
-  // 2^-1022 or past e^708, or where the pair is too near halfway (on zl's side, 2^-73 of ln x or 2^-70 near 1)
+  // 2^-1022 or past e^708 (where the guess passes 708: exp's argument would be clamped and the pair wrong; a formula's
+  // value gets there, a name's can't, from 3.4e38 up refused), or where the pair is too near halfway (on zl's side, 2^-73
+  // of ln x or 2^-70 near 1)
   const liveLog = (xe, base) => { const { P, mac, store, add, sub, mul, num, fast, twoProd, ddMul } = kit();
     const x = mac('x', xe), y0 = mac('y0', `log(max(${x}, ${2 ** -1022}))`), ge = (a, b) => `(1 - sign(max(0, ${b} + (-1 * ${a}))))`, two = (e) => `pow(2, ${e})`;
-    decls.push([`${P}-d`, `${ge(x, num(2 ** -1022))} * (${x} * 0 + 1) * ${ge(709, `(-1 * ${y0})`)}`], [`${P}-near`, `(1 - sign(max(0, abs(${x} + -1) + ${-(2 ** -10)})))`]);
+    decls.push([`${P}-d`, `${ge(x, num(2 ** -1022))} * (${x} * 0 + 1) * ${ge(709, `(-1 * ${y0})`)} * ${ge(708, y0)}`], [`${P}-near`, `(1 - sign(max(0, abs(${x} + -1) + ${-(2 ** -10)})))`]);
     // near 1: the series
     const u = mac('u', `clamp(${-(2 ** -10)}, ${x} + -1, ${2 ** -10})`), [sq, sqe] = twoProd('q', u, u);
     const t = [8, 7, 6, 5, 4, 3].reduce((acc, n) => add(num((n % 2 ? 1 : -1) / n), mul(u, acc)), num(1 / 9)), [h, e] = fast('a', u, `(-0.5 * ${sq})`);
@@ -774,14 +783,14 @@ function former(divide) {
     return { Y: [store('yh', y1[0]), store('yl', y1[1])], UH, flags: ['n1', 'n2', 'dh', 'dl', 'rem', 'uh', 'ul', 'sh', 'sl', 'yh'].map((n) => `var(${P}-${n}-f)`).join(' * ') }; };
   // the answer from a pair (zh0, zl0): stored, with x's sign of zero where x is ±0 (keepZero); ok where the pair is clear of
   // halfway on zl's side by B, or is exactly 0
-  const answer = (K, x, zh0, zl0, B, flags, keepZero) => { const { P, mac, store } = K, ge = (u, v) => `(1 - sign(max(0, ${v} + (-1 * ${u}))))`, two = (e) => `pow(2, ${e})`;
+  const answer = (K, x, zh0, zl0, B, flags, keepZero, force = '0') => { const { P, mac, store } = K, ge = (u, v) => `(1 - sign(max(0, ${v} + (-1 * ${u}))))`, two = (e) => `pow(2, ${e})`;
     const ZH = store('zh', zh0, true); if (keepZero) decls.push([`${P}-zh-z`, `(1 - abs(sign(${x}))) * max(0, -1 * sign(1 / ${x}))`]);
     const zh = mac('zh', ZH), zl = mac('zl', zl0), az = `abs(${zh})`;
     decls.push([`${P}-z0`, `round(down, log(max(${az}, ${2 ** -1074}), 2), 1)`]);
     const sc = `(${az} * ${two(`(-1 * var(${P}-z0))`)})`; decls.push([`${P}-ez`, `var(${P}-z0) + ${ge(sc, 2)} + (-1 * (1 - ${ge(sc, 1)}))`]);
     const atPow2 = `(1 - abs(sign(${az} + (-1 * ${two(`var(${P}-ez)`)}))))`, toward0 = `abs(sign(${zl})) * (1 - abs(sign(sign(${zl}) + sign(${zh}))))`;
     const half = `(${two(`(var(${P}-ez) + -53)`)} / (1 + ${atPow2} * ${toward0}))`;
-    decls.push([`${P}-ok`, `${flags} * var(${P}-zh-f) * max(1 - abs(sign(${zh})), sign(max(0, ${half} + (-1 * abs(${zl})) + (-1 * ${B(az)}))))`]);
+    decls.push([`${P}-ok`, `${flags} * var(${P}-zh-f) * max(${force}, 1 - abs(sign(${zh})), sign(max(0, ${half} + (-1 * abs(${zl})) + (-1 * ${B(az)}))))`]);
     return `(${zh} * (1 + 0 / var(${P}-ok)))`; };
   // arctan of a value the page sets, to the double nearest the true value (probes/dcss/atan-check.mjs runs these steps in
   // JavaScript and in the engines): t = |x|, or 1/|x| past 1 as a pair (CSS's division as a guess, corrected by TwoProduct, so
@@ -859,6 +868,84 @@ function former(divide) {
     const [zh, zl] = fast('z', y0, D), sg = `(1 - 2 * sign(max(0, -1 * ${x})))`;
     const y = answer(K, x, `(${zh} * ${sg})`, `(${zl} * ${sg})`, (az) => `(${num(2 ** -97)} * ${az} + ${num(2 ** -50)} * abs(${D}) + ${n} * ${D} * ${D} / max(${az}, ${2 ** -1000}))`, `var(${P}-d)`, true);
     return `(${y} * ${two(`var(${P}-k)`)})`; };
+  // sinh, cosh or tanh of a value the page sets, to the double nearest the true value (probes/dcss/hyp-check.mjs runs these
+  // steps in JavaScript and in the engines): Z = e^|x| as expCore's pair, 2^E apart; G = 2^-2E / Z as a pair (one corrected
+  // division); S = Z − G and C = Z + G: sinh is S 2^(E−1), cosh C 2^(E−1), tanh S / C (corrected). Below 2^-5, where S
+  // cancels, sinh by its series to x¹¹ (x³/6 as a pair) and tanh = 2 sinh / C. The halfway test leaves 2^-73 (Z + G) +
+  // 2^-100 |y|, 2^-75 |y| for the series, and tanh the two relative errors and 2^-73; the pairs' errors were measured at
+  // most 2^-3.2 of it. Below 2^-27 sinh and tanh are x, taken as they are (half an ulp underflows near 2^-1022). No answer
+  // past |x| = 709 for sinh and cosh (their true values are finite to 710.47); tanh takes min(|x|, 20), whose answer, ±1,
+  // is every larger x's too. ±0 is ±0
+  const liveHyp = (xe, fn) => { const K = kit(), { P, mac, store, add, sub, mul, num, twoSum, fast, twoProd, ddMul } = K, two = (e) => `pow(2, ${e})`;
+    const x = mac('x', xe), a = mac('a', `abs(${x})`), lt = (u, v) => `sign(max(0, ${v} + (-1 * ${u})))`;
+    decls.push([`${P}-d`, fn === 'tanh' ? `sign(${a} + 1)` : `(${x} * 0 + 1) * (1 - ${lt(709, a)})`], [`${P}-sm`, lt(a, 2 ** -5)], [`${P}-ty`, lt(a, 2 ** -27)]);
+    const sm = `var(${P}-sm)`, pick = (u, v) => `(${sel(sm, u)} + ${sel(`(1 - ${sm})`, v)})`;
+    const ex = expCore(`min(${a}, ${fn === 'tanh' ? 20 : 709})`, true), ZH = ex.zh, ZL = ex.zl, E = `var(${ex.P}-E)`;
+    const q0 = mac('q0', `(1 / ${ZH})`), [m, me] = twoProd('w', q0, ZH), [rh, rl] = fast('v', q0, store('rq', `(${sub(sub(sub('1', m), me), mul(q0, ZL))} / ${ZH})`));
+    const sc = mac('sc', two(`(-2 * ${E})`)), Gh = mac('gh', store('gh', mul(rh, sc))), Gl = mac('gl', store('gl', mul(rl, sc)));
+    const [s1, s2] = twoSum('s', ZH, `(-1 * ${Gh})`), [sh, sl] = fast('t', s1, add(s2, sub(ZL, Gl))), SH = store('sh', sh), SL = store('sl', sl);
+    const [c1, c2] = twoSum('c', ZH, Gh), [ch, cl] = fast('u', c1, add(c2, add(ZL, Gl))), CH = store('ch', ch), CL = store('cl', cl);
+    const sg = `(1 - 2 * sign(max(0, -1 * ${x})))`, flags = `var(${P}-d) * var(${ex.P}-pf)`, edge = `(${num(2 ** -73)} * (${ZH} + ${Gh}))`;
+    if (fn === 'cosh') return `(${answer(K, x, CH, CL, (az) => `(${edge} + ${num(2 ** -100)} * ${az})`, flags, false)} * ${two(`(${E} + -1)`)})`;
+    // the series below 2^-5, from |x| held there so that it stays finite
+    // (each pair stored: a TwoProduct reads its operands' halves, so a chain of them re-expands: 890k tokens unstored)
+    const b = store('b', `min(${a}, ${2 ** -5})`), [th0, tl0] = twoProd('q', b, b), th = store('th', th0), tl = store('tl', tl0), [p, pe] = twoProd('p', b, th);
+    const [k1, k2] = fast('k', p, add(pe, mul(b, tl))), c6 = ddMul('six', [store('k1', k1), store('k2', k2)], SIXTH.map(num)), C6H = store('c6h', c6[0]), C6L = store('c6l', c6[1]);
+    const poly = add(num(1 / 120), mul(th, add(num(1 / 5040), mul(th, add(num(1 / 362880), mul(th, num(1 / 39916800)))))));
+    const [u1, u2] = fast('m', b, C6H), [nh, nl] = fast('n', u1, add(u2, add(C6L, mul(mul(mul(b, th), th), poly)))), NH = store('nh', nh), NL = store('nl', nl);
+    if (fn === 'sinh') return `(${answer(K, x, `(${pick(NH, SH)} * ${sg})`, `(${pick(NL, SL)} * ${sg})`, (az) => `(${sm} * ${num(2 ** -75)} * ${az} + (1 - ${sm}) * (${edge} + ${num(2 ** -100)} * ${az}))`, flags, true, `var(${P}-ty)`)} * (${sm} + (1 - ${sm}) * ${two(`(${E} + -1)`)}))`;
+    // tanh: the numerator (2 sinh's series, or S) over C, corrected once
+    const UH = store('uh', pick(mul('2', NH), SH)), UL = store('ul', pick(mul('2', NL), SL)), d0 = mac('d0', `(${UH} / ${CH})`), [w, we] = twoProd('x', d0, CH);
+    const [yh, yl] = fast('y', d0, store('yq', `(${add(sub(sub(UH, w), we), sub(UL, mul(d0, CL)))} / ${CH})`));
+    return answer(K, x, `(${yh} * ${sg})`, `(${yl} * ${sg})`, (az) => `(${az} * (${sm} * ${num(2 ** -75)} + (1 - ${sm}) * ${edge} / max(abs(${SH}), ${2 ** -1000}) + ${num(2 ** -73 + 2 ** -100)}))`, flags, true, `var(${P}-ty)`); };
+  // the inverse hyperbolic functions' parts: an odd series b + c3 b³ (a pair) + b⁵ (c5 + c7 b² + …); √ of a pair, corrected
+  // once; and ln of a pair w from 1 up: CSS's log(wh) as a guess y0, δ = w e^(−y0) − 1 from the exact exp's pair, ln w =
+  // y0 + δ − δ²/2 (absolute error under 2^-73; none where y0 passes 708, exp's argument then clamped)
+  const oddSeries = (K, nm, b, c3, cs) => { const { mac, store, add, mul, num, fast, twoProd, ddMul } = K;
+    const [th0, tl0] = twoProd(`${nm}q`, b, b), th = store(`${nm}th`, th0), tl = store(`${nm}tl`, tl0), [p, pe] = twoProd(`${nm}p`, b, th), [k1, k2] = fast(`${nm}k`, p, add(pe, mul(b, tl)));
+    const cc = ddMul(`${nm}c`, [store(`${nm}k1`, k1), store(`${nm}k2`, k2)], c3.map(num)), CH = store(`${nm}ch`, cc[0]), CL = store(`${nm}cl`, cc[1]);
+    const poly = cs.slice(0, -1).reduceRight((acc, q) => add(num(q), mul(th, acc)), num(cs.at(-1))), [u1, u2] = fast(`${nm}u`, b, CH);
+    const [nh, nl] = fast(`${nm}n`, u1, add(u2, add(CL, mul(mul(mul(b, th), th), poly)))); return [store(`${nm}nh`, nh), store(`${nm}nl`, nl)]; };
+  const sqrtPair = (K, nm, qh, ql) => { const { mac, store, add, sub, fast, twoProd } = K, r0 = mac(`${nm}r`, `sqrt(${qh})`), [m, me] = twoProd(`${nm}m`, r0, r0);
+    return fast(`${nm}s`, r0, store(`${nm}c`, `(${add(sub(sub(qh, m), me), ql)} / max(2 * ${r0}, ${2 ** -1000}))`)); };
+  const lnFar = (K, wh, wl) => { const { P, mac, store, add, sub, mul, fast, twoProd } = K, ge = (u, v) => `(1 - sign(max(0, ${v} + (-1 * ${u}))))`;
+    const y0 = mac('ly0', `log(max(${wh}, ${2 ** -1022}))`), ex = expCore(`clamp(-708, -1 * ${y0}, 709)`, true), sc = `pow(2, var(${ex.P}-E))`;
+    const xs = mac('lxs', `(${wh} * ${sc})`), [p, pe] = twoProd('lr', xs, ex.zh), dl = store('ldl', add(sub(p, '1'), add(pe, add(mul(xs, ex.zl), mul(mac('lxl', `(${wl} * ${sc})`), ex.zh)))));
+    return { pair: fast('lc', y0, sub(dl, mul(mul(dl, dl), '0.5'))), ok: `${ge(708, y0)} * var(${ex.P}-pf)` }; };
+  // arcsinh, arccosh or arctanh of a value the page sets, to the double nearest the true value (probes/dcss/ahyp-check.mjs
+  // runs these steps in JavaScript and in the engines). Near their zeros a series: arcsinh and arctanh below 2^-5 (odd, to
+  // x¹⁵), arccosh within 2^-10 of 1 as √(2t) (1 − t/12 + 3t²/160 − …), t = x − 1; elsewhere ln of an exact pair w: x + √(x²
+  // ± 1) (from 2^26, x ± 1/(4x) and ln 2 added), (1 + x)/(1 − x) halved. The halfway test leaves 2^-71 |y| for the odd series
+  // (their x⁵ terms' roundings: measured 2^-2.8 of it), 2^-73 |y| for arccosh's, and 2^-73 (arctanh 2^-74) + 2^-100 |y| for
+  // the ln; below 2^-27 arcsinh and arctanh take the pair as it is, x (half an ulp underflows near 2^-1022). No answer for
+  // arccosh below 1, arctanh from 1, or where ln's guess passes 708 (x past about 1.5e307); ±0 is ±0
+  const liveAhyp = (xe, fn) => { const K = kit(), { P, mac, store, add, sub, mul, num, twoSum, fast, twoProd, ddMul, ddAdd } = K;
+    const x = mac('x', xe), a = mac('a', `abs(${x})`), lt = (u, v) => `sign(max(0, ${v} + (-1 * ${u})))`, sg = `(1 - 2 * sign(max(0, -1 * ${x})))`;
+    const edge = fn === 'arccosh' ? [`(${x} + -1)`, 2 ** -10] : [a, 2 ** -5], top = fn === 'arccosh' ? x : a;
+    decls.push([`${P}-d`, fn === 'arcsinh' ? `(${x} * 0 + 1)` : fn === 'arctanh' ? `(${x} * 0 + 1) * ${lt(a, 1)}` : `(${x} * 0 + 1) * (1 - ${lt(x, 1)})`],
+      [`${P}-sm`, lt(edge[0], edge[1])], [`${P}-big`, lt(2 ** 26, top)], [`${P}-ty`, lt(a, 2 ** -27)]);
+    const sm = `var(${P}-sm)`, big = `var(${P}-big)`, pick = (g, u, v) => `(${sel(g, u)} + ${sel(`(1 - ${g})`, v)})`;
+    // near the zero
+    let S, Bs;
+    if (fn === 'arccosh') { const t = store('t', `clamp(0, ${x} + -1, ${2 ** -10})`), [rh, rl] = sqrtPair(K, 'q', mul('2', t), '0'), TW = PAIROF(1, 12), [gh, ge] = twoProd('g', t, num(TW[0])), [g1, g2] = fast('h', gh, add(ge, mul(t, num(TW[1]))));
+      const rest = mul(mul(t, t), [3 / 160, -5 / 896, 35 / 18432, -63 / 90112].reduceRight((acc, q) => add(num(q), mul(t, acc)), num(231 / 851968))), G1 = store('g1', g1), [f1, f2] = twoSum('f', '1', `(-1 * ${G1})`);
+      const [fh, fl] = fast('e', f1, add(f2, add(`(-1 * ${store('g2', g2)})`, mac('rest', rest)))); const Y = ddMul('y', [store('rh', rh), store('rl', rl)], [store('fh', fh), store('fl', fl)]); S = [store('zs', Y[0]), store('zt', Y[1])]; Bs = num(2 ** -73); }
+    else { const b = store('b', `min(${a}, ${2 ** -5})`); S = fn === 'arcsinh' ? oddSeries(K, 's', b, PAIROF(-1, 6), [3 / 40, -5 / 112, 35 / 1152, -63 / 2816, 231 / 13312, -143 / 10240]) : oddSeries(K, 's', b, PAIROF(1, 3), [1 / 5, 1 / 7, 1 / 9, 1 / 11, 1 / 13, 1 / 15, 1 / 17]); Bs = num(2 ** -71); }
+    // elsewhere: w, then its ln
+    let w;
+    if (fn === 'arctanh') { const m = mac('m', `clamp(${2 ** -5}, ${a}, ${1 - 2 ** -53})`), [nh, nl] = twoSum('n', '1', m), [dh, dl] = twoSum('o', '1', `(-1 * ${m})`);
+      const DH = store('dh', dh), DL = store('dl', dl), NH = store('nh', nh), NL = store('nl', nl), q0 = mac('q0', `(${NH} / ${DH})`), [mm, me] = twoProd('w', q0, DH);
+      w = fast('v', q0, store('wq', `(${add(sub(sub(NH, mm), me), sub(NL, mul(q0, DL)))} / ${DH})`)); }
+    else { const m = mac('m', fn === 'arcsinh' ? `clamp(${2 ** -5}, ${a}, ${2 ** 26})` : `clamp(${1 + 2 ** -10}, ${x}, ${2 ** 26})`), [p, e] = twoProd('p', m, m), [s1, s2] = twoSum('c', p, fn === 'arcsinh' ? '1' : '-1');
+      const [qh, ql] = fast('k', s1, add(s2, e)), [rh, rl] = sqrtPair(K, 'r', store('qh', qh), store('ql', ql)), [wh, we] = twoSum('u', m, store('sh', rh)), w0 = fast('v', wh, add(we, store('sl', rl)));
+      const g = mac('g', `max(${top}, ${2 ** 26})`), gl = `(${fn === 'arcsinh' ? 1 : -1} / ${mul('4', g)})`; w = [pick(big, g, w0[0]), pick(big, gl, w0[1])]; }
+    const ln = lnFar(K, store('wh', w[0]), store('wl', w[1]));
+    let L = ln.pair;
+    if (fn === 'arctanh') L = [mul(L[0], '0.5'), mul(L[1], '0.5')];
+    else L = ddAdd('t2', [store('mh', L[0]), store('ml', L[1])], LN2PAIR.map((v) => `(${big} * ${num(v)})`));
+    const LH = store('lh', L[0]), LL = store('ll', L[1]), sgn = fn === 'arccosh' ? '1' : sg;
+    const B = (az) => `(${sm} * ${Bs} * ${az} + (1 - ${sm}) * (${num(fn === 'arctanh' ? 2 ** -74 : 2 ** -73)} + ${num(2 ** -100)} * ${az}))`;
+    return answer(K, x, `(${pick(sm, S[0], LH)} * ${sgn})`, `(${pick(sm, S[1], LL)} * ${sgn})`, B, `var(${P}-d) * (${sm} + (1 - ${sm}) * ${ln.ok})`, fn !== 'arccosh', fn === 'arccosh' ? '0' : `var(${P}-ty)`); };
   // n! of a value the page sets: picked from FACTK by round(n), an answer only for a whole n from 0 to 170
   const liveFactorial = (ne) => { const { P, mac, pickers } = kit(), n = mac('n', ne);
     decls.push([`${P}-n`, `round(${n}, 1)`], [`${P}-ok`, `(1 - abs(sign(${n} + (-1 * var(${P}-n))))) * (1 - sign(max(0, -1 * ${n}))) * (1 - sign(max(0, ${n} + -170)))`]);
@@ -882,6 +969,8 @@ function former(divide) {
     if (node.call === 'tan') return liveTan(arg(node.items[0]), node.op);
     if (node.call === 'asin') return liveAsin(arg(node.items[0]), node.op);
     if (node.call === 'nroot') return liveRoot(arg(node.items[0]), node.degree);
+    if (node.call === 'hyp') return liveHyp(arg(node.items[0]), node.op);
+    if (node.call === 'ahyp') return liveAhyp(arg(node.items[0]), node.op);
     if (node.call === 'eset') return expr({ call: 'piecewise', conds: [{ set: ['e'] }], otherwise: true, items: [{ node: { call: 'power', items: node.items } }, { node: { call: 'exp', items: node.items.slice(1) } }] });
     if (node.call === 'fixed' && node.unless) { // as a piecewise: the live power where --e is set, no answer where another is
       const others = node.unless.filter((n) => !(node.live && n === 'e')), conds = [...(node.live ? [{ set: ['e'] }] : []), ...(others.length ? [{ set: others }] : [])];
