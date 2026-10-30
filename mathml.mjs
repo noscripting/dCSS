@@ -196,6 +196,8 @@ export const MATHFN = {
   arccoth: trueOf((c, X) => (X > c.ONE || X < -c.ONE ? ((Y) => c.ln(c.div(c.ONE + Y, c.ONE - Y)) / 2n)(c.inv(X)) : null)),
   cbrt: trueOf((c, X) => (X === 0n ? 0n : (X < 0n ? -1n : 1n) * c.ex(c.ln(X < 0n ? -X : X) / 3n))),
 };
+// the n-th root of a number the build knows, odd ones of negatives (an operator, <root/>, not one of the functions above)
+export const rootOf = (x, n) => (x === 0 ? x : x < 0 ? (n % 2 ? -rootOf(-x, n) : NaN) : trueOf((c, X) => c.ex(c.ln(X) / BigInt(n)))(x));
 const WHY = {
   factorial: 'CSS has no factorial, and d3 none',
   sum: '<sum/> binds a variable over limits; a list of numbers is added with <plus/>',
@@ -305,6 +307,11 @@ function call(apply) {
   if (op === 'power' && (items[0].konst === 'e' || (items[0].ci === 'e' && !items[0].def))) { const seen = new Set(), x = itemValue(items[1], seen);
     if (x !== null) return fixed('power', MATHFN.exp(x), items, apply.start, items[0].ci ? seen.add('e') : seen, items[0].ci && { op, call: CALLS[op], items }); }
   if (op === 'power' && (items[0].konst === 'e' || (items[0].ci === 'e' && !items[0].def))) throw refusal(args[0].start, 'e to a power is exp(x): CSS\'s exp() doesn\'t give JavaScript\'s Math.exp, and Math.pow(Math.E, x) is another double for 92 of 100 x; if e is a quantity of your own, define it in a formula before this one');
+  // a root of a degree other than a power of 2: of a number the build knows, the double nearest the true root (∛64 is 4);
+  // of a name the page sets, refused, as CSS has no such root and pow(x, 1/3) misses whole roots
+  if (op === 'root' && degree & (degree - 1)) { const x = itemValue(items[0]);
+    if (x === null) throw refusal(apply.start, `a root of degree ${degree} of a name the page sets: CSS has no such root, and pow(x, 1/${degree}) misses whole roots (the cube root of 64 comes out 3.9999999999999996, of -8 nothing); of a number the build knows it is computed when the page is built, and of a name, degrees 2, 4, 8 and so on are taken`);
+    return Object.assign(fixed('root', rootOf(x, degree), items, apply.start), { degree }); }
   return { op, call: CALLS[op], items, degree, start: apply.start };
 }
 // one argument: a number ({ x }), a name ({ ci }, with the page's definition of it, { def }), or another <apply> ({ node })
@@ -456,7 +463,6 @@ function named(x, a, defining) {
 // a root's degree: 2 (sqrt), or a power of 2, where pow(x, 1/n) has an exact exponent; any other misses whole roots
 // (pow(64, 1/3) is 3.9999999999999996, so a floor of it is 3; pow(-8, 1/3) is NaN where the cube root is -2)
 function degreeOf(cn) { const { x } = number(cn); if (!Number.isInteger(x) || x < 2) throw refusal(cn.start, `a root of degree ${x}: this build takes whole degrees from 2`);
-  if (x & (x - 1)) throw refusal(cn.start, `a root of degree ${x}: CSS has no such root, and pow(x, 1/${x}) misses whole roots (the cube root of 64 comes out 3.9999999999999996, of -8 nothing); this build takes degrees 2, 4, 8 and so on`);
   return x; }
 
 // --- what CSS computes: the formula as one calc(), d3's operations in d3's order, so the page's number is d3's double
