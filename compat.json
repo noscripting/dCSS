@@ -1928,7 +1928,7 @@
             },
             "firefox": {
               "version_added": false,
-              "notes": "FAIL: 897 of 1,677 (its calc() in 32-bit floats) (2026-10-30)"
+              "notes": "FAIL: 900 of 1,707 (its calc() in 32-bit floats) (2026-10-30)"
             }
           },
           "status": {
