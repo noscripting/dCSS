@@ -131,9 +131,9 @@
         "dcss-ticks-log",
         "dcss-ticks-log-format"
       ],
-      "raw": 161976,
-      "gzip9": 11582,
-      "sha256": "02a7a45031925d8676212ba5598ada2a2d61c3d084e9b0c7b440585d4fdd5581"
+      "raw": 164580,
+      "gzip9": 11965,
+      "sha256": "77c45d1cf8d519daeb642c82fd6f0ff911a071cc286326b9d1cc2d4b3288e3a8"
     },
     "ease": {
       "file": "families/ease.css",
