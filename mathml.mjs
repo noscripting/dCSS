@@ -462,13 +462,23 @@ const MAX_COMPARES = 2048;
 // a sum or product to a bound the page sets writes each term to its ceiling in seven registered steps: 100 terms are
 // 260 KB of style, and a change of the bound 4.2 ms of style and layout in Chrome, 9 in WebKit (360: 13.5 and 36; 2026-10-30)
 const MAX_LIVE = 100;
+// Chrome drops a calculation nested 100 levels deep, WebKit 101, a var() bringing its value's depth along
+// (facts/calc-nesting-depth.mjs), and a fenced chain nests a level a step: a sum of 97 terms gave no answer. Past DEPTH
+// levels a value goes through the registered split, exact, its finiteness kept as a guard (an infinite step there leaves
+// no answer, as one at the top does)
+const DEPTH = 64;
+const depthOf = (s) => { let d = 0, m = 0; for (const ch of s) if (ch === '(') m = Math.max(m, ++d); else if (ch === ')') d--; return m; };
 // the formula in one form of division: the answer's expression and the registered steps before it, as [name, expression]
 // the CSS of formulas in one form of division: expr(node) is a node's expression; the registered steps it needs collect in
 // decls, as [name, expression], and the names the page sets in names
 function former(divide) {
   const decls = [], names = new Set(), f = { decls, names, compares: 0 }; let id = 0;
   const arg = (x) => (x.node ? expr(x.node) : x.def ? expr(x.def) : x.ci ? (x.fallback ? `var(--${x.ci}, ${x.fallback})` : (names.add(x.ci), `var(--${x.ci})`)) : Object.is(x.x, -0) ? '(-1 * 0)' : String(x.x));
-  const expr = f.expr = (node) => {
+  const keep = (x) => { if (depthOf(x) <= DEPTH) return x; const q = `--dcss-dcss-d${++id}`;
+    for (const z of 'eabcz') decls.push([`${q}-${z}`, SPLIT[z](q, `clamp(-1 * pow(2, 1023), ${x}, pow(2, 1023))`)]);
+    decls.push([`${q}-f`, `${x} * 0 + 1`]); return `(${join(q)} * (1 + 0 / var(${q}-f)))`; };
+  const chain = (op, xs) => xs.reduce((a, b) => keep(F(`${a} ${op} ${b}`)));
+  const build = (node) => {
     if (node.call === 'fixed' && node.unless) { // as a piecewise: the live power where --e is set, no answer where another is
       const others = node.unless.filter((n) => !(node.live && n === 'e')), conds = [...(node.live ? [{ set: ['e'] }] : []), ...(others.length ? [{ set: others }] : [])];
       return expr({ call: 'piecewise', conds, otherwise: true, items: [...(node.live ? [{ node: node.live }] : []), ...(others.length ? [{ x: NaN }] : []), { x: node.value }] }); }
@@ -482,7 +492,7 @@ function former(divide) {
         decls.push([`${P}-vf${j}`, `${x} * 0 + 1`], [`${P}-in${j}`, `clamp(0, round(down, ${hi}, 1) - ${node.lo + j - 1}, 1)`]); });
       decls.push([`${P}-hf`, `${hi} * 0 + 1`], [`${P}-ok`, `1 - min(1, ${[...xs.map((_, j) => `var(${P}-in${j}) * (1 - var(${P}-vf${j}))`), `1 - var(${P}-hf)`].join(' + ')})`]);
       const parts = xs.map((_, j) => (node.call === 'isum' ? `var(${P}-in${j}) * ${join(`${P}-v${j}`)}` : `pow(${join(`${P}-v${j}`)}, var(${P}-in${j}))`));
-      return `(${[node.call === 'isum' ? '0' : '1', ...parts].reduce((a, b) => F(`${a} ${node.call === 'isum' ? '+' : '*'} ${b}`))} * (1 + 0 / var(${P}-ok)))`;
+      return `(${chain(node.call === 'isum' ? '+' : '*', [node.call === 'isum' ? '0' : '1', ...parts])} * (1 + 0 / var(${P}-ok)))`;
     }
     // a number as JavaScript reads it: -0 kept (String(-0) is "0", and 1 / -0 is -Infinity); a name with a fallback (LaTeXML's
     // 𝜋) reads the page's value when it sets one, else the fallback, so an unset one is no missing name
@@ -507,10 +517,10 @@ function former(divide) {
       decls.push([`${P}-ok`, `1 - min(1, ${err.join(' + ')})`]);
       // the chosen piece alone is not 0, so a sum of all of them is it, -0 aside: the chosen one's sign of zero is put back
       const zero = xs.map((_, j) => `${gate(j)} * var(${P}-v${j}-z)`).join(' + ');
-      return `(${xs.map((_, j) => `${gate(j)} * ${join(`${P}-v${j}`)}`).reduce((a, b) => F(`${a} + ${b}`))} * (1 - 2 * (${zero})) * (1 + 0 / ${v('ok')}))`;
+      return `(${chain('+', xs.map((_, j) => `${gate(j)} * ${join(`${P}-v${j}`)}`))} * (1 - 2 * (${zero})) * (1 + 0 / ${v('ok')}))`;
     }
     // d3.sum and d3.mean add from 0, as a loop does: 0 + -0 is 0, so a sum of -0s is 0 (each term after is added exactly)
-    const total = () => ['0', ...xs].reduce((a, b) => F(`${a} + ${b}`));
+    const total = () => chain('+', ['0', ...xs]);
     if (node.call === 'sum' || node.call === 'isum') return total();
     if (node.call === 'quotient' || node.call === 'rem') {
       // rem() is JavaScript's % to the bit, -0 included, and floor(|a / b|) · sign(a / b) Math.trunc(a / b) (2,544 pairs, both
@@ -519,11 +529,11 @@ function former(divide) {
       decls.push([`${P}-ok`, `1 - min(1, abs(sign(rem(${a}, 1))) + abs(sign(rem(${b}, 1))) + max(0, sign(abs(${a}) - 67108864)) + max(0, sign(abs(${b}) - 67108864)) + 1 - abs(sign(${b})))`]);
       return `(${node.call === 'rem' ? `rem(${a}, ${b})` : `(round(down, abs(${d}), 1) * sign(${d}))`} * (1 + 0 / var(${P}-ok)))`;
     }
-    if (node.call === 'iproduct') return ['1', ...xs].reduce((a, b) => F(`${a} * ${b}`)); // as p = 1, p *= term
+    if (node.call === 'iproduct') return chain('*', ['1', ...xs]); // as p = 1, p *= term
     if (node.call === 'mean') return divide(total(), xs.length);
     // a - b as a + -1 · b, the same IEEE double: WebKit's calc() gives -0 - 0 as 0 (JavaScript -0), and 1 / it would flip
     if (node.call === 'minus') return xs.length === 1 ? `(-1 * ${xs[0]})` : F(`${xs[0]} + (-1 * ${xs[1]})`);
-    if (node.call === 'times') return xs.reduce((a, b) => F(`${a} * ${b}`));
+    if (node.call === 'times') return chain('*', xs);
     if (node.call === 'divide') return divide(xs[0], xs[1]);
     if (node.call === 'power') return `pow(${xs[0]}, ${xs[1]})`;
     if (node.call === 'root') return node.degree === 2 ? `sqrt(${xs[0]})` : `pow(${xs[0]}, ${String(1 / node.degree)})`;
@@ -551,6 +561,7 @@ function former(divide) {
     // infinite value1 makes it NaN (d3.median([1, 2, Infinity]) is NaN)
     return F(`${F(pick(i0))} + ${F(`${F(`${pick(i0 + 1)} + (-1 * ${pick(i0)})`)} * ${n % 2 ? 0 : 0.5}`)}`);
   };
+  const expr = f.expr = (node) => keep(build(node));
   return f;
 }
 // a name the page doesn't set (or sets to no number) leaves no answer: --value fails with it, and so does a registered
