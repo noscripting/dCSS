@@ -1914,6 +1914,29 @@
           }
         }
       },
+      "A141": {
+        "__compat": {
+          "description": "`mathml.mjs` MUST compute `<arctan/>` of a formula the page sets, on the page, to the double nearest the true value, arctan(±0) as ±0. Where x is unset or not a number, or the computed value lies too close to halfway between two doubles to round from, there MUST be no answer, error 1; it MUST NOT give another double.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
+            },
+            "firefox": {
+              "version_added": null
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
       "A140": {
         "__compat": {
           "description": "`mathml.mjs` MUST compute `<sin/>` and `<cos/>` of a formula the page sets, on the page, to the double nearest the true value, sin(±0) as ±0. Where |x| passes 2^20, x is unset or not a number, or the computed value lies too close to halfway between two doubles to round from, there MUST be no answer, error 1; it MUST NOT give another double.",
