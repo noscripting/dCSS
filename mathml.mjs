@@ -230,8 +230,9 @@ export const ATANK = (() => { const c = at(1600n), dbl = (v) => nearest(v, c.P),
   return { A: Array.from({ length: 257 }, (_, j) => pair(c.atan((c.ONE * BigInt(j)) / 256n)).map(splitInts)), PI2: pair(c.PI / 2n) }; })();
 const PIPAIR = (() => { const c = at(1600n), h = nearest(c.PI, c.P); return [h, nearest(c.PI - c.fix(h), c.P)]; })(); // π as a pair
 // 1/ln 10 and 1/ln 2 as pairs, for a live log10 and log2
-export const LOGINV = (() => { const c = at(1200n), dbl = (v) => nearest(v, c.P), pair = (v) => { const h = dbl(v); return [h, dbl(v - c.fix(h))]; };
-  return { 10: pair((c.ONE << c.P) / c.LN10), 2: pair((c.ONE << c.P) / c.LN2) }; })();
+// 1/ln b as a pair, for a live log to a base b the build knows (10 and 2 the usual ones)
+export const logInv = (b) => { const c = at(1200n), dbl = (v) => nearest(v, c.P), v = (c.ONE << c.P) / c.ln(c.fix(b)), h = dbl(v); return [h, dbl(v - c.fix(h))]; };
+export const LOGINV = { 10: logInv(10), 2: logInv(2) };
 // 0! to 170!, exactly, and as the split's integers of each rounded once (the table a live factorial picks from)
 const FACT = [1n]; for (let i = 1n; i <= 170n; i++) FACT.push(FACT.at(-1) * i);
 export const FACTK = FACT.map((f) => splitInts(Number(f)));
@@ -484,8 +485,8 @@ function folded(name, at, args, apply) {
   if ((name === 'sin' || name === 'cos') && (x === null || seen.size)) return { op: name, call: 'trig', items, start: apply.start }; // computed in calc()
   if (name === 'arctan' && (x === null || seen.size)) return { op: name, call: 'atan', items, start: apply.start };
   if ((name === 'arcsin' || name === 'arccos') && (x === null || seen.size)) return { op: name, call: 'asin', items, start: apply.start };
-  const lb = name === 'ln' ? 'e' : name === 'log' ? (base.length ? b : 10) : null; // ln, and log to base 10 or 2: computed in calc()
-  if ((name === 'ln' || name === 'log') && (x === null || seen.size) && (lb === 'e' || lb === 10 || lb === 2)) return { op: name, call: 'log', base: lb, items, start: apply.start };
+  const lb = name === 'ln' ? 'e' : name === 'log' ? (base.length ? b : 10) : null; // ln, and log to a base the build knows: computed in calc()
+  if ((name === 'ln' || name === 'log') && (x === null || seen.size) && (lb === 'e' || (Number.isFinite(lb) && lb > 0 && lb !== 1))) return { op: name, call: 'log', base: lb, items, start: apply.start };
   if (x === null || (base.length && b === null)) throw refusal(at, `${name} of a name the page sets: ${INEXACT}. Of numbers the build knows it is computed when the page is built; exp, ln, log10, log2, sin, cos, arcsin, arccos and arctan of a name are computed on the page`);
   return fixed(name, MATHFN[name](x, name === 'log' ? (base.length ? b : 10) : undefined), items, apply.start, seen);
 }
@@ -681,7 +682,7 @@ function former(divide) {
     // picked, stored, scaled to the base
     const near = `var(${P}-near)`, pickd = (a, b) => `(${sel(near, a)} + ${sel(`(1 - ${near})`, b)})`;
     let y = [store('yh', pickd(ah, bh)), store('yl', pickd(al, bl))];
-    if (base !== 'e') { const m = ddMul('m', y, LOGINV[base].map(num)); y = [store('wh', m[0]), store('wl', m[1])]; }
+    if (base !== 'e') { const m = ddMul('m', y, logInv(base).map(num)); y = [store('wh', m[0]), store('wl', m[1])]; }
     const [zh0, zl0] = fast('z', y[0], y[1]), zh = mac('zh', store('zh', zh0)), zl = mac('zl', zl0);
     // halfway on zl's side: zh's exponent from CSS's log2, corrected by two comparisons; half an ulp is 2^(ez − 53), half that
     // at a power of 2 with zl toward 0; ln 1 = 0 is exact

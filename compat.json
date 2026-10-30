@@ -1985,7 +1985,7 @@
       },
       "A139": {
         "__compat": {
-          "description": "`mathml.mjs` MUST compute `<ln/>`, and `<log/>` to base 10 or 2, of a formula the page sets, on the page, to the double nearest the true value. Where x is not above 2^-1022, past e^708, unset or not a number, and where the computed value lies too close to halfway between two doubles to round from, there MUST be no answer, error 1; it MUST NOT give another double, whatever the platform's own `log()` returns.",
+          "description": "`mathml.mjs` MUST compute `<ln/>`, and `<log/>` to a base known when the page is built, of a formula the page sets, on the page, to the double nearest the true value. Where x is not above 2^-1022, past e^708, unset or not a number, and where the computed value lies too close to halfway between two doubles to round from, there MUST be no answer, error 1; it MUST NOT give another double, whatever the platform's own `log()` returns.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
