@@ -77,6 +77,7 @@
         "dcss-quantile-index",
         "dcss-quantile-sorted",
         "dcss-range",
+        "dcss-read",
         "dcss-scale-quantile",
         "dcss-scale-quantize",
         "dcss-scale-threshold",
@@ -85,9 +86,9 @@
         "dcss-summarize",
         "dcss-variance"
       ],
-      "raw": 294981,
-      "gzip9": 23217,
-      "sha256": "ddb49d30add0d7398f2a7670375b0e7b3782aee7f7809a059a81e01103f3ae64"
+      "raw": 298663,
+      "gzip9": 23326,
+      "sha256": "262f63a5d2315e1841b122a78a9c5a51314ddab3680a7d98bbd6ce293326641a"
     },
     "hierarchy": {
       "file": "families/hierarchy.css",
@@ -376,6 +377,7 @@
     "dcss-quantile-index": "array",
     "dcss-quantile-sorted": "array",
     "dcss-range": "array",
+    "dcss-read": "array",
     "dcss-scale-quantile": "array",
     "dcss-scale-quantize": "array",
     "dcss-scale-threshold": "array",
@@ -6049,6 +6051,10 @@
         "role": "style-only"
       },
       "dcss-min": {
+        "family": "array",
+        "role": "style-only"
+      },
+      "dcss-read": {
         "family": "array",
         "role": "style-only"
       },

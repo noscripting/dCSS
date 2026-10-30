@@ -6,7 +6,7 @@ All notable changes to dcss are written here. The format follows [Keep a Changel
 
 ### Added
 
-- `.dcss-summarize`: one list, written once, gives its sum, count, length, mean, min, max, median, variance and deviation (`--dcss-sum` to `--dcss-deviation`), read three elements deep as a median is. Up to 64 items in 64ths from -1024 to 65535 (±1024 for the variance); each answer is to the bit in Chrome and Safari (1,948 of 1,948 on 304 lists). Before, each answer took its own figure and its own copy of the list.
+- `.dcss-summarize`: one list, written once, gives its sum, count, length, mean, min, max, median, variance and deviation (`--dcss-sum` to `--dcss-deviation`). The element after the list is the page's own (a `<p>`, a `<dl>`), and its children get the sum, count, length, mean and min; one element of class `dcss-read` around it adds the max, and two the median, variance and deviation. Up to 64 items in 64ths from -1024 to 65535 (±1024 for the variance); each answer is to the bit in Chrome and Safari (1,948 of 1,948 on 304 lists). Before, each answer took its own figure and its own copy of the list.
 - MathML's `<factorof/>`, a ∣ b: true where b is a whole multiple of a (0 ∣ 0 included), as JavaScript's `b % a === 0`, on whole numbers within ±2^53; drawn ∣ with the intent `divides`.
 - MathML's `<equivalent/>` of two conditions, ⟺, as JavaScript's `===` of their truths; drawn with the intent `if-and-only-if`.
 - LaTeX's everyday forms through LaTeXML: degrees, `\sin(30^\circ)`, computed as x · (π / 180); percent, `15\%`, as x / 100; a word as a subscript, `v_{\text{max}}` or `T_{room}`, as one name (`--v_max`, `--T_room`); `\bar{x}`, `\hat{p}` and `\tilde{y}` as one name, the letter and its mark (`--x̄`, `--p̂`); and `\prod` with limits. Each is drawn as typed. Of 70 inputs an author might type, 54 build (was 48).
@@ -65,6 +65,8 @@ All notable changes to dcss are written here. The format follows [Keep a Changel
 - License headers (SPDX) on every sheet; `package.json` for npm.
 
 ### Changed
+
+- `.dcss-variance` and `.dcss-deviation` read through two elements of class `dcss-read` and the page's own element inside them, in place of three plain `<div>`s.
 
 - A call's answers (`--dcss-sum`, `--dcss-count`, `--dcss-length`, `--dcss-mean`, `--dcss-min`, `--dcss-max`, `--dcss-variance`, `--dcss-deviation`) reach the elements directly inside the element that reads them, not their descendants: set `--value: var(--dcss-mean)` on such an element to pass one deeper. A printed summary moving every frame costs 10 ms a frame in Chrome instead of 24.
 - `.dcss-format-fixed` and `.dcss-format-percent` compute on their `::after`.
