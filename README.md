@@ -47,7 +47,7 @@ A page that uses many calls can link the core, `dcss-array.css`, and the familie
 | File in `families/` | Calls | Size, gzipped |
 |---|---|---:|
 | `ticks.css` | ticks, nice, the four axes, the identity scale's ticks | 10 KB |
-| `array.css` | sum, count, mean, min, max, extent, length; ascending, descending; the index extrema; bisect, bisector; share; median, quantile and their indexes, the discrete scales, cumsum; bin; variance, deviation; the precision helpers; range | 21 KB |
+| `array.css` | sum, count, mean, min, max, extent, length; ascending, descending; the index extrema; bisect, bisector; share; median, quantile and their indexes, the discrete scales, cumsum; bin; variance, deviation; the precision helpers; range | 22 KB |
 | `hierarchy.css` | slice, dice and slice-dice treemaps, partition | 0.9 KB |
 | `scale.css` | linear, pow, sqrt, log, band and identity scales | 7.5 KB |
 | `format.css` | format types f, %, s and general; a log scale's ticks and labels; an Arabic locale | 18 KB |
@@ -66,7 +66,7 @@ Every call in the families works the same way. The class goes on a `<figure>`, n
 
 ### The data
 
-The data is the `<ul>` or `<ol>` inside the figure, one `<li>` per datum, each with its number as `--value`. A hierarchy is nested lists. Give each datum its own `--value`: it never takes its parent's. An item may hold text, a label say, and the answer stays the same; but the list is the call's layout, hidden or drawn as the call needs, so text a reader needs goes in a caption, as below. An item without one is skipped, as d3 skips a missing value, and the call answers as d3 does with `--dcss-err` 0: the sum, mean, count, min, max, extent, variance, bins and median, and the quantile at `--p` 0, 0.5 and 1. The quantile at any other `--p` and the median and quantile indexes give no answer. A value they can't take exactly, off the 1/64 grid (12.3 is not a 64th; 12.25 is) or past a call's range, leaves no answer and `--dcss-err` 1, never a rounded one: give tenths or cents as whole numbers and scale the answer. So does a list too large to read exactly ([Browsers](#browsers)).
+The data is the `<ul>` or `<ol>` inside the figure, one `<li>` per datum, each with its number as `--value`. A hierarchy is nested lists. Give each datum its own `--value`: it never takes its parent's. An item may hold text, a label say, and the answer stays the same; but the list is the call's layout, hidden or drawn as the call needs, so text a reader needs goes in a caption, as below. An item without one is skipped, as d3 skips a missing value, and the call answers as d3 does with `--dcss-err` 0: the sum, mean, count, min, max, extent, variance, bins and median, the quantile at `--p` 0, 0.5 and 1, and the median and quantile indexes (which count it, as d3's do). The quantile at any other `--p` gives no answer. A value they can't take exactly, off the 1/64 grid (12.3 is not a 64th; 12.25 is) or past a call's range, leaves no answer and `--dcss-err` 1, never a rounded one: give tenths or cents as whole numbers and scale the answer. So does a list too large to read exactly ([Browsers](#browsers)).
 
 A call lays its list out and measures it, so it sets the boxes of the list and its items itself. In a page that orders its CSS with `@layer`, link dcss unlayered or in the last layer: a rule on lists in a later layer (`ol { padding-inline-start: 1rem }`) beats dcss's and changes the answers with no error. A call measures across and down whatever the page's `writing-mode`, so in a vertical page its printed answer reads across.
 
@@ -605,7 +605,7 @@ The place, from 0, of the number a median or quantile takes. Source: [d3.medianI
 
 Output: `--dcss-median-index`, `--dcss-quantile-index`, read as a median's; -1 for no values.
 
-Where several values equal the one at the index, d3's choice follows its quickselect ([5, 5, 5] gives 0, [4, 4, 4, 4] gives 2); these take the copy their order picks: values ascending, equal ones last place first, and at `--p` 0 or less the first place, as d3.minIndex. A value off the grid, or a `--p` that isn't a number, leaves no answer.
+Where several values equal the one at the index, d3's choice follows its quickselect ([5, 5, 5] gives 0, [4, 4, 4, 4] gives 2); these take the copy their order picks: values ascending, equal ones last place first, and at `--p` 0 or less the first place, as d3.minIndex. An item with no `--value` is d3's missing value: counted in n and never the answer, so past the numbers the index is the largest one's (-1 with none). A value off the grid, a `--value` that isn't a number, one from a class rather than the item's style attribute, or a `--p` that isn't a number, leaves no answer.
 
 #### `.dcss-scale-threshold`
 
@@ -1288,7 +1288,7 @@ In WebKit, the median of three cold loads beside the core (2026-10-28):
 | File in `families/` | Size | Load in WebKit 26.4 |
 |---|---:|---:|
 | `ticks.css` | 128 KB | 14 ms |
-| `array.css` | 271 KB | 15 ms |
+| `array.css` | 281 KB | 15 ms |
 | `hierarchy.css` | 6.6 KB | 10 ms |
 | `scale.css` | 120 KB | 12 ms |
 | `format.css` | 237 KB | 15 ms |
@@ -1302,7 +1302,7 @@ The core is 284 KB, 73 KB gzipped; `dcss-array-extras.css`, the lists, loops and
 | Family | Parts | A part | The family |
 |---|---:|---:|---:|
 | `ticks.css` | 8 | 2.9 KB (0.5–5.7) | 10 KB |
-| `array.css` | 38 | 1.7 KB (0.8–5.8) | 21 KB |
+| `array.css` | 38 | 1.8 KB (0.8–5.8) | 22 KB |
 | `hierarchy.css` | 4 | 0.6 KB (0.6–0.7) | 0.9 KB |
 | `scale.css` | 6 | 2.3 KB (0.5–3.0) | 7.5 KB |
 | `format.css` | 9 | 3.7 KB (1.3–11.9) | 18 KB |

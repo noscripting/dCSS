@@ -2510,7 +2510,7 @@
       },
       "A128": {
         "__compat": {
-          "description": "`.dcss-median-index` and `.dcss-quantile-index` (`--p`) with the list written once and three nested elements after it MUST give the third's children d3's index of the value at floor((n - 1) p), for 0 to 64 values on the 1/64 grid within ±131,072, with -1 for no values; with ties at that value, the place of the one sorted last when values ascend and equal ones go last place first (first place first at p 0 or less). Another value or a `--p` that isn't a number MUST leave no answer.",
+          "description": "`.dcss-median-index` and `.dcss-quantile-index` (`--p`) with the list written once and three nested elements after it MUST give the third's children d3's index of the value at floor((n - 1) p), for 0 to 64 values on the 1/64 grid within ±131,072, with -1 for no values; with ties at that value, the place of the one sorted last when values ascend and equal ones go last place first (first place first at p 0 or less). An item with no `--value` in its style attribute MUST count in n and never be the answer: the index of rank min(k, D - 1) among the D numbers, -1 for none. Another value, a number such an item takes from elsewhere, or a `--p` that isn't a number MUST leave no answer.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {

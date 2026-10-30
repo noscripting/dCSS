@@ -6,6 +6,7 @@ All notable changes to dcss-array.css are written here. The format follows [Keep
 
 ### Added
 
+- `.dcss-median-index` and `.dcss-quantile-index` take missing items as d3 does: an `<li>` with no `--value` counts in n and is never the answer, so past the numbers the index is the largest one's, -1 with none (d3's `quantileIndex([1, 1, 1, null, 2, 3, 3, 3], 0.5)` is 4). They gave no answer before.
 - `mathml.mjs`, a build step in Node beside the sheets, the package's one script (never loaded by a page): a formula written in Content MathML (`<apply><median/><apply><mean/>…</apply><ci>jan</ci></apply>`) becomes one `calc()` the page computes, d3's double to the bit in Chrome and Safari (median, mean, min, max, plus, minus, times, divide, power, root, abs, floor and ceiling, formulas inside formulas, `<ci>` names the page sets, any double, LaTeXML's superscripts and subscripted names; an equation with a name alone on one side defines it for the formulas after it, an inequality prints true or false, an equation between formulas shows each side's value), the formula kept as Presentation MathML with its Content MathML as annotation.
 - `.dcss-bin`, d3.bin() on the grid with a domain and thresholds, or `--count` for d3's tick thresholds: one `<li>` per bin in a second list, each reading its count, x0 and x1.
 - `.dcss-variance` and `.dcss-deviation`, d3.variance() and d3.deviation() on the grid: each value's square as two exact halves, read through two anchors, so 64 values in 64ths to ±1024 give the true variance rounded once.
