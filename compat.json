@@ -1914,6 +1914,29 @@
           }
         }
       },
+      "A138": {
+        "__compat": {
+          "description": "`mathml.mjs` MUST compute `<factorial/>` of a whole number n from 0 to 170 to the double nearest n!, when the page is built where it knows n and on the page where the page sets it, with no answer, error 1, for any other n on the page. `<gcd/>` and `<lcm/>` of whole numbers known when the page is built MUST be exact; of a formula the page sets they MUST stop the build with the reason.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
+            },
+            "firefox": {
+              "version_added": null
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
       "A137": {
         "__compat": {
           "description": "`mathml.mjs` MUST compute `<exp/>` of a formula the page sets, and e to such a power, on the page to the double nearest the true value of e^x. Where x is outside -708 to 709, unset or not a number, and where the computed value lies too close to halfway between two doubles to round from, there MUST be no answer, error 1; it MUST NOT give another double.",

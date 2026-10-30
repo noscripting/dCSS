@@ -125,10 +125,10 @@ function number(cn) {
 
 // --- the operators: Content MathML's elements and their OpenMath symbols (MathML 4, appendix E; F.8.3 for s_data1)
 const CALLS = { brackets: 'id', quotient: 'quotient', rem: 'rem', median: 'median', mean: 'mean', min: 'min', max: 'max', plus: 'sum',
-  minus: 'minus', times: 'times', divide: 'divide', power: 'power', root: 'root', abs: 'abs', floor: 'floor', ceiling: 'ceiling' };
-const SYMBOLS = { s_data1: ['median', 'mean'], minmax1: ['min', 'max'], arith1: ['plus', 'minus', 'unary_minus', 'times', 'divide', 'power', 'root', 'abs'], rounding1: ['floor', 'ceiling'] };
+  minus: 'minus', times: 'times', divide: 'divide', power: 'power', root: 'root', abs: 'abs', floor: 'floor', ceiling: 'ceiling', factorial: 'factorial', gcd: 'gcd', lcm: 'lcm' };
+const SYMBOLS = { s_data1: ['median', 'mean'], minmax1: ['min', 'max'], arith1: ['plus', 'minus', 'unary_minus', 'times', 'divide', 'power', 'root', 'abs', 'gcd', 'lcm'], rounding1: ['floor', 'ceiling'], integer1: ['factorial'] };
 // how many arguments each takes, past the statistics' lists
-const ARITY = { brackets: [1, 1], quotient: [2, 2], rem: [2, 2], minus: [1, 2], divide: [2, 2], power: [2, 2], root: [1, 1], abs: [1, 1], floor: [1, 1], ceiling: [1, 1], times: [2, Infinity], plus: [2, Infinity] };
+const ARITY = { factorial: [1, 1], gcd: [2, Infinity], lcm: [2, Infinity], brackets: [1, 1], quotient: [2, 2], rem: [2, 2], minus: [1, 2], divide: [2, 2], power: [2, 2], root: [1, 1], abs: [1, 1], floor: [1, 1], ceiling: [1, 1], times: [2, Infinity], plus: [2, Infinity] };
 // CSS's exp(), log() and trigonometric functions don't give the double nearest the true value: of 4,000 each (2026-10-30)
 // sin() misses 3,046 in Chrome and 172 in WebKit, tan() 1,895 and 3,612, exp() 6 in both
 const INEXACT = "CSS's exp(), log() and trigonometric functions don't give the double nearest the true value (sin(): 3,046 of 4,000 off in Chrome, tan(): 3,612 in WebKit)";
@@ -218,10 +218,12 @@ export const EXPK = (() => { const c = at(1200n), dbl = (v) => nearest(v, c.P), 
   const T = Array.from({ length: 64 }, (_, j) => { const v = c.ex((c.LN2 * BigInt(j)) / 64n), h = dbl(v); return [h, dbl(v - c.fix(h)), ...halves(h)].map(splitInts); });
   const C = [3, 4, 5, 6, 7, 8].map((n) => { let f = 1n; for (let i = 2n; i <= BigInt(n); i++) f *= i; return dbl(c.ONE / f); });
   return { L1: dbl(L1), L2: dbl(L2), L3: dbl(L - L1 - L2), INV: dbl((c.ONE << c.P) / L), T, C }; })();
+// 0! to 170!, exactly, and as the split's integers of each rounded once (the table a live factorial picks from)
+const FACT = [1n]; for (let i = 1n; i <= 170n; i++) FACT.push(FACT.at(-1) * i);
+export const FACTK = FACT.map((f) => splitInts(Number(f)));
 // the n-th root of a number the build knows, odd ones of negatives (an operator, <root/>, not one of the functions above)
 export const rootOf = (x, n) => (x === 0 ? x : x < 0 ? (n % 2 ? -rootOf(-x, n) : NaN) : trueOf((c, X) => c.ex(c.ln(X) / BigInt(n)))(x));
 const WHY = {
-  factorial: 'CSS has no factorial, and d3 none',
   sum: '<sum/> binds a variable over limits; a list of numbers is added with <plus/>',
   variance: "MathML doesn't say it divides by n - 1, as d3 and dcss do", sdev: "MathML doesn't say it divides by n - 1, as d3 and dcss do",
   mode: 'dcss has no mode', moment: 'dcss has no moment', card: "a set's size drops repeated values, which d3.count counts",
@@ -323,6 +325,19 @@ function call(apply) {
   if (args.length < lo || args.length > hi) throw refusal(apply.start, `${op} of ${args.length} argument${args.length === 1 ? '' : 's'}: it takes ${lo === hi ? lo : hi === Infinity ? `${lo} or more` : `${lo} or ${hi}`}`);
   if (args.length === 1 && args[0].name === 'ci' && !ARITY[op]) throw refusal(args[0].start, `one <ci> alone: MathML reads it as a data set (MathML 4, §4.3.5.13), not one value`);
   const items = args.map((a) => item(a));
+  // n! of a whole n from 0 to 170 (past it, n! passes the largest double): the true value, rounded once; of a number the
+  // build knows, written in, of a name the page sets, picked from the 171 on the page; gcd and lcm of whole numbers the
+  // build knows, as MathML's (gcd(0, 0) is 0, the lcm of any with 0 is 0)
+  if (op === 'factorial') { const n = itemValue(items[0]);
+    if (n === null) return { op, call: 'factorial', items, start: apply.start };
+    if (!Number.isInteger(n) || n < 0) throw refusal(apply.start, `factorial of ${n}: MathML's factorial takes whole numbers from 0`);
+    return fixed('factorial', n > 170 ? Infinity : Number(FACT[n]), items, apply.start); } // Number() of a BigInt rounds once, to nearest
+  if (op === 'gcd' || op === 'lcm') { const vs = items.map((x) => itemValue(x));
+    if (vs.includes(null)) throw refusal(apply.start, `${op} of a name the page sets: Euclid's algorithm loops as long as its numbers ask, which CSS can't; of whole numbers the build knows it is computed when the page is built`);
+    if (!vs.every((v) => Number.isSafeInteger(v))) throw refusal(apply.start, `${op} of ${vs.find((v) => !Number.isSafeInteger(v))}: MathML's ${op} takes whole numbers, here within ±2^53`);
+    const g = (a, b) => (b ? g(b, a % b) : a), big = vs.map((v) => BigInt(Math.abs(v)));
+    const r = op === 'gcd' ? big.reduce(g) : big.reduce((a, b) => (a === 0n || b === 0n ? 0n : (a / g(a, b)) * b));
+    return fixed(op, Number(r), items, apply.start); }
   if (op === 'quotient' || op === 'rem') { const [a, b] = items.map(itemValue);
     if (a !== null && b !== null && !wholeArgs(a, b)) throw refusal(apply.start, `${op} of ${a} and ${b}: MathML's integer division takes whole numbers, within ±2^26 here, and a divisor that isn't 0`); }
   // e to a power is exp(x) (MathML 4: power of exponentiale), not Math.pow(Math.E, x), another double for 92 of 100 x
@@ -450,7 +465,6 @@ function folded(name, at, args, apply) {
 // answer, or, for 𝑒 to a power where --e is set, live: the power of the page's e
 function fixed(op, v, items, start, seen, live) {
   if (!Number.isFinite(v)) throw refusal(start, `${op} here is ${v}: no number to show`);
-  if (Math.abs(v) >= FMAX) throw refusal(start, `${op} here is ${v}: Chrome reads a number from 3.4e38 up as 3.4e38`);
   return { op, call: 'fixed', value: v, items, start, unless: seen?.size ? [...seen] : undefined, live };
 }
 // MathML 4's <piecewise> (4.3.10.5): the first <piece> whose condition holds gives the value, else <otherwise>, as
@@ -613,13 +627,21 @@ function former(divide) {
     const above = `(1 - sign(max(0, 1 + (-1 * ${zh}))))`, atOneDown = `(1 - abs(sign(${zh} + -1))) * sign(max(0, -1 * ${zl}))`;
     decls.push([`${P}-ok`, `var(${P}-d) * var(${P}-rh-f) * var(${P}-rl-f) * var(${P}-s-f) * var(${P}-p0-f) * sign(max(0, pow(2, -54) * (1 + ${above} * (1 - ${atOneDown})) + (-1 * abs(${zl})) + ${-(2 ** -72)}))`]);
     return `(${zh} * pow(2, var(${P}-E)) * (1 + 0 / var(${P}-ok)))`; };
+  // n! of a value the page sets: picked from FACTK by round(n), an answer only for a whole n from 0 to 170
+  const liveFactorial = (ne) => { const { P, mac, pickers } = kit(), n = mac('n', ne);
+    decls.push([`${P}-n`, `round(${n}, 1)`], [`${P}-ok`, `(1 - abs(sign(${n} + (-1 * var(${P}-n))))) * (1 - sign(max(0, -1 * ${n}))) * (1 - sign(max(0, ${n} + -170)))`]);
+    return `(${pickers('I', `var(${P}-n)`, 0, 170)('f', FACTK)} * (1 + 0 / var(${P}-ok)))`; };
   const build = (node) => {
+    if (node.call === 'factorial') return liveFactorial(arg(node.items[0]));
     if (node.call === 'exp') return liveExp(arg(node.items.at(-1)));
     if (node.call === 'eset') return expr({ call: 'piecewise', conds: [{ set: ['e'] }], otherwise: true, items: [{ node: { call: 'power', items: node.items } }, { node: { call: 'exp', items: node.items.slice(1) } }] });
     if (node.call === 'fixed' && node.unless) { // as a piecewise: the live power where --e is set, no answer where another is
       const others = node.unless.filter((n) => !(node.live && n === 'e')), conds = [...(node.live ? [{ set: ['e'] }] : []), ...(others.length ? [{ set: others }] : [])];
       return expr({ call: 'piecewise', conds, otherwise: true, items: [...(node.live ? [{ node: node.live }] : []), ...(others.length ? [{ x: NaN }] : []), { x: node.value }] }); }
-    if (node.call === 'fixed') return Object.is(node.value, -0) ? '(-1 * 0)' : String(node.value);
+    // a value the build computed, written in; from 3.4e38 up as m · 2^e (Chrome reads such a number token as 3.4e38, a
+    // product of two smaller ones keeps the double: facts/number-token-float-max.mjs)
+    if (node.call === 'fixed') { const v = node.value; if (Object.is(v, -0)) return '(-1 * 0)'; if (Math.abs(v) < FMAX) return String(v);
+      const e = Number(BigInt(bitsOf(v).mant.toString(2).length) - 1n + bitsOf(v).e); return `(${v / 2 ** e} * pow(2, ${e}))`; }
     if (node.live) { // a sum or product to a bound the page sets (indexed): each term to the ceiling in four registered
       // integers with its finiteness, and whether it counts (i <= the bound, as an integer: an unset var() voids only its
       // own term); a term not counted adds 0 (a product's is to the power 0), even where the page sets none of its names
@@ -780,6 +802,7 @@ function write({ kind, root, value, decls: own, ints, sides }, math, src) {
     if (op === 'root') return node.degree === 2 ? `<msqrt${arg} intent="square-root(${ids})">${show(0)}</msqrt>` : `<mroot${arg} intent="root($a1,$a2)">${show(0)}<mn arg="a2">${node.degree}</mn></mroot>`;
     if (op === 'abs' || op === 'floor' || op === 'ceiling') { const [l, r] = { abs: ['|', '|'], floor: ['⌊', '⌋'], ceiling: ['⌈', '⌉'] }[op];
       return `<mrow${arg} intent="${op === 'abs' ? 'absolute-value' : op}(${ids})"><mo>${l}</mo>${show(0)}<mo>${r}</mo></mrow>`; }
+    if (op === 'factorial') return `<mrow${arg} intent="factorial(${ids})">${show(0, 9)}<mo>!</mo></mrow>`;
     if (op === 'log' && items.length === 2) return `<mrow${arg} intent="log(${ids})"><msub><mi>log</mi>${show(1)}</msub><mo>⁡</mo><mrow><mo>(</mo>${show(0)}<mo>)</mo></mrow></mrow>`;
     return `<mrow${arg} intent="${op}(${ids})"><mi>${op}</mi><mo>⁡</mo><mrow><mo>(</mo>${items.map((_, i) => show(i)).join('<mo>,</mo>')}<mo>)</mo></mrow></mrow>`;
   };
