@@ -218,6 +218,13 @@ export const EXPK = (() => { const c = at(1200n), dbl = (v) => nearest(v, c.P), 
   const T = Array.from({ length: 64 }, (_, j) => { const v = c.ex((c.LN2 * BigInt(j)) / 64n), h = dbl(v); return [h, dbl(v - c.fix(h)), ...halves(h)].map(splitInts); });
   const C = [3, 4, 5, 6, 7, 8].map((n) => { let f = 1n; for (let i = 2n; i <= BigInt(n); i++) f *= i; return dbl(c.ONE / f); });
   return { L1: dbl(L1), L2: dbl(L2), L3: dbl(L - L1 - L2), INV: dbl((c.ONE << c.P) / L), T, C }; })();
+// sin and cos of a name the page sets (TRIGK): π/512 in three 25-bit parts and the rest (k times each part is exact for
+// |k| < 2^28), 512/π, and sin and cos of iπ/512 for i = 0..256 as pairs, as the split's integers
+export const TRIGK = (() => { const c = at(1600n), dbl = (v) => nearest(v, c.P), pair = (v) => { const h = dbl(v); return [h, dbl(v - c.fix(h))]; };
+  const keep = (v, n) => { const drop = BigInt(v.toString(2).length) - BigInt(n); return drop > 0n ? (v >> drop) << drop : v; };
+  const Q = c.PI / 512n, P1 = keep(Q, 25), P2 = keep(Q - P1, 25), P3 = keep(Q - P1 - P2, 25);
+  const S = [], C = []; for (let i = 0; i <= 256; i++) { const a = (c.PI * BigInt(i)) / 512n; S[i] = pair(c.sin(a)).map(splitInts); C[i] = pair(c.cos(a)).map(splitInts); }
+  return { PP: [P1, P2, P3].map(dbl), P4: dbl(Q - P1 - P2 - P3), INV: dbl((c.ONE << c.P) / Q), S, C }; })();
 // 1/ln 10 and 1/ln 2 as pairs, for a live log10 and log2
 export const LOGINV = (() => { const c = at(1200n), dbl = (v) => nearest(v, c.P), pair = (v) => { const h = dbl(v); return [h, dbl(v - c.fix(h))]; };
   return { 10: pair((c.ONE << c.P) / c.LN10), 2: pair((c.ONE << c.P) / c.LN2) }; })();
@@ -470,9 +477,10 @@ function folded(name, at, args, apply) {
   for (const a of rest) if (!['cn', 'ci', 'apply', 'piecewise'].includes(a.name) && !constantOf(a)) throw refusal(a.start, `<${a.name}> as an argument: only <cn> numbers, <ci> names, π, e and another <apply>`);
   const seen = new Set(), items = [item(rest[0]), ...(base.length ? [item(elements(base[0])[0])] : [])], [x, b] = items.map((i) => itemValue(i, seen));
   if (name === 'exp' && (x === null || seen.size)) return { op: 'exp', call: 'exp', items, start: apply.start }; // computed in calc(), exactly
+  if ((name === 'sin' || name === 'cos') && (x === null || seen.size)) return { op: name, call: 'trig', items, start: apply.start }; // computed in calc()
   const lb = name === 'ln' ? 'e' : name === 'log' ? (base.length ? b : 10) : null; // ln, and log to base 10 or 2: computed in calc()
   if ((name === 'ln' || name === 'log') && (x === null || seen.size) && (lb === 'e' || lb === 10 || lb === 2)) return { op: name, call: 'log', base: lb, items, start: apply.start };
-  if (x === null || (base.length && b === null)) throw refusal(at, `${name} of a name the page sets: ${INEXACT}. Of numbers the build knows it is computed when the page is built; exp, ln, log10 and log2 of a name are computed on the page`);
+  if (x === null || (base.length && b === null)) throw refusal(at, `${name} of a name the page sets: ${INEXACT}. Of numbers the build knows it is computed when the page is built; exp, ln, log10, log2, sin and cos of a name are computed on the page`);
   return fixed(name, MATHFN[name](x, name === 'log' ? (base.length ? b : 10) : undefined), items, apply.start, seen);
 }
 // a value the build computed (the double nearest the true value): written in as a number, drawn as the formula it came from. Where it took 𝜋 or
@@ -677,6 +685,49 @@ function former(divide) {
     const one = `(1 - abs(sign(${x} + -1)))`;
     decls.push([`${P}-ok`, `var(${P}-d) * max(${one}, (1 - ${near} * 0) * var(${P}-yh-f) * var(${P}-yl-f) * var(${P}-zh-f) * (${near} + (1 - ${near}) * var(${ex.P}-pf)) * sign(max(0, ${half} + (-1 * abs(${zl})) + (-1 * ${B} * ${az}))))`]);
     return `(${zh} * (1 + 0 / var(${P}-ok)))`; };
+  // sin or cos of a value the page sets, to the double nearest the true value (probes/dcss/trig-check.mjs runs these steps
+  // in JavaScript and in the engines): k = round(x · 512/π) (a macro: k may pass 10^6, which var() would round), r = x −
+  // k π/512 by four exact parts, j = k mod 1024 (cos: k + 256), S and C = sin and cos of jπ/512 from the 257 of a quarter
+  // turn, turned by the quadrant; sin(a + r) = S + C r − S r²/2 − C r³/6 + S r⁴/24 + C r⁵/120 − S r⁶/720 − C r⁷/5040, the
+  // first three as pairs. The halfway test leaves 2^-73 |y| + 2^-50 |r|³ (measured: 2^-75 relative, 2^-78.4 absolute where
+  // |r| is 2^-8.4) + 2^-50 |k P4| + 2^-100 |r| for the reduction, so sin(29π) answers. No answer past |x| = 2^20. sin(±0) is ±0, kept by the stored answer's zero flag
+  const liveTrig = (xe, fn) => { const { P, mac, store, add, sub, mul, num, twoSum, fast, twoProd } = kit(), { PP, P4, INV, S: TS, C: TC } = TRIGK, off = fn === 'cos' ? 256 : 0;
+    const x = mac('x', xe), k = mac('k', `round(${x} * ${num(INV)}, 1)`), ge = (a, b) => `(1 - sign(max(0, ${b} + (-1 * ${a}))))`, two = (e) => `pow(2, ${e})`;
+    decls.push([`${P}-d`, `${ge(num(2 ** 20), `abs(${x})`)} * (${x} * 0 + 1)`], [`${P}-j`, `${k} + ${off} + -1024 * round(down, (${k} + ${off}) / 1024, 1)`]);
+    decls.push([`${P}-q`, `round(down, var(${P}-j) / 256, 1)`], [`${P}-i`, `var(${P}-j) + -256 * var(${P}-q)`]);
+    for (let n = 0; n < 4; n++) decls.push([`${P}-Q${n}`, `max(0, 1 - abs(var(${P}-q) + ${-n}))`]);
+    for (let n = 0; n <= 256; n++) decls.push([`${P}-I${n}`, `max(0, 1 - abs(var(${P}-i) + ${-n}))`]);
+    // the table's values at i, then S and C by the quadrant: (s, c), (c, −s), (−s, −c), (−c, s); each a sum where one term is not 0
+    const part = (tab, h, z) => tab.map((t, n) => (t[h][z] ? `var(${P}-I${n}) * ${t[h][z]}` : '')).filter(Boolean).join(' + ') || '0';
+    for (const h of [0, 1]) for (const z of 'eabc') { decls.push([`${P}-s${h}${z}`, part(TS, h, z)], [`${P}-c${h}${z}`, part(TC, h, z)]); }
+    const even = `(var(${P}-Q0) + var(${P}-Q2))`, odd = `(var(${P}-Q1) + var(${P}-Q3))`, sA = `(var(${P}-Q0) + -1 * var(${P}-Q2))`, sB = `(var(${P}-Q1) + -1 * var(${P}-Q3))`;
+    const turned = (n, h, first, second, sign2) => { const q = `${P}-${n}`;
+      decls.push([`${q}-e`, `${even} * var(${P}-${first}${h}e) + ${odd} * var(${P}-${second}${h}e)`], [`${q}-z`, '0']);
+      for (const z of 'abc') decls.push([`${q}-${z}`, `${sA} * var(${P}-${first}${h}${z}) + ${sign2} * ${sB} * var(${P}-${second}${h}${z})`]);
+      return mac(n, join(q)); };
+    const Sh = turned('Sh', 0, 's', 'c', 1), Sl = turned('Sl', 1, 's', 'c', 1), Ch = turned('Ch', 0, 'c', 's', -1), Cl = turned('Cl', 1, 'c', 's', -1);
+    // r = rh + rl
+    const [s1, e1] = twoSum('a', sub(x, `(${k} * ${num(PP[0])})`), `(-1 * ${k} * ${num(PP[1])})`), [s2, e2] = twoSum('b', s1, `(-1 * ${k} * ${num(PP[2])})`);
+    const [rh0, rl0] = fast('c', s2, add(add(e1, e2), `(-1 * ${k} * ${num(P4)})`)), RH = store('rh', rh0), RL = store('rl', rl0);
+    // S + C r − S r²/2 as pairs, the rest in doubles
+    const [p1, e3] = twoProd('m', Ch, RH), [sq, sqe] = twoProd('q', RH, RH), h2 = mac('h2', `(${sq} * 0.5)`), [p2, e4] = twoProd('n', Sh, h2);
+    const r2 = mac('r2', mul(RH, RH)), r3 = mac('r3', mul(r2, RH)), div = (a, n) => `(${a} * ${num(1 / n)})`;
+    const small = [mul(Ch, RL), mul(Cl, RH), `(-1 * ${add(mul(Sh, add(`(${sqe} * 0.5)`, mul(RH, RL))), mul(Sl, h2))})`, `(-1 * ${div(mul(Ch, r3), 6)})`,
+      div(mul(Sh, mul(r2, r2)), 24), div(mul(Ch, mul(r3, r2)), 120), `(-1 * ${div(mul(Sh, mul(r3, r3)), 720)})`, `(-1 * ${div(mul(Ch, mul(mul(r3, r2), r2)), 5040)})`].reduce(add);
+    // stored before they are summed: each is read several times below
+    const P1 = store('p1', p1), P2 = store('p2', p2), EE = store('ee', sub(e3, e4)), SM = store('sm', small);
+    const [a1, b1] = twoSum('s', Sh, P1), [a2, b2] = twoSum('t', a1, `(-1 * ${P2})`), [zh0, zl0] = fast('z', a2, add(add(b1, b2), add(Sl, add(EE, SM))));
+    const xzero = `(1 - abs(sign(${x})))`, ZH = store('zh', zh0); // sin(±0) is ±0: the zero flag from x itself
+    if (fn === 'sin') decls.push([`${P}-zh-z`, `${xzero} * max(0, -1 * sign(1 / ${x}))`]);
+    const zh = mac('zh', ZH), zl = mac('zl', zl0), az = `abs(${zh})`;
+    decls.push([`${P}-z0`, `round(down, log(max(${az}, ${2 ** -1074}), 2), 1)`]);
+    const sc = `(${az} * ${two(`(-1 * var(${P}-z0))`)})`; decls.push([`${P}-ez`, `var(${P}-z0) + ${ge(sc, 2)} + (-1 * (1 - ${ge(sc, 1)}))`]);
+    const atPow2 = `(1 - abs(sign(${az} + (-1 * ${two(`var(${P}-ez)`)}))))`, toward0 = `abs(sign(${zl})) * (1 - abs(sign(sign(${zl}) + sign(${zh}))))`;
+    // the reduction's own error: the last part's rounding times k, and its sum's rounding, which scales with r (the TwoSums'
+    // errors are 2^-53 of what they round) and |k P4|
+    const half = `(${two(`(var(${P}-ez) + -53)`)} / (1 + ${atPow2} * ${toward0}))`, B = `(${num(2 ** -73)} * ${az} + ${num(2 ** -50)} * abs(${RH}) * abs(${RH}) * abs(${RH}) + ${num(2 ** -50)} * abs(${k}) * ${num(Math.abs(P4))} + ${num(2 ** -100)} * abs(${RH}))`;
+    decls.push([`${P}-ok`, `var(${P}-d) * var(${P}-rh-f) * var(${P}-rl-f) * var(${P}-sm-f) * var(${P}-ee-f) * var(${P}-zh-f) * max(${xzero}, sign(max(0, ${half} + (-1 * abs(${zl})) + (-1 * ${B}))))`]);
+    return `(${zh} * (1 + 0 / var(${P}-ok)))`; };
   // n! of a value the page sets: picked from FACTK by round(n), an answer only for a whole n from 0 to 170
   const liveFactorial = (ne) => { const { P, mac, pickers } = kit(), n = mac('n', ne);
     decls.push([`${P}-n`, `round(${n}, 1)`], [`${P}-ok`, `(1 - abs(sign(${n} + (-1 * var(${P}-n))))) * (1 - sign(max(0, -1 * ${n}))) * (1 - sign(max(0, ${n} + -170)))`]);
@@ -695,6 +746,7 @@ function former(divide) {
     if (node.call === 'factorial') return liveFactorial(arg(node.items[0]));
     if (node.call === 'exp') return liveExp(arg(node.items.at(-1)));
     if (node.call === 'log') return liveLog(arg(node.items[0]), node.base);
+    if (node.call === 'trig') return liveTrig(arg(node.items[0]), node.op);
     if (node.call === 'eset') return expr({ call: 'piecewise', conds: [{ set: ['e'] }], otherwise: true, items: [{ node: { call: 'power', items: node.items } }, { node: { call: 'exp', items: node.items.slice(1) } }] });
     if (node.call === 'fixed' && node.unless) { // as a piecewise: the live power where --e is set, no answer where another is
       const others = node.unless.filter((n) => !(node.live && n === 'e')), conds = [...(node.live ? [{ set: ['e'] }] : []), ...(others.length ? [{ set: others }] : [])];
