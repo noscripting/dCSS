@@ -2,8 +2,6 @@
 
 dcss.css computes what d3, the JavaScript library for data charts, computes, in HTML with no script: statistics, ticks and axes, scales, number and date formats, easing, treemaps, UTC time and map projections. It works in Chrome and Safari, not Firefox ([Browsers](#browsers)).
 
-With [noscripting](https://github.com/noscripting/noscripting), [loop](https://github.com/noscripting/loop) and [unround](https://github.com/noscripting/unround).
-
 ## Installation
 
 Write the data once, as a table the reader sees, and each result as a MathML formula over it. Then build the page once with `mathml.mjs` and Node.js:
