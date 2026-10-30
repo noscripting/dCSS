@@ -1845,6 +1845,29 @@
           }
         }
       },
+      "A133": {
+        "__compat": {
+          "description": "`mathml.mjs` MUST compile a `<piecewise>`, alone or as an argument, to its first `<piece>` whose condition (`<lt/>`, `<leq/>`, `<gt/>`, `<geq/>`, `<eq/>`, `<neq/>`, a chain of one, or an `<and/>` or `<or/>` of them) JavaScript's operators find true, else its `<otherwise>`, to the bit. A piece not chosen MUST change nothing, NaN or infinite included. With none holding and no otherwise, or a chosen piece not finite, there MUST be no answer, error 1.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
+            },
+            "firefox": {
+              "version_added": null
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
       "A80": {
         "__compat": {
           "description": "Compiled cumsum MUST publish 0–128 scoped per-item endpoints with bounds and status in version-two contracts. Within declared 1/64-grid prefix bounds below 2^18, both qualified lowerings MUST match d3, preserve scalar reuse and native reset, and skip missing/NaN values. Invalid inputs MUST invalidate their prefix and later results while preserving earlier results.",

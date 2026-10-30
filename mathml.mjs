@@ -6,7 +6,7 @@
 //   <math><apply><median/><apply><mean/><cn>4</cn><cn>1.5</cn></apply><ci>jan</ci></apply></math>
 // becomes a figure with the formula as its caption and an <output> whose --value is d3.median([d3.mean([4, 1.5]),
 // jan]) to the bit, jan read from --jan on an ancestor (unset: no answer, --dcss-err 1). Only a <math> whose one element
-// child is an <apply> of an operator it takes is compiled; the rest of the page is copied byte for byte, so the build
+// child is an <apply> of an operator it takes, or a <piecewise>, is compiled; the rest of the page is copied byte for byte, so the build
 // run on its own output changes nothing.
 import { readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
@@ -182,7 +182,7 @@ function compile(math) {
       const its = as.map((a) => item(a)); for (let k = 0; k + 1 < its.length; k++) pairs.push([h.name, its[k], its[k + 1]]); return { op: h.name, call: 'relation', items: its }; };
     const shown = head.name === 'and' ? { op: 'and', call: 'relation', items: args.map((a) => { if (a.name !== 'apply') throw refusal(a.start, 'an <and/> of something not a relation'); const [h, ...as] = elements(a); return { node: chain(h, as, a.start) }; }) } : chain(head, args, top.start);
     out = { kind: 'truth', root: shown, ...emitTruth(pairs) };
-  } else { const root = call(top); out = { kind: 'value', root, ...emit(root) }; }
+  } else { const root = top.name === 'piecewise' ? piecewise(top) : call(top); out = { kind: 'value', root, ...emit(root) }; }
   if (out.compares > MAX_COMPARES) throw refusal(math.start, `this formula's medians compare ${out.compares.toLocaleString('en-US')} pairs of values the page sets, past the ${MAX_COMPARES.toLocaleString('en-US')} this build writes: give a long list as a .dcss-median call (README, Writing a call)`);
   if (out.decls.join('').length + out.value.length > 1048576) throw refusal(math.start, `this formula's calc() would be ${Math.round((out.decls.join('').length + out.value.length) / 1024)} KB of style: definitions used inside each other grow it; past 1 MB this build refuses`);
   return out;
@@ -225,7 +225,7 @@ function call(apply) {
     if (q.length > 1) throw refusal(q[1].start, 'two <degree>s');
     if (q.length) { const k = elements(q[0]); if (k.length !== 1 || k[0].name !== 'cn') throw refusal(q[0].start, '<degree> holds one <cn>, the root\'s degree'); degree = degreeOf(k[0]); args = args.filter((a) => a !== q[0]); } }
   for (const a of args) if (QUALIFIERS.has(a.name)) throw refusal(a.start, `<${a.name}>: qualifiers aren't taken, only numbers`);
-  for (const a of args) if (!['cn', 'ci', 'apply'].includes(a.name) && !constantOf(a)) throw refusal(a.start, `<${a.name}> as an argument: only <cn> numbers, <ci> names, π, e and another <apply>`);
+  for (const a of args) if (!['cn', 'ci', 'apply', 'piecewise'].includes(a.name) && !constantOf(a)) throw refusal(a.start, `<${a.name}> as an argument: only <cn> numbers, <ci> names, π, e and another <apply>`);
   if (!args.length) throw refusal(apply.start, `${op} of nothing`);
   const [lo, hi] = ARITY[op] ?? [1, Infinity];
   if (args.length < lo || args.length > hi) throw refusal(apply.start, `${op} of ${args.length} argument${args.length === 1 ? '' : 's'}: it takes ${lo === hi ? lo : hi === Infinity ? `${lo} or more` : `${lo} or ${hi}`}`);
@@ -247,6 +247,7 @@ function item(a, defining = false) {
       return named({ ci: id, sub: [textOf(base).trim().normalize('NFKC'), textOf(index).trim().normalize('NFKC'), index.name] }, a, defining);
     }
     if (a.name === 'apply') return { node: call(a) };
+    if (a.name === 'piecewise') return { node: piecewise(a) };
     if (a.name === 'cn') return number(a);
     const k = constantOf(a); if (k) return k;
     if (elements(a).length) throw refusal(a.start, '<ci> with markup inside: a name is text');
@@ -266,6 +267,30 @@ function constantOf(a) {
   if ((a.name === 'pi' || a.name === 'exponentiale') && blank(a) && !elements(a).length) return CONSTANTS[a.name === 'pi' ? 'pi' : 'e'];
   if (a.name === 'csymbol' && a.attrs.cd === 'nums1' && ['pi', 'e'].includes(textOf(a).trim())) return CONSTANTS[textOf(a).trim()];
   return null;
+}
+// MathML 4's <piecewise> (4.3.10.5): the first <piece> whose condition holds gives the value, else <otherwise>, as
+// JavaScript's if/else chain does; with none holding and no <otherwise>, no answer. A condition is a relation (<lt/>,
+// <leq/>, <gt/>, <geq/>, <eq/>, <neq/>, a chain of one) or an <and/> or <or/> of them
+const CONDS = { ...RELS, eq: '=', neq: '≠' };
+function piecewise(el) {
+  const items = [], conds = []; let otherwise = false;
+  for (const k of elements(el)) {
+    if (otherwise) throw refusal(k.start, `<${k.name}> after <otherwise>: <otherwise> comes last`);
+    const [v, c, ...more] = elements(k);
+    if (k.name === 'piece') { if (!v || !c || more.length) throw refusal(k.start, '<piece> holds a value and its condition'); items.push(item(v)); conds.push(condition(c)); }
+    else if (k.name === 'otherwise') { if (!v || c) throw refusal(k.start, '<otherwise> holds one value'); items.push(item(v)); otherwise = true; }
+    else throw refusal(k.start, `<${k.name}> in a <piecewise>: it holds <piece>s and one <otherwise>`);
+  }
+  if (!conds.length) throw refusal(el.start, 'a <piecewise> with no <piece>');
+  return { op: 'piecewise', call: 'piecewise', items, conds, otherwise, start: el.start };
+}
+function condition(c) {
+  if (c.name !== 'apply') throw refusal(c.start, `<${c.name}> as a condition: a condition is a relation, <apply><lt/>…</apply>, or an <and/> or <or/> of them`);
+  const [h, ...as] = elements(c);
+  if (h?.name === 'and' || h?.name === 'or') { if (as.length < 2) throw refusal(c.start, `<${h.name}/> of ${as.length}: it joins two or more conditions`); return { op: h.name, parts: as.map(condition) }; }
+  if (!(h?.name in CONDS)) throw refusal(c.start, `<${h?.name ?? '?'}/> as a condition: this build takes <lt/>, <leq/>, <gt/>, <geq/>, <eq/>, <neq/>, <and/> and <or/>`);
+  if (as.length < 2 || (h.name === 'neq' && as.length !== 2)) throw refusal(c.start, `<${h.name}/> of ${as.length}: a relation compares ${h.name === 'neq' ? 'two' : 'two or more'}`);
+  return { op: h.name, items: as.map((a) => item(a)) };
 }
 // a name the page defines: the definition's side in its place; one it defines further down is refused
 function named(x, a, defining) {
@@ -316,7 +341,14 @@ const D3 = {
   min: (xs) => Math.min(...xs), max: (xs) => Math.max(...xs), id: (xs) => xs[0],
   median: (xs) => { const s = [...xs].sort((a, b) => a - b), i0 = Math.floor((s.length - 1) / 2); return s.length % 2 ? s[i0] : s[i0] + (s[i0 + 1] - s[i0]) * 0.5; },
 };
-const valueOf = (node) => { const xs = node.items.map((x) => (x.node ? valueOf(x.node) : x.def ? valueOf(x.def) : x.ci ? null : x.x)); return xs.includes(null) ? null : D3[node.call](xs, node); };
+const itemValue = (x) => (x.node ? valueOf(x.node) : x.def ? valueOf(x.def) : x.ci ? null : x.x);
+const OPS = { lt: (a, b) => a < b, leq: (a, b) => a <= b, gt: (a, b) => a > b, geq: (a, b) => a >= b, eq: (a, b) => a === b, neq: (a, b) => a !== b };
+const condValue = (c) => { if (c.parts) { const vs = c.parts.map(condValue); return vs.includes(null) ? null : c.op === 'and' ? vs.every(Boolean) : vs.some(Boolean); }
+  const xs = c.items.map(itemValue); return xs.includes(null) ? null : xs.slice(1).every((b, i) => OPS[c.op](xs[i], b)); };
+const valueOf = (node) => { const xs = node.items.map(itemValue); if (xs.includes(null)) return null;
+  if (node.call !== 'piecewise') return D3[node.call](xs, node);
+  for (let j = 0; j < node.conds.length; j++) { const t = condValue(node.conds[j]); if (t === null) return null; if (t) return xs[j]; }
+  return node.otherwise ? xs.at(-1) : NaN; };
 // a median of n values the page sets compares n · (n - 1) pairs: 2,048 is a median of 45 names, 93 KB of style, a change
 // 0.1 ms of style work in Chrome and WebKit (2026-10-29)
 const MAX_COMPARES = 2048;
@@ -328,6 +360,22 @@ function former(divide) {
   const expr = f.expr = (node) => {
     const k = ++id, xs = node.items.map((x) => (x.node ? expr(x.node) : x.def ? expr(x.def) : x.ci ? (names.add(x.ci), `var(--${x.ci})`) : String(x.x)));
     if (node.call === 'id') return xs[0];
+    if (node.call === 'piecewise') {
+      // each condition's truth and its sides' finiteness, and each value in four registered integers with its own
+      // finiteness: an unchosen piece that is NaN or infinite then adds exactly 0 (a registered integer's NaN is 0, and
+      // the value is clamped to ±2^1023 before it is split); the chosen value comes back to the bit
+      const P = `--dcss-dcss-w${k}`, m = node.conds.length, v = (n) => `var(${P}-${n})`;
+      const cond = (c) => { if (c.parts) { const ps = c.parts.map(cond); return { t: `${c.op === 'and' ? 'min' : 'max'}(${ps.map((q) => q.t).join(', ')})`, sides: ps.flatMap((q) => q.sides) }; }
+        const ss = c.items.map((x) => expr(asNode(x))), hs = ss.slice(1).map((b, i) => CHECK[c.op](ss[i], b));
+        return { t: hs.length === 1 ? hs[0] : `min(${hs.join(', ')})`, sides: ss }; };
+      node.conds.forEach((c, j) => { const { t, sides } = cond(c); decls.push([`${P}-t${j}`, t], [`${P}-cf${j}`, `${sides.map((x) => `${x} * 0`).join(' + ')} + 1`]); });
+      xs.forEach((x, j) => { const q = `${P}-v${j}`, c = `clamp(-1 * pow(2, 1023), ${x}, pow(2, 1023))`; for (const z of 'eabc') decls.push([`${q}-${z}`, SPLIT[z](q, c)]); decls.push([`${P}-vf${j}`, `${x} * 0 + 1`]); });
+      const reached = (j) => (j ? Array.from({ length: j }, (_, i) => `(1 - ${v(`t${i}`)})`).join(' * ') : '1');
+      const gate = (j) => (j < m ? `${v(`t${j}`)} * ${reached(j)}` : reached(m));
+      const err = [...xs.map((_, j) => `${gate(j)} * (1 - ${v(`vf${j}`)})`), ...node.conds.map((_, j) => `${reached(j)} * (1 - ${v(`cf${j}`)})`), `(1 - (${xs.map((_, j) => gate(j)).join(' + ')}))`];
+      decls.push([`${P}-ok`, `1 - min(1, ${err.join(' + ')})`]);
+      return `(${xs.map((_, j) => `${gate(j)} * ${join(`${P}-v${j}`)}`).reduce((a, b) => F(`${a} + ${b}`))} + 0 / ${v('ok')})`;
+    }
     const total = () => xs.reduce((a, b) => F(`${a} + ${b}`));
     if (node.call === 'sum') return total();
     if (node.call === 'mean') return divide(total(), xs.length);
@@ -376,6 +424,9 @@ const emit = (root) => both(form(root, DIVIDE.plain), form(root, DIVIDE.length))
 // inequalities: each pair's truth as JavaScript's operator gives it on the two doubles (the sign of a fenced difference,
 // exact for finite doubles), the chain's the least of them; --dcss-dcss-fin is 0 when a side is NaN or infinite or
 // a name is unset, and then nothing prints
+// a condition's relations, the same tests and = and ≠ besides (JavaScript's === and !== on finite doubles)
+const CHECK = { get lt() { return HOLDS.lt; }, get leq() { return HOLDS.leq; }, get gt() { return HOLDS.gt; }, get geq() { return HOLDS.geq; },
+  eq: (a, b) => `(1 - abs(sign(${F(`${a} - ${b}`)})))`, neq: (a, b) => `abs(sign(${F(`${a} - ${b}`)}))` };
 const HOLDS = { lt: (a, b) => `max(0, sign(${F(`${b} - ${a}`)}))`, gt: (a, b) => `max(0, sign(${F(`${a} - ${b}`)}))`,
   leq: (a, b) => `(1 - max(0, sign(${F(`${a} - ${b}`)})))`, geq: (a, b) => `(1 - max(0, sign(${F(`${b} - ${a}`)})))` };
 function truthForm(pairs, divide) {
@@ -418,6 +469,12 @@ function write({ kind, root, value, decls: own, ints, sides }, math, src) {
     if (op === 'minus') return items.length === 1 ? `<mrow${arg} intent="minus(${ids})"><mo>−</mo>${show(0, 4)}</mrow>` : `<mrow${arg} intent="minus(${ids})">${infix('−', (i) => (i ? 2 : 1))}</mrow>`;
     if (op === 'divide') return `<mfrac${arg} intent="divide(${ids})">${show(0)}${show(1)}</mfrac>`;
     if (op === 'brackets') return `<mrow${arg} intent="$a1"><mo>[</mo>${show(0)}<mo>]</mo></mrow>`;
+    if (op === 'neq') return `<mrow${arg}>${infix('≠', () => 0)}</mrow>`;
+    if (op === 'piecewise') { // a brace, each piece a row, its value and "if" its condition, "otherwise" last
+      const cond = (c) => (c.parts ? `<mrow>${c.parts.map(cond).join(`<mspace width="0.4em"/><mtext>${c.op}</mtext><mspace width="0.4em"/>`)}</mrow>` : pres({ op: c.op, items: c.items }));
+      const rows = node.conds.map((c, i) => `<mtr><mtd>${show(i)}</mtd><mtd><mtext>if</mtext><mspace width="0.4em"/>${cond(c)}</mtd></mtr>`).join('')
+        + (node.otherwise ? `<mtr><mtd>${show(items.length - 1)}</mtd><mtd><mtext>otherwise</mtext></mtd></mtr>` : '');
+      return `<mrow${arg}><mo>{</mo><mtable>${rows}</mtable></mrow>`; }
     if (op === 'power') return `<msup${arg} intent="power(${ids})">${show(0, 5)}${show(1)}</msup>`;
     if (op === 'root') return node.degree === 2 ? `<msqrt${arg} intent="square-root(${ids})">${show(0)}</msqrt>` : `<mroot${arg} intent="root($a1,$a2)">${show(0)}<mn arg="a2">${node.degree}</mn></mroot>`;
     if (op === 'abs' || op === 'floor' || op === 'ceiling') { const [l, r] = { abs: ['|', '|'], floor: ['⌊', '⌋'], ceiling: ['⌈', '⌉'] }[op];
@@ -466,12 +523,12 @@ export function toDcss(src, { file = 'page.html' } = {}) {
     // LaTeXML's form: <semantics>, its Presentation MathML first and the Content MathML in an annotation-xml
     const sem = elements(math).length === 1 && elements(math)[0].name === 'semantics' ? elements(math)[0] : null;
     const content = sem && elements(sem).find((a) => a.name === 'annotation-xml' && /^(MathML-Content|application\/mathml-content\+xml)$/i.test(a.attrs.encoding ?? ''));
-    if (content && elements(content).length === 1 && elements(content)[0].name === 'apply') math = { ...math, children: [elements(content)[0]] };
+    if (content && elements(content).length === 1 && ['apply', 'piecewise'].includes(elements(content)[0].name)) math = { ...math, children: [elements(content)[0]] };
     const kids = elements(math);
-    if (kids.length !== 1 || kids[0].name !== 'apply' || !blank(math)) {
+    if (kids.length !== 1 || !['apply', 'piecewise'].includes(kids[0].name) || !blank(math)) {
       // a formula with Content MathML outside an annotation would draw nothing in Chrome and Safari
-      const loose = (n) => elements(n).some((c) => c.name === 'annotation-xml' || c.name === 'annotation' ? false : ['apply', 'cn', 'ci', 'csymbol', 'bind'].includes(c.name) || loose(c));
-      if (loose(math)) throw new Error(`${file}:${lineOf(src, math.start)}: Content MathML outside an annotation draws nothing in Chrome and Safari; this build compiles a <math> whose one element is an <apply>`);
+      const loose = (n) => elements(n).some((c) => c.name === 'annotation-xml' || c.name === 'annotation' ? false : ['apply', 'piecewise', 'cn', 'ci', 'csymbol', 'bind'].includes(c.name) || loose(c));
+      if (loose(math)) throw new Error(`${file}:${lineOf(src, math.start)}: Content MathML outside an annotation draws nothing in Chrome and Safari; this build compiles a <math> whose one element is an <apply> or a <piecewise>`);
       continue;
     }
     let from = math.start, to = math.end;

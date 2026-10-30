@@ -6,6 +6,7 @@ All notable changes to dcss-array.css are written here. The format follows [Keep
 
 ### Added
 
+- `mathml.mjs` takes `<piecewise>`: the first `<piece>` whose condition holds, else `<otherwise>`, as JavaScript's if/else chain (tax brackets, tiered prices, guards). A piece not chosen changes nothing, even where it is NaN or infinite: each piece's value travels in four registered integers, whose NaN is 0.
 - `mathml.mjs` takes π and e as numbers: `<pi/>`, `<exponentiale/>`, OpenMath's `nums1` symbols and LaTeXML's 𝜋 (which read `--π` before, no answer unless a page set it) are Math.PI and Math.E. e to a power stops the build: it is exp(x), which CSS doesn't compute to JavaScript's double, and Math.pow(Math.E, x) differs from Math.exp(x) for 92 of 100 x (16 ARQMath formulas compiled it as pow(--e, x)).
 - `mathml.mjs` takes LaTeXML's square brackets around one thing as grouping, drawn as brackets: 440 of ARQMath's 1,164 formulas with an operator compile, 6 more.
 - `.dcss-median-index` and `.dcss-quantile-index` take missing items as d3 does: an `<li>` with no `--value` counts in n and is never the answer, so past the numbers the index is the largest one's, -1 with none (d3's `quantileIndex([1, 1, 1, null, 2, 3, 3, 3], 0.5)` is 4). They gave no answer before.
