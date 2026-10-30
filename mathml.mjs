@@ -225,6 +225,9 @@ export const TRIGK = (() => { const c = at(1600n), dbl = (v) => nearest(v, c.P),
   const Q = c.PI / 512n, P1 = keep(Q, 25), P2 = keep(Q - P1, 25), P3 = keep(Q - P1 - P2, 25);
   const S = [], C = []; for (let i = 0; i <= 256; i++) { const a = (c.PI * BigInt(i)) / 512n; S[i] = pair(c.sin(a)).map(splitInts); C[i] = pair(c.cos(a)).map(splitInts); }
   return { PP: [P1, P2, P3].map(dbl), P4: dbl(Q - P1 - P2 - P3), INV: dbl((c.ONE << c.P) / Q), S, C }; })();
+// tan and cot of a name the page sets (TANK): tan(iπ/512) for i = 0..128 as pairs, as the split's integers
+export const TANK = (() => { const c = at(1600n), dbl = (v) => nearest(v, c.P), pair = (v) => { const h = dbl(v); return [h, dbl(v - c.fix(h))]; };
+  return Array.from({ length: 129 }, (_, i) => { const a = (c.PI * BigInt(i)) / 512n; return pair(c.div(c.sin(a), c.cos(a))).map(splitInts); }); })();
 // arctan of a name the page sets (ATANK): atan(j/256) for j = 0..256 as pairs, as the split's integers, and π/2 as a pair
 export const ATANK = (() => { const c = at(1600n), dbl = (v) => nearest(v, c.P), pair = (v) => { const h = dbl(v); return [h, dbl(v - c.fix(h))]; };
   return { A: Array.from({ length: 257 }, (_, j) => pair(c.atan((c.ONE * BigInt(j)) / 256n)).map(splitInts)), PI2: pair(c.PI / 2n) }; })();
@@ -484,10 +487,11 @@ function folded(name, at, args, apply) {
   if (name === 'exp' && (x === null || seen.size)) return { op: 'exp', call: 'exp', items, start: apply.start }; // computed in calc(), exactly
   if ((name === 'sin' || name === 'cos') && (x === null || seen.size)) return { op: name, call: 'trig', items, start: apply.start }; // computed in calc()
   if (name === 'arctan' && (x === null || seen.size)) return { op: name, call: 'atan', items, start: apply.start };
+  if ((name === 'tan' || name === 'cot') && (x === null || seen.size)) return { op: name, call: 'tan', items, start: apply.start };
   if ((name === 'arcsin' || name === 'arccos') && (x === null || seen.size)) return { op: name, call: 'asin', items, start: apply.start };
   const lb = name === 'ln' ? 'e' : name === 'log' ? (base.length ? b : 10) : null; // ln, and log to a base the build knows: computed in calc()
   if ((name === 'ln' || name === 'log') && (x === null || seen.size) && (lb === 'e' || (Number.isFinite(lb) && lb > 0 && lb !== 1))) return { op: name, call: 'log', base: lb, items, start: apply.start };
-  if (x === null || (base.length && b === null)) throw refusal(at, `${name} of a name the page sets: ${INEXACT}. Of numbers the build knows it is computed when the page is built; exp, ln, log10, log2, sin, cos, arcsin, arccos and arctan of a name are computed on the page`);
+  if (x === null || (base.length && b === null)) throw refusal(at, `${name} of a name the page sets: ${INEXACT}. Of numbers the build knows it is computed when the page is built; exp, ln, log, sin, cos, tan, cot, arcsin, arccos and arctan of a name are computed on the page`);
   return fixed(name, MATHFN[name](x, name === 'log' ? (base.length ? b : 10) : undefined), items, apply.start, seen);
 }
 // a value the build computed (the double nearest the true value): written in as a number, drawn as the formula it came from. Where it took 𝜋 or
@@ -796,6 +800,27 @@ function former(divide) {
     const [zh0, zl0] = fast('z', r[0], r[1]), sg = fn === 'arcsin' ? `sign(${x})` : '1';
     return answer(K, x, `(${zh0} * ${sg})`, `(${zl0} * ${sg})`, (az) => `(${num(2 ** -76)} * ${az} + ${num(2 ** -50)} * abs(${UH}) * abs(${UH}) * abs(${UH}))`,
       `var(${P}-d) * var(${P}-wh-f) * var(${P}-rs-f) * var(${P}-sh0-f) * var(${P}-dh0-f) * var(${P}-rt-f) * var(${P}-th-f) * var(${P}-rh-f) * ${flags}`, fn === 'arcsin'); };
+  // tan or cot of a value the page sets (probes/dcss/tan-check.mjs): sin's reduction, k mod 512 (tan's period is π); within
+  // π/4 of π/2, tan x = −1/tan(x − π/2), so T = tan(j'π/512) for |j'| ≤ 128 from a table of 129, with j's sign; t = tan r as a
+  // pair (r + r³/3 + 2r⁵/15 + 17r⁷/315 + 62r⁹/2835); n = T + t and d = 1 − T t as pairs; tan = n/d, or −d/n on that branch,
+  // cot the other way round, by one corrected division. The halfway test leaves |y| (2^-74 + (2^-49 |r|³ + 2^-49 |k P4| +
+  // 2^-99 |r|) / min(|n|, |d|)): t's tail and the reduction's error, carried through n and d. tan(±0) is ±0; cot(0) none
+  const liveTan = (xe, fn) => { const K = kit(), { P, mac, store, add, sub, mul, num, twoSum, fast, twoProd, ddAdd, ddMul } = K, { PP, P4, INV } = TRIGK;
+    const x = mac('x', xe), k = mac('k', `round(${x} * ${num(INV)}, 1)`), ge = (a, b) => `(1 - sign(max(0, ${b} + (-1 * ${a}))))`;
+    decls.push([`${P}-d`, `${ge(num(2 ** 20), `abs(${x})`)} * (${x} * 0 + 1)`], [`${P}-j`, `${k} + -512 * round(down, ${k} / 512, 1)`]);
+    decls.push([`${P}-jj`, `var(${P}-j) + 128 + -256 * round(down, (var(${P}-j) + 128) / 256, 1) + -128`], [`${P}-fl`, `round(down, (var(${P}-j) + 128 + -512 * round(down, (var(${P}-j) + 128) / 512, 1)) / 256, 1)`]);
+    decls.push([`${P}-aj`, `abs(var(${P}-jj))`]); for (let n = 0; n <= 128; n++) decls.push([`${P}-I${n}`, `max(0, 1 - abs(var(${P}-aj) + ${-n}))`]);
+    const tab = (h) => { const q = `${P}-T${h}`; for (const z of 'eabc') decls.push([`${q}-${z}`, TANK.map((t, n) => (t[h][z] ? `var(${P}-I${n}) * ${t[h][z]}` : '')).filter(Boolean).join(' + ') || '0']); decls.push([`${q}-z`, '0']); return mac(`T${h}`, `(sign(var(${P}-jj)) * ${join(q)})`); };
+    const T = [tab(0), tab(1)];
+    const [s1, e1] = twoSum('a', sub(x, `(${k} * ${num(PP[0])})`), `(-1 * ${k} * ${num(PP[1])})`), [s2, e2] = twoSum('b', s1, `(-1 * ${k} * ${num(PP[2])})`);
+    const [rh0, rl0] = fast('c', s2, add(add(e1, e2), `(-1 * ${k} * ${num(P4)})`)), RH = store('rh', rh0), RL = store('rl', rl0);
+    const r2 = mac('r2', mul(RH, RH)), poly = [17 / 315, 2 / 15, 1 / 3].reduce((acc, c) => add(num(c), mul(r2, acc)), num(62 / 2835)), tt = fast('t', RH, add(RL, mul(mul(RH, r2), poly)));
+    const t = [store('th', tt[0]), store('tl', tt[1])], n0 = ddAdd('n', T, t), Tt0 = ddMul('p', T, t), Tt = [store('ph', Tt0[0]), store('pl', Tt0[1])], d0 = ddAdd('d', ['1', '0'], [`(-1 * ${Tt[0]})`, `(-1 * ${Tt[1]})`]);
+    const N = [store('nh', n0[0]), store('nl', n0[1])], D = [store('dh', d0[0]), store('dl', d0[1])], flip = `var(${P}-fl)`, nd = fn === 'tan' ? `(1 - ${flip})` : flip;
+    const pickd = (u, v) => `(${sel(nd, u)} + ${sel(`(1 - ${nd})`, v)})`, UH = store('uh', pickd(N[0], D[0])), UL = store('ul', pickd(N[1], D[1])), VH = store('vh', pickd(D[0], N[0])), VL = store('vl', pickd(D[1], N[1]));
+    const q0 = mac('q0', `(${UH} / ${VH})`), [m, me] = twoProd('m', q0, VH), REM = store('rem', `(${add(sub(sub(UH, m), me), sub(UL, mul(q0, VL)))} / ${VH})`), [qh, ql] = fast('q', q0, REM), sg = `(1 - 2 * ${flip})`;
+    const B = (az) => `(${az} * (${num(2 ** -74)} + (${num(2 ** -49)} * abs(${RH}) * abs(${RH}) * abs(${RH}) + ${num(2 ** -49)} * abs(${k}) * ${num(Math.abs(P4))} + ${num(2 ** -99)} * abs(${RH})) / max(min(abs(${N[0]}), abs(${D[0]})), ${2 ** -1000})))`;
+    return answer(K, x, `(${qh} * ${sg})`, `(${ql} * ${sg})`, B, `var(${P}-d) * var(${P}-rh-f) * var(${P}-nh-f) * var(${P}-dh-f) * var(${P}-uh-f) * var(${P}-vh-f) * var(${P}-rem-f)`, fn === 'tan'); };
   // n! of a value the page sets: picked from FACTK by round(n), an answer only for a whole n from 0 to 170
   const liveFactorial = (ne) => { const { P, mac, pickers } = kit(), n = mac('n', ne);
     decls.push([`${P}-n`, `round(${n}, 1)`], [`${P}-ok`, `(1 - abs(sign(${n} + (-1 * var(${P}-n))))) * (1 - sign(max(0, -1 * ${n}))) * (1 - sign(max(0, ${n} + -170)))`]);
@@ -816,6 +841,7 @@ function former(divide) {
     if (node.call === 'log') return liveLog(arg(node.items[0]), node.base);
     if (node.call === 'trig') return liveTrig(arg(node.items[0]), node.op);
     if (node.call === 'atan') return liveAtan(arg(node.items[0]));
+    if (node.call === 'tan') return liveTan(arg(node.items[0]), node.op);
     if (node.call === 'asin') return liveAsin(arg(node.items[0]), node.op);
     if (node.call === 'eset') return expr({ call: 'piecewise', conds: [{ set: ['e'] }], otherwise: true, items: [{ node: { call: 'power', items: node.items } }, { node: { call: 'exp', items: node.items.slice(1) } }] });
     if (node.call === 'fixed' && node.unless) { // as a piecewise: the live power where --e is set, no answer where another is
