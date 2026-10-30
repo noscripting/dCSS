@@ -573,12 +573,24 @@ function former(divide) {
   // and then there is none, as outside -708 ≤ x ≤ 709. A value used more than once is a macro, an unregistered custom
   // property: the same tokens compute the same double each time; each stage's results go through the split, so no
   // declaration brings past 65,535 tokens (WebKit's most through one var())
-  const liveExp = (xe) => { const k = ++id, P = `--dcss-dcss-x${k}`, mac = (n, v) => (decls.push([`--dcss-dcss-y${k}-${n}`, `(${v})`]), `var(--dcss-dcss-y${k}-${n})`);
+  // the steps both live functions build from: macros, stores through the split, fenced IEEE operations, the error-free
+  // transformations (TwoSum, FastTwoSum, Veltkamp's halves, Dekker's TwoProduct) and pairs (double-doubles) added and multiplied
+  const kit = () => { const k = ++id, P = `--dcss-dcss-x${k}`, named = new Set();
+    const mac = (n, v) => { if (named.has(n)) throw new Error(`macro ${n} twice`); named.add(n); decls.push([`--dcss-dcss-y${k}-${n}`, `(${v})`]); return `var(--dcss-dcss-y${k}-${n})`; };
     const store = (n, v) => { const q = `${P}-${n}`; for (const z of 'eabcz') decls.push([`${q}-${z}`, SPLIT[z](q, `clamp(-1 * pow(2, 1023), ${v}, pow(2, 1023))`)]); decls.push([`${q}-f`, `${v} * 0 + 1`]); return join(q); };
-    const add = (a, b) => F(`${a} + ${b}`), sub = (a, b) => F(`${a} + (-1 * ${b})`), mul = (a, b) => F(`${a} * ${b}`), num = (v) => String(v);
+    const add = (a, b) => F(`${a} + ${b}`), sub = (a, b) => F(`${a} + (-1 * ${b})`), mul = (a, b) => F(`${a} * ${b}`), num = (v) => (Object.is(v, -0) ? '(-1 * 0)' : String(v));
     const twoSum = (n, a, b) => { const s = mac(`${n}s`, add(a, b)), bb = mac(`${n}b`, sub(s, a)); return [s, add(sub(a, sub(s, bb)), sub(b, bb))]; };
     const fast = (n, a, b) => { const s = mac(`${n}s`, add(a, b)); return [s, sub(b, sub(s, a))]; };
     const halves = (n, a) => { const t = mac(`${n}t`, mul('134217729', a)), hi = mac(`${n}h`, sub(t, sub(t, a))); return [hi, mac(`${n}l`, sub(a, hi))]; };
+    const twoProd = (n, a, b) => { const p = mac(`${n}p`, mul(a, b)), [ah, al] = halves(`${n}a`, a), [bh, bl] = a === b ? [ah, al] : halves(`${n}c`, b);
+      return [p, add(add(add(sub(mul(ah, bh), p), mul(ah, bl)), mul(al, bh)), mul(al, bl))]; };
+    const ddAdd = (n, [ah, al], [bh, bl]) => { const [s, e] = twoSum(`${n}a`, ah, bh); const [h, l] = fast(`${n}b`, s, add(e, add(al, bl))); return [h, mac(`${n}l`, l)]; };
+    const ddMul = (n, [ah, al], [bh, bl]) => { const [p, e] = twoProd(`${n}m`, ah, bh); const [h, l] = fast(`${n}b`, p, add(e, add(mul(ah, bl), mul(al, bh)))); return [h, mac(`${n}l`, l)]; };
+    // a table's value at an index the page computes: its split integers picked by registered indicators
+    const pickers = (n, idx, lo, hi) => { for (let j = lo; j <= hi; j++) decls.push([`${P}-${n}${j}`, `max(0, 1 - abs(${idx} + ${-j}))`]);
+      return (name, rows) => { const q = `${P}-${name}`; for (const z of 'eabcz') decls.push([`${q}-${z}`, rows.map((t, j) => (t && t[z] ? `var(${P}-${n}${j}) * ${t[z]}` : '')).filter(Boolean).join(' + ') || '0']); return mac(name, join(q)); }; };
+    return { k, P, mac, store, add, sub, mul, num, twoSum, fast, halves, twoProd, ddAdd, ddMul, pickers }; };
+  const liveExp = (xe) => { const { P, mac, store, add, sub, mul, num, twoSum, fast, halves } = kit();
     const { L1, L2, L3, INV, T, C } = EXPK, K = `var(${P}-K)`;
     const x = mac('x', xe);
     decls.push([`${P}-d`, `(1 - sign(max(0, -708 + (-1 * ${x})))) * (1 - sign(max(0, ${x} + -709)))`], [`${P}-K`, `round(${x} * ${num(INV)}, 1)`], [`${P}-E`, `round(down, ${K} / 64, 1)`], [`${P}-J`, `${K} + -64 * var(${P}-E)`]);
