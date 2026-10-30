@@ -128,7 +128,7 @@ const CALLS = { brackets: 'id', quotient: 'quotient', rem: 'rem', median: 'media
   minus: 'minus', times: 'times', divide: 'divide', power: 'power', root: 'root', abs: 'abs', floor: 'floor', ceiling: 'ceiling', factorial: 'factorial', gcd: 'gcd', lcm: 'lcm' };
 const SYMBOLS = { s_data1: ['median', 'mean'], minmax1: ['min', 'max'], arith1: ['plus', 'minus', 'unary_minus', 'times', 'divide', 'power', 'root', 'abs', 'gcd', 'lcm'], rounding1: ['floor', 'ceiling'], integer1: ['factorial'] };
 // how many arguments each takes, past the statistics' lists
-const ARITY = { factorial: [1, 1], gcd: [2, Infinity], lcm: [2, Infinity], brackets: [1, 1], quotient: [2, 2], rem: [2, 2], minus: [1, 2], divide: [2, 2], power: [2, 2], root: [1, 1], abs: [1, 1], floor: [1, 1], ceiling: [1, 1], times: [2, Infinity], plus: [2, Infinity] };
+const ARITY = { binomial: [2, 2], factorial: [1, 1], gcd: [2, Infinity], lcm: [2, Infinity], brackets: [1, 1], quotient: [2, 2], rem: [2, 2], minus: [1, 2], divide: [2, 2], power: [2, 2], root: [1, 1], abs: [1, 1], floor: [1, 1], ceiling: [1, 1], times: [2, Infinity], plus: [2, Infinity] };
 // CSS's exp(), log() and trigonometric functions don't give the double nearest the true value: of 4,000 each (2026-10-30)
 // sin() misses 3,046 in Chrome and 172 in WebKit, tan() 1,895 and 3,612, exp() 6 in both
 const INEXACT = "CSS's exp(), log() and trigonometric functions don't give the double nearest the true value (sin(): 3,046 of 4,000 off in Chrome, tan(): 3,612 in WebKit)";
@@ -291,6 +291,7 @@ function call(apply) {
   else if (head.name === 'csymbol' && head.attrs.cd === 'latexml' && textOf(head).trim() === 'delimited-[]') { // LaTeXML's [x]: brackets as grouping
     if (args.length !== 1) throw refusal(head.start, `LaTeXML's [ ] around ${args.length} things: [a, b] is an interval or a commutator, not a number`);
     op = 'brackets';
+  } else if (head.name === 'csymbol' && ['latexml', 'combinat1', 'dlmf'].includes(head.attrs.cd) && textOf(head).trim() === 'binomial') { op = 'binomial'; // \binom{n}{k}
   } else if (head.name === 'csymbol' && head.attrs.cd === 'transc1' && textOf(head).trim() in MATHFN) { // OpenMath's log takes its base first
     const name = textOf(head).trim(); if (name === 'log' && args.length !== 2) throw refusal(apply.start, `transc1 log of ${args.length} arguments: it takes the base and a number`);
     return folded(name, head.start, name === 'log' ? [args[1], { name: 'logbase', start: args[0].start, children: [args[0]] }] : args, apply);
@@ -332,6 +333,15 @@ function call(apply) {
     if (n === null) return { op, call: 'factorial', items, start: apply.start };
     if (!Number.isInteger(n) || n < 0) throw refusal(apply.start, `factorial of ${n}: MathML's factorial takes whole numbers from 0`);
     return fixed('factorial', n > 170 ? Infinity : Number(FACT[n]), items, apply.start); } // Number() of a BigInt rounds once, to nearest
+  // C(n, k) of whole n ≥ 0 and k (0 where k is past n or below 0): of numbers the build knows, the double nearest it; of
+  // names the page sets, n! / (k! (n − k)!) from the factorial table rounded to a whole number, exact while it is below
+  // 2^50 (the three roundings move it less than a millionth), no answer above it or for n past 170
+  if (op === 'binomial') { const [n, k] = items.map((x) => itemValue(x));
+    if (n === null || k === null) return { op, call: 'binomial', items, start: apply.start };
+    if (!Number.isSafeInteger(n) || !Number.isSafeInteger(k) || n < 0) throw refusal(apply.start, `binomial of ${n} and ${k}: this build takes whole n from 0 and whole k`);
+    if (k < 0 || k > n) return fixed('binomial', 0, items, apply.start);
+    let c = 1n; for (let i = 1n, kk = BigInt(Math.min(k, n - k)); i <= kk; i++) c = (c * (BigInt(n) - kk + i)) / i;
+    return fixed('binomial', Number(c), items, apply.start); }
   if (op === 'gcd' || op === 'lcm') { const vs = items.map((x) => itemValue(x));
     if (vs.includes(null)) throw refusal(apply.start, `${op} of a name the page sets: Euclid's algorithm loops as long as its numbers ask, which CSS can't; of whole numbers the build knows it is computed when the page is built`);
     if (!vs.every((v) => Number.isSafeInteger(v))) throw refusal(apply.start, `${op} of ${vs.find((v) => !Number.isSafeInteger(v))}: MathML's ${op} takes whole numbers, here within ±2^53`);
@@ -631,7 +641,17 @@ function former(divide) {
   const liveFactorial = (ne) => { const { P, mac, pickers } = kit(), n = mac('n', ne);
     decls.push([`${P}-n`, `round(${n}, 1)`], [`${P}-ok`, `(1 - abs(sign(${n} + (-1 * var(${P}-n))))) * (1 - sign(max(0, -1 * ${n}))) * (1 - sign(max(0, ${n} + -170)))`]);
     return `(${pickers('I', `var(${P}-n)`, 0, 170)('f', FACTK)} * (1 + 0 / var(${P}-ok)))`; };
+  const liveBinomial = (ne, ke) => { const { P, mac, pickers } = kit(), n = mac('n', ne), k = mac('k', ke);
+    decls.push([`${P}-n`, `round(${n}, 1)`], [`${P}-k`, `round(${k}, 1)`], [`${P}-m`, `var(${P}-n) + (-1 * var(${P}-k))`]);
+    // each table read at its index held to 0..170, so that no read is 0 and the quotient stays finite where k is past n
+    const f = (v, tag) => pickers(tag, `clamp(0, var(${P}-${v}), 170)`, 0, 170)(`f${tag}`, FACTK), q = mac('q', `round(${f('n', 'A')} / (${f('k', 'B')} * ${f('m', 'C')}), 1)`);
+    const whole = (v, w) => `(1 - abs(sign(${v} + (-1 * var(${P}-${w})))))`, ge = (a, b) => `(1 - sign(max(0, ${b} + (-1 * ${a}))))`;
+    // k past n or below 0 gives 0; otherwise an answer for whole n, k with n ≤ 170 and C(n, k) below 2^50
+    const inside = `${ge(`var(${P}-k)`, 0)} * ${ge(`var(${P}-m)`, 0)}`;
+    decls.push([`${P}-in`, inside], [`${P}-ok`, `${whole(n, 'n')} * ${whole(k, 'k')} * ${ge(`var(${P}-n)`, 0)} * (1 - ${inside} + ${inside} * ${ge(170, `var(${P}-n)`)} * ${ge(2 ** 50, q)})`]);
+    return `(${q} * var(${P}-in) * (1 + 0 / var(${P}-ok)))`; };
   const build = (node) => {
+    if (node.call === 'binomial') return liveBinomial(arg(node.items[0]), arg(node.items[1]));
     if (node.call === 'factorial') return liveFactorial(arg(node.items[0]));
     if (node.call === 'exp') return liveExp(arg(node.items.at(-1)));
     if (node.call === 'eset') return expr({ call: 'piecewise', conds: [{ set: ['e'] }], otherwise: true, items: [{ node: { call: 'power', items: node.items } }, { node: { call: 'exp', items: node.items.slice(1) } }] });
@@ -802,6 +822,7 @@ function write({ kind, root, value, decls: own, ints, sides }, math, src) {
     if (op === 'root') return node.degree === 2 ? `<msqrt${arg} intent="square-root(${ids})">${show(0)}</msqrt>` : `<mroot${arg} intent="root($a1,$a2)">${show(0)}<mn arg="a2">${node.degree}</mn></mroot>`;
     if (op === 'abs' || op === 'floor' || op === 'ceiling') { const [l, r] = { abs: ['|', '|'], floor: ['⌊', '⌋'], ceiling: ['⌈', '⌉'] }[op];
       return `<mrow${arg} intent="${op === 'abs' ? 'absolute-value' : op}(${ids})"><mo>${l}</mo>${show(0)}<mo>${r}</mo></mrow>`; }
+    if (op === 'binomial') return `<mrow${arg} intent="binomial(${ids})"><mo>(</mo><mfrac linethickness="0">${show(0)}${show(1)}</mfrac><mo>)</mo></mrow>`;
     if (op === 'factorial') return `<mrow${arg} intent="factorial(${ids})">${show(0, 9)}<mo>!</mo></mrow>`;
     if (op === 'log' && items.length === 2) return `<mrow${arg} intent="log(${ids})"><msub><mi>log</mi>${show(1)}</msub><mo>⁡</mo><mrow><mo>(</mo>${show(0)}<mo>)</mo></mrow></mrow>`;
     return `<mrow${arg} intent="${op}(${ids})"><mi>${op}</mi><mo>⁡</mo><mrow><mo>(</mo>${items.map((_, i) => show(i)).join('<mo>,</mo>')}<mo>)</mo></mrow></mrow>`;

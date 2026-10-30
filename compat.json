@@ -1916,7 +1916,7 @@
       },
       "A138": {
         "__compat": {
-          "description": "`mathml.mjs` MUST compute `<factorial/>` of a whole number n from 0 to 170 to the double nearest n!, when the page is built where it knows n and on the page where the page sets it, with no answer, error 1, for any other n on the page. `<gcd/>` and `<lcm/>` of whole numbers known when the page is built MUST be exact; of a formula the page sets they MUST stop the build with the reason.",
+          "description": "`mathml.mjs` MUST compute `<factorial/>` of a whole number n from 0 to 170 to the double nearest n!, when the page is built where it knows n and on the page where the page sets it, with no answer, error 1, for any other n on the page. `<gcd/>` and `<lcm/>` of whole numbers known when the page is built MUST be exact; of a formula the page sets they MUST stop the build with the reason. LaTeXML's binomial C(n, k) of whole n ≥ 0 MUST be the double nearest it (0 for k past n or below 0), and where the page sets n or k, with no answer, error 1, for n past 170, a fraction, or C(n, k) from 2^50 up.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {

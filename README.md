@@ -245,6 +245,7 @@ A formula converted from LaTeX by LaTeXML is taken as LaTeXML writes it: its Con
 | `<pi/>`, `<exponentiale/>`, OpenMath's `nums1` `pi` and `e`, and LaTeXML's 𝜋 and 𝑒 where the page defines no π or e | `Math.PI`, `Math.E`; LaTeXML's 𝜋 and 𝑒 read the page's `--π` and `--e` where it sets them. e to a power is exp(x), not `Math.pow(Math.E, x)` (another number for 92 of 100 x): of a number the build knows, worked out when the page is built; of a name the page sets, computed on the page, as `<exp/>` is |
 | `<exp/>`, `<ln/>`, `<log/>` (base 10, or a `<logbase>`), `<sin/>`, `<cos/>`, `<tan/>`, `<sec/>`, `<csc/>`, `<cot/>`, the hyperbolic ones, their inverses (`<arcsin/>`, `<arcsinh/>`…), and OpenMath's `transc1` | of numbers the build knows: the double nearest the true value, worked out when the page is built and written in (sec x is 1 / cos x, arcsec x is acos(1 / x), each rounded once); of a name the page sets, `<exp/>` is computed on the page to the same double (below), and the others stop the build |
 | `<factorial/>` (or `integer1`'s) of a whole n from 0 to 170 | n!, the double nearest it: of a number the build knows, worked out when the page is built; of a name the page sets, picked on the page from the 171; any other n leaves no answer |
+| LaTeXML's \binom (`binomial`), C(n, k) of whole n from 0 | the double nearest C(n, k), 0 for k past n or below 0: of numbers the build knows, worked out when the page is built; of names the page sets, n! / (k! (n − k)!) from the table rounded to a whole number, exact below 2^50, and no answer above it or past n = 170 |
 | `<gcd/>`, `<lcm/>` (or `arith1`'s) of whole numbers the build knows | the greatest common divisor and least common multiple, exactly; of a name the page sets, they stop the build (Euclid's algorithm loops as long as its numbers ask) |
 | `<quotient/>`, `<rem/>` of whole numbers within ±2^26 | `Math.trunc(a / b)` and `a % b` (MathML's integer division: the remainder takes a's sign); a fraction, a divisor of 0 or a larger number leaves no answer |
 | `<root/>`, with a `<degree>`, or arith1's `root` | of a number the build knows, any whole degree: the double nearest the true root (∛64 is 4, ∛−8 is −2); of a name the page sets, `Math.sqrt`, or `Math.pow(x, 1 / n)` for 4, 8 or another power of 2, and any other degree stops the build: `Math.pow(64, 1 / 3)` is 3.9999999999999996 |
@@ -1412,7 +1413,7 @@ Formulas, an update forced:
 
 Share a result through a reader rather than copy a computation into each formula, and keep stages few.
 
-A MathML exp of a name the page sets writes 118 registered or written steps; a change of x, style and layout forced (2026-10-30): 3.7 ms in Chrome, 8 ms in WebKit 26.4, against 0.4 and 1.0 for x · 2.
+A MathML factorial of a name the page sets costs 0.8 ms a change in Chrome and 1.0 in WebKit, a binomial of two names 1.9 and 3.0 (2026-10-30). A MathML exp of a name the page sets writes 118 registered or written steps; a change of x, style and layout forced (2026-10-30): 3.7 ms in Chrome, 8 ms in WebKit 26.4, against 0.4 and 1.0 for x · 2.
 
 A MathML sum to a bound the page sets, min(n, C), writes each term out with seven registered steps; a change of n, style and layout forced (2026-10-30): C = 10, 60, 100 and 360 take 0.9, 3.6, 4.2 and 13.5 ms in Chrome, 2, 7, 9 and 36 ms in WebKit 26.4. The build takes C up to 100.
 

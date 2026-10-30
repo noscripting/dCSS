@@ -6,6 +6,7 @@ All notable changes to dcss-array.css are written here. The format follows [Keep
 
 ### Added
 
+- `mathml.mjs` takes LaTeXML's \binom: C(n, k) exactly where the build knows n and k, and where the page sets them, n! / (k! (n − k)!) from the factorial table rounded to a whole number, exact below 2^50 (no answer above, or past n = 170).
 - `mathml.mjs` takes `<factorial/>`, `<gcd/>` and `<lcm/>`: n! for whole n from 0 to 170 is the double nearest it, worked out when the page is built or picked on the page from the 171 when the page sets n (any other n, no answer); gcd and lcm of whole numbers the build knows, exactly. A value the build works out from 3.4e38 up is written as m · 2^e, which Chrome doesn't clamp, so 170! no longer stops the build.
 - `mathml.mjs` computes exp of a name the page sets on the page, to the double nearest the true value: e^x as a pair of doubles carried to about 2^-76 (Cody-Waite reduction, a 64-entry table, a degree-8 polynomial, TwoSum and TwoProduct, each step fenced and exact in both engines), shown rounded unless it lies too near halfway (about 3 in a million) or x is outside −708 to 709. P·e^(rt), the normal density and logistic growth now build: 27 of 29 textbook formulas. About 68 KB of style each; 3.7 ms a change in Chrome, 8 in WebKit.
 - `mathml.mjs` takes a root of any whole degree of a number it knows, the double nearest the true root: ∛64 is 4 and ∛−8 is −2 (`Math.pow(64, 1 / 3)` is 3.9999999999999996). Of a name the page sets, degrees other than powers of 2 still stop the build.
