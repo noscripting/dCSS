@@ -596,8 +596,10 @@ function former(divide) {
     const [Th, Tl, Thh, Thl] = [0, 1, 2, 3].map(tab), [phh, phl] = halves('g', ph), m = mac('m', mul(Th, ph));
     const me = add(add(add(sub(mul(Thh, phh), m), mul(Thh, phl)), mul(Thl, phh)), mul(Thl, phl));
     const [yh, yt] = fast('y', Th, m), low = mac('lo', add(yt, add(me, add(Tl, add(mul(Th, pl), mul(Tl, ph)))))), [zh, zl0] = fast('z', yh, low), zl = mac('zl', zl0);
-    // halfway: half an ulp of zh (2^-53 below 1, 2^-52 from 1; zh is in [0.99, 2)) against |zl|, with 2^-72 to spare
-    decls.push([`${P}-ok`, `var(${P}-d) * var(${P}-rh-f) * var(${P}-rl-f) * var(${P}-s-f) * var(${P}-p0-f) * sign(max(0, pow(2, -54) * (2 - sign(max(0, 1 + (-1 * ${zh})))) + (-1 * abs(${zl})) + ${-(2 ** -72)}))`]);
+    // halfway, on zl's side: zh is in [0.99, 2), so half an ulp is 2^-54 below 1 and 2^-53 from 1 up, but 2^-54 again at
+    // zh = 1 with zl below it (the doubles under 1 are twice as close); |zl| must be 2^-72 short of it
+    const above = `(1 - sign(max(0, 1 + (-1 * ${zh}))))`, atOneDown = `(1 - abs(sign(${zh} + -1))) * sign(max(0, -1 * ${zl}))`;
+    decls.push([`${P}-ok`, `var(${P}-d) * var(${P}-rh-f) * var(${P}-rl-f) * var(${P}-s-f) * var(${P}-p0-f) * sign(max(0, pow(2, -54) * (1 + ${above} * (1 - ${atOneDown})) + (-1 * abs(${zl})) + ${-(2 ** -72)}))`]);
     return `(${zh} * pow(2, var(${P}-E)) * (1 + 0 / var(${P}-ok)))`; };
   const build = (node) => {
     if (node.call === 'exp') return liveExp(arg(node.items.at(-1)));
