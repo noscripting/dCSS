@@ -36,7 +36,7 @@ latexmlmath --cmml=- 'M = \frac{P r}{1 - (1 + r)^{-n}}'
 
 ## Without the build
 
-Each call is a class, and a file in `parts/`. One class per figure, each with its own list: two on one figure answer wrong. A sum is a `<figure>` around a list: the browser lays the list out, and its size is the answer. This page links two parts that come to 6 KB gzipped, and prints a total and an average:
+Each call is a class, and a file in `parts/`. One class per figure (two answer wrong); `.dcss-summarize` gives several from one list. A sum is a `<figure>` around a list: the browser lays the list out, and its size is the answer. This page links two parts that come to 6 KB gzipped:
 
 ```html
 <!doctype html>
@@ -127,7 +127,7 @@ An axis on a nice domain reads `.dcss-nice`'s `--dcss-nice-start` and `--dcss-ni
 </figure>
 ```
 
-A median, quantile or variance reads its list through three nested elements. Put what reads it in the innermost:
+A median, quantile, variance or summary reads its list through three nested elements; read it in the innermost:
 
 ```html
 <figure class="dcss-median">
@@ -137,6 +137,18 @@ A median, quantile or variance reads its list through three nested elements. Put
   </div></div></div>
 </figure>
 ```
+One list, several answers:
+
+```html
+<figure class="dcss-summarize">
+  <ul><li style="--value: 72.5"></li> <li style="--value: 88"></li> <li style="--value: 95"></li> <li style="--value: 47"></li></ul>
+  <div><div><div>
+    <output class="dcss-format-fixed" style="--value: var(--dcss-mean); --precision: 1"></output>   <!-- 75.6 -->
+    <output class="dcss-format-fixed" style="--value: var(--dcss-max); --precision: 1"></output>    <!-- 95.0 -->
+  </div></div></div>
+</figure>
+```
+
 
 ## Reference
 
@@ -153,6 +165,7 @@ Each call gives its answer as `--dcss-` and its name, with `--dcss-ready` and `-
 ### Array: families/array.css
 
 - [`.dcss-sum`](https://d3js.org/d3-array/summarize#sum), [`.dcss-mean`](https://d3js.org/d3-array/summarize#mean), [`.dcss-count`](https://d3js.org/d3-array/summarize#count), `.dcss-length`, [`.dcss-min`](https://d3js.org/d3-array/summarize#min), [`.dcss-max`](https://d3js.org/d3-array/summarize#max), [`.dcss-extent`](https://d3js.org/d3-array/summarize#extent): of the list; length counts its items.
+- `.dcss-summarize`: sum, count, length, mean, min and max of one list, three elements deep.
 - [`.dcss-min-index`](https://d3js.org/d3-array/summarize#minIndex), [`.dcss-max-index`](https://d3js.org/d3-array/summarize#maxIndex), [`.dcss-least-index`](https://d3js.org/d3-array/summarize#leastIndex), [`.dcss-greatest-index`](https://d3js.org/d3-array/summarize#greatestIndex), [`.dcss-least`](https://d3js.org/d3-array/summarize#least), [`.dcss-greatest`](https://d3js.org/d3-array/summarize#greatest): where the least or greatest is, or its value.
 - [`.dcss-median`](https://d3js.org/d3-array/summarize#median), [`.dcss-quantile`](https://d3js.org/d3-array/summarize#quantile), [`.dcss-quantile-sorted`](https://d3js.org/d3-array/summarize#quantileSorted), [`.dcss-median-index`](https://d3js.org/d3-array/summarize#medianIndex), [`.dcss-quantile-index`](https://d3js.org/d3-array/summarize#quantileIndex), [`.dcss-variance`](https://d3js.org/d3-array/summarize#variance), [`.dcss-deviation`](https://d3js.org/d3-array/summarize#deviation): read three elements deep; `--p` places a quantile.
 - [`.dcss-scale-quantile`](https://d3js.org/d3-scale/quantile#scaleQuantile), [`.dcss-scale-threshold`](https://d3js.org/d3-scale/threshold#scaleThreshold), [`.dcss-scale-quantize`](https://d3js.org/d3-scale/quantize#scaleQuantize): `--value` to `--range-0` to `--range-16` (`--ranges` of them) or `--unknown`, by the list four elements deep or by `--domain-0` to `--domain-15`.
@@ -223,7 +236,7 @@ Each call gives its answer as `--dcss-` and its name, with `--dcss-ready` and `-
 
 <!-- browsers -->
 
-Headless Chrome 155 and WebKit 26.4, Safari's engine, pass all 160 requirements of [SPEC.md](SPEC.md), and the calls match d3 on 3,206 of the 7,049 calls in d3's tests. Firefox 158 computes `calc()` in 32-bit floats, so exact sums, dates and most formatting go wrong there: it passes 71. [QUIRKS.md](QUIRKS.md) has the engine bugs.
+Headless Chrome 155 and WebKit 26.4, Safari's engine, pass all 161 requirements of [SPEC.md](SPEC.md), and the calls match d3 on 3,206 of the 7,049 calls in d3's tests. Firefox 158 computes `calc()` in 32-bit floats, so exact sums, dates and most formatting go wrong there: it passes 71. [QUIRKS.md](QUIRKS.md) has the engine bugs.
 
 <!-- /browsers -->
 
@@ -231,7 +244,7 @@ Headless Chrome 155 and WebKit 26.4, Safari's engine, pass all 160 requirements 
 
 <!-- performance -->
 
-Layout does the work, in the frame a number changes. A family is at most 22 KB gzipped and loads in 15 ms or less in WebKit 26.4 (2026-10-28). Twenty printed medians, a value moving: 7.6 ms a frame in Chrome, 14.3 in WebKit; variance 22.3, 12.4 (2026-10-30).
+Layout does the work, in the frame a number changes. A family is at most 23 KB gzipped and loads in 15 ms or less in WebKit 26.4 (2026-10-28). Twenty printed medians, a value moving: 7.6 ms a frame in Chrome, 14.3 in WebKit; variance 22.3, 12.4 (2026-10-30).
 
 <!-- /performance -->
 
