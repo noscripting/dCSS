@@ -614,7 +614,8 @@ function former(divide) {
   // transformations (TwoSum, FastTwoSum, Veltkamp's halves, Dekker's TwoProduct) and pairs (double-doubles) added and multiplied
   const kit = () => { const k = ++id, P = `--dcss-dcss-x${k}`, named = new Set();
     const mac = (n, v) => { if (named.has(n)) throw new Error(`macro ${n} twice`); named.add(n); decls.push([`--dcss-dcss-y${k}-${n}`, `(${v})`]); return `var(--dcss-dcss-y${k}-${n})`; };
-    const store = (n, v) => { const q = `${P}-${n}`; for (const z of 'eabcz') decls.push([`${q}-${z}`, SPLIT[z](q, `clamp(-1 * pow(2, 1023), ${v}, pow(2, 1023))`)]); decls.push([`${q}-f`, `${v} * 0 + 1`]); return join(q); };
+    // a stored step's −0 flag is 0: no step of these functions passes a sign of zero on (sin's answer takes x's)
+    const store = (n, v) => { const q = `${P}-${n}`; for (const z of 'eabc') decls.push([`${q}-${z}`, SPLIT[z](q, `clamp(-1 * pow(2, 1023), ${v}, pow(2, 1023))`)]); decls.push([`${q}-z`, '0'], [`${q}-f`, `${v} * 0 + 1`]); return join(q); };
     const add = (a, b) => F(`${a} + ${b}`), sub = (a, b) => F(`${a} + (-1 * ${b})`), mul = (a, b) => F(`${a} * ${b}`), num = (v) => (Object.is(v, -0) ? '(-1 * 0)' : String(v));
     const twoSum = (n, a, b) => { const s = mac(`${n}s`, add(a, b)), bb = mac(`${n}b`, sub(s, a)); return [s, add(sub(a, sub(s, bb)), sub(b, bb))]; };
     const fast = (n, a, b) => { const s = mac(`${n}s`, add(a, b)); return [s, sub(b, sub(s, a))]; };
