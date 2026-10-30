@@ -193,6 +193,7 @@ const asNode = (x) => x.node ?? { op: 'id', call: 'id', items: [x] };
 function call(apply) {
   const kids = elements(apply), head = kids[0];
   if (!head) throw refusal(apply.start, 'an empty <apply>');
+  const ix = indexForm(head, kids); if (ix) return indexed(ix, apply);
   if (head.name === 'apply') throw refusal(head.start, 'a nested <apply> as the operator: one operator applied to numbers');
   let op, args = kids.slice(1), degree = 2;
   if (head.name === 'csymbol' && head.attrs.cd === 'ambiguous' && textOf(head).trim() === 'superscript') op = 'power'; // LaTeXML's x^2, read as a power
@@ -242,6 +243,8 @@ function item(a, defining = false) {
     if (sub) { // LaTeXML's x_1: one name, x_1, read from --x_1 and drawn as a subscript
       const [, base, index, ...more] = elements(a);
       if (!base || !index || more.length || base.name !== 'ci' || !['ci', 'cn'].includes(index.name) || elements(base).length || elements(index).length) throw refusal(a.start, 'a subscript other than a name and one name or number (x_1, x_i): this build reads those as one name');
+      const iv = index.name === 'ci' ? INDEX.get(textOf(index).trim().normalize('NFKC')) : undefined; // x_i inside a sum over i
+      if (iv !== undefined && iv !== null) return named({ ci: `${textOf(base).trim()}_${iv}`.normalize('NFKC'), sub: [textOf(base).trim().normalize('NFKC'), String(iv), 'cn'] }, a, defining);
       const id = `${textOf(base).trim()}_${textOf(index).trim()}`.normalize('NFKC');
       if (!/^-?[_a-zA-Z\u0080-\u{10FFFF}][-_a-zA-Z0-9\u0080-\u{10FFFF}]*$/u.test(id)) throw refusal(a.start, `the subscripted name ${id} is no CSS identifier`);
       return named({ ci: id, sub: [textOf(base).trim().normalize('NFKC'), textOf(index).trim().normalize('NFKC'), index.name] }, a, defining);
@@ -256,6 +259,7 @@ function item(a, defining = false) {
     // a CSS identifier: letters past ASCII too (𝑚)
     if (!/^-?[_a-zA-Z\u0080-\u{10FFFF}][-_a-zA-Z0-9\u0080-\u{10FFFF}]*$/u.test(id)) throw refusal(a.start, `<ci>${id}</ci>: a name must be a CSS identifier`);
     if (RESERVED.test(id)) throw refusal(a.start, `<ci>${id}</ci>: --${id} is a name dcss itself reads or writes`);
+    if (INDEX.has(id) && INDEX.get(id) !== null) { const v = INDEX.get(id); return { x: v, neg: v < 0, mag: `<mn>${Math.abs(v)}</mn>` }; } // a sum's index
     if (id === 'π' && !defining && !DEFS.has(id) && !LATER.has(id)) return { ci: 'π', fallback: String(Math.PI) }; // π, or the page's --π
     return named({ ci: id }, a, defining);
   }
@@ -268,6 +272,54 @@ function constantOf(a) {
   if ((a.name === 'pi' || a.name === 'exponentiale') && blank(a) && !elements(a).length) return CONSTANTS[a.name === 'pi' ? 'pi' : 'e'];
   if (a.name === 'csymbol' && a.attrs.cd === 'nums1' && ['pi', 'e'].includes(textOf(a).trim())) return CONSTANTS[textOf(a).trim()];
   return null;
+}
+// a sum or product over an index, i from lo to hi of a body: MathML 4's <sum/> with <bvar>, <lowlimit> and <uplimit>
+// (or a closed <interval>), and LaTeXML's ∑ with i = lo below and hi above. Unrolled when the page is built, each term the
+// body with i a number (x_i reads --x_3), and added as JavaScript's loop adds them, s = 0, s += term (a product from 1):
+// so a term with no value leaves no answer. The bounds are whole numbers the build knows: written, or a name a formula
+// above defines with numbers; one the page sets at run time, or an infinite one, stops the build
+const MAX_TERMS = 1000;
+let INDEX = new Map(); // an index being unrolled: its number, or null where the body is drawn as written
+const isSym = (n, name) => n?.name === 'csymbol' && n.attrs.cd === 'ambiguous' && textOf(n).trim() === name;
+function indexForm(head, kids) {
+  const [, ...args] = kids;
+  if (head.name === 'sum' || head.name === 'product') {
+    const q = (k) => args.filter((a) => a.name === k), bv = q('bvar'), lo = q('lowlimit'), hi = q('uplimit'), iv = q('interval');
+    for (const k of ['condition', 'domainofapplication']) if (q(k).length) throw refusal(q(k)[0].start, `<${k}>: a ${head.name} over a set or a condition isn't taken; give it <lowlimit> and <uplimit>`);
+    const body = args.filter((a) => !['bvar', 'lowlimit', 'uplimit', 'interval'].includes(a.name));
+    if (bv.length !== 1 || elements(bv[0]).length !== 1 || elements(bv[0])[0].name !== 'ci') throw refusal(head.start, `<${head.name}/> binds one <bvar><ci>i</ci></bvar>: its index`);
+    let l, h;
+    if (iv.length === 1 && !lo.length && !hi.length) { if ((iv[0].attrs.closure ?? 'closed') !== 'closed' || elements(iv[0]).length !== 2) throw refusal(iv[0].start, 'an <interval> of a sum is closed, its two ends'); [l, h] = elements(iv[0]); }
+    else if (lo.length === 1 && hi.length === 1 && !iv.length && elements(lo[0]).length === 1 && elements(hi[0]).length === 1) { l = elements(lo[0])[0]; h = elements(hi[0])[0]; }
+    else throw refusal(head.start, `<${head.name}/> takes its range as one <lowlimit> and one <uplimit>, or a closed <interval>`);
+    if (body.length !== 1) throw refusal(head.start, `<${head.name}/> of ${body.length} terms: it takes one body, the term`);
+    return { op: head.name, name: textOf(elements(bv[0])[0]).trim().normalize('NFKC'), lo: l, hi: h, body: body[0], at: head.start };
+  }
+  // LaTeXML's: (superscript (subscript <sum/> (eq i lo)) hi) applied to the body
+  if (head.name !== 'apply') return null;
+  const [sup, under, hi] = elements(head);
+  if (!isSym(sup, 'superscript') || under?.name !== 'apply') return null;
+  const [sub, op, cond] = elements(under);
+  if (!isSym(sub, 'subscript') || !['sum', 'product'].includes(op?.name)) return null;
+  if (!hi || elements(head).length !== 3 || cond?.name !== 'apply' || elements(under).length !== 3) throw refusal(head.start, `a ${op.name} with no range: this build adds over i = lo to hi`);
+  const [eq, i, lo, ...more] = elements(cond);
+  if (eq?.name !== 'eq' || i?.name !== 'ci' || !lo || more.length) throw refusal(cond.start, `a ${op.name} over ${eq?.name === 'in' ? 'a set' : 'a condition'}: this build adds over i = lo to hi`);
+  if (kids.length !== 2) throw refusal(head.start, `a ${op.name} of ${kids.length - 1} terms: it takes one body, the term`);
+  return { op: op.name, name: textOf(i).trim().normalize('NFKC'), lo, hi, body: kids[1], at: head.start };
+}
+const withIndex = (name, v, f) => { const was = INDEX.has(name) ? INDEX.get(name) : undefined; INDEX.set(name, v); try { return f(); } finally { if (was === undefined) INDEX.delete(name); else INDEX.set(name, was); } };
+function indexed(ix, apply) {
+  if (ix.hi.name === 'infinity') throw refusal(ix.hi.start, `an infinite ${ix.op}: it has no last term to add`);
+  const bound = (el) => { const it = item(el), v = itemValue(it);
+    if (v === null) throw refusal(el.start, `a ${ix.op}'s bound the page sets at run time: this build unrolls the ${ix.op} when the page is built, so a bound is a number, or a name a formula above defines with numbers`);
+    if (!Number.isInteger(v)) throw refusal(el.start, `a ${ix.op}'s bound of ${v}: the index runs over whole numbers`);
+    return [it, v]; };
+  const [loItem, lo] = bound(ix.lo), [hiItem, hi] = bound(ix.hi);
+  if (hi - lo + 1 > MAX_TERMS) throw refusal(ix.at, `a ${ix.op} of ${hi - lo + 1} terms, past the ${MAX_TERMS} this build writes out`);
+  const display = withIndex(ix.name, null, () => item(ix.body)), terms = [];
+  for (let v = lo; v <= hi; v++) terms.push(withIndex(ix.name, v, () => item(ix.body)));
+  const call = ix.op === 'sum' ? 'isum' : 'iproduct';
+  return { op: call, call, items: terms, display, index: ix.name, loItem, hiItem, start: apply.start };
 }
 // MathML 4's <piecewise> (4.3.10.5): the first <piece> whose condition holds gives the value, else <otherwise>, as
 // JavaScript's if/else chain does; with none holding and no <otherwise>, no answer. A condition is a relation (<lt/>,
@@ -341,6 +393,7 @@ const D3 = {
   minus: (xs) => (xs.length === 1 ? -xs[0] : xs[0] - xs[1]), times: (xs) => xs.reduce((a, b) => a * b), divide: (xs) => xs[0] / xs[1],
   power: (xs) => Math.pow(xs[0], xs[1]), root: (xs, n) => (n.degree === 2 ? Math.sqrt(xs[0]) : Math.pow(xs[0], 1 / n.degree)),
   abs: (xs) => Math.abs(xs[0]), floor: (xs) => Math.floor(xs[0]), ceiling: (xs) => Math.ceil(xs[0]),
+  isum: (xs) => xs.reduce((s, x) => s + x, 0), iproduct: (xs) => xs.reduce((p, x) => p * x, 1),
   sum: (xs) => xs.reduce((s, x) => s + x, 0), mean: (xs) => xs.reduce((s, x) => s + x, 0) / xs.length,
   min: (xs) => Math.min(...xs), max: (xs) => Math.max(...xs), id: (xs) => xs[0],
   median: (xs) => { const s = [...xs].sort((a, b) => a - b), i0 = Math.floor((s.length - 1) / 2); return s.length % 2 ? s[i0] : s[i0] + (s[i0 + 1] - s[i0]) * 0.5; },
@@ -386,7 +439,8 @@ function former(divide) {
     }
     // d3.sum and d3.mean add from 0, as a loop does: 0 + -0 is 0, so a sum of -0s is 0 (each term after is added exactly)
     const total = () => ['0', ...xs].reduce((a, b) => F(`${a} + ${b}`));
-    if (node.call === 'sum') return total();
+    if (node.call === 'sum' || node.call === 'isum') return total();
+    if (node.call === 'iproduct') return ['1', ...xs].reduce((a, b) => F(`${a} * ${b}`)); // as p = 1, p *= term
     if (node.call === 'mean') return divide(total(), xs.length);
     // a - b as a + -1 · b, the same IEEE double: WebKit's calc() gives -0 - 0 as 0 (JavaScript -0), and 1 / it would flip
     if (node.call === 'minus') return xs.length === 1 ? `(-1 * ${xs[0]})` : F(`${xs[0]} + (-1 * ${xs[1]})`);
@@ -468,15 +522,18 @@ function write({ kind, root, value, decls: own, ints, sides }, math, src) {
   // infix; fractions, powers, roots and bars as MathML draws them; a negative as an operator; parentheses only where a
   // lower operator sits inside a higher one. Each argument is named for its call's intent; the search for a name stops
   // at an element with its own intent (MathML 4, 5.1), so an inner call's names are its own
-  const PREC = { plus: 1, minus: 1, times: 2, power: 4 }; // the rest stand alone
+  const PREC = { plus: 1, minus: 1, isum: 1, iproduct: 1, times: 2, power: 4 }; // the rest stand alone
   const prec = (x) => (x.node?.op === 'id' ? prec(x.node.items[0]) : x.node ? (x.node.op === 'minus' && x.node.items.length === 1 ? 3 : PREC[x.node.op] ?? 9) : x.neg ? 3 : 9);
   const pres = (node, arg = '') => {
     const { op, items } = node, ids = items.map((_, i) => `$a${i + 1}`).join(',');
-    const show = (i, need = 0) => { const x = items[i].node?.op === 'id' ? items[i].node.items[0] : items[i], a = ` arg="a${i + 1}"`;
-      const m = x.node ? pres(x.node, a) : x.sub ? `<msub${a}><mi>${esc(x.sub[0])}</mi><${x.sub[2] === 'cn' ? 'mn' : 'mi'}>${esc(x.sub[1])}</${x.sub[2] === 'cn' ? 'mn' : 'mi'}></msub>` : x.ci ? `<mi${a}>${esc(x.ci)}</mi>`
+    const draw = (x, a = '') => (x.node ? pres(x.node, a) : x.sub ? `<msub${a}><mi>${esc(x.sub[0])}</mi><${x.sub[2] === 'cn' ? 'mn' : 'mi'}>${esc(x.sub[1])}</${x.sub[2] === 'cn' ? 'mn' : 'mi'}></msub>` : x.ci ? `<mi${a}>${esc(x.ci)}</mi>`
         : !x.neg ? (x.mag.startsWith('<mn>') && x.mag.indexOf('<', 1) === x.mag.indexOf('</mn>') ? `<mn${a}>${x.mag.slice(4)}` : `<mrow${a}>${x.mag}</mrow>`)
-        : `<mrow${a}><mo>−</mo>${x.mag}</mrow>`;
-      return prec(x) < need ? `<mrow><mo>(</mo>${m}<mo>)</mo></mrow>` : m; };
+        : `<mrow${a}><mo>−</mo>${x.mag}</mrow>`);
+    const bare = (x) => (x.node?.op === 'id' ? x.node.items[0] : x), paren = (x, m, need) => (prec(x) < need ? `<mrow><mo>(</mo>${m}<mo>)</mo></mrow>` : m);
+    const show = (i, need = 0) => { const x = bare(items[i]); return paren(x, draw(x, ` arg="a${i + 1}"`), need); };
+    if (op === 'isum' || op === 'iproduct') { // the sign with its range under and over it, then the body as written
+      const body = bare(node.display);
+      return `<mrow${arg}><munderover><mo>${op === 'isum' ? '∑' : '∏'}</mo><mrow><mi>${esc(node.index)}</mi><mo>=</mo>${draw(bare(node.loItem))}</mrow>${draw(bare(node.hiItem))}</munderover>${paren(body, draw(body), 2)}</mrow>`; }
     const infix = (sign, need) => items.map((x, i) => show(i, prec(x) === 3 ? 4 : need(i))).join(`<mo>${esc(sign)}</mo>`);
     if (op === 'eq' || op === 'assign') return `<mrow${arg} intent="${op === 'eq' ? 'equals' : 'assign'}(${ids})">${items.map((_, i) => show(i)).join(`<mo>${op === 'eq' ? '=' : '≔'}</mo>`)}</mrow>`;
     if (op in RELS) return `<mrow${arg} intent="${{ lt: 'less-than', leq: 'less-than-or-equal', gt: 'greater-than', geq: 'greater-than-or-equal' }[op]}(${ids})">${infix(RELS[op], () => 0)}</mrow>`;
