@@ -1,6 +1,6 @@
-# dcss-array.css: QUIRKS
+# dcss.css: QUIRKS
 
-The engine bugs dcss-array.css meets when it computes with layout, and what the sheet does about each. The reftest pages and scripts named below are in the noscript.ing repository ([github.com/noscripting/noscript.ing](https://github.com/noscripting/noscript.ing)), under `libraries/dcss/`.
+The engine bugs dcss.css meets when it computes with layout, and what the sheet does about each. The reftest pages and scripts named below are in the noscript.ing repository ([github.com/noscripting/noscript.ing](https://github.com/noscripting/noscript.ing)), under `libraries/dcss/`.
 
 Measured 2026-10-22, headless: Chrome 155.0.8059.86, WebKit 26.4, Firefox 158.0.
 

@@ -8,7 +8,8 @@
 // jan]) to the bit, jan read from --jan on an ancestor (unset: no answer, --dcss-err 1). Only a <math> whose one element
 // child is an <apply> of an operator it takes, or a <piecewise>, is compiled; the rest of the page is copied byte for byte, so the build
 // run on its own output changes nothing.
-import { readFileSync, writeFileSync } from 'node:fs';
+import { createHash } from 'node:crypto';
+import { readFileSync, realpathSync, watchFile, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 const manifest = JSON.parse(readFileSync(new URL('families.json', import.meta.url), 'utf8')), families = manifest.families;
 // the family sheets a page's dcss- classes need, in families.json's order (as runtime.mjs picks them, read from the
@@ -49,8 +50,9 @@ const refusal = (at, why) => Object.assign(new Refusal(why), { at });
 const attrRe = /([^\s"'>/=]+)(?:\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'=<>`]+)))?/g;
 const readAttrs = (s, at) => { const out = {}; for (const m of s.matchAll(attrRe)) { const k = m[1].toLowerCase(); if (!(k in out)) out[k] = decode(m[2] ?? m[3] ?? m[4] ?? '', at); } return out; };
 // one tag at i (s[i] === '<'): { name, end, close, self, attrs, length } or null for text
+const TAG = /<(\/?)([a-zA-Z][^\s/>]*)((?:\s+(?:[^\s"'>/=]+(?:\s*=\s*(?:"[^"]*"|'[^']*'|[^\s"'=<>`]+))?)|\s*\/(?!>))*)\s*(\/?)>/y;
 const tagAt = (s, i) => {
-  const m = /^<(\/?)([a-zA-Z][^\s/>]*)((?:\s+(?:[^\s"'>/=]+(?:\s*=\s*(?:"[^"]*"|'[^']*'|[^\s"'=<>`]+))?)|\s*\/(?!>))*)\s*(\/?)>/.exec(s.slice(i, i + 4096));
+  TAG.lastIndex = i; const m = TAG.exec(s); // the whole tag, however long (a built scope's start tag passes 40 KB)
   return m && { name: m[2].toLowerCase(), close: !!m[1], self: !!m[4], rawAttrs: m[3], length: m[0].length };
 };
 
@@ -248,8 +250,9 @@ export const FACTK = FACT.map((f) => splitInts(Number(f)));
 export const rootOf = (x, n) => (x === 0 ? x : x < 0 ? (n % 2 ? -rootOf(-x, n) : NaN) : trueOf((c, X) => c.ex(c.ln(X) / BigInt(n)))(x));
 const WHY = {
   sum: '<sum/> binds a variable over limits; a list of numbers is added with <plus/>',
-  variance: "MathML doesn't say it divides by n - 1, as d3 and dcss do", sdev: "MathML doesn't say it divides by n - 1, as d3 and dcss do",
-  mode: 'dcss has no mode', moment: 'dcss has no moment', card: "a set's size drops repeated values, which d3.count counts",
+  variance: "MathML doesn't say whether it divides by n or n - 1; d3's, which divides by n - 1, is <csymbol definitionURL=\"https://d3js.org/d3-array/summarize#variance\">variance</csymbol>",
+  sdev: "MathML doesn't say whether it divides by n or n - 1; d3's, which divides by n - 1, is <csymbol definitionURL=\"https://d3js.org/d3-array/summarize#deviation\">deviation</csymbol>",
+  mode: "MathML doesn't say which value a tie gives; d3's, the first value to reach the count, is <csymbol definitionURL=\"https://d3js.org/d3-array/summarize#mode\">mode</csymbol>", moment: 'dcss has no moment', card: "a set's size drops repeated values, which d3.count counts",
 };
 const QUALIFIERS = new Set(['bvar', 'condition', 'domainofapplication', 'lowlimit', 'uplimit', 'degree', 'momentabout', 'interval']);
 // a <ci> name dcss reads or writes itself: the formula would read that, not the page's value
@@ -263,10 +266,27 @@ const RESERVED = /^(value|dcss-.*)$/;
 // compared (JavaScript's 0.1 + 0.2 === 0.3 is false, and so is (a + b)² === a² + 2ab + b² for about half of inputs), and a
 // review (2026-10-29, four readers) split four ways on a verdict; two values never claim anything wrong
 const RELS = { lt: '<', leq: '≤', gt: '>', geq: '≥' };
-let DEFS = new Map(), LATER = new Map(); // the page's definitions before the formula being compiled, and after it
+// one build's state (toDcss starts a fresh one and puts the one before back, so two builds share nothing): the definitions
+// the formula being compiled sees (defs: above it in its own data-dcss-scope or one around it; later: further down
+// there; elsewhere: in a scope it isn't in, line by name) and the indexes of the sums being unrolled (index: a number,
+// or null where the body is drawn as written)
+let CX = { defs: new Map(), later: new Map(), elsewhere: new Map(), index: new Map(), series: new Map(), seriesElsewhere: new Map() };
 const isAssign = (h) => h?.name === 'csymbol' && h.attrs.cd === 'latexml' && textOf(h).trim() === 'assign';
 const subName = (a) => a?.name === 'apply' && elements(a)[0]?.name === 'csymbol' && elements(a)[0].attrs.cd === 'ambiguous' && textOf(elements(a)[0]).trim() === 'subscript';
-const loneName = (a) => (a?.name === 'ci' && !elements(a).length ? textOf(a).trim().normalize('NFKC') : subName(a) && elements(a).length === 3 && ['ci', 'cn'].includes(elements(a)[2].name) ? `${textOf(elements(a)[1]).trim()}_${textOf(elements(a)[2]).trim()}`.normalize('NFKC') : null);
+// a word as a subscript, v_{\text{max}} (LaTeXML's <ci><mtext>) or T_{room} (its product of letters, none a sum's index):
+// one name, v_max, T_room
+const wordOf = (x) => (x?.name === 'ci' && elements(x).length === 1 && elements(x)[0].name === 'mtext' && /^[\p{L}\p{N}]+$/u.test(textOf(x).trim()) ? textOf(x).trim()
+  : x?.name === 'apply' && elements(x)[0]?.name === 'times' && elements(x).length > 2 && elements(x).slice(1).every((c) => c.name === 'ci' && !elements(c).length && /^\p{L}$/u.test(textOf(c).trim().normalize('NFKC')) && !CX.index.has(textOf(c).trim().normalize('NFKC')))
+    ? elements(x).slice(1).map((c) => textOf(c).trim().normalize('NFKC')).join('') : null);
+// LaTeXML's \bar{x}, \overline{x}, \hat{p} and \tilde{y}, an <apply> of the mark: one name, the letter and its combining mark
+// (x̄ is --x̄), as statistics writes a mean or an estimate
+const ACCENT = { '¯': '\u0304', '^': '\u0302', '~': '\u0303', '˜': '\u0303' };
+const accentOf = (a) => { const [h, x, ...more] = a?.name === 'apply' ? elements(a) : [];
+  return h?.name === 'ci' && !elements(h).length && textOf(h).trim() in ACCENT && x?.name === 'ci' && !elements(x).length && !more.length ? [textOf(x).trim().normalize('NFKC'), textOf(h).trim()] : null; };
+const loneName = (a) => { const acc = accentOf(a); if (acc) return acc[0] + ACCENT[acc[1]];
+  if (a?.name === 'ci' && !elements(a).length) return textOf(a).trim().normalize('NFKC');
+  const ix = subName(a) && elements(a).length === 3 ? elements(a)[2] : null, w = wordOf(ix);
+  return ix && (w || ['ci', 'cn'].includes(ix.name)) ? `${textOf(elements(a)[1]).trim()}_${w ?? textOf(ix).trim()}`.normalize('NFKC') : null; };
 // what a formula defines: [name, the side that defines it], or null
 function definition(top) {
   const [head, ...args] = elements(top);
@@ -276,7 +296,9 @@ function definition(top) {
 }
 function compile(math) {
   if ('cdgroup' in math.attrs) throw refusal(math.start, 'a cdgroup could rename the symbols');
-  const top = elements(math)[0], [head, ...args] = elements(top), assign = isAssign(head), def = definition(top);
+  // a product that is a condition in words (x < 0 \text{ or } x > 1, as LaTeXML reads it) is that condition
+  const top0 = elements(math)[0], said = elements(top0)[0]?.name === 'times' ? spoken(top0) : top0, h0 = elements(said)[0]?.name;
+  const top = h0 in CONDS || h0 in LOGIC || h0 in MEMBER || h0 === 'factorof' ? said : top0, [head, ...args] = elements(top), assign = isAssign(head), def = definition(top);
   let out;
   if ((head?.name === 'eq' || assign) && !def) {
     if (assign) throw refusal(top.start, ':= with no name alone on its left');
@@ -288,12 +310,11 @@ function compile(math) {
     if (mentions(side)) throw refusal(side.start, `${name} is defined in terms of itself`);
     const nameItem = item(nameAt, true), sideNode = asNode(item(side));
     out = { kind: 'define', name, root: { op: assign ? 'assign' : 'eq', call: 'relation', items: [nameItem, { node: sideNode }] }, ...emit(sideNode) };
-  } else if (head?.name in RELS || head?.name === 'and') {
-    const pairs = [], chain = (h, as, at) => { if (!(h?.name in RELS)) throw refusal(at, `<and/> of <${h?.name}/>: this build takes an <and/> of inequalities (<lt/>, <leq/>, <gt/>, <geq/>)`);
-      if (as.length < 2) throw refusal(at, `<${h.name}/> of ${as.length} argument: an inequality compares two or more`);
-      const its = as.map((a) => item(a)); for (let k = 0; k + 1 < its.length; k++) pairs.push([h.name, its[k], its[k + 1]]); return { op: h.name, call: 'relation', items: its }; };
-    const shown = head.name === 'and' ? { op: 'and', call: 'relation', items: args.map((a) => { if (a.name !== 'apply') throw refusal(a.start, 'an <and/> of something not a relation'); const [h, ...as] = elements(a); return { node: chain(h, as, a.start) }; }) } : chain(head, args, top.start);
-    out = { kind: 'truth', root: shown, ...emitTruth(pairs) };
+  } else if (head?.name in RELS || head?.name === 'neq' || head?.name in LOGIC || head?.name in MEMBER || head?.name === 'factorof') {
+    // a relation other than =, x ∈ a set, or <and/>, <or/>, <xor/>, <not/> or <implies/> of them (= among them: JavaScript's ===)
+    if (head.name in RELS && args.length < 2) throw refusal(top.start, `<${head.name}/> of ${args.length} argument: an inequality compares two or more`);
+    const c = condition(top), shown = (q) => (q.chain ? { op: 'chain', call: 'relation', ...q.chain } : q.parts ? { op: q.op, call: 'relation', items: q.parts.map((p) => ({ node: shown(p) })) } : { op: q.op, call: 'relation', items: q.items, of: q.of, closure: q.closure });
+    out = { kind: 'truth', root: shown(c), ...emitTruth(c) };
   } else { const root = top.name === 'piecewise' ? piecewise(top) : call(top); out = { kind: 'value', root, ...emit(root) }; }
   if (out.compares > MAX_COMPARES) throw refusal(math.start, `this formula's medians compare ${out.compares.toLocaleString('en-US')} pairs of values the page sets, past the ${MAX_COMPARES.toLocaleString('en-US')} this build writes: give a long list as a .dcss-median call (README, Writing a call)`);
   if (out.decls.join('').length + out.value.length > 1048576) throw refusal(math.start, `this formula's calc() would be ${Math.round((out.decls.join('').length + out.value.length) / 1024)} KB of style: definitions used inside each other grow it; past 1 MB this build refuses`);
@@ -317,7 +338,7 @@ function call(apply) {
   // LaTeXML's \begin{cases}: value, condition, value, condition…, a last value with "otherwise" (or none), as <piecewise>
   if (head.name === 'csymbol' && head.attrs.cd === 'latexml' && textOf(head).trim() === 'cases') { const xs = kids.slice(1), parts = [];
     for (let i = 0; i < xs.length; i += 2) { const v = xs[i], c = xs[i + 1];
-      if (!c || (c.name === 'ci' && textOf(c).trim() === 'otherwise')) parts.push({ name: 'otherwise', start: v.start, children: [v] }); else parts.push({ name: 'piece', start: v.start, children: [v, c] }); }
+      if (!c || (c.name === 'ci' && /^(otherwise|else)[.,;]?$/i.test(textOf(c).trim()))) parts.push({ name: 'otherwise', start: v.start, children: [v] }); else parts.push({ name: 'piece', start: v.start, children: [v, c] }); }
     return piecewise({ name: 'piecewise', start: head.start, children: parts }); }
   if (head.name === 'apply') throw refusal(head.start, 'a nested <apply> as the operator: one operator applied to numbers');
   let op, args = kids.slice(1), degree = 2;
@@ -329,12 +350,24 @@ function call(apply) {
     if (args.length !== 1) throw refusal(head.start, `LaTeXML's [ ] around ${args.length} things: [a, b] is an interval or a commutator, not a number`);
     op = 'brackets';
   } else if (head.name === 'csymbol' && ['latexml', 'combinat1', 'dlmf'].includes(head.attrs.cd) && textOf(head).trim() === 'binomial') { op = 'binomial'; // \binom{n}{k}
+  } else if (head.name === 'csymbol' && head.attrs.cd === 'latexml' && textOf(head).trim() === 'percent') { op = 'percent';
   } else if (head.name === 'csymbol' && head.attrs.cd === 'latexml' && textOf(head).trim() === 'modulo') { op = 'rem'; // \bmod, as MathML's rem: the sign of the first
   } else if (head.name === 'csymbol' && head.attrs.cd === 'transc1' && textOf(head).trim() in MATHFN) { // OpenMath's log takes its base first
     const name = textOf(head).trim(); if (name === 'log' && args.length !== 2) throw refusal(apply.start, `transc1 log of ${args.length} arguments: it takes the base and a number`);
     return folded(name, head.start, name === 'log' ? [args[1], { name: 'logbase', start: args[0].start, children: [args[0]] }] : args, apply);
+  } else if (head.name === 'csymbol' && 'definitionurl' in head.attrs) { // d3's own functions, by their documented definitions (MathML 4, 4.2.3.2)
+    const url = head.attrs.definitionurl.trim(), fn = D3SYMBOL.exec(url)?.[1], name = textOf(head).trim();
+    if (!fn) throw refusal(head.start, `<csymbol definitionURL="${url}">: this build takes d3's sum, count, maxIndex, minIndex, variance, deviation, quantile and mode of a series, https://d3js.org/d3-array/summarize#sum, #count, #maxIndex, #minIndex, #variance, #deviation, #quantile and #mode`);
+    if (name !== fn) throw refusal(head.start, `<csymbol definitionURL="${url}">${name}</csymbol>: the symbol's text is its function's name, ${fn}`);
+    // d3's quantile takes the series and p: a number written in the page, or a formula the page sets
+    const want = fn === 'quantile' ? 2 : 1, nm = args.length === want && args[0].name === 'ci' ? letterOf(args[0]) : null, q = nm && CX.series.get(nm);
+    if (!q) throw refusal(apply.start, nm && CX.seriesElsewhere.has(nm) ? `${nm} is a series of another data-dcss-scope (line ${CX.seriesElsewhere.get(nm)}): a formula reads the series of its own scope and the scopes around it`
+      : fn === 'quantile' ? "d3's quantile takes a series and p: a <ci> naming a list or table marked data-dcss-series, then p (0.9 for the 90th percentile)" : `d3's ${fn} takes one series, a <ci> naming a list or table marked data-dcss-series (for names or numbers, <plus/> adds them)`);
+    if (fn === 'quantile') { const pi = item(args[1]); return seriesStat(fn, q, apply, itemValue(pi), pi); }
+    return seriesStat(fn, q, apply);
   } else if (head.name === 'csymbol') {
     const cd = head.attrs.cd, name = textOf(head).trim();
+    if (cd === 'latexml' && name === 'expectation') throw refusal(head.start, "LaTeXML's ⟨…⟩, which it reads from a < before a > in one formula: 2x + 1 < 0 \\text{ or } x > 1 comes out as 2x + 1 ⟨0 or x⟩ 1; put each relation in parentheses, (2x + 1 < 0) \\text{ or } (x > 1), or write the second as 1 < x");
     if (!SYMBOLS[cd]?.includes(name)) throw refusal(head.start, `<csymbol cd="${cd}">${name}</csymbol> is not an operator this build takes (s_data1 median and mean, minmax1 min and max, arith1 plus, minus, unary_minus, times, divide, power, root and abs, rounding1 floor and ceiling)`);
     op = name === 'unary_minus' ? 'minus' : name;
     if (cd === 'arith1' && name === 'unary_minus' && args.length !== 1) throw refusal(head.start, 'arith1 unary_minus takes one argument');
@@ -351,22 +384,40 @@ function call(apply) {
     if (!blank(head) || elements(head).length) throw refusal(head.start, `<${head.name}> is an operator: write it empty, <${head.name}/>`);
     for (const k of ['definitionurl', 'encoding']) if (k in head.attrs) throw refusal(head.start, `<${head.name} ${k}="…">: the operator would mean another function`);
     if (head.name in MATHFN) return folded(head.name, head.start, args, apply);
+    if (head.name === 'selector') { // MathML 4's <selector/> (4.3.7.3): item i of a list, here slot i of a series, as sales_i reads it
+      const [list, ix, ...more] = args; if (!list || !ix || more.length || list.name !== 'ci') throw refusal(head.start, '<selector/> takes a series and one index: <apply><selector/><ci>sales</ci><ci>i</ci></apply>');
+      const nm = letterOf(list), q = CX.series.get(nm); if (!q) throw refusal(list.start, CX.seriesElsewhere.has(nm) ? `${nm} is a series of another data-dcss-scope (line ${CX.seriesElsewhere.get(nm)}): a formula reads the series of its own scope and the scopes around it` : `<selector/> of ${nm}: no series of that name in this data-dcss-scope or one around it`);
+      const k = ix.name === 'cn' ? number(ix).x : ix.name === 'ci' ? CX.index.get(letterOf(ix)) : undefined;
+      if (k === null) return { op: 'id', call: 'id', items: [{ ci: `${nm}_${letterOf(ix)}`, sub: [nm, letterOf(ix), 'ci'] }] }; // the body drawn as written
+      if (k === undefined) throw refusal(ix.start, `<selector/> of ${nm}: its index is a number or a sum's index`);
+      return { op: 'id', call: 'id', items: [slotItem(q, k, apply.start, [nm, String(k), 'cn'])] }; }
     if (!(head.name in CALLS)) throw refusal(head.start, WHY[head.name] ?? `<${head.name}/> is not an operator this build takes (median, mean, min, max, plus, minus, times, divide, power, root, abs, floor and ceiling)`);
     op = head.name;
   }
+  // LaTeXML's 30^\circ, a superscript of <compose/> (it reads ∘ as composition): degrees, x · (π / 180) as MDN's degToRad
+  // writes it; and its 10\%: x / 100. Each drawn as written
+  const synth = (name, at, kids = []) => ({ name, attrs: {}, start: at, children: kids });
+  if (op === 'power' && args.length === 2 && args[1].name === 'compose') {
+    const at = args[1].start, rad = synth('apply', at, [synth('divide', at), synth('pi', at), synth('cn', at, [{ text: '180' }])]);
+    return { op: 'times', call: CALLS.times, items: [item(args[0]), item(rad)], shown: 'degrees', start: apply.start }; }
+  if (op === 'percent') { if (args.length !== 1) throw refusal(apply.start, `LaTeXML's percent of ${args.length} things: 10\\% is one number`);
+    return { op: 'divide', call: CALLS.divide, items: [item(args[0]), item(synth('cn', apply.start, [{ text: '100' }]))], shown: 'percent', start: apply.start }; }
   if (op === 'root') { const q = args.filter((a) => a.name === 'degree'); // <root/> with a <degree> qualifier (MathML 4, 4.3.3.2); none is a square root
     if (q.length > 1) throw refusal(q[1].start, 'two <degree>s');
     if (q.length) { const k = elements(q[0]); if (k.length !== 1 || k[0].name !== 'cn') throw refusal(q[0].start, '<degree> holds one <cn>, the root\'s degree'); degree = degreeOf(k[0]); args = args.filter((a) => a !== q[0]); } }
   for (const a of args) if (QUALIFIERS.has(a.name)) throw refusal(a.start, `<${a.name}>: qualifiers aren't taken, only numbers`);
-  for (const a of args) if (!['cn', 'ci', 'apply', 'piecewise'].includes(a.name) && !constantOf(a)) throw refusal(a.start, `<${a.name}> as an argument: only <cn> numbers, <ci> names, π, e and another <apply>`);
+  for (const a of args) if (!['cn', 'ci', 'apply', 'piecewise'].includes(a.name) && !constantOf(a)) throw a.name === 'share' ? refusal(a.start, SHARE) : refusal(a.start, `<${a.name}> as an argument: only <cn> numbers, <ci> names, π, e and another <apply>`);
   if (!args.length) throw refusal(apply.start, `${op} of nothing`);
   const [lo, hi] = ARITY[op] ?? [1, Infinity];
   if (args.length < lo || args.length > hi) throw refusal(apply.start, `${op} of ${args.length} argument${args.length === 1 ? '' : 's'}: it takes ${lo === hi ? lo : hi === Infinity ? `${lo} or more` : `${lo} or ${hi}`}`);
-  if (args.length === 1 && args[0].name === 'ci' && !ARITY[op]) throw refusal(args[0].start, `one <ci> alone: MathML reads it as a data set (MathML 4, §4.3.5.13), not one value`);
+  if (args.length === 1 && args[0].name === 'ci' && !ARITY[op]) { const nm = letterOf(args[0]), q = CX.series.get(nm);
+    if (q) return seriesStat(op, q, apply);
+    if (CX.seriesElsewhere.has(nm)) throw refusal(args[0].start, `${nm} is a series of another data-dcss-scope (line ${CX.seriesElsewhere.get(nm)}): a formula reads the series of its own scope and the scopes around it`);
+    throw refusal(args[0].start, `one <ci> alone: MathML reads it as a data set (MathML 4, §4.3.5.13), not one value; a page's list or table marked data-dcss-series is one`); }
   const items = args.map((a) => item(a));
   // n! of a whole n from 0 to 170 (past it, n! passes the largest double): the true value, rounded once; of a number the
   // build knows, written in, of a name the page sets, picked from the 171 on the page; gcd and lcm of whole numbers the
-  // build knows, as MathML's (gcd(0, 0) is 0, the lcm of any with 0 is 0)
+  // build knows, as MathML's (gcd(0, 0) is 0, the lcm of any with 0 is 0); of names the page sets, on the page (liveGcd)
   if (op === 'factorial') { const n = itemValue(items[0]);
     if (n === null) return { op, call: 'factorial', items, start: apply.start };
     if (!Number.isInteger(n) || n < 0) throw refusal(apply.start, `factorial of ${n}: MathML's factorial takes whole numbers from 0`);
@@ -381,8 +432,8 @@ function call(apply) {
     let c = 1n; for (let i = 1n, kk = BigInt(Math.min(k, n - k)); i <= kk; i++) c = (c * (BigInt(n) - kk + i)) / i;
     return fixed('binomial', Number(c), items, apply.start); }
   if (op === 'gcd' || op === 'lcm') { const vs = items.map((x) => itemValue(x));
-    if (vs.includes(null)) throw refusal(apply.start, `${op} of a name the page sets: Euclid's algorithm loops as long as its numbers ask, which CSS can't; of whole numbers the build knows it is computed when the page is built`);
-    if (!vs.every((v) => Number.isSafeInteger(v))) throw refusal(apply.start, `${op} of ${vs.find((v) => !Number.isSafeInteger(v))}: MathML's ${op} takes whole numbers, here within ±2^53`);
+    if (!vs.every((v) => v === null || Number.isSafeInteger(v))) throw refusal(apply.start, `${op} of ${vs.find((v) => v !== null && !Number.isSafeInteger(v))}: MathML's ${op} takes whole numbers, here within ±2^53`);
+    if (vs.includes(null)) return { op, call: op, items, start: apply.start };
     const g = (a, b) => (b ? g(b, a % b) : a), big = vs.map((v) => BigInt(Math.abs(v)));
     const r = op === 'gcd' ? big.reduce(g) : big.reduce((a, b) => (a === 0n || b === 0n ? 0n : (a / g(a, b)) * b));
     return fixed(op, Number(r), items, apply.start); }
@@ -401,31 +452,91 @@ function call(apply) {
     return Object.assign(fixed('root', rootOf(x, degree), items, apply.start), { degree }); }
   return { op, call: CALLS[op], items, degree, start: apply.start };
 }
+// d3's mean, min, max and median of an array, undefined and NaN skipped (d3-array's own loops: mean.js, min.js, max.js,
+// and median.js's quantile at 0.5, which takes the larger of the lower half and the smaller of the upper half)
+const d3min = (vs) => { let m; for (const v of vs) if (v != null && (m > v || (m === undefined && v >= v))) m = v; return m; };
+const d3max = (vs) => { let m; for (const v of vs) if (v != null && (m < v || (m === undefined && v >= v))) m = v; return m; };
+const D3SERIES = { min: d3min, max: d3max,
+  sum: (vs) => { let s = 0; for (let v of vs) if ((v = +v)) s += v; return s; },
+  count: (vs) => { let n = 0; for (let v of vs) if (v != null && (v = +v) >= v) ++n; return n; },
+  maxIndex: (vs) => { let m, k = -1, i = -1; for (const v of vs) { ++i; if (v != null && (m < v || (m === undefined && v >= v))) { m = v; k = i; } } return k; },
+  minIndex: (vs) => { let m, k = -1, i = -1; for (const v of vs) { ++i; if (v != null && (m > v || (m === undefined && v >= v))) { m = v; k = i; } } return k; },
+  mean: (vs) => { let n = 0, s = 0; for (let v of vs) if (v != null && (v = +v) >= v) { n++; s += v; } return n ? s / n : undefined; },
+  median: (vs) => { const xs = vs.filter((v) => v != null && v >= v), n = xs.length; if (!n) return undefined; if (n < 2) return d3min(xs);
+    const sorted = [...xs].sort((a, b) => a - b), i0 = Math.floor((n - 1) / 2), v0 = d3max(sorted.slice(0, i0 + 1)), v1 = d3min(sorted.slice(i0 + 1));
+    return v0 + (v1 - v0) * ((n - 1) * 0.5 - i0); },
+  // variance.js: Welford's running mean, the sum of squares divided by n - 1, none under two values; deviation.js its root
+  variance: (vs) => { let count = 0, delta, mean = 0, sum = 0; for (let v of vs) if (v != null && (v = +v) >= v) { delta = v - mean; mean += delta / ++count; sum += delta * (v - mean); } return count > 1 ? sum / (count - 1) : undefined; },
+  deviation: (vs) => { const v = D3SERIES.variance(vs); return v ? Math.sqrt(v) : v; },
+  // quantile.js: the min at p <= 0 or under two values, the max at p >= 1; else the values ranked i0 = floor((n - 1) · p)
+  // and i0 + 1, v0 + (v1 - v0) · ((n - 1) · p - i0)
+  quantile: (vs, p) => { const xs = vs.filter((v) => v != null && (v = +v) >= v).map(Number), n = xs.length; if (!n || Number.isNaN(p)) return undefined;
+    if (p <= 0 || n < 2) return d3min(xs); if (p >= 1) return d3max(xs);
+    const i = (n - 1) * p, i0 = Math.floor(i), sorted = [...xs].sort((a, b) => a - b), v0 = d3max(sorted.slice(0, i0 + 1)), v1 = d3min(sorted.slice(i0 + 1));
+    return v0 + (v1 - v0) * (i - i0); },
+  // mode.js: each value's count in an InternMap, a Map (its keys' zeros +0), the first value to reach the most
+  mode: (vs) => { const counts = new Map(); for (const v of vs) if (v != null && v >= v) counts.set(v, (counts.get(v) || 0) + 1); let m, c = 0; for (const [v, k] of counts) if (k > c) { c = k; m = v; } return m; } };
+const D3SYMBOL = /^https:\/\/d3js\.org\/d3-array\/summarize#(sum|count|maxIndex|minIndex|variance|deviation|quantile|mode)$/;
+const MEDIAN_SLOTS = 45; // a median of a series ranks n · (n − 1) pairs: 45 slots are 1,980, within MAX_COMPARES
+// mean, min, max or median of a series: d3's answer, its missing slots skipped. Of written slots only it is d3's when the
+// page is built (none present: no answer, as d3 has none); with slots the page sets, computed in calc() (former's series)
+function seriesStat(op, q, apply, p, pItem) {
+  if (!['mean', 'min', 'max', 'median', 'sum', 'count', 'maxIndex', 'minIndex', 'variance', 'deviation', 'quantile', 'mode'].includes(op)) throw refusal(apply.start, `${op} of the series ${q.name}: mean, min, max, median and d3's sum, count, variance, deviation, quantile and mode take a series (<csymbol definitionURL="https://d3js.org/d3-array/summarize#sum">sum</csymbol>)`);
+  const pLive = op === 'quantile' && p === null ? pItem : undefined; // a p the page sets
+  if (op === 'quantile' && !pLive && (p <= 0 || p >= 1)) op = p <= 0 ? 'min' : 'max'; // d3's quantile at p <= 0 is its min, at p >= 1 its max
+  if (['median', 'quantile', 'mode'].includes(op) && q.slots.length > MEDIAN_SLOTS) throw refusal(apply.start, `the ${op} of the series ${q.name}, ${q.slots.length} slots: past the ${MEDIAN_SLOTS} this build ${op === 'mode' ? 'compares' : 'ranks'} (2,048 comparisons)`);
+  const items = [{ ci: q.name }, ...(pItem ? [pItem] : [])];
+  const indexOf = op.endsWith('Index') ? q : undefined; // a label reader prints the row header at that index
+  if (pLive || q.slots.some((x) => x.kind === 'live')) return { op, call: 'series', series: q, items, start: apply.start, indexOf, p, pLive };
+  const v = D3SERIES[op](q.slots.map((x) => (x.kind === 'literal' ? x.x : undefined)), p);
+  return v === undefined ? { op, call: 'fixed', value: NaN, items, start: apply.start } : Object.assign(fixed(op, v, items, apply.start), { indexOf });
+}
+// a series' slot k (from 1), read as sales_k or as sales_i in a sum over i: a written one is its number, a missing one is
+// refused (the sum would have no value), one the page sets reads its scope's split, no answer while it is missing
+function slotItem(q, k, at, sub) {
+  if (!Number.isInteger(k) || k < 1 || k > q.slots.length) throw refusal(at, `${q.name}_${k}: the series ${q.name} has ${q.slots.length} slot${q.slots.length === 1 ? '' : 's'} (line ${q.line}), numbered from 1`);
+  const x = q.slots[k - 1];
+  if (x.kind === 'missing') throw refusal(at, `${q.name}_${k} is missing (line ${x.line}): a formula that names a slot needs its value`);
+  return x.kind === 'literal' ? { x: x.x, neg: x.x < 0 || Object.is(x.x, -0), mag: `<mn>${x.text.replace(/^-/, '')}</mn>`, sub } : { slot: x.store, sub };
+}
 // one argument: a number ({ x }), a name ({ ci }, with the page's definition of it, { def }), or another <apply> ({ node })
+const SHARE = "<share/>, a term shared from elsewhere in the formula: this build reads one only in a chain of relations, LaTeXML's 0 < x ≤ 1";
 function item(a, defining = false) {
   {
     const sub = a.name === 'apply' && elements(a)[0]?.name === 'csymbol' && elements(a)[0].attrs.cd === 'ambiguous' && textOf(elements(a)[0]).trim() === 'subscript';
     if (sub) { // LaTeXML's x_1: one name, x_1, read from --x_1 and drawn as a subscript
-      const [, base, index, ...more] = elements(a);
+      const [, base, ix, ...more] = elements(a), w = wordOf(ix), index = w ? { name: 'ci', attrs: {}, start: ix.start, children: [{ text: w }] } : ix;
       if (!base || !index || more.length || base.name !== 'ci' || !['ci', 'cn'].includes(index.name) || elements(base).length || elements(index).length) throw refusal(a.start, 'a subscript other than a name and one name or number (x_1, x_i): this build reads those as one name');
-      const iv = index.name === 'ci' ? INDEX.get(textOf(index).trim().normalize('NFKC')) : undefined; // x_i inside a sum over i
+      const iv = index.name === 'ci' ? CX.index.get(textOf(index).trim().normalize('NFKC')) : undefined; // x_i inside a sum over i
+      const q = CX.series.get(letterOf(base)); // a series' slot: sales_3, or sales_i in a sum over i
+      if (q && iv !== null) { const k = iv !== undefined ? iv : index.name === 'cn' ? number(index).x : NaN;
+        if (Number.isNaN(k)) throw refusal(a.start, `${q.name}_${letterOf(index)}: a slot of the series ${q.name} is read by a number or a sum's index`);
+        return slotItem(q, k, a.start, [letterOf(base), String(k), 'cn']); }
+      if (!q && CX.seriesElsewhere.has(letterOf(base))) throw refusal(a.start, `${letterOf(base)} is a series of another data-dcss-scope (line ${CX.seriesElsewhere.get(letterOf(base))}): a formula reads the series of its own scope and the scopes around it`);
       if (iv !== undefined && iv !== null) return named({ ci: `${letterOf(base)}_${iv}`, sub: [letterOf(base), String(iv), 'cn'] }, a, defining);
       const id = `${letterOf(base)}_${letterOf(index)}`;
       if (!/^-?[_a-zA-Z\u0080-\u{10FFFF}][-_a-zA-Z0-9\u0080-\u{10FFFF}]*$/u.test(id)) throw refusal(a.start, `the subscripted name ${id} is no CSS identifier`);
       return named({ ci: id, sub: [letterOf(base), letterOf(index), index.name] }, a, defining);
     }
+    const acc = accentOf(a);
+    if (acc) { const id = acc[0] + ACCENT[acc[1]];
+      if (!/^[_a-zA-Z\u0080-\u{10FFFF}][-_a-zA-Z0-9\u0080-\u{10FFFF}]*$/u.test(id)) throw refusal(a.start, `the name ${id} is no CSS identifier`);
+      return named({ ci: id, acc }, a, defining); }
     if (a.name === 'apply') return { node: call(a) };
     if (a.name === 'piecewise') return { node: piecewise(a) };
+    if (a.name === 'share') throw refusal(a.start, SHARE);
     if (a.name === 'cn') return number(a);
     const k = constantOf(a); if (k) return k;
+    if (WORD(a)) throw refusal(a.start, `<ci><mtext>${WORD(a)}</mtext></ci>: a word inside the formula, LaTeX's \\text{…}, which LaTeXML reads as a factor; this build takes if, when or for before a condition, and or or between two, and otherwise`);
     if (elements(a).length) throw refusal(a.start, '<ci> with markup inside: a name is text');
     if ('type' in a.attrs) throw refusal(a.start, `<ci type="${a.attrs.type}"> names a collection or another kind of value`);
     const id = letterOf(a); // LaTeXML's mathematical italic 𝑥 is the page's x
     // a CSS identifier: letters past ASCII too (𝑚)
     if (!/^-?[_a-zA-Z\u0080-\u{10FFFF}][-_a-zA-Z0-9\u0080-\u{10FFFF}]*$/u.test(id)) throw refusal(a.start, `<ci>${id}</ci>: a name must be a CSS identifier`);
     if (RESERVED.test(id)) throw refusal(a.start, `<ci>${id}</ci>: --${id} is a name dcss itself reads or writes`);
-    if (INDEX.has(id) && INDEX.get(id) !== null) { const v = INDEX.get(id); return { x: v, neg: v < 0, mag: `<mn>${Math.abs(v)}</mn>` }; } // a sum's index
-    if ((id === 'π' || id === 'e') && !defining && !DEFS.has(id) && !LATER.has(id)) return { ci: id, fallback: String(id === 'π' ? Math.PI : Math.E) }; // π and e, or the page's --π and --e
+    if (CX.index.has(id) && CX.index.get(id) !== null) { const v = CX.index.get(id); return { x: v, neg: v < 0, mag: `<mn>${Math.abs(v)}</mn>` }; } // a sum's index
+    if (CX.series.has(id) || CX.seriesElsewhere.has(id)) throw refusal(a.start, CX.series.has(id) ? `${id} is a series: mean, min, max, median and d3's sum and count take it whole (<csymbol definitionURL="https://d3js.org/d3-array/summarize#sum">sum</csymbol> adds its present slots), and ${id}_i in a sum over i reads its slots` : `${id} is a series of another data-dcss-scope (line ${CX.seriesElsewhere.get(id)}): a formula reads the series of its own scope and the scopes around it`);
+    if ((id === 'π' || id === 'e') && !defining && !CX.defs.has(id) && !CX.later.has(id) && !CX.elsewhere.has(id)) return { ci: id, fallback: String(id === 'π' ? Math.PI : Math.E) }; // π and e, or the page's --π and --e
     return named({ ci: id }, a, defining);
   }
 }
@@ -444,7 +555,6 @@ function constantOf(a) {
 // so a term with no value leaves no answer. The bounds are whole numbers the build knows: written, or a name a formula
 // above defines with numbers; one the page sets at run time, or an infinite one, stops the build
 const MAX_TERMS = 1000;
-let INDEX = new Map(); // an index being unrolled: its number, or null where the body is drawn as written
 const isSym = (n, name) => n?.name === 'csymbol' && n.attrs.cd === 'ambiguous' && textOf(n).trim() === name;
 function indexForm(head, kids) {
   const [, ...args] = kids;
@@ -464,7 +574,7 @@ function indexForm(head, kids) {
   if (head.name !== 'apply') return null;
   const [sup, under, hi] = elements(head);
   if (!isSym(sup, 'superscript') || under?.name !== 'apply') return null;
-  const [sub, op, cond] = elements(under);
+  const [sub, op0, cond] = elements(under), op = op0?.name === 'csymbol' && op0.attrs.cd === 'latexml' && textOf(op0).trim() === 'product' ? { ...op0, name: 'product' } : op0;
   if (!isSym(sub, 'subscript') || !['sum', 'product'].includes(op?.name)) return null;
   if (!hi || elements(head).length !== 3 || cond?.name !== 'apply' || elements(under).length !== 3) throw refusal(head.start, `a ${op.name} with no range: this build adds over i = lo to hi`);
   const [eq, i, lo, ...more] = elements(cond);
@@ -472,7 +582,7 @@ function indexForm(head, kids) {
   if (kids.length !== 2) throw refusal(head.start, `a ${op.name} of ${kids.length - 1} terms: it takes one body, the term`);
   return { op: op.name, name: textOf(i).trim().normalize('NFKC'), lo, hi, body: kids[1], at: head.start };
 }
-const withIndex = (name, v, f) => { const was = INDEX.has(name) ? INDEX.get(name) : undefined; INDEX.set(name, v); try { return f(); } finally { if (was === undefined) INDEX.delete(name); else INDEX.set(name, was); } };
+const withIndex = (name, v, f) => { const I = CX.index, was = I.has(name) ? I.get(name) : undefined; I.set(name, v); try { return f(); } finally { if (was === undefined) I.delete(name); else I.set(name, was); } };
 function indexed(ix, apply) {
   if (ix.hi.name === 'infinity') throw refusal(ix.hi.start, `an infinite ${ix.op}: it has no last term to add`);
   const bound = (el) => { const it = item(el), v = itemValue(it);
@@ -508,13 +618,19 @@ function folded(name, at, args, apply) {
   if (name === 'exp' && (x === null || seen.size)) return { op: 'exp', call: 'exp', items, start: apply.start }; // computed in calc(), exactly
   if (['sin', 'cos', 'sec', 'csc'].includes(name) && (x === null || seen.size)) return { op: name, call: 'trig', items, start: apply.start }; // computed in calc()
   if (name === 'arctan' && (x === null || seen.size)) return { op: name, call: 'atan', items, start: apply.start };
+  if (name === 'arccot' && (x === null || seen.size)) return { op: name, call: 'acot', items, start: apply.start };
   if ((name === 'tan' || name === 'cot') && (x === null || seen.size)) return { op: name, call: 'tan', items, start: apply.start };
   if ((name === 'arcsin' || name === 'arccos') && (x === null || seen.size)) return { op: name, call: 'asin', items, start: apply.start };
+  if ((name === 'arcsec' || name === 'arccsc') && (x === null || seen.size)) return { op: name, call: 'asec', items, start: apply.start };
   if (['sinh', 'cosh', 'tanh'].includes(name) && (x === null || seen.size)) return { op: name, call: 'hyp', items, start: apply.start };
+  if (['sech', 'csch', 'coth'].includes(name) && (x === null || seen.size)) return { op: name, call: 'rhyp', items, start: apply.start };
   if (['arcsinh', 'arccosh', 'arctanh'].includes(name) && (x === null || seen.size)) return { op: name, call: 'ahyp', items, start: apply.start };
+  if (['arcsech', 'arccsch', 'arccoth'].includes(name) && (x === null || seen.size)) return { op: name, call: 'rahyp', items, start: apply.start };
   const lb = name === 'ln' ? 'e' : name === 'log' ? (base.length ? b : 10) : null; // ln, and log to a base the build knows: computed in calc()
   if ((name === 'ln' || name === 'log') && (x === null || seen.size) && (lb === 'e' || (Number.isFinite(lb) && lb > 0 && lb !== 1))) return { op: name, call: 'log', base: lb, items, start: apply.start };
-  if (x === null || (base.length && b === null)) throw refusal(at, `${name} of a name the page sets: ${INEXACT}. Of numbers the build knows it is computed when the page is built; exp, ln, log, sin, cos, tan, sec, csc, cot, arcsin, arccos, arctan, sinh, cosh, tanh, arcsinh, arccosh and arctanh of a name are computed on the page`);
+  // every function of a name is computed on the page; a log's base is a number the build knows, its 1/ln b a pair
+  if (base.length && b === null) throw refusal(at, `log to a base the page sets: its base is a number written in the page (10, 2, 3…), its 1/ln b worked out when the page is built, since ${INEXACT}`);
+  if (x === null) throw refusal(at, name === 'log' ? `log to base ${lb} has no value` : `${name} of a name the page sets: ${INEXACT}`);
   return fixed(name, MATHFN[name](x, name === 'log' ? (base.length ? b : 10) : undefined), items, apply.start, seen);
 }
 // a value the build computed (the double nearest the true value): written in as a number, drawn as the formula it came from. Where it took 𝜋 or
@@ -526,7 +642,7 @@ function fixed(op, v, items, start, seen, live) {
 }
 // MathML 4's <piecewise> (4.3.10.5): the first <piece> whose condition holds gives the value, else <otherwise>, as
 // JavaScript's if/else chain does; with none holding and no <otherwise>, no answer. A condition is a relation (<lt/>,
-// <leq/>, <gt/>, <geq/>, <eq/>, <neq/>, a chain of one) or an <and/> or <or/> of them
+// <leq/>, <gt/>, <geq/>, <eq/>, <neq/>, a chain of one) or MathML's logic of them (condition())
 const CONDS = { ...RELS, eq: '=', neq: '≠' };
 // a name's text: LaTeXML's mathematical italic 𝑥 is x (NFKC), and its italic-ϕ (\phi, against \varphi's φ) is ϕ
 const letterOf = (el) => textOf(el).trim().normalize('NFKC').replace(/^italic-(.)$/u, '$1');
@@ -542,19 +658,112 @@ function piecewise(el) {
   if (!conds.length) throw refusal(el.start, 'a <piecewise> with no <piece>');
   return { op: 'piecewise', call: 'piecewise', items, conds, otherwise, start: el.start };
 }
+// MathML's logic (4.3.5.9) on conditions: <and/>, <or/> and <xor/> of two or more, <not/> of one, <implies/> of two
+// the drawing's intent names: the concept names of MathML's intent core list (w3c/mathml-docs, _data/core.yml) where it
+// has the concept; count, quantile and d3's deviation (n - 1, which the list's standard-deviation doesn't say) keep theirs
+const TRIG = ['sine', 'cosine', 'tangent', 'secant', 'cosecant', 'cotangent'], TRIGOF = ['sin', 'cos', 'tan', 'sec', 'csc', 'cot'];
+const CORE = { eq: 'equals', assign: 'defined-as', lt: 'less-than', leq: 'less-than-or-equal-to', gt: 'greater-than', geq: 'greater-than-or-equal-to',
+  neq: 'not-equal-to', divide: 'divided-by', abs: 'absolute-value', binomial: 'binomial-coefficient', rem: 'remainder', exp: 'exponential',
+  ln: 'natural-logarithm', log: 'logarithm', equivalent: 'if-and-only-if', factorof: 'divides', gcd: 'greatest-common-divisor', lcm: 'least-common-multiple', in: 'element-of', notin: 'not-member-of',
+  ...Object.fromEntries(TRIGOF.flatMap((f, i) => [[f, TRIG[i]], [`arc${f}`, `arc${TRIG[i]}`], [`${f}h`, `hyperbolic-${TRIG[i]}`], [`arc${f}h`, `arc-hyperbolic-${TRIG[i]}`]])) };
+const coreName = (op) => CORE[op] ?? op;
+const LOGIC = { and: [2, Infinity], or: [2, Infinity], xor: [2, Infinity], not: [1, 1], implies: [2, 2], equivalent: [2, 2] };
+// a word LaTeX's \text{…} puts in a formula, which LaTeXML reads as a factor: a leading if, when or for is dropped
+const LEAD = new Set(['if', 'when', 'for']), WORD = (e) => (e?.name === 'ci' && elements(e).length === 1 && elements(e)[0].name === 'mtext' ? textOf(e).trim().toLowerCase() : null);
+const ap = (head, kids, at) => ({ name: 'apply', attrs: {}, start: at, children: [{ name: head, attrs: {}, start: at, children: [] }, ...kids] });
+const prod = (fs, at) => (fs.length === 1 ? fs[0] : ap('times', fs, at));
+function stripLead(c) { if (c?.name !== 'apply') return c; const [h, a, ...rest] = elements(c);
+  if (h?.name === 'times' && LEAD.has(WORD(a)) && rest.length) return prod(rest, c.start);
+  if (!a || !(h.name in CONDS || h.name in MEMBER || h.name === 'and' || h.name === 'or')) return c;
+  const b = stripLead(a); return b === a ? c : { ...c, children: [h, b, ...rest] }; }
+// LaTeX's words in a condition, as LaTeXML reads them: \text{if } x > 0 a product led by the word; x > 0 \text{ or }
+// x < -5 a chain whose middle term is the product 0 · or · x (\lor: or(0, x)); x < 0 \text{ or } x > 1 the product
+// x · ⟨0 · or · x⟩ · 1, its < and > taken for angle brackets; (x < 0) \text{ or } (x > 1) a product of the relations
+// and the word. Read back as the relations with the words between them, and binding before or, as in English and
+// in logic; anything else as it is
+function spoken(c0) {
+  const c = stripLead(c0), at = c.start, rel = (a) => (a?.name === 'apply' && elements(a)[0]?.name in CONDS ? elements(a)[0].name : null);
+  const toks = [], angled = (h) => h?.name === 'csymbol' && h.attrs.cd === 'latexml' && textOf(h).trim() === 'expectation';
+  const term = (t) => { const [h, ...as] = t.name === 'apply' ? elements(t) : [];
+    if (h?.name === 'times') as.forEach(factor);
+    else if ((h?.name === 'and' || h?.name === 'or') && as.length === 2) { term(as[0]); toks.push({ join: h.name }); term(as[1]); }
+    else factor(t); };
+  const factor = (f) => { const w = WORD(f), [h, ...as] = f.name === 'apply' ? elements(f) : [];
+    if (w === 'and' || w === 'or') toks.push({ join: w });
+    else if (angled(h) && as.length === 1) { toks.push({ op: 'lt' }); term(as[0]); toks.push({ op: 'gt' }); }
+    else toks.push(rel(f) || h?.name in MEMBER ? { cond: f } : { factor: f }); };
+  const chainOf = (r) => elements(r).slice(1).forEach((t, i) => { if (i) toks.push({ op: rel(r) }); term(t); });
+  if (rel(c)) chainOf(c);
+  else if (c?.name === 'apply' && elements(c)[0]?.name === 'and' && elements(c).slice(1).every(rel) && elements(c).slice(2).every((r) => elements(r)[1]?.name === 'share')) {
+    const [r0, ...rs] = elements(c).slice(1); chainOf(r0); for (const r of rs) elements(r).slice(2).forEach((t) => { toks.push({ op: rel(r) }); term(t); }); }
+  else if (c?.name === 'apply' && elements(c)[0]?.name === 'times') elements(c).slice(1).forEach(factor);
+  else return c;
+  if (!toks.some((t) => t.join)) return c;
+  // consecutive factors are one term; each stretch between words a relation (or a chain of them) or a whole condition
+  const segs = [[]], joins = [];
+  for (const t of toks) { const g = segs.at(-1);
+    if (t.join) { joins.push(t.join); segs.push([]); } else if (t.factor && g.at(-1)?.fs) g.at(-1).fs.push(t.factor); else g.push(t.factor ? { fs: [t.factor] } : t); }
+  const share = { name: 'share', attrs: {}, start: at, children: [] }, conds = [];
+  for (const g of segs) {
+    if (g.length === 1 && g[0].cond) { conds.push(g[0].cond); continue; }
+    if (g.length < 3 || g.length % 2 === 0 || g.some((t, i) => (i % 2 ? !t.op : !t.fs))) return c;
+    const terms = g.filter((t, i) => i % 2 === 0).map((t) => prod(t.fs, at)), ops = g.filter((t, i) => i % 2).map((t) => t.op);
+    conds.push(new Set(ops).size === 1 ? ap(ops[0], terms, at) : ap('and', ops.map((op, i) => ap(op, [i ? share : terms[0], terms[i + 1]], at)), at)); }
+  const groups = [[conds[0]]]; joins.forEach((w, i) => (w === 'and' ? groups.at(-1) : groups[groups.push([]) - 1]).push(conds[i + 1]));
+  const ands = groups.map((g) => (g.length === 1 ? g[0] : ap('and', g, at)));
+  return ands.length === 1 ? ands[0] : ap('or', ands, at);
+}
 function condition(c) {
-  if (c.name !== 'apply') throw refusal(c.start, `<${c.name}> as a condition: a condition is a relation, <apply><lt/>…</apply>, or an <and/> or <or/> of them`);
+  c = spoken(c);
+  if (c.name !== 'apply') throw refusal(c.start, `<${c.name}> as a condition: a condition is a relation, <apply><lt/>…</apply>, or an <and/>, <or/>, <xor/>, <not/> or <implies/> of them`);
   const [h, ...as] = elements(c);
-  if (h?.name === 'and' || h?.name === 'or') { if (as.length < 2) throw refusal(c.start, `<${h.name}/> of ${as.length}: it joins two or more conditions`); return { op: h.name, parts: as.map(condition) }; }
-  if (!(h?.name in CONDS)) throw refusal(c.start, `<${h?.name ?? '?'}/> as a condition: this build takes <lt/>, <leq/>, <gt/>, <geq/>, <eq/>, <neq/>, <and/> and <or/>`);
+  if (h?.name in LOGIC) { const [lo, hi] = LOGIC[h.name]; if (as.length < lo || as.length > hi) throw refusal(c.start, `<${h.name}/> of ${as.length}: it takes ${lo === hi ? (lo === 1 ? 'one condition' : 'two conditions') : 'two or more conditions'}`);
+    // LaTeXML's chain, 0 < x ≤ 1: an <and/> of relations, each after the first opening with a <share/> of the term before
+    // it (its href names an id the Content MathML alone doesn't carry); read as that term, drawn as one chain
+    const rel = (a) => a?.name === 'apply' && elements(a)[0]?.name in CONDS && elements(a).length > 2, shared = (a) => rel(a) && elements(a)[1].name === 'share';
+    const linked = as.map((a, i) => (h.name === 'and' && i && shared(a) && rel(as[i - 1]) ? { ...a, children: a.children.map((k) => (k === elements(a)[1] ? elements(as[i - 1]).at(-1) : k)) } : a));
+    const parts = linked.map(condition), chain = h.name === 'and' && rel(as[0]) && as.slice(1).every(shared);
+    return { op: h.name, parts, ...(chain && { chain: { items: [...parts[0].items, ...parts.slice(1).flatMap((q) => q.items.slice(1))], ops: parts.flatMap((q) => q.items.slice(1).map(() => q.op)) } }) }; }
+  if (h?.name in MEMBER) return membership(c, h.name, as);
+  // a ∣ b (MathML's <factorof/>): b is a whole multiple of a, as JavaScript's a === 0 ? b === 0 : b % a === 0 on whole
+  // numbers; numbers the build knows that aren't whole within ±2^53 stop the build, names the page sets give no answer
+  if (h?.name === 'factorof') { if (as.length !== 2) throw refusal(c.start, `<factorof/> of ${as.length}: it takes two, a ∣ b`);
+    const items = as.map((a) => item(a)), bad = items.map((x) => itemValue(x)).find((v) => v !== null && !Number.isSafeInteger(v));
+    if (bad !== undefined) throw refusal(c.start, `factorof of ${bad}: a ∣ b takes whole numbers, here within ±2^53`);
+    return { op: 'factorof', divides: true, items }; }
+  if (!(h?.name in CONDS)) throw refusal(c.start, `<${h?.name ?? '?'}/> as a condition: this build takes <lt/>, <leq/>, <gt/>, <geq/>, <eq/>, <neq/>, <in/>, <notin/>, <factorof/>, <and/>, <or/>, <xor/>, <not/>, <implies/> and <equivalent/>`);
   if (as.length < 2 || (h.name === 'neq' && as.length !== 2)) throw refusal(c.start, `<${h.name}/> of ${as.length}: a relation compares ${h.name === 'neq' ? 'two' : 'two or more'}`);
   return { op: h.name, items: as.map((a) => item(a)) };
 }
-// a name the page defines: the definition's side in its place; one it defines further down is refused
+// x ∈ a set, MathML's <in/> (<notin/> its negation): an <interval>, closed unless its closure says (MathML's default), an end
+// ±<infinity/> bounding nothing that way; or a number set, <integers/>, <naturalnumbers/> (with 0, as MathML defines them)
+// and <reals/>, or LaTeX's ℤ, ℕ and ℝ through LaTeXML. ℚ is refused: every double is a rational number
+const MEMBER = { in: '∈', notin: '∉' }, NUMSETS = { integers: 'Z', naturalnumbers: 'N', reals: 'R', 'ℤ': 'Z', 'ℕ': 'N', 'ℝ': 'R' };
+const CLOSURE = { closed: ['leq', 'leq'], open: ['lt', 'lt'], 'open-closed': ['lt', 'leq'], 'closed-open': ['leq', 'lt'] };
+function membership(c, op, as) {
+  if (as.length !== 2) throw refusal(c.start, `<${op}/> of ${as.length}: it takes a value and a set`);
+  const [x, s] = as, set = s.name === 'ci' && !elements(s).length ? textOf(s).trim() : s.name;
+  if (s.name === 'interval') {
+    const closure = s.attrs.closure ?? 'closed', ends = elements(s);
+    if (!(closure in CLOSURE)) throw refusal(s.start, `<interval closure="${closure}">: MathML's closures are closed, open, open-closed and closed-open`);
+    if (ends.length !== 2) throw refusal(s.start, `an <interval> of ${ends.length}: it has two ends`);
+    const end = (e, i) => { const [m, inf, ...more] = e.name === 'apply' ? elements(e) : [], neg = m?.name === 'minus' && inf?.name === 'infinity' && !more.length;
+      if (e.name !== 'infinity' && !neg) return item(e);
+      if (neg !== !i) throw refusal(e.start, `an interval ${i ? 'up to −∞' : 'from +∞'}: it holds no number`);
+      return { inf: neg ? -1 : 1 }; };
+    return { op, of: 'interval', closure, items: [item(x), ...ends.map(end)] };
+  }
+  if (set in NUMSETS) return { op, of: NUMSETS[set], items: [item(x)] };
+  throw refusal(s.start, set === 'rationals' || set === 'ℚ' ? `x ∈ ℚ: every double is a rational number, so the page can't tell √2 from 1.4142135623730951`
+    : `${s.name === 'ci' ? `<ci>${set}</ci>` : `<${set}>`} as a set: this build takes an <interval> and the integers, the natural numbers and the reals (ℤ, ℕ, ℝ)`);
+}
+// a name the page defines: the definition's side in its place; one it defines further down, or in a data-dcss-scope the
+// formula isn't in, is refused (values flow down: a formula sees its own scope's definitions and those around it)
 function named(x, a, defining) {
   if (defining) return x;
-  if (DEFS.has(x.ci)) return { ...x, def: DEFS.get(x.ci) };
-  if (LATER.has(x.ci)) throw refusal(a.start, `${x.ci} is defined further down the page (line ${LATER.get(x.ci)}): define it before the formulas that use it`);
+  if (CX.defs.has(x.ci)) { const d = CX.defs.get(x.ci); return d?.result ? { ...x, result: d.result } : { ...x, def: d }; }
+  if (CX.later.has(x.ci)) throw refusal(a.start, `${x.ci} is defined further down the page (line ${CX.later.get(x.ci)}): define it before the formulas that use it`);
+  if (CX.elsewhere.has(x.ci)) throw refusal(a.start, `${x.ci} is defined in another data-dcss-scope (line ${CX.elsewhere.get(x.ci)}): a formula reads the definitions of its own scope and the scopes around it`);
   return x;
 }
 // a root's degree: 2 (sqrt), or a power of 2, where pow(x, 1/n) has an exact exponent; any other misses whole roots
@@ -590,6 +799,8 @@ const SPLIT = { e: (n, v) => `round(down, log(max(abs(${v}), pow(2, -1074)), 2))
   // and a fifth, 1 for -0 (an integer has no sign of zero; 1 / -0 is -Infinity), multiplied back in
   z: (n, v) => `(1 - abs(sign(${v}))) * max(0, -1 * sign(1 / ${v}))` };
 const join = (n) => `(${by2(`(var(${n}-a) + var(${n}-b) / 524288 + var(${n}-c) / 274877906944)`, `var(${n}-e) - 17`)} * (1 - 2 * var(${n}-z)))`;
+// a scope's result: its five parts and v, 1 while it has an answer, on the scope's element, inherited by what is inside it
+const ANSWER = ['e', 'a', 'b', 'c', 'z', 'v'], readAnswer = (A) => `calc(${join(A)} * (1 + 0 / var(${A}-v)))`;
 // d3's answer in JavaScript's doubles (JavaScript's Math where d3 has no call), when every number under it is written
 // (null with a <ci> under it); CSS's pow() and sqrt() are Math.pow's and Math.sqrt's to the bit (sqrt 300 of 300; pow 50,000 of 50,000, random and
 // compound-interest pairs, both engines on macOS, 2026-10-30; other systems' pow() not measured)
@@ -602,14 +813,21 @@ const D3 = {
   quotient: ([a, b]) => (wholeArgs(a, b) ? Math.trunc(a / b) : NaN), rem: ([a, b]) => (wholeArgs(a, b) ? a % b : NaN),
   isum: (xs) => xs.reduce((s, x) => s + x, 0), iproduct: (xs) => xs.reduce((p, x) => p * x, 1),
   sum: (xs) => xs.reduce((s, x) => s + x, 0), mean: (xs) => xs.reduce((s, x) => s + x, 0) / xs.length,
-  min: (xs) => Math.min(...xs), max: (xs) => Math.max(...xs), id: (xs) => xs[0],
+  min: (xs) => d3min(xs), max: (xs) => d3max(xs), id: (xs) => xs[0], // d3's: the first of equal values, so min(0, -0) is 0
   median: (xs) => { const s = [...xs].sort((a, b) => a - b), i0 = Math.floor((s.length - 1) / 2); return s.length % 2 ? s[i0] : s[i0] + (s[i0 + 1] - s[i0]) * 0.5; },
 };
 // a value the build knows, or null; given a set, a name with a fallback (LaTeXML's 𝜋 and 𝑒) is its fallback, noted in the set
-const itemValue = (x, seen) => (x.node ? valueOf(x.node, seen) : x.def ? valueOf(x.def, seen) : x.ci ? (seen && x.fallback ? (seen.add(x.ci), +x.fallback) : null) : x.x);
+const itemValue = (x, seen) => (x.node ? valueOf(x.node, seen) : x.def ? valueOf(x.def, seen) : x.slot || x.result ? null : x.ci ? (seen && x.fallback ? (seen.add(x.ci), +x.fallback) : null) : x.x);
 const OPS = { lt: (a, b) => a < b, leq: (a, b) => a <= b, gt: (a, b) => a > b, geq: (a, b) => a >= b, eq: (a, b) => a === b, neq: (a, b) => a !== b };
-const condValue = (c, seen) => { if (c.parts) { const vs = c.parts.map((q) => condValue(q, seen)); return vs.includes(null) ? null : c.op === 'and' ? vs.every(Boolean) : vs.some(Boolean); }
-  const xs = c.items.map((x) => itemValue(x, seen)); return xs.includes(null) ? null : xs.slice(1).every((b, i) => OPS[c.op](xs[i], b)); };
+const LOGICJS = { and: (vs) => vs.every(Boolean), or: (vs) => vs.some(Boolean), xor: (vs) => vs.filter(Boolean).length % 2 === 1, not: ([v]) => !v, implies: ([a, b]) => !a || b, equivalent: ([a, b]) => a === b };
+const LOGICCSS = { and: (ts) => `min(${ts.join(', ')})`, or: (ts) => `max(${ts.join(', ')})`, xor: (ts) => `mod(${ts.join(' + ')}, 2)`, not: ([t]) => `(1 - ${t})`, implies: ([a, b]) => `max(1 - ${a}, ${b})`, equivalent: ([a, b]) => `(1 - abs(${a} - ${b}))` };
+const condValue = (c, seen) => { if (c.parts) { const vs = c.parts.map((q) => condValue(q, seen)); return vs.includes(null) ? null : LOGICJS[c.op](vs); }
+  const xs = c.items.map((x) => (x.inf ? x.inf * Infinity : itemValue(x, seen))); if (xs.includes(null)) return null;
+  if (c.divides) { const [a, b] = xs; return a === 0 ? b === 0 : b % a === 0; }
+  if (c.of) { const [x, lo, hi] = xs, [a, b] = CLOSURE[c.closure] ?? [];
+    const v = c.of === 'Z' ? Number.isInteger(x) : c.of === 'N' ? Number.isInteger(x) && x >= 0 : c.of === 'R' ? Number.isFinite(x) : OPS[a](lo, x) && OPS[b](x, hi);
+    return c.op === 'notin' ? !v : v; }
+  return xs.slice(1).every((b, i) => OPS[c.op](xs[i], b)); };
 const wholeArgs = (a, b) => Number.isInteger(a) && Number.isInteger(b) && Math.abs(a) <= 2 ** 26 && Math.abs(b) <= 2 ** 26 && b !== 0;
 const valueOf = (node, seen) => { if (node.live) return null; if (node.call === 'fixed') { if (!node.unless) return node.value; if (!seen) return null; node.unless.forEach((n) => seen.add(n)); return node.value; }
   const xs = node.items.map((x) => itemValue(x, seen)); if (xs.includes(null)) return null;
@@ -633,9 +851,9 @@ const depthOf = (s) => { let d = 0, m = 0; for (const ch of s) if (ch === '(') m
 // decls, as [name, expression], and the names the page sets in names
 function former(divide) {
   const decls = [], names = new Set(), f = { decls, names, compares: 0 }; let id = 0;
-  const arg = (x) => (x.node ? expr(x.node) : x.def ? expr(x.def) : x.ci ? (x.fallback ? `var(--${x.ci}, ${x.fallback})` : (names.add(x.ci), `var(--${x.ci})`)) : Object.is(x.x, -0) ? '(-1 * 0)' : String(x.x));
+  const arg = (x) => (x.node ? expr(x.node) : x.def ? expr(x.def) : x.result ? `(${join(x.result)} * (1 + 0 / var(${x.result}-v)))` : x.slot ? `(${join(x.slot)} * (1 + 0 / var(${x.slot}-g)))` : x.ci ? (x.fallback ? `var(--${x.ci}, ${x.fallback})` : (names.add(x.ci), `var(--${x.ci})`)) : Object.is(x.x, -0) ? '(-1 * 0)' : String(x.x));
   const keep = (x) => { if (depthOf(x) <= DEPTH) return x; const q = `--dcss-dcss-d${++id}`;
-    for (const z of 'eabcz') decls.push([`${q}-${z}`, SPLIT[z](q, `clamp(-1 * pow(2, 1023), ${x}, pow(2, 1023))`)]);
+    for (const z of 'eabcz') decls.push([`${q}-${z}`, SPLIT[z](q, `clamp(-1 * (pow(2, 1023) * (2 - pow(2, -52))), ${x}, (pow(2, 1023) * (2 - pow(2, -52))))`)]);
     decls.push([`${q}-f`, `${x} * 0 + 1`]); return `(${join(q)} * (1 + 0 / var(${q}-f)))`; };
   const chain = (op, xs) => xs.reduce((a, b) => keep(F(`${a} ${op} ${b}`)));
   // exp of a value the page sets, to the double nearest the true value (a model of these steps in JavaScript matched the
@@ -796,16 +1014,18 @@ function former(divide) {
   // JavaScript and in the engines): t = |x|, or 1/|x| past 1 as a pair (CSS's division as a guess, corrected by TwoProduct, so
   // WebKit's inexact division can't matter); then atanOf; past 1, π/2 − it; then x's sign. The halfway test leaves
   // 2^-76 |y| + 2^-50 |u|³ (the tail's rounding, where A_j and u nearly cancel: measured 2^-80.6 absolute). An infinite x is
-  // 2^1000's (π/2); ±0 is ±0
-  const liveAtan = (xe) => { const K = kit(), { P, mac, store, mul, sub, num, fast, twoProd, ddAdd } = K, { PI2 } = ATANK;
+  // 2^996's (π/2); ±0 is ±0. arccot is atan(1/x), the same two branches the other way round: atan t past 1, π/2 − it
+  // below; none for 0 (MathML's arccot as OpenMath's, atan(1/x)) or past 2^996, where TwoProduct's split of x (134217729 x)
+  // would pass the largest double and 1/x lose its low part
+  const liveAtan = (xe, fn) => { const K = kit(), { P, mac, store, mul, sub, num, fast, twoProd, ddAdd } = K, { PI2 } = ATANK, cot = fn === 'arccot';
     const x = mac('x', xe), a = mac('a', `abs(${x})`), two = (e) => `pow(2, ${e})`;
-    decls.push([`${P}-d`, `sign(abs(${x}) + 1)`], [`${P}-inv`, `sign(max(0, ${a} + -1))`]);
+    decls.push([`${P}-d`, cot ? `sign(abs(${x}) + 1) * abs(sign(${x})) * (1 - sign(max(0, ${a} + (-1 * ${two(996)}))))` : `sign(abs(${x}) + 1)`], [`${P}-inv`, `sign(max(0, ${a} + -1))`]);
     const inv = `var(${P}-inv)`, pickd = (u, v) => `(${sel(inv, u)} + ${sel(`(1 - ${inv})`, v)})`;
-    // 1/|x| for |x| past 1, from |x| held to [1, 2^1000] so that neither branch is NaN
-    const a1 = mac('a1', `clamp(1, ${a}, ${two(1000)})`), q0 = mac('q0', `(1 / ${a1})`), [p, pe] = twoProd('i', a1, q0), [ih, il] = fast('j', q0, mul(q0, sub(sub('1', p), pe)));
+    // 1/|x| for |x| past 1, from |x| held to [1, 2^996] so that neither branch is NaN
+    const a1 = mac('a1', `clamp(1, ${a}, ${two(996)})`), q0 = mac('q0', `(1 / ${a1})`), [p, pe] = twoProd('i', a1, q0), [ih, il] = fast('j', q0, mul(q0, sub(sub('1', p), pe)));
     const TH = store('th', pickd(ih, `min(${a}, 1)`)), TL = store('tl', pickd(il, '0')), { Y, UH, flags } = atanOf(K, TH, TL);
-    const y2 = ddAdd('v', PI2.map(num), [`(-1 * ${Y[0]})`, `(-1 * ${Y[1]})`]), [zh0, zl0] = fast('z', pickd(y2[0], Y[0]), pickd(y2[1], Y[1])), sg = `sign(${x})`;
-    return answer(K, x, `(${zh0} * ${sg})`, `(${zl0} * ${sg})`, (az) => `(${num(2 ** -76)} * ${az} + ${num(2 ** -50)} * abs(${UH}) * abs(${UH}) * abs(${UH}))`, `var(${P}-d) * var(${P}-th-f) * var(${P}-tl-f) * ${flags}`, true); };
+    const y2 = ddAdd('v', PI2.map(num), [`(-1 * ${Y[0]})`, `(-1 * ${Y[1]})`]), [zh0, zl0] = cot ? fast('z', pickd(Y[0], y2[0]), pickd(Y[1], y2[1])) : fast('z', pickd(y2[0], Y[0]), pickd(y2[1], Y[1])), sg = `sign(${x})`;
+    return answer(K, x, `(${zh0} * ${sg})`, `(${zl0} * ${sg})`, (az) => `(${num(2 ** -76)} * ${az} + ${num(2 ** -50)} * abs(${UH}) * abs(${UH}) * abs(${UH}))`, `var(${P}-d) * var(${P}-th-f) * var(${P}-tl-f) * ${flags}`, !cot); };
   // arcsin or arccos of a value the page sets (probes/dcss/asin-check.mjs): a = |x|, s = √(1 − x²) as a pair (1 − x² by
   // TwoProduct, the root corrected once), t = min(a, s) / max(a, s) as a pair, atanOf; arcsin(|x|) = atan t or π/2 − it,
   // arccos(|x|) the other of the two (so neither cancels near 1), then x's sign for arcsin, π − it for arccos below 0.
@@ -828,6 +1048,32 @@ function former(divide) {
     const [zh0, zl0] = fast('z', r[0], r[1]), sg = fn === 'arcsin' ? `sign(${x})` : '1';
     return answer(K, x, `(${zh0} * ${sg})`, `(${zl0} * ${sg})`, (az) => `(${num(2 ** -76)} * ${az} + ${num(2 ** -50)} * abs(${UH}) * abs(${UH}) * abs(${UH}))`,
       `var(${P}-d) * var(${P}-wh-f) * var(${P}-rs-f) * var(${P}-sh0-f) * var(${P}-dh0-f) * var(${P}-rt-f) * var(${P}-th-f) * var(${P}-rh-f) * ${flags}`, fn === 'arcsin'); };
+  // arcsec or arccsc of a value the page sets (probes/dcss/asin-check.mjs): a = |x|; t = √(a² − 1) as a pair below √2 (a² − 1
+  // by TwoProduct, exact, the root corrected once), else 1 over it, q / √(1 − q²) with q = 1/a as a pair (no cancellation
+  // there, and q² lost past 2^500 changes nothing); atanOf. Below √2 arcsec(a) is atan t and arccsc(a) π/2 − it, above the
+  // other way round, so neither cancels; then π − it for arcsec below 0, x's sign for arccsc. No answer for |x| below 1;
+  // past 2^996 (TwoProduct's split of a, 134217729 a, would pass the largest double) arccsc has none and arcsec is 2^996's
+  const liveAsec = (xe, fn) => { const K = kit(), { P, mac, store, add, sub, mul, num, twoSum, fast, twoProd, ddAdd } = K, { PI2 } = ATANK, two = (e) => `pow(2, ${e})`;
+    const x = mac('x', xe), a = mac('a', `abs(${x})`);
+    decls.push([`${P}-d`, `(1 - sign(max(0, 1 + (-1 * ${a})))) * (${x} * 0 + 1)${fn === 'arccsc' ? ` * (1 - sign(max(0, ${a} + (-1 * ${two(996)}))))` : ''}`], [`${P}-inv`, `sign(max(0, ${num(Math.SQRT2)} + (-1 * ${a})))`]);
+    const inv = `var(${P}-inv)`, pickd = (u, v) => `(${sel(inv, u)} + ${sel(`(1 - ${inv})`, v)})`;
+    const root = (n, wh, wl) => { const WH = store(`${n}wH`, wh), WL = store(`${n}wL`, wl), s0 = mac(`${n}0`, `sqrt(${WH})`), [p, pe] = twoProd(`${n}p`, s0, s0);
+      return fast(`${n}s`, s0, store(`${n}r`, `(${add(sub(sub(WH, p), pe), WL)} / (2 * max(${s0}, ${2 ** -600})))`)); };
+    // below √2: u = √(a² − 1), a held to [1, 1.5]
+    const a1 = mac('a1', `clamp(1, ${a}, 1.5)`), [sq, sqe] = twoProd('q', a1, a1), [w0, w1] = twoSum('w', sq, '-1'), [uh, ul] = root('U', ...fast('v', w0, add(w1, sqe)));
+    // above: q = 1/a, a held to [1, 2^996]; s = √(1 − q²); 1/u = q / s
+    const a2 = mac('a2', `clamp(1, ${a}, ${two(996)})`), q0 = mac('q0', `(1 / ${a2})`), [p, pe] = twoProd('i', a2, q0), [qh0, ql0] = fast('j', q0, mul(q0, sub(sub('1', p), pe)));
+    const QH = store('qh', qh0), QL = store('ql', ql0), [r2, r2e] = twoProd('kk', QH, QH), [y0, y1] = twoSum('y', '1', `(-1 * ${r2})`);
+    const [sh, sl] = root('S', ...fast('z', y0, sub(sub(y1, r2e), mul('2', mul(QH, QL))))), SH = store('SH', sh), SL = store('SL', sl);
+    const t0 = mac('t0', `(${QH} / ${SH})`), [m, me] = twoProd('g', t0, SH), [vh, vl] = fast('h', t0, store('rt', `(${add(sub(sub(QH, m), me), sub(QL, mul(t0, SL)))} / ${SH})`));
+    const { Y, UH, flags } = atanOf(K, store('th', pickd(uh, vh)), store('tl', pickd(ul, vl))), comp = ddAdd('c', PI2.map(num), [`(-1 * ${Y[0]})`, `(-1 * ${Y[1]})`]);
+    const first = fn === 'arcsec' ? (h) => pickd(Y[h], comp[h]) : (h) => pickd(comp[h], Y[h]);
+    let r = [store('rh', first(0)), store('rl', first(1))];
+    if (fn === 'arcsec') { const neg = `sign(max(0, -1 * ${x}))`, pi = PIPAIR.map(num), back = ddAdd('b', pi, [`(-1 * ${r[0]})`, `(-1 * ${r[1]})`]);
+      r = [`(${sel(neg, back[0])} + ${sel(`(1 - ${neg})`, r[0])})`, `(${sel(neg, back[1])} + ${sel(`(1 - ${neg})`, r[1])})`]; }
+    const [zh0, zl0] = fast('fo', r[0], r[1]), sg = fn === 'arccsc' ? `sign(${x})` : '1';
+    return answer(K, x, `(${zh0} * ${sg})`, `(${zl0} * ${sg})`, (az) => `(${num(2 ** -76)} * ${az} + ${num(2 ** -50)} * abs(${UH}) * abs(${UH}) * abs(${UH}))`,
+      `var(${P}-d) * var(${P}-qh-f) * var(${P}-SH-f) * var(${P}-rt-f) * var(${P}-th-f) * var(${P}-rh-f) * ${flags}`, false); };
   // tan or cot of a value the page sets (probes/dcss/tan-check.mjs): sin's reduction, k mod 512 (tan's period is π); within
   // π/4 of π/2, tan x = −1/tan(x − π/2), so T = tan(j'π/512) for |j'| ≤ 128 from a table of 129, with j's sign; t = tan r as a
   // pair (r + r³/3 + 2r⁵/15 + 17r⁷/315 + 62r⁹/2835); n = T + t and d = 1 − T t as pairs; tan = n/d, or −d/n on that branch,
@@ -878,15 +1124,22 @@ function former(divide) {
   // is every larger x's too. ±0 is ±0
   const liveHyp = (xe, fn) => { const K = kit(), { P, mac, store, add, sub, mul, num, twoSum, fast, twoProd, ddMul } = K, two = (e) => `pow(2, ${e})`;
     const x = mac('x', xe), a = mac('a', `abs(${x})`), lt = (u, v) => `sign(max(0, ${v} + (-1 * ${u})))`;
-    decls.push([`${P}-d`, fn === 'tanh' ? `sign(${a} + 1)` : `(${x} * 0 + 1) * (1 - ${lt(709, a)})`], [`${P}-sm`, lt(a, 2 ** -5)], [`${P}-ty`, lt(a, 2 ** -27)]);
+    const flat = fn === 'tanh' || fn === 'coth'; // 1 to the double from |x| 20 up: e^20 is enough
+    decls.push([`${P}-d`, flat ? `sign(${a} + 1)` : `(${x} * 0 + 1) * (1 - ${lt(709, a)})`], [`${P}-sm`, lt(a, 2 ** -5)], [`${P}-ty`, lt(a, 2 ** -27)]);
     const sm = `var(${P}-sm)`, pick = (u, v) => `(${sel(sm, u)} + ${sel(`(1 - ${sm})`, v)})`;
-    const ex = expCore(`min(${a}, ${fn === 'tanh' ? 20 : 709})`, true), ZH = ex.zh, ZL = ex.zl, E = `var(${ex.P}-E)`;
+    const ex = expCore(`min(${a}, ${flat ? 20 : 709})`, true), ZH = ex.zh, ZL = ex.zl, E = `var(${ex.P}-E)`;
     const q0 = mac('q0', `(1 / ${ZH})`), [m, me] = twoProd('w', q0, ZH), [rh, rl] = fast('v', q0, store('rq', `(${sub(sub(sub('1', m), me), mul(q0, ZL))} / ${ZH})`));
     const sc = mac('sc', two(`(-2 * ${E})`)), Gh = mac('gh', store('gh', mul(rh, sc))), Gl = mac('gl', store('gl', mul(rl, sc)));
+    // sech, csch and coth: 1 / the pair (cosh's, sinh's or tanh's, before its power of 2), one corrected division; the
+    // relative error is the pair's and 2^-100 more; none for csch and coth of |x| below 2^-1022 (1/x near the largest double)
+    const inv = (hh, ll) => { const H = store('ih', hh), L = store('il', ll), r0 = mac('r0', `(1 / ${H})`), [m2, me2] = twoProd('r', r0, H);
+      return fast('rq', r0, store('rr', `(${sub(sub(sub('1', m2), me2), mul(r0, L))} / ${H})`)); };
+    if (fn === 'sech' || fn === 'csch' || fn === 'coth') decls.push([`${P}-dd`, fn === 'sech' ? '1' : `sign(max(0, ${a} + (-1 * ${2 ** -1022})))`]);
     const [s1, s2] = twoSum('s', ZH, `(-1 * ${Gh})`), [sh, sl] = fast('t', s1, add(s2, sub(ZL, Gl))), SH = store('sh', sh), SL = store('sl', sl);
     const [c1, c2] = twoSum('c', ZH, Gh), [ch, cl] = fast('u', c1, add(c2, add(ZL, Gl))), CH = store('ch', ch), CL = store('cl', cl);
     const sg = `(1 - 2 * sign(max(0, -1 * ${x})))`, flags = `var(${P}-d) * var(${ex.P}-pf)`, edge = `(${num(2 ** -73)} * (${ZH} + ${Gh}))`;
     if (fn === 'cosh') return `(${answer(K, x, CH, CL, (az) => `(${edge} + ${num(2 ** -100)} * ${az})`, flags, false)} * ${two(`(${E} + -1)`)})`;
+    if (fn === 'sech') { const [qh, ql] = inv(CH, CL); return `(${answer(K, x, qh, ql, (az) => `(${az} * ${num(2 ** -73 + 2 ** -99)})`, `${flags} * var(${P}-dd)`, false)} * ${two(`(1 + -1 * ${E})`)})`; }
     // the series below 2^-5, from |x| held there so that it stays finite
     // (each pair stored: a TwoProduct reads its operands' halves, so a chain of them re-expands: 890k tokens unstored)
     const b = store('b', `min(${a}, ${2 ** -5})`), [th0, tl0] = twoProd('q', b, b), th = store('th', th0), tl = store('tl', tl0), [p, pe] = twoProd('p', b, th);
@@ -894,9 +1147,13 @@ function former(divide) {
     const poly = add(num(1 / 120), mul(th, add(num(1 / 5040), mul(th, add(num(1 / 362880), mul(th, num(1 / 39916800)))))));
     const [u1, u2] = fast('m', b, C6H), [nh, nl] = fast('n', u1, add(u2, add(C6L, mul(mul(mul(b, th), th), poly)))), NH = store('nh', nh), NL = store('nl', nl);
     if (fn === 'sinh') return `(${answer(K, x, `(${pick(NH, SH)} * ${sg})`, `(${pick(NL, SL)} * ${sg})`, (az) => `(${sm} * ${num(2 ** -75)} * ${az} + (1 - ${sm}) * (${edge} + ${num(2 ** -100)} * ${az}))`, flags, true, `var(${P}-ty)`)} * (${sm} + (1 - ${sm}) * ${two(`(${E} + -1)`)}))`;
+    if (fn === 'csch') { const [qh, ql] = inv(pick(NH, SH), pick(NL, SL));
+      return `(${answer(K, x, `(${qh} * ${sg})`, `(${ql} * ${sg})`, (az) => `(${az} * (${sm} * ${num(2 ** -75)} + (1 - ${sm}) * (${edge} / max(abs(${SH}), ${2 ** -1000}) + ${num(2 ** -100)}) + ${num(2 ** -99)}))`, `${flags} * var(${P}-dd)`, false)} * (${sm} + (1 - ${sm}) * ${two(`(1 + -1 * ${E})`)}))`; }
     // tanh: the numerator (2 sinh's series, or S) over C, corrected once
     const UH = store('uh', pick(mul('2', NH), SH)), UL = store('ul', pick(mul('2', NL), SL)), d0 = mac('d0', `(${UH} / ${CH})`), [w, we] = twoProd('x', d0, CH);
     const [yh, yl] = fast('y', d0, store('yq', `(${add(sub(sub(UH, w), we), sub(UL, mul(d0, CL)))} / ${CH})`));
+    if (fn === 'coth') { const [qh, ql] = inv(yh, yl);
+      return answer(K, x, `(${qh} * ${sg})`, `(${ql} * ${sg})`, (az) => `(${az} * (${sm} * ${num(2 ** -75)} + (1 - ${sm}) * ${edge} / max(abs(${SH}), ${2 ** -1000}) + ${num(2 ** -73 + 2 ** -99)}))`, `${flags} * var(${P}-dd)`, false); }
     return answer(K, x, `(${yh} * ${sg})`, `(${yl} * ${sg})`, (az) => `(${az} * (${sm} * ${num(2 ** -75)} + (1 - ${sm}) * ${edge} / max(abs(${SH}), ${2 ** -1000}) + ${num(2 ** -73 + 2 ** -100)}))`, flags, true, `var(${P}-ty)`); };
   // the inverse hyperbolic functions' parts: an odd series b + c3 b³ (a pair) + b⁵ (c5 + c7 b² + …); √ of a pair, corrected
   // once; and ln of a pair w from 1 up: CSS's log(wh) as a guess y0, δ = w e^(−y0) − 1 from the exact exp's pair, ln w =
@@ -946,6 +1203,68 @@ function former(divide) {
     const LH = store('lh', L[0]), LL = store('ll', L[1]), sgn = fn === 'arccosh' ? '1' : sg;
     const B = (az) => `(${sm} * ${Bs} * ${az} + (1 - ${sm}) * (${num(fn === 'arctanh' ? 2 ** -74 : 2 ** -73)} + ${num(2 ** -100)} * ${az}))`;
     return answer(K, x, `(${pick(sm, S[0], LH)} * ${sgn})`, `(${pick(sm, S[1], LL)} * ${sgn})`, B, `var(${P}-d) * (${sm} + (1 - ${sm}) * ${ln.ok})`, fn !== 'arccosh', fn === 'arccosh' ? '0' : `var(${P}-ty)`); };
+  // arcsech, arccsch or arccoth of a value the page sets (probes/dcss/ahyp-check.mjs): arccosh, arcsinh and arctanh of 1/x
+  // without 1/x's rounding. Past 32, arccsch and arccoth are arcsinh's and arctanh's odd series of t = 1/x as a pair, t's
+  // low part added through the derivative (1/√(1 + t²), 1/(1 − t²)); arcsech within 2^-11 of 1 is arccosh's series in
+  // t = (1 − x)/x as a pair; elsewhere ln of an exact pair, (1 + √(1 ± x²))/x or (x + 1)/(x − 1) halved, and below 2^-26
+  // ln 2 − ln x ± x²/4. The halfway test leaves what liveAhyp's does. No answer for x unset, arcsech outside (0, 1], arccoth
+  // inside [−1, 1], |x| below 2^-1022, or arccsch and arccoth past 2^996 (TwoProduct's split of x)
+  const liveRahyp = (xe, fn) => { const K = kit(), { P, mac, store, add, sub, mul, num, twoSum, fast, twoProd, ddMul, ddAdd } = K;
+    const x = mac('x', xe), a = mac('a', `abs(${x})`), lt = (u, v) => `sign(max(0, ${v} + (-1 * ${u})))`, pick = (g, u, v) => `(${sel(g, u)} + ${sel(`(1 - ${g})`, v)})`;
+    const top = fn === 'arcsech' ? x : a;
+    decls.push([`${P}-d`, `(${x} * 0 + 1) * (1 - ${lt(top, 2 ** -1022)})${fn === 'arcsech' ? ` * (1 - ${lt(1, x)})` : ` * (1 - ${lt(2 ** 996, a)})`}${fn === 'arccoth' ? ` * ${lt(1, a)}` : ''}`],
+      [`${P}-sm`, fn === 'arcsech' ? `(1 - ${lt(x, num(1 - 2 ** -11))})` : lt(32, a)]);
+    let S, Bs;
+    if (fn === 'arcsech') { // arccosh's series in t = (1 − x)/x
+      const xc = mac('xc', `clamp(${1 - 2 ** -11}, ${x}, 1)`), n = mac('n1', `(1 + (-1 * ${xc}))`), t0 = mac('t0', `(${n} / ${xc})`), [tp, tpe] = twoProd('tp', t0, xc);
+      const [th0, tl0] = fast('tf', t0, `(${sub(sub(n, tp), tpe)} / ${xc})`), TH = store('th', th0), TL = store('tl', tl0), TW = PAIROF(1, 12);
+      const [rh, rl] = sqrtPair(K, 'q', mul('2', TH), mul('2', TL)), [gh, ge] = twoProd('g', TH, num(TW[0])), [g1, g2] = fast('h', gh, add(ge, add(mul(TH, num(TW[1])), mul(TL, num(TW[0])))));
+      const rest = mul(mul(TH, TH), [3 / 160, -5 / 896, 35 / 18432, -63 / 90112].reduceRight((acc, q) => add(num(q), mul(TH, acc)), num(231 / 851968))), G1 = store('g1', g1), [f1, f2] = twoSum('f', '1', `(-1 * ${G1})`);
+      const [fh, fl] = fast('e', f1, add(f2, add(`(-1 * ${store('g2', g2)})`, mac('rest', rest)))), Y = ddMul('y', [store('rh', rh), store('rl', rl)], [store('fh', fh), store('fl', fl)]);
+      S = [store('zs', Y[0]), store('zt', Y[1])]; Bs = num(2 ** -73); }
+    else { // the odd series of t = 1/x past 32
+      const a1 = mac('a1', `clamp(32, ${a}, ${2 ** 996})`), q0 = mac('q0', `(1 / ${a1})`), [p, pe] = twoProd('i', a1, q0), [qh, ql] = fast('j', q0, mul(q0, sub(sub('1', p), pe)));
+      const b = store('b', `min(${qh}, ${2 ** -5})`), QL = store('tq', ql), S0 = fn === 'arccsch' ? oddSeries(K, 's', b, PAIROF(-1, 6), [3 / 40, -5 / 112, 35 / 1152, -63 / 2816, 231 / 13312, -143 / 10240])
+        : oddSeries(K, 's', b, PAIROF(1, 3), [1 / 5, 1 / 7, 1 / 9, 1 / 11, 1 / 13, 1 / 15, 1 / 17]);
+      const Sf = fast('sf', S0[0], add(S0[1], fn === 'arccsch' ? `(${QL} / sqrt(1 + ${b} * ${b}))` : `(${QL} / (1 + (-1 * ${b} * ${b})))`)); S = [store('zs', Sf[0]), store('zt', Sf[1])]; Bs = num(2 ** -71); }
+    // elsewhere: w, then its ln
+    let W, tiny = '0', xs = '0';
+    if (fn === 'arccoth') { const m = mac('m', `clamp(${1 + 2 ** -52}, ${a}, 32)`), [nh, nl] = twoSum('n', m, '1'), [dh, dl] = twoSum('o', m, '-1');
+      const DH = store('dh', dh), DL = store('dl', dl), NH = store('nh', nh), NL = store('nl', nl), w0 = mac('w0', `(${NH} / ${DH})`), [mm, me] = twoProd('w', w0, DH);
+      W = fast('v', w0, store('wq', `(${add(sub(sub(NH, mm), me), sub(NL, mul(w0, DL)))} / ${DH})`)); }
+    else { decls.push([`${P}-ty`, lt(top, 2 ** -26)]); tiny = `var(${P}-ty)`; xs = mac('xs', `clamp(${2 ** -1022}, ${top}, ${2 ** -26})`);
+      const m = mac('m', fn === 'arcsech' ? `clamp(${2 ** -26}, ${x}, ${1 - 2 ** -11})` : `clamp(${2 ** -26}, ${a}, 32)`), [p, e] = twoProd('p', m, m), [s1, s2] = twoSum('c', '1', fn === 'arccsch' ? p : `(-1 * ${p})`);
+      const [qh, ql] = fast('k', s1, fn === 'arccsch' ? add(s2, e) : sub(s2, e)), [rh, rl] = sqrtPair(K, 'r', store('qh', qh), store('ql', ql)), [nh, ne] = twoSum('u', '1', store('sh', rh)), [nh1, nl1] = fast('nn', nh, add(ne, store('sl', rl)));
+      const NH = store('nh', nh1), NL = store('nl', nl1), w0 = mac('w0', `(${NH} / ${m})`), [mm, me] = twoProd('w', w0, m), wm = fast('v', w0, store('wq', `(${add(sub(sub(NH, mm), me), NL)} / ${m})`));
+      W = [pick(tiny, xs, wm[0]), pick(tiny, '0', wm[1])]; }
+    const ln = lnFar(K, store('wh', W[0]), store('wl', W[1]));
+    let L = ln.pair;
+    if (fn === 'arccoth') L = [mul(L[0], '0.5'), mul(L[1], '0.5')];
+    else { const MH = store('mh', L[0]), ML = store('ml', L[1]), T2 = ddAdd('t2', LN2PAIR.map(num), [`(-1 * ${MH})`, `(-1 * ${ML})`]), Tf = fast('tg', T2[0], add(T2[1], `(${fn === 'arccsch' ? 1 : -1} * ${xs} * ${xs} * 0.25)`));
+      L = [pick(tiny, Tf[0], MH), pick(tiny, Tf[1], ML)]; }
+    const LH = store('lh', L[0]), LL = store('ll', L[1]), sm = `var(${P}-sm)`, sgn = fn === 'arcsech' ? '1' : `(1 - 2 * sign(max(0, -1 * ${x})))`;
+    const B = (az) => `(${sm} * ${Bs} * ${az} + (1 - ${sm}) * (${num(fn === 'arccoth' ? 2 ** -74 : 2 ** -73)} + ${num(2 ** -100)} * ${az}))`;
+    return answer(K, x, `(${pick(sm, S[0], LH)} * ${sgn})`, `(${pick(sm, S[1], LL)} * ${sgn})`, B, `var(${P}-d) * (${sm} + (1 - ${sm}) * ${ln.ok})`, false); };
+  // gcd or lcm of values the page sets (probes/dcss/gcd-check.mjs): Euclid's algorithm unrolled, r(k + 1) = rem(r(k − 1),
+  // r(k)), 80 steps, past the 79 that two consecutive Fibonacci numbers below 2^53 take; the gcd is the last r before a 0.
+  // CSS's rem() is exact on whole numbers to 2^53 (3,005 of 3,005 pairs in Chrome and WebKit, 2026-10-30); each r is
+  // carried in three registered integers of 18 bits, so no step's text grows. lcm is a / gcd · b, rounded once as the
+  // build's BigInt is, and between more than two arguments a whole number within 2^53 at each step. Arguments are |x|. No
+  // answer for a value that is not a whole number within ±2^53, or a last r not 0
+  const liveGcd = (xes, op) => { const { P, mac } = kit(), W = 2 ** 18, STEPS = 80, MAX = 2 ** 53 - 1, oks = [];
+    let n = 0; const put = (v) => { const q = `${P}-r${n++}`, m = mac(`v${n}`, v);
+      for (const j of [0, 1, 2]) decls.push([`${q}${j}`, `calc(round(down, ${m} / ${W ** (2 - j)}, 1) - round(down, ${m} / ${W ** (3 - j)}, 1) * ${W})`]);
+      return `((var(${q}0) * ${W} + var(${q}1)) * ${W} + var(${q}2))`; };
+    const whole = (x) => `(1 - abs(sign(rem(${x}, 1)))) * (1 - sign(max(0, abs(${x}) + ${-MAX})))`;
+    const gcd2 = (A, B) => { const r = [A, B]; for (let k = 1; k < STEPS; k++) r.push(put(`rem(${r[k - 1]}, max(${r[k]}, 1)) * sign(${r[k]})`));
+      oks.push(`(1 - sign(${r.at(-1)}))`); return put(r.slice(1).map((rk, k) => `${r[k]} * (1 - sign(${rk}))`).join(' + ')); };
+    let acc = put(`abs(${xes[0]})`);
+    xes.forEach((x, i) => { oks.push(whole(x)); if (!i) return; const b = put(`abs(${x})`), g = gcd2(acc, b);
+      if (op === 'gcd') { acc = g; return; }
+      const l = `(${divide(acc, `max(${g}, 1)`)} * ${b})`; if (i === xes.length - 1) { acc = l; return; }
+      oks.push(`(1 - sign(max(0, ${l} + ${-MAX})))`); acc = put(l); });
+    decls.push([`${P}-ok`, oks.join(' * ')]);
+    return `(${acc} * (1 + 0 / var(${P}-ok)))`; };
   // n! of a value the page sets: picked from FACTK by round(n), an answer only for a whole n from 0 to 170
   const liveFactorial = (ne) => { const { P, mac, pickers } = kit(), n = mac('n', ne);
     decls.push([`${P}-n`, `round(${n}, 1)`], [`${P}-ok`, `(1 - abs(sign(${n} + (-1 * var(${P}-n))))) * (1 - sign(max(0, -1 * ${n}))) * (1 - sign(max(0, ${n} + -170)))`]);
@@ -959,32 +1278,111 @@ function former(divide) {
     const inside = `${ge(`var(${P}-k)`, 0)} * ${ge(`var(${P}-m)`, 0)}`;
     decls.push([`${P}-in`, inside], [`${P}-ok`, `${whole(n, 'n')} * ${whole(k, 'k')} * ${ge(`var(${P}-n)`, 0)} * (1 - ${inside} + ${inside} * ${ge(170, `var(${P}-n)`)} * ${ge(2 ** 50, q)})`]);
     return `(${q} * var(${P}-in) * (1 + 0 / var(${P}-ok)))`; };
+  // mean, min, max or median of a series with slots the page sets, d3's way: each slot its value and p, 1 where present
+  // (a written slot 1, a missing one 0, one the page sets its scope's flag), and no answer while a present slot is past
+  // 3.4e38 or none is present. The mean adds p · v from 0 in order, divided by the count; min and max are CSS's over the
+  // present values (a missing one held at ∓2^1023), with d3's sign of a zero: its first present zero's (CSS's min(0, -0) is
+  // -0 wherever it stands); the median ranks the present slots (one before another when smaller, or equal and earlier),
+  // picks ranks i0 = floor((c − 1) / 2) and i0 + 1 for the count c, and gives v0 + (v1 − v0) · 0.5 or · 0 (d3's
+  // quantile), the one value itself when c is 1
+  const series = (node) => {
+    // d3's quantile at a p the page sets, as quantile.js: its min at p <= 0 (the value ranked 0, the first least in source
+    // order, its sign of zero kept), its max at p >= 1 from the max's own steps (ranked last is the last greatest, and
+    // d3.max keeps the first: max(-0, 0) is -0), else the interpolation; relations' fenced tests pick; a NaN p, no answer
+    if (node.pLive) { const { mac } = kit(), p = mac('p', arg(node.pLive)), lo = HOLDS.leq(p, '0'), hi = HOLDS.geq(p, '1');
+      const q = series({ ...node, pLive: undefined, p: `clamp(0, ${p}, 1)`, atMin: lo }), max = series({ ...node, op: 'max', pLive: undefined });
+      return `(${sel(hi, max)} + ${sel(`(1 - ${hi})`, q)})`; }
+    const K = kit(), { P, mac } = K, q = node.series, op = node.op;
+    const sl = q.slots.map((x, i) => (x.kind === 'live' ? { v: mac(`v${i}`, join(x.store)), p: `var(${x.store}-p)`, bad: `(var(${x.store}-p) - var(${x.store}-g))`, z: `var(${x.store}-z)` }
+      : x.kind === 'literal' ? { v: Object.is(x.x, -0) ? '(-1 * 0)' : String(x.x), p: '1', z: Object.is(x.x, -0) ? '1' : '0' } : { v: '0', p: '0', z: '0' }));
+    const bads = sl.map((x) => x.bad).filter(Boolean);
+    decls.push([`${P}-n`, sl.map((x) => x.p).join(' + ')], [`${P}-ok`, `${['sum', 'maxIndex', 'minIndex'].includes(op) ? '' : 'sign(var(' + P + '-n)) * '}(1 - min(1, ${bads.join(' + ') || '0'}))`]);
+    const n = `var(${P}-n)`, guard = (x) => `(${x} * (1 + 0 / var(${P}-ok)))`;
+    const total = () => chain('+', ['0', ...sl.filter((x) => x.p !== '0').map((x) => (x.p === '1' ? x.v : `(${x.p} * ${x.v})`))]);
+    if (op === 'count') return n; // d3.count: every present value, past 3.4e38 or infinite too
+    // the total in a macro: the answer's split reads it five times
+    if (op === 'sum') return guard(F(mac('t', total()))); // d3.sum: 0 with none present
+    if (op === 'mean') return guard(divide(mac('t', total()), n));
+    // d3.variance: each present value, in order, moves the running mean by delta / count and adds delta · (value - mean) to
+    // the sum, every operation IEEE's and fenced; a missing slot leaves both as they were (its step adds -0). Then sum /
+    // (count - 1), none under two present values; d3.deviation is its square root (CSS's sqrt() is Math.sqrt's). Neither
+    // the mean nor the sum is ever -0 (both start at 0, and 0 + -0 is 0), so the split's -0 flag of 0 loses nothing
+    if (op === 'variance' || op === 'deviation') { let mean = '0', sum = '0', count = '0';
+      sl.forEach((x, i) => { if (x.p === '0') return; count = x.p === '1' ? (count === '0' ? '1' : `${count} + 1`) : (count === '0' ? x.p : `${count} + ${x.p}`);
+        const c = mac(`c${i}`, count); count = c; const d = mac(`d${i}`, F(`${x.v} + (-1 * ${mean})`)), step = (e) => (x.p === '1' ? e : sel(x.p, e));
+        // each step's mean and sum stored through the split: as macros, each would hold the last one's text twice
+        mean = K.store(`m${i}`, F(`${mean} + ${step(divide(d, x.p === '1' ? c : `max(${c}, 1)`))}`));
+        sum = K.store(`s${i}`, F(`${sum} + ${step(F(`${d} * ${F(`${x.v} + (-1 * ${mean})`)}`))}`)); });
+      const v = `(${divide(sum, `(${n} - 1)`)} * (1 + 0 / sign(max(0, ${n} - 1))))`;
+      return guard(op === 'variance' ? v : `sqrt(${v})`); }
+    // d3.mode: each present slot's count of present slots equal to it (±0 equal), registered integers; the first slot whose
+    // count is the most holds the value that reached it first; + 0 makes its zero +0, as a Map's key is
+    if (op === 'mode') {
+      sl.forEach((x, i) => { if (x.p === '0') return decls.push([`${P}-k${i}`, '0']);
+        const terms = sl.map((y, j) => { if (j === i || y.p === '0') return null; f.compares++; const c = `(1 - abs(sign(${x.v} - ${y.v})))`; return y.p === '1' ? c : `${y.p} * ${c}`; }).filter(Boolean);
+        decls.push([`${P}-k${i}`, `${x.p === '1' ? '' : `${x.p} * `}(1${terms.map((t) => ` + ${t}`).join('')})`]); });
+      decls.push([`${P}-top`, `max(${sl.map((_, i) => `var(${P}-k${i})`).join(', ') || '0'})`]);
+      // w: 1 at the first slot whose count is the most; h: 1 while none before has been
+      let before = '1'; const terms = sl.map((x, i) => { if (x.p === '0') return null;
+        decls.push([`${P}-w${i}`, `${before} * (1 - abs(sign(var(${P}-k${i}) - var(${P}-top))))`], [`${P}-h${i}`, `${before} - var(${P}-w${i})`]); before = `var(${P}-h${i})`; return sel(`var(${P}-w${i})`, x.v); }).filter(Boolean);
+      // every term but one -0, so the sum is that one in any order: flat, as the median's pick
+      return guard(F(`${mac('m', terms.join(' + ') || '0')} + 0`)); }
+    // d3.maxIndex and minIndex: the first present slot equal to the series' max (min), from 0; -1 with none present
+    if (op === 'maxIndex' || op === 'minIndex') { const far = op === 'minIndex' ? 'pow(2, 1023)' : '(-1 * pow(2, 1023))';
+      const mm = mac('m', `${op === 'minIndex' ? 'min' : 'max'}(${sl.map((x) => (x.p === '1' ? x.v : x.p === '0' ? far : `(${sel(x.p, x.v)} + ${sel(`(1 - ${x.p})`, far)})`)).join(', ')})`);
+      // w: 1 at the first present slot equal to it; h: 1 while none before has been
+      let before = '1'; const terms = sl.map((x, i) => { if (x.p === '0') return null;
+        decls.push([`${P}-w${i}`, `${before} * ${x.p === '1' ? '' : `${x.p} * `}(1 - abs(sign(${x.v} - ${mm})))`], [`${P}-h${i}`, `${before} - var(${P}-w${i})`]); before = `var(${P}-h${i})`; return `${i} * var(${P}-w${i})`; }).filter(Boolean);
+      return guard(`(${terms.join(' + ') || '0'} - (1 - sign(${n})))`); }
+    if (op === 'min' || op === 'max') { const far = op === 'min' ? 'pow(2, 1023)' : '(-1 * pow(2, 1023))';
+      const m = mac('m', `${op}(${sl.map((x) => (x.p === '1' ? x.v : x.p === '0' ? far : `(${sel(x.p, x.v)} + ${sel(`(1 - ${x.p})`, far)})`)).join(', ')})`);
+      // the first present zero's sign of zero, where the answer is 0
+      let before = '1'; const first = sl.map((x, i) => { const zero = x.p === '0' ? '0' : `${x.p === '1' ? '' : `${x.p} * `}(1 - abs(sign(${x.v})))`, f = `${before} * ${zero}`;
+        decls.push([`${P}-r${i}`, `${before} * (1 - ${zero})`]); before = `var(${P}-r${i})`; return `${f} * ${x.z}`; });
+      decls.push([`${P}-z`, first.join(' + ') || '0']);
+      const isZero = `(1 - abs(sign(${m})))`;
+      return guard(F(`${sel(`(1 - ${isZero})`, m)} + ${sel(isZero, `(0 * (1 - 2 * var(${P}-z)))`)}`)); }
+    // the median: ranks among the present slots, registered integers
+    sl.forEach((x, i) => { const terms = sl.map((y, j) => { if (j === i || y.p === '0') return null; f.compares++;
+        const c = j < i ? `(1 - sign(max(0, ${y.v} - ${x.v})))` : `sign(max(0, ${x.v} - ${y.v}))`; return y.p === '1' ? c : `${y.p} * ${c}`; }).filter(Boolean);
+      decls.push([`${P}-k${i}`, terms.join(' + ') || '0']); });
+    // d3's quantile at p from 0 to 1, exclusive: i = (n − 1) · p and its floor i0, IEEE's product as JavaScript's; the
+    // median is p = 0.5, its fraction 0.5 or 0
+    const at = op === 'quantile' ? mac('i', F(`(${n} - 1) * ${node.p}`)) : null;
+    decls.push([`${P}-i0`, at ? `round(down, ${at}, 1)` : `round(down, (${n} - 1) / 2, 1)`]);
+    const pick = (t) => `(${sl.map((x, i) => (x.p === '0' ? null : sel(`${x.p === '1' ? '' : `${x.p} * `}(1 - abs(sign(var(${P}-k${i}) - ${t})))`, x.v))).filter(Boolean).join(' + ') || '0'})`;
+    const v0 = mac('m0', pick(`var(${P}-i0)`)), v1 = mac('m1', pick(`(var(${P}-i0) + 1)`)), half = at ? F(`${at} + (-1 * var(${P}-i0))`) : `(1 - rem(${n}, 2)) * 0.5`, one = node.atMin ? `max(${node.atMin}, 1 - abs(sign(${n} - 1)))` : `(1 - abs(sign(${n} - 1)))`;
+    return guard(F(`${sel(one, v0)} + ${sel(`(1 - ${one})`, F(`${F(v0)} + ${F(`${F(`${v1} + (-1 * ${v0})`)} * ${half}`)}`))}`)); };
   const build = (node) => {
+    if (node.call === 'series') return series(node);
     if (node.call === 'binomial') return liveBinomial(arg(node.items[0]), arg(node.items[1]));
     if (node.call === 'factorial') return liveFactorial(arg(node.items[0]));
     if (node.call === 'exp') return liveExp(arg(node.items.at(-1)));
     if (node.call === 'log') return liveLog(arg(node.items[0]), node.base);
     if (node.call === 'trig') return liveTrig(arg(node.items[0]), node.op);
-    if (node.call === 'atan') return liveAtan(arg(node.items[0]));
+    if (node.call === 'atan' || node.call === 'acot') return liveAtan(arg(node.items[0]), node.op);
     if (node.call === 'tan') return liveTan(arg(node.items[0]), node.op);
     if (node.call === 'asin') return liveAsin(arg(node.items[0]), node.op);
+    if (node.call === 'asec') return liveAsec(arg(node.items[0]), node.op);
     if (node.call === 'nroot') return liveRoot(arg(node.items[0]), node.degree);
-    if (node.call === 'hyp') return liveHyp(arg(node.items[0]), node.op);
+    if (node.call === 'hyp' || node.call === 'rhyp') return liveHyp(arg(node.items[0]), node.op);
     if (node.call === 'ahyp') return liveAhyp(arg(node.items[0]), node.op);
+    if (node.call === 'rahyp') return liveRahyp(arg(node.items[0]), node.op);
+    if (node.call === 'gcd' || node.call === 'lcm') return liveGcd(node.items.map(arg), node.call);
     if (node.call === 'eset') return expr({ call: 'piecewise', conds: [{ set: ['e'] }], otherwise: true, items: [{ node: { call: 'power', items: node.items } }, { node: { call: 'exp', items: node.items.slice(1) } }] });
     if (node.call === 'fixed' && node.unless) { // as a piecewise: the live power where --e is set, no answer where another is
       const others = node.unless.filter((n) => !(node.live && n === 'e')), conds = [...(node.live ? [{ set: ['e'] }] : []), ...(others.length ? [{ set: others }] : [])];
       return expr({ call: 'piecewise', conds, otherwise: true, items: [...(node.live ? [{ node: node.live }] : []), ...(others.length ? [{ x: NaN }] : []), { x: node.value }] }); }
     // a value the build computed, written in; from 3.4e38 up as m · 2^e (Chrome reads such a number token as 3.4e38, a
     // product of two smaller ones keeps the double: facts/number-token-float-max.mjs)
-    if (node.call === 'fixed') { const v = node.value; if (Object.is(v, -0)) return '(-1 * 0)'; if (Math.abs(v) < FMAX) return String(v);
+    if (node.call === 'fixed') { const v = node.value; if (Number.isNaN(v)) return 'NaN'; if (Object.is(v, -0)) return '(-1 * 0)'; if (Math.abs(v) < FMAX) return String(v);
       const e = Number(BigInt(bitsOf(v).mant.toString(2).length) - 1n + bitsOf(v).e); return `(${v / 2 ** e} * pow(2, ${e}))`; }
     if (node.live) { // a sum or product to a bound the page sets (indexed): each term to the ceiling in four registered
       // integers with its finiteness, and whether it counts (i <= the bound, as an integer: an unset var() voids only its
       // own term); a term not counted adds 0 (a product's is to the power 0), even where the page sets none of its names
       const kept = [...names]; names.clear(); const k = ++id, xs = node.items.map(arg); names.clear(); kept.forEach((n) => names.add(n));
       const P = `--dcss-dcss-u${k}`, hi = expr(node.live);
-      xs.forEach((x, j) => { const q = `${P}-v${j}`, c = `clamp(-1 * pow(2, 1023), ${x}, pow(2, 1023))`; for (const z of 'eabcz') decls.push([`${q}-${z}`, SPLIT[z](q, c)]);
+      xs.forEach((x, j) => { const q = `${P}-v${j}`, c = `clamp(-1 * (pow(2, 1023) * (2 - pow(2, -52))), ${x}, (pow(2, 1023) * (2 - pow(2, -52))))`; for (const z of 'eabcz') decls.push([`${q}-${z}`, SPLIT[z](q, c)]);
         decls.push([`${P}-vf${j}`, `${x} * 0 + 1`], [`${P}-in${j}`, `clamp(0, round(down, ${hi}, 1) - ${node.lo + j - 1}, 1)`]); });
       decls.push([`${P}-hf`, `${hi} * 0 + 1`], [`${P}-ok`, `1 - min(1, ${[...xs.map((_, j) => `var(${P}-in${j}) * (1 - var(${P}-vf${j}))`), `1 - var(${P}-hf)`].join(' + ')})`]);
       const parts = xs.map((_, j) => (node.call === 'isum' ? `var(${P}-in${j}) * ${join(`${P}-v${j}`)}` : `pow(${join(`${P}-v${j}`)}, var(${P}-in${j}))`));
@@ -1002,11 +1400,13 @@ function former(divide) {
       // a page's name set or not: 1 or, where it is unset, the registered integer's initial 0, one step per name (an unset
       // var() voids the whole declaration); a NaN one is caught by its side
       let sets = 0; const cond = (c) => { if (c.set) return { t: `max(${c.set.map((n) => { const q = `${P}-s${sets++}`; decls.push([q, `sign(abs(var(--${n})) + 1)`]); return `var(${q})`; }).join(', ')})`, sides: c.set.map((n) => `var(--${n}, 0)`) };
-        if (c.parts) { const ps = c.parts.map(cond); return { t: `${c.op === 'and' ? 'min' : 'max'}(${ps.map((q) => q.t).join(', ')})`, sides: ps.flatMap((q) => q.sides) }; }
+        if (c.parts) { const ps = c.parts.map(cond); return { t: LOGICCSS[c.op](ps.map((q) => q.t)), sides: ps.flatMap((q) => q.sides) }; }
+        if (c.divides) return dividesCss(c.items.map((x) => expr(asNode(x))));
+        if (c.of) return memberCss(c, c.items.map((x) => (x.inf ? null : expr(asNode(x)))));
         const ss = c.items.map((x) => expr(asNode(x))), hs = ss.slice(1).map((b, i) => CHECK[c.op](ss[i], b));
         return { t: hs.length === 1 ? hs[0] : `min(${hs.join(', ')})`, sides: ss }; };
       node.conds.forEach((c, j) => { const { t, sides } = cond(c); decls.push([`${P}-t${j}`, t], [`${P}-cf${j}`, `${sides.map((x) => `${x} * 0`).join(' + ')} + 1`]); });
-      xs.forEach((x, j) => { const q = `${P}-v${j}`, c = `clamp(-1 * pow(2, 1023), ${x}, pow(2, 1023))`; for (const z of 'eabcz') decls.push([`${q}-${z}`, SPLIT[z](q, c)]); decls.push([`${P}-vf${j}`, `${x} * 0 + 1`]); });
+      xs.forEach((x, j) => { const q = `${P}-v${j}`, c = `clamp(-1 * (pow(2, 1023) * (2 - pow(2, -52))), ${x}, (pow(2, 1023) * (2 - pow(2, -52))))`; for (const z of 'eabcz') decls.push([`${q}-${z}`, SPLIT[z](q, c)]); decls.push([`${P}-vf${j}`, `${x} * 0 + 1`]); });
       const reached = (j) => (j ? Array.from({ length: j }, (_, i) => `(1 - ${v(`t${i}`)})`).join(' * ') : '1');
       const gate = (j) => (j < m ? `${v(`t${j}`)} * ${reached(j)}` : reached(m));
       const err = [...xs.map((_, j) => `${gate(j)} * (1 - ${v(`vf${j}`)})`), ...node.conds.map((_, j) => `${reached(j)} * (1 - ${v(`cf${j}`)})`), `(1 - (${xs.map((_, j) => gate(j)).join(' + ')}))`];
@@ -1037,6 +1437,16 @@ function former(divide) {
     // a ceiling as -floor(-x): WebKit's round(up) gives 0 where Math.ceil(-0.5) is -0
     if (node.call === 'floor') return `round(down, ${xs[0]}, 1)`;
     if (node.call === 'ceiling') return `(-1 * round(down, -1 * ${xs[0]}, 1))`;
+    // d3.min and d3.max keep the first of equal values, so of zeros the first one's sign; CSS's min(0, -0) is -0 wherever
+    // it stands. Where the answer is 0, the first zero argument's sign of zero is put back
+    if ((node.call === 'min' || node.call === 'max') && xs.length > 1) {
+      // the flags in registered steps, each in its own form of division (a macro would carry both forms' text, and in
+      // Chrome a length's division under a mean made it 1 ulp off), the arguments written in
+      const { P } = kit(), m = `${node.call}(${xs.join(', ')})`, zero = (x) => `(1 - abs(sign(${x})))`;
+      let before = '1'; const first = xs.map((x, i) => { const f = `${before} * ${zero(x)} * max(0, -1 * sign(1 / ${x}))`;
+        decls.push([`${P}-r${i}`, `${before} * (1 - ${zero(x)})`]); before = `var(${P}-r${i})`; return f; });
+      decls.push([`${P}-z`, first.join(' + ')], [`${P}-mz`, zero(m)]);
+      return F(`${sel(`(1 - var(${P}-mz))`, m)} + ${sel(`var(${P}-mz)`, `(0 * (1 - 2 * var(${P}-z)))`)}`); } // fenced: a bare sum regroups
     if (node.call !== 'median') return `${node.call}(${xs.join(', ')})`;
     const n = xs.length; if (n === 1) return xs[0];
     const known = node.items.map((x) => (x.node ? valueOf(x.node) : x.def ? valueOf(x.def) : x.ci ? null : x.x));
@@ -1086,21 +1496,61 @@ const CHECK = { get lt() { return HOLDS.lt; }, get leq() { return HOLDS.leq; }, 
   eq: (a, b) => `(1 - abs(sign(${F(`${a} - ${b}`)})))`, neq: (a, b) => `abs(sign(${F(`${a} - ${b}`)}))` };
 const HOLDS = { lt: (a, b) => `max(0, sign(${F(`${b} - ${a}`)}))`, gt: (a, b) => `max(0, sign(${F(`${a} - ${b}`)}))`,
   leq: (a, b) => `(1 - max(0, sign(${F(`${a} - ${b}`)})))`, geq: (a, b) => `(1 - max(0, sign(${F(`${b} - ${a}`)})))` };
-function truthForm(pairs, divide) {
-  const f = former(divide), sides = pairs.map(([op, a, b]) => [op, f.expr(asNode(a)), f.expr(asNode(b))]);
-  const fin = `calc(${sides.flatMap(([, a, b]) => [`${a} * 0`, `${b} * 0`]).join(' + ')} + 1)`;
-  const holds = sides.map(([op, a, b]) => HOLDS[op](a, b)), t = holds.length === 1 ? holds[0] : `min(${holds.join(', ')})`;
+// x ∈ a set as 0 or 1, from its items' CSS (null for an infinite end, which bounds nothing), and the sides whose
+// finiteness it needs: ℤ as rem(x, 1) = 0 (exact for every double), ℕ that and x ≥ 0 (−0 in it, as JavaScript's
+// -0 >= 0), ℝ any finite x; an interval its two relations
+const memberCss = (c, [x, lo, hi]) => { const [a, b] = CLOSURE[c.closure] ?? [], whole = `(1 - abs(sign(rem(${x}, 1))))`;
+  const t = c.of === 'Z' ? whole : c.of === 'N' ? `${whole} * (1 - max(0, sign(-1 * ${x})))` : c.of === 'R' ? '1'
+    : `min(${lo === null ? '1' : CHECK[a](lo, x)}, ${hi === null ? '1' : CHECK[b](x, hi)})`;
+  return { t: c.op === 'notin' ? `(1 - ${t})` : t, sides: [x, lo, hi].filter((v) => v != null) }; };
+// a ∣ b as 0 or 1: b = 0 where a is 0, else rem(b, a) = 0 (CSS's rem() is exact on whole numbers below 2^53); a side
+// that is infinite where a or b isn't a whole number within ±2^53, so there is no answer
+const dividesCss = ([a, b]) => { const z = (x) => `(1 - abs(sign(${x})))`, whole = (x) => `(1 - abs(sign(rem(${x}, 1)))) * (1 - sign(max(0, abs(${x}) - ${2 ** 53 - 1})))`;
+  return { t: `(${z(a)} * ${z(b)} + (1 - ${z(a)}) * ${z(`rem(${b}, ${a} + ${z(a)})`)})`, sides: [a, b, `(1 / (${whole(a)} * ${whole(b)}))`] }; };
+function truthForm(c, divide) {
+  const f = former(divide), all = [];
+  const truth = (q) => { if (q.parts) return LOGICCSS[q.op](q.parts.map(truth));
+    if (q.divides) { const { t, sides } = dividesCss(q.items.map((x) => f.expr(asNode(x)))); all.push(...sides); return t; }
+    if (q.of) { const { t, sides } = memberCss(q, q.items.map((x) => (x.inf ? null : f.expr(asNode(x))))); all.push(...sides); return t; }
+    const ss = q.items.map((x) => f.expr(asNode(x))), hs = ss.slice(1).map((b, i) => CHECK[q.op](ss[i], b)); all.push(...ss); return hs.length === 1 ? hs[0] : `min(${hs.join(', ')})`; };
+  const t = truth(c), fin = `calc(${all.map((a) => `${a} * 0`).join(' + ')} + 1)`;
   if (f.names.size) f.decls.push(okDecl(f.names));
   f.decls.push(['--dcss-dcss-fin', fin], ['--dcss-dcss-t', t]);
   return { value: f.names.size ? 'var(--dcss-dcss-ok)' : '1', decls: f.decls, compares: f.compares };
 }
-const emitTruth = (pairs) => both(truthForm(pairs, DIVIDE.plain), truthForm(pairs, DIVIDE.length));
+const emitTruth = (c) => both(truthForm(c, DIVIDE.plain), truthForm(c, DIVIDE.length));
 
 // --- what the page gets
 const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
 const FORMAT_SETTINGS = /^--(precision|comma|symbol|sign|trim|type|currency|locale|base|grouping|zero|fill|align|width|percent)$/;
 const splitStyle = (s) => (s ?? '').split(';').map((d) => d.trim()).filter(Boolean).map((d) => { const k = d.indexOf(':'); return [d.slice(0, k).trim(), d.slice(k + 1).trim()]; });
-function write({ kind, root, value, decls: own, ints, sides }, math, src) {
+// a live carrier's value, printed in it the way an answer prints: the carrier's own formatter, or d3.format(",.6~f"); a
+// span, as the cell's own text would be (an <output> is a status region, announced on each change)
+function printed(attrs, v) {
+  const fmt = (attrs.class ?? '').split(/\s+/).filter((c) => c.startsWith('dcss-format-')), own = splitStyle(attrs.style).filter(([k]) => FORMAT_SETTINGS.test(k));
+  return `<span class="${fmt.length ? fmt.join(' ') : 'dcss-format-fixed'}" style="--value: ${v}${fmt.length || own.length ? '' : '; --precision: 6; --trim: 1; --comma: 1'}"></span>`;
+}
+// an answer known when the page is built, written as text (with its double in <data value>): d3-format's ",.p~f", as
+// dcss-format-fixed prints it, where the page writes its settings as numbers; a setting CSS gives, another format, or a
+// value format.css prints nothing for (|v| · 10^p from 2^53 up) leaves it to the page's CSS
+const d3trim = (s) => { let i0 = -1, i1; out: for (let i = 1; i < s.length; ++i) { switch (s[i]) { case '.': i0 = i1 = i; break; case '0': if (i0 === 0) i0 = i; i1 = i; break; default: if (!+s[i]) break out; if (i0 > 0) i0 = 0; break; } } return i0 > 0 ? s.slice(0, i0) + s.slice(i1 + 1) : s; };
+const fixedOf = (classes, decls) => {
+  const fmt = classes.filter((c) => c.startsWith('dcss-format-')), set = decls.filter(([k]) => FORMAT_SETTINGS.test(k));
+  if (!fmt.length && !set.length) return { precision: 6, trim: 1, comma: 1 }; // the build's own default
+  if (fmt.length !== 1 || fmt[0] !== 'dcss-format-fixed') return null;
+  const o = { precision: 6, trim: 0, comma: 0 }; // format.css's
+  for (const [k, v] of set) { const n = /^\s*-?\d+(\.\d+)?\s*$/.test(v) ? Number(v) : NaN; if (!(k.slice(2) in o) || Number.isNaN(n)) return null; o[k.slice(2)] = n; }
+  o.precision = Math.min(20, Math.max(0, Math.round(o.precision)));
+  return [0, 1].includes(o.trim) && [0, 1].includes(o.comma) ? o : null;
+};
+const fixedText = (v, { precision: p, trim, comma }) => {
+  if (!Number.isFinite(v) || Math.abs(v) * 10 ** p >= 2 ** 53) return null;
+  let t = Math.abs(v).toFixed(p); if (trim) t = d3trim(t);
+  const neg = (v < 0 || 1 / v < 0) && +t !== 0, [i, f] = t.split('.');
+  return (neg ? '\u2212' : '') + (comma ? i.replace(/\B(?=(\d{3})+$)/g, ',') : i) + (f !== undefined ? `.${f}` : '');
+};
+const asText = (v, text) => `<data value="${Object.is(v, -0) ? '-0' : String(v)}">${text}</data>`;
+function write({ kind, root, value, decls: own, ints, sides }, math, src, inline = false, pAttrs = '', quiet = ' aria-live="off"') {
   const classes = (math.attrs.class ?? '').split(/\s+/).filter(Boolean), fmt = classes.filter((c) => c.startsWith('dcss-format-')), keep = classes.filter((c) => !c.startsWith('dcss-format-'));
   const decls = splitStyle(math.attrs.style), fmtDecls = decls.filter(([k]) => FORMAT_SETTINGS.test(k)), varDecls = decls.filter(([k]) => k.startsWith('--') && !FORMAT_SETTINGS.test(k)), mathDecls = decls.filter(([k]) => !k.startsWith('--'));
   const css = (ds) => ds.map(([k, v]) => `${k}: ${v}`).join('; ');
@@ -1109,40 +1559,55 @@ function write({ kind, root, value, decls: own, ints, sides }, math, src) {
   // lower operator sits inside a higher one. Each argument is named for its call's intent; the search for a name stops
   // at an element with its own intent (MathML 4, 5.1), so an inner call's names are its own
   const PREC = { plus: 1, minus: 1, isum: 1, iproduct: 1, times: 2, power: 4 }; // the rest stand alone
-  const prec = (x) => (x.node?.op === 'id' ? prec(x.node.items[0]) : x.node ? (x.node.op === 'minus' && x.node.items.length === 1 ? 3 : PREC[x.node.op] ?? 9) : x.neg ? 3 : 9);
+  const prec = (x) => (x.node?.op === 'id' ? prec(x.node.items[0]) : x.node?.shown ? 4 : x.node ? (x.node.op === 'minus' && x.node.items.length === 1 ? 3 : PREC[x.node.op] ?? 9) : x.neg ? 3 : 9);
   const pres = (node, arg = '') => {
     const { op, items } = node, ids = items.map((_, i) => `$a${i + 1}`).join(',');
-    const draw = (x, a = '') => (x.node ? pres(x.node, a) : x.sub ? `<msub${a}><mi>${esc(x.sub[0])}</mi><${x.sub[2] === 'cn' ? 'mn' : 'mi'}>${esc(x.sub[1])}</${x.sub[2] === 'cn' ? 'mn' : 'mi'}></msub>` : x.ci ? `<mi${a}>${esc(x.ci)}</mi>`
+    const draw = (x, a = '') => (x.node ? pres(x.node, a) : x.acc ? `<mover${a} accent="true"><mi>${esc(x.acc[0])}</mi><mo>${{ '^': 'ˆ', '~': '˜' }[x.acc[1]] ?? x.acc[1]}</mo></mover>` : x.sub ? `<msub${a}><mi>${esc(x.sub[0])}</mi><${x.sub[2] === 'cn' ? 'mn' : 'mi'}>${esc(x.sub[1])}</${x.sub[2] === 'cn' ? 'mn' : 'mi'}></msub>` : x.ci ? `<mi${a}>${esc(x.ci)}</mi>`
         : !x.neg ? (x.mag.startsWith('<mn>') && x.mag.indexOf('<', 1) === x.mag.indexOf('</mn>') ? `<mn${a}>${x.mag.slice(4)}` : `<mrow${a}>${x.mag}</mrow>`)
         : `<mrow${a}><mo>−</mo>${x.mag}</mrow>`);
     const bare = (x) => (x.node?.op === 'id' ? x.node.items[0] : x), paren = (x, m, need) => (prec(x) < need ? `<mrow><mo>(</mo>${m}<mo>)</mo></mrow>` : m);
     const show = (i, need = 0) => { const x = bare(items[i]); return paren(x, draw(x, ` arg="a${i + 1}"`), need); };
+    if (node.shown === 'degrees') return `<msup${arg}>${paren(bare(items[0]), draw(bare(items[0])), 5)}<mo>°</mo></msup>`;
+    if (node.shown === 'percent') return `<mrow${arg}>${paren(bare(items[0]), draw(bare(items[0])), 5)}<mo>%</mo></mrow>`;
     if (op === 'isum' || op === 'iproduct') { // the sign with its range under and over it, then the body as written
       const body = bare(node.display);
       return `<mrow${arg}><munderover><mo>${op === 'isum' ? '∑' : '∏'}</mo><mrow><mi>${esc(node.index)}</mi><mo>=</mo>${draw(bare(node.loItem))}</mrow>${draw(bare(node.hiItem))}</munderover>${paren(body, draw(body), 2)}</mrow>`; }
     const infix = (sign, need) => items.map((x, i) => show(i, prec(x) === 3 ? 4 : need(i))).join(`<mo>${esc(sign)}</mo>`);
-    if (op === 'eq' || op === 'assign') return `<mrow${arg} intent="${op === 'eq' ? 'equals' : 'assign'}(${ids})">${items.map((_, i) => show(i)).join(`<mo>${op === 'eq' ? '=' : '≔'}</mo>`)}</mrow>`;
-    if (op in RELS) return `<mrow${arg} intent="${{ lt: 'less-than', leq: 'less-than-or-equal', gt: 'greater-than', geq: 'greater-than-or-equal' }[op]}(${ids})">${infix(RELS[op], () => 0)}</mrow>`;
-    if (op === 'and') return `<mrow${arg} intent="and(${ids})">${items.map((_, i) => show(i)).join('<mo>,</mo><mspace width="0.5em"/>')}</mrow>`;
+    if (op === 'eq' || op === 'assign') return `<mrow${arg} intent="${coreName(op)}(${ids})">${items.map((_, i) => show(i)).join(`<mo>${op === 'eq' ? '=' : '≔'}</mo>`)}</mrow>`;
+    if (op in RELS) return `<mrow${arg} intent="${coreName(op)}(${ids})">${infix(RELS[op], () => 0)}</mrow>`;
+    if (op === 'factorof') return `<mrow${arg} intent="divides(${ids})">${infix('∣', () => 0)}</mrow>`;
+    const LOGICSIGN = { and: '∧', or: '∨', xor: '⊻', implies: '⇒', equivalent: '⟺' }, inLogic = (i) => { const x = bare(items[i]); return x.node?.op in LOGIC ? `<mrow><mo>(</mo>${draw(x, ` arg="a${i + 1}"`)}<mo>)</mo></mrow>` : show(i); };
+    if (op === 'and' && !arg && !items.some((x) => x.node?.op in LOGIC)) return `<mrow${arg} intent="and(${ids})">${items.map((_, i) => show(i)).join('<mo>,</mo><mspace width="0.5em"/>')}</mrow>`;
+    if (op in LOGICSIGN) return `<mrow${arg} intent="${coreName(op)}(${ids})">${items.map((_, i) => inLogic(i)).join(`<mo>${LOGICSIGN[op]}</mo>`)}</mrow>`;
+    if (op === 'not') return `<mrow${arg} intent="not(${ids})"><mo>¬</mo>${inLogic(0)}</mrow>`;
     if (op === 'plus') return `<mrow${arg} intent="plus(${ids})">${infix('+', () => 2)}</mrow>`;
     if (op === 'times') return `<mrow${arg} intent="times(${ids})">${infix('×', () => 2)}</mrow>`;
     if (op === 'minus') return items.length === 1 ? `<mrow${arg} intent="minus(${ids})"><mo>−</mo>${show(0, 4)}</mrow>` : `<mrow${arg} intent="minus(${ids})">${infix('−', (i) => (i ? 2 : 1))}</mrow>`;
-    if (op === 'divide') return `<mfrac${arg} intent="divide(${ids})">${show(0)}${show(1)}</mfrac>`;
+    if (op === 'divide') return `<mfrac${arg} intent="divided-by(${ids})">${show(0)}${show(1)}</mfrac>`;
     if (op === 'brackets') return `<mrow${arg} intent="$a1"><mo>[</mo>${show(0)}<mo>]</mo></mrow>`;
-    if (op === 'neq') return `<mrow${arg}>${infix('≠', () => 0)}</mrow>`;
+    if (op === 'neq') return `<mrow${arg} intent="not-equal-to(${ids})">${infix('≠', () => 0)}</mrow>`;
+    if (op === 'chain') return `<mrow${arg}>${items.map((_, i) => (i ? `<mo>${esc(CONDS[node.ops[i - 1]])}</mo>` : '') + show(i)).join('')}</mrow>`; // 0 < x ≤ 1, read as written
+    if (op in MEMBER) { // x ∈ [a, b) or x ∈ ℤ, the interval and the set with their intents
+      const end = (i) => (items[i].inf ? `<mrow arg="a${i + 1}">${items[i].inf < 0 ? '<mo>−</mo>' : ''}<mi>∞</mi></mrow>` : show(i)), c = node.closure;
+      const set = node.of === 'interval' ? `<mrow arg="s" intent="${c}-interval($a2,$a3)"><mo>${c.startsWith('open') ? '(' : '['}</mo>${end(1)}<mo>,</mo>${end(2)}<mo>${c.endsWith('open') ? ')' : ']'}</mo></mrow>`
+        : `<mi arg="s" intent="${{ Z: 'set-of-integers', N: 'set-of-natural-numbers', R: 'set-of-reals' }[node.of]}">${{ Z: 'ℤ', N: 'ℕ', R: 'ℝ' }[node.of]}</mi>`;
+      return `<mrow${arg} intent="${coreName(op)}($a1,$s)">${show(0)}<mo>${MEMBER[op]}</mo>${set}</mrow>`; }
     if (op === 'piecewise') { // a brace, each piece a row, its value and "if" its condition, "otherwise" last
-      const cond = (c) => (c.parts ? `<mrow>${c.parts.map(cond).join(`<mspace width="0.4em"/><mtext>${c.op}</mtext><mspace width="0.4em"/>`)}</mrow>` : pres({ op: c.op, items: c.items }));
+      // a logic in words, a logic inside another in parentheses
+      const sp = '<mspace width="0.4em"/>', cond = (c, inner) => { if (c.chain) return pres({ op: 'chain', ...c.chain }); if (!c.parts) return pres({ op: c.op, items: c.items, of: c.of, closure: c.closure });
+        const m = c.op === 'not' ? `<mtext>not</mtext>${sp}${cond(c.parts[0], true)}` : c.parts.map((q) => cond(q, true)).join(`${sp}<mtext>${c.op === 'equivalent' ? 'if and only if' : c.op}</mtext>${sp}`);
+        return inner ? `<mrow><mo>(</mo>${m}<mo>)</mo></mrow>` : `<mrow>${m}</mrow>`; };
       const rows = node.conds.map((c, i) => `<mtr><mtd>${show(i)}</mtd><mtd><mtext>if</mtext><mspace width="0.4em"/>${cond(c)}</mtd></mtr>`).join('')
         + (node.otherwise ? `<mtr><mtd>${show(items.length - 1)}</mtd><mtd><mtext>otherwise</mtext></mtd></mtr>` : '');
       return `<mrow${arg}><mo>{</mo><mtable>${rows}</mtable></mrow>`; }
     if (op === 'power') return `<msup${arg} intent="power(${ids})">${show(0, 5)}${show(1)}</msup>`;
-    if (op === 'root') return node.degree === 2 ? `<msqrt${arg} intent="square-root(${ids})">${show(0)}</msqrt>` : `<mroot${arg} intent="root($a1,$a2)">${show(0)}<mn arg="a2">${node.degree}</mn></mroot>`;
+    if (op === 'root') return node.degree === 2 ? `<msqrt${arg} intent="square-root-of(${ids})">${show(0)}</msqrt>` : `<mroot${arg} intent="root($a1,$a2)">${show(0)}<mn arg="a2">${node.degree}</mn></mroot>`;
     if (op === 'abs' || op === 'floor' || op === 'ceiling') { const [l, r] = { abs: ['|', '|'], floor: ['⌊', '⌋'], ceiling: ['⌈', '⌉'] }[op];
-      return `<mrow${arg} intent="${op === 'abs' ? 'absolute-value' : op}(${ids})"><mo>${l}</mo>${show(0)}<mo>${r}</mo></mrow>`; }
-    if (op === 'binomial') return `<mrow${arg} intent="binomial(${ids})"><mo>(</mo><mfrac linethickness="0">${show(0)}${show(1)}</mfrac><mo>)</mo></mrow>`;
+      return `<mrow${arg} intent="${coreName(op)}(${ids})"><mo>${l}</mo>${show(0)}<mo>${r}</mo></mrow>`; }
+    if (op === 'binomial') return `<mrow${arg} intent="binomial-coefficient(${ids})"><mo>(</mo><mfrac linethickness="0">${show(0)}${show(1)}</mfrac><mo>)</mo></mrow>`;
     if (op === 'factorial') return `<mrow${arg} intent="factorial(${ids})">${show(0, 9)}<mo>!</mo></mrow>`;
-    if (op === 'log' && items.length === 2) return `<mrow${arg} intent="log(${ids})"><msub><mi>log</mi>${show(1)}</msub><mo>⁡</mo><mrow><mo>(</mo>${show(0)}<mo>)</mo></mrow></mrow>`;
-    return `<mrow${arg} intent="${op}(${ids})"><mi>${op}</mi><mo>⁡</mo><mrow><mo>(</mo>${items.map((_, i) => show(i)).join('<mo>,</mo>')}<mo>)</mo></mrow></mrow>`;
+    if (op === 'log' && items.length === 2) return `<mrow${arg} intent="logarithm(${ids})"><msub><mi>log</mi>${show(1)}</msub><mo>⁡</mo><mrow><mo>(</mo>${show(0)}<mo>)</mo></mrow></mrow>`;
+    return `<mrow${arg} intent="${coreName(op)}(${ids})"><mi>${op}</mi><mo>⁡</mo><mrow><mo>(</mo>${items.map((_, i) => show(i)).join('<mo>,</mo>')}<mo>)</mo></mrow></mrow>`;
   };
   const mathAttrs = Object.entries(math.attrs).filter(([k]) => !['class', 'style'].includes(k)).map(([k, v]) => ` ${k}="${esc(v)}"`).join('')
     + (keep.length ? ` class="${esc(keep.join(' '))}"` : '') + (mathDecls.length ? ` style="${esc(css(mathDecls))}"` : '');
@@ -1156,30 +1621,222 @@ function write({ kind, root, value, decls: own, ints, sides }, math, src) {
   // a relation's truth prints through a counter style: nothing, false or true
   const truth = kind === 'truth' ? '@counter-style dcss-dcss-truth { system: fixed 0; symbols: "" "false" "true"; } [data-dcss-truth]::after { content: counter(dcss-dcss-truth, dcss-dcss-truth); }' : '';
   const props = ints.length || truth ? `<style>${ints.map((n) => `@property ${n} { syntax: '<integer>'; inherits: false; initial-value: 0; }`).join(' ')}${truth ? ' ' + truth : ''}</style>` : '';
-  const one = (v, d) => `<output class="${f}" style="${d.length ? d.join(' ') + ' ' : ''}--value: ${v}${st ? '; ' + st : ''}"></output>`;
+  const one = (v, d) => `<output${quiet} class="${f}" style="${d.length ? d.join(' ') + ' ' : ''}--value: ${v}${st ? '; ' + st : ''}"></output>`;
+  const known = kind === 'value' ? valueOf(root) : kind === 'define' ? valueOf(root.items[1].node) : null, ff = known === null ? null : fixedOf(classes, decls), text = ff ? fixedText(known, ff) : null;
   const answer = kind === 'sides' ? sides.map((e) => one(e.value, e.decls)).join('<span aria-hidden="true"> &#xb7; </span>') : kind === 'truth'
-    ? `<output data-dcss-truth style="${own.join(' ')} counter-reset: dcss-dcss-truth calc(${value} * var(--dcss-dcss-fin) * (1 + var(--dcss-dcss-t))); --dcss-err: calc(1 - ${value} * var(--dcss-dcss-fin))"></output>`
-    : `<output class="${f}" style="${own.length ? own.join(' ') + ' ' : ''}--value: ${value}${st ? '; ' + st : ''}"></output>`;
-  return `<figure data-dcss-mathml${varDecls.length ? ` style="${esc(css(varDecls))}"` : ''}>${caption}${props}<div>${kind === 'value' || kind === 'define' ? '= ' : ''}${answer}</div></figure>`;
+    ? `<output${quiet} data-dcss-truth style="${own.join(' ')} counter-reset: dcss-dcss-truth calc(${value} * var(--dcss-dcss-fin) * (1 + var(--dcss-dcss-t))); --dcss-err: calc(1 - ${value} * var(--dcss-dcss-fin))"></output>`
+    : `<output${quiet} class="${f}${text === null ? '' : ' dcss-text'}" style="${own.length ? own.join(' ') + ' ' : ''}--value: ${value}${st ? '; ' + st : ''}">${text === null ? NONE : asText(known, text)}</output>`;
+  const lead = kind === 'value' || kind === 'define' ? '= ' : '';
+  // in a sentence: phrasing elements only (a figure, a div or a caption would close the paragraph), the formula and its answer
+  // the formula and its answer one run that doesn't wrap: a break fell between them, no-break spaces or not (the printed
+  // number is generated text, and Chrome broke before it)
+  if (inline) return `<span data-dcss-mathml style="white-space: nowrap${varDecls.length ? `; ${esc(css(varDecls))}` : ''}">${props}<math${mathAttrs}><semantics>${ascii(pres(root))}<annotation-xml encoding="application/mathml-content+xml">${annotation}</annotation-xml></semantics></math> ${lead}${answer}</span>`;
+  // a paragraph the formula stood alone in gives the figure its attributes (id, class, lang…), its style before the formula's
+  const pa = readAttrs(pAttrs, 0), pStyle = splitStyle(pa.style), rest = Object.entries(pa).filter(([k]) => k !== 'style').map(([k, v]) => ` ${k}="${esc(v)}"`).join(''), fs = [...pStyle, ...varDecls];
+  return `<figure data-dcss-mathml${rest}${fs.length ? ` style="${esc(css(fs))}"` : ''}>${caption}${props}<div>${lead}${answer}</div></figure>`;
 }
 
 // --- the page: each <math> the parser would build, compiled when it is one <apply> of an operator
 const lineOf = (src, at) => src.slice(0, at).split('\n').length;
+// where </name closes, its name ending there (</textareax> doesn't close a textarea), case aside; -1 if nowhere
+const closeAt = (src, name, from) => { const re = new RegExp(`</${name}(?=[\\s/>])`, 'ig'); re.lastIndex = from; const m = re.exec(src); return m ? m.index : -1; };
+// a data-dcss-scope: an element whose end tag is required, so its extent is where that end tag is
+const VOID = new Set(['area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'link', 'meta', 'source', 'track', 'wbr']);
+const OPTIONAL_END = new Set(['html', 'head', 'body', 'p', 'li', 'dt', 'dd', 'rt', 'rp', 'optgroup', 'option', 'colgroup', 'caption', 'thead', 'tbody', 'tfoot', 'tr', 'td', 'th']);
+function endOf(src, lt, t) {
+  let depth = 1, i = lt + t.length;
+  while (i < src.length) {
+    const at = src.indexOf('<', i); if (at < 0) break;
+    if (src.startsWith('<!--', at)) { const e = src.indexOf('-->', at + 4); i = e < 0 ? src.length : e + 3; continue; }
+    const u = tagAt(src, at); if (!u) { i = at + 1; continue; }
+    if (!u.close && RAW.has(u.name)) { const e = closeAt(src, u.name, at + u.length); i = e < 0 ? src.length : e; continue; }
+    if (u.name === t.name && !u.self) { if (!u.close) depth++; else if (--depth === 0) return at + u.length; }
+    i = at + u.length;
+  }
+  return -1;
+}
+// a series: data-dcss-series on an <ol> or <ul> (its own items) or a <table> (its body's rows, thead and tfoot left out),
+// each item or row with one carrier marked data-dcss-value: a literal (the carrier's own text, a plain number), live
+// (data-dcss-value="var(--jan)" on an empty carrier, which the build prints) or missing (empty, the attribute bare).
+// data-dcss-count names its number of slots, missing ones counted; 0 to MAX_SLOTS slots
+const MAX_SLOTS = 64, IDENT = /^-?[_a-zA-Z\u0080-\u{10FFFF}][-_a-zA-Z0-9\u0080-\u{10FFFF}]*$/u;
+const ENDS_ITEM = new Set(['li', 'tr', 'td', 'th', 'tbody', 'thead', 'tfoot', 'table', 'ol', 'ul']); // a tag that ends an item's or a cell's text
+// does a <data>'s text show its value? Its number (grouped by commas, points, spaces or apostrophes in threes, a point or a
+// comma as the decimal mark, a minus, − or brackets for a negative, a %, k, M, B, G or T after it as its scale) is the
+// value rounded to the digits it shows, at a tie either way (a % reads 12.5% as 0.125 or as 12.5 percent points)
+const SCALE = { '%': 0.01, k: 1e3, K: 1e3, M: 1e6, B: 1e9, G: 1e9, T: 1e12 };
+const shows = (text, value) => {
+  const m = /([-\u2212(])?\s*(\d[\d.,' ]*\d|\d)\s*([%kKMBGT])?(?!\w)/.exec(text.replace(/&nbsp;|&#160;|&#x202f;|[\u00a0\u202f\u2009]/gi, ' ')); if (!m) return false;
+  const neg = !!m[1], digits = m[2].replace(/[' ]/g, '');
+  return (m[3] === '%' ? [0.01, 1] : [SCALE[m[3]] ?? 1]).some((scale) => [['.', ','], [',', '.']].some(([dec, group]) => { // 12.5% is 0.125, or 12.5 in points
+    const [int, ...frac] = digits.split(dec); if (frac.length > 1 || frac.some((x) => x.includes(group))) return false;
+    const groups = int.split(group); if (groups.length > 1 && (groups[0].length > 3 || groups.slice(1).some((g) => g.length !== 3))) return false; // 1,200 or 1.200, not 20.27
+    const x = Number([groups.join(''), ...frac].join('.')), half = 0.5 * 10 ** -(frac[0]?.length ?? 0) * scale;
+    return Number.isFinite(x) && Math.abs((neg ? -x : x) * scale - value) <= half * (1 + 1e-12) + Number.EPSILON * Math.abs(value); }));
+};
+// a carrier marked data-dcss-value at p (its tag u): a written number (its text, or a <data value>), var(--name) for one the
+// page sets, or empty for a missing one
+function carrierAt(src, p, u, end, no) {
+  const i = p + u.length;
+  // the carrier: its attribute, its own text, and the tag after that text, which must end it
+  const v = (readAttrs(u.rawAttrs, p)['data-dcss-value'] ?? '').trim(), te = src.indexOf('<', i), text = src.slice(i, te < 0 ? end : te), next = te < 0 ? null : tagAt(src, te);
+  const live = /^var\(\s*--([^\s)]+)\s*\)$/.exec(v), built = live && !text.trim() && (next?.name === 'span' || next?.name === 'output') && !next.close && /\bdcss-format-/.test(next.rawAttrs); // printed by a build already
+  // HTML's <data value="1200">1,200</data>: the number in value, the text as the page shows it; the carrier itself, or
+  // the one element in it
+  const inner = !live && !v && !text.trim() && next && !next.close && next.name === 'data' ? next : null;
+  const data = u.name === 'data' ? readAttrs(u.rawAttrs, p) : inner ? readAttrs(inner.rawAttrs, te) : null;
+  if (inner) { const shut = closeAt(src, 'data', te + inner.length), after = shut < 0 ? -1 : src.indexOf('>', shut) + 1, te2 = after < 0 ? -1 : src.indexOf('<', after), next2 = te2 < 0 ? null : tagAt(src, te2);
+    if (shut < 0 || src.slice(after, te2).trim() || !next2 || !((next2.close && next2.name === u.name) || ENDS_ITEM.has(next2.name))) throw no(p, `<${u.name} data-dcss-value> with more than one <data> inside: a carrier holds its number as its text or in one <data value>`); }
+  if (!built && !data && (!next || !((next.close && next.name === u.name) || ENDS_ITEM.has(next.name)))) throw no(p, `<${u.name} data-dcss-value> with markup inside: a carrier's number is its own text, or a <data value="…">`);
+  const shown = data ? (inner ? src.slice(te + inner.length, closeAt(src, 'data', te + inner.length)) : text).replace(/<[^>]*>/g, '').trim() : null; // what a reader sees
+  let slot;
+  if (live) { if (text.trim()) throw no(p, `<${u.name} data-dcss-value="${v}"> holds text: a live carrier is empty, and the build prints its value`);
+    const nm = live[1].normalize('NFKC'); if (!IDENT.test(nm)) throw no(p, `data-dcss-value="${v}": --${nm} is no CSS custom property`);
+    slot = { kind: 'live', name: nm, after: i, attrs: readAttrs(u.rawAttrs, p), built }; }
+  else if (v) throw no(p, `data-dcss-value="${v}": a carrier's value is its own text, or var(--name) for one the page sets`);
+  else if (data && !('value' in data)) throw no(p, `a <data> carrier with no value attribute: its number goes in value="…", as in <data value="1200">1,200</data>`);
+  else if (data ? !data.value.trim() : !text.trim()) { if (data && /\d/.test(shown)) throw no(p, `<data value="">${shown}</data>: it shows a number and its value is empty (missing); a reader would see ${shown} and the page compute without it`); slot = { kind: 'missing' }; }
+  else { const w = (data ? data.value : text).trim();
+    if (!/^-?(\d+\.?\d*|\.\d+)$/.test(w)) throw no(p, `${JSON.stringify(w)} is not a plain number: a carrier's ${data ? 'value' : 'text'} is digits, a point and a leading minus, as in -1200.5${data ? '' : ' (or <data value="1200">1,200</data> to show it formatted)'}`);
+    const x = Number(w); if (Math.abs(x) >= FMAX) throw no(p, `${w}: Chrome reads a number from 3.4e38 up as 3.4e38 (a 32-bit float's largest), so the page would compute with another number`);
+    if (data && !shows(shown, x)) throw no(p, `<data value="${data.value}">${shown}</data>: its text shows another number than its value, so a reader would see ${JSON.stringify(shown)} and the page compute with ${w} (the text is the value rounded to the digits it shows; separators, and a %, k, M or B after it, are read)`);
+    slot = { kind: 'literal', x, text: w }; }
+  return { ...slot, line: lineOf(src, p) };
+}
+function seriesAt(src, lt, t, end, file) {
+  const attrs = readAttrs(t.rawAttrs, lt), name = (attrs['data-dcss-series'] ?? '').trim().normalize('NFKC'), count = attrs['data-dcss-count']?.trim().normalize('NFKC');
+  const no = (p, why) => new Error(`${file}:${lineOf(src, p)}: ${why}`);
+  if (t.name === 'th') throw no(lt, 'data-dcss-series on a column header in a table marked data-dcss-series itself, or in no table: name the table\'s one series or its columns, not both');
+  if (!['ol', 'ul', 'table'].includes(t.name)) throw no(lt, `data-dcss-series on <${t.name}>: a series is an <ol>, a <ul> or a <table>, or a column's <th scope="col">`);
+  for (const [k, v] of [['data-dcss-series', name], ...(count !== undefined ? [['data-dcss-count', count]] : [])]) {
+    if (!IDENT.test(v)) throw no(lt, `${k}="${v}": a name a formula can use, a CSS identifier`);
+    if (RESERVED.test(v)) throw no(lt, `${k}="${v}": --${v} is a name dcss itself reads or writes`); }
+  if (count === name) throw no(lt, `data-dcss-count="${count}" is the series' own name`);
+  const list = t.name !== 'table', nest = list ? new Set(['ol', 'ul']) : new Set(['table']), items = [];
+  let depth = 0, head = false, i = lt + t.length;
+  while (i < end) {
+    const p = src.indexOf('<', i); if (p < 0 || p >= end) break;
+    if (src.startsWith('<!--', p)) { const e = src.indexOf('-->', p + 4); i = e < 0 ? end : e + 3; continue; }
+    const u = tagAt(src, p); if (!u) { i = p + 1; continue; }
+    i = p + u.length;
+    if (!u.close && RAW.has(u.name)) { const e = closeAt(src, u.name, i); i = e < 0 ? end : e; continue; }
+    if (nest.has(u.name) && !u.self && p < end - 1) { if (u.close) depth--; else depth++; continue; }
+    if (depth) continue;
+    if (!list && ['thead', 'tfoot', 'tbody'].includes(u.name)) { head = !u.close && u.name !== 'tbody'; continue; }
+    if (!u.close && u.name === (list ? 'li' : 'tr') && !head) items.push({ at: p, carriers: [] });
+    if (!list && !head && !u.close && u.name === 'th' && items.length && items.at(-1).label === undefined && !/(?:^|\s)data-dcss-value(?=[\s=]|$)/i.test(u.rawAttrs)
+      && (readAttrs(u.rawAttrs, p).scope ?? 'row').trim().toLowerCase() === 'row') items.at(-1).label = cellText(src, p, u); // its row header
+    if (u.close || !/(?:^|\s)data-dcss-value(?=[\s=]|$)/i.test(u.rawAttrs)) continue;
+    if (!items.length || (!list && head)) throw no(p, 'a data-dcss-value outside the series\' items');
+    items.at(-1).carriers.push(carrierAt(src, p, u, end, no));
+  }
+  for (const it of items) {
+    if (it.carriers.length > 1) throw no(it.at, `${it.carriers.length} carriers marked data-dcss-value in one ${list ? 'item' : 'row'}: a series takes one value an item (two-column series aren't taken yet)`);
+    if (!it.carriers.length) throw no(it.at, `a${list ? 'n item' : ' row'} of the series ${name} with no data-dcss-value: mark its number's element, or an empty one for a missing value`); }
+  if (items.length > MAX_SLOTS) throw no(lt, `the series ${name} has ${items.length} ${list ? 'items' : 'rows'}, past the ${MAX_SLOTS} this build takes`);
+  return { name, count, line: lineOf(src, lt), slots: items.map((it) => it.carriers[0]), labels: items.map((it) => it.label ?? null) };
+}
+// a table whose header row names its columns, <th scope="col" data-dcss-series="sales2025">: a series a column, one slot a
+// body row. A cell's column is its column header by HTML's table model, the header its headers attribute names or else
+// the one above it; merged cells, a row of another length, a headers attribute naming another column, column headers in
+// two rows and a carrier under no series are refused, so no value can stand in another column's place. Rows in <tfoot>
+// are no slots (a total goes there). Each row's header (<th scope="row">) is its slot's label
+// a cell's text, its markup left out (its character references kept, as HTML)
+const cellText = (src, p, u) => { const from = p + u.length, e = /<\/?(?:th|td|tr|tbody|thead|tfoot|table)\b/i.exec(src.slice(from)); return src.slice(from, e ? from + e.index : undefined).replace(/<[^>]*>/g, '').trim(); };
+function columnsAt(src, lt, t, end, file) {
+  const no = (p, why) => new Error(`${file}:${lineOf(src, p)}: ${why}`), rows = [];
+  let depth = 0, section = 'body', i = lt + t.length;
+  while (i < end) {
+    const p = src.indexOf('<', i); if (p < 0 || p >= end) break;
+    if (src.startsWith('<!--', p)) { const e = src.indexOf('-->', p + 4); i = e < 0 ? end : e + 3; continue; }
+    const u = tagAt(src, p); if (!u) { i = p + 1; continue; }
+    i = p + u.length;
+    if (!u.close && RAW.has(u.name)) { const e = closeAt(src, u.name, i); i = e < 0 ? end : e; continue; }
+    if (u.name === 'table' && !u.self && p < end - 1) { depth += u.close ? -1 : 1; continue; }
+    if (depth) continue;
+    if (['thead', 'tbody', 'tfoot'].includes(u.name)) { section = u.close || u.name === 'tbody' ? 'body' : u.name; continue; }
+    if (!u.close && u.name === 'tr') rows.push({ at: p, section, cells: [] });
+    if (u.close || (u.name !== 'td' && u.name !== 'th')) continue;
+    const a = readAttrs(u.rawAttrs, p);
+    if (!rows.length) throw no(p, `a <${u.name}> outside a <tr> in a table with column series`);
+    for (const k of ['colspan', 'rowspan']) if (k in a && a[k].trim() !== '1') throw no(p, `${k}="${a[k]}" in a table with column series: a merged cell would put a value in another column's place`);
+    rows.at(-1).cells.push({ at: p, u, a, value: /(?:^|\s)data-dcss-value(?=[\s=]|$)/i.test(u.rawAttrs), series: 'data-dcss-series' in a });
+  }
+  const heads = rows.filter((row) => row.cells.some((c) => c.series));
+  if (heads.length > 1) throw no(heads[1].at, `column headers marked data-dcss-series in two rows (line ${lineOf(src, heads[0].at)} first): the columns are named in one header row`);
+  if (!heads.length) return null;
+  const head = heads[0], W = head.cells.length, k0 = rows.indexOf(head);
+  if (head.section === 'tfoot') throw no(head.at, 'column headers in <tfoot>: the columns are named in the header row, <thead>');
+  const cols = head.cells.map((c, k) => {
+    if (!c.series) return null;
+    const name = c.a['data-dcss-series'].trim().normalize('NFKC'), count = c.a['data-dcss-count']?.trim().normalize('NFKC'), scope = (c.a.scope ?? '').trim().toLowerCase();
+    if (c.u.name !== 'th') throw no(c.at, `data-dcss-series on a <td>: a column is named by its header, <th scope="col" data-dcss-series="${name}">`);
+    if (scope && scope !== 'col') throw no(c.at, `<th scope="${scope}" data-dcss-series="${name}">: a column's header is scope="col"`);
+    for (const [kk, v] of [['data-dcss-series', name], ...(count !== undefined ? [['data-dcss-count', count]] : [])]) {
+      if (!IDENT.test(v)) throw no(c.at, `${kk}="${v}": a name a formula can use, a CSS identifier`);
+      if (RESERVED.test(v)) throw no(c.at, `${kk}="${v}": --${v} is a name dcss itself reads or writes`); }
+    if (count === name) throw no(c.at, `data-dcss-count="${count}" is the series' own name`);
+    return { k, name, count, id: c.a.id?.trim(), at: c.at, slots: [], labels: [] }; });
+  const named = cols.filter(Boolean), ids = new Map(named.filter((c) => c.id).map((c) => [c.id, c]));
+  rows.forEach((row, j) => {
+    if (row === head) return;
+    const carriers = row.cells.filter((c) => c.value);
+    if (row.section !== 'body') { if (carriers.length) throw no(carriers[0].at, `a data-dcss-value in a ${row.section === 'tfoot' ? '<tfoot>' : 'header'} row: only body rows are slots (a total in <tfoot> reads its result with data-dcss-result)`); return; }
+    if (j < k0) throw no(row.at, 'a body row above the column headers: the header row comes first');
+    if (row.cells.length !== W) throw no(row.at, `a row of ${row.cells.length} cell${row.cells.length === 1 ? '' : 's'} under a header row of ${W}: each row has a cell for every column, an empty data-dcss-value one for a missing value`);
+    const label = row.cells.find((c) => c.u.name === 'th' && !c.value && (c.a.scope ?? 'row').trim().toLowerCase() === 'row');
+    row.cells.forEach((c, k) => {
+      const col = cols[k];
+      if (c.value && !col) throw no(c.at, `a data-dcss-value under a column with no data-dcss-series (column ${k + 1})`);
+      if (!col) return;
+      if (!c.value) throw no(c.at, `the cell under ${col.name} has no data-dcss-value: mark it, empty for a missing value`);
+      if ('headers' in c.a) { const hs = c.a.headers.trim().split(/\s+/), other = hs.map((h) => ids.get(h)).find((x) => x && x !== col);
+        if (!col.id || !hs.includes(col.id) || other) throw no(c.at, `headers="${c.a.headers}" on a cell under ${col.name}${col.id ? ` (id="${col.id}")` : ' (its header has no id)'}: a cell's headers name its own column's header`); }
+      col.slots.push(carrierAt(src, c.at, c.u, end, no));
+      col.labels.push(label ? cellText(src, label.at, label.u) : null); }); });
+  for (const col of named) if (col.slots.length > MAX_SLOTS) throw no(col.at, `the series ${col.name} has ${col.slots.length} rows, past the ${MAX_SLOTS} this build takes`);
+  return named.map(({ name, count, at, slots, labels }) => ({ name, count, line: lineOf(src, at), at, slots, labels }));
+}
 export function toDcss(src, { file = 'page.html' } = {}) {
-  const found = [], calls = new Set(); let i = 0, pOpen = null; // pOpen: the start of an open <p>, or null
+  const was = CX; CX = { defs: new Map(), later: new Map(), elsewhere: new Map(), index: new Map(), series: new Map(), seriesElsewhere: new Map() };
+  try { return build(src, file); } finally { CX = was; }
+}
+function build(src, file) {
+  // scopes: 0 is the page; each data-dcss-scope element another, inside the one it sits in
+  const found = [], calls = new Set(), scopes = [{ id: 0, parent: null }], open = [], series = [], marks = [], colHeads = new Set(), lives = []; let i = 0, pOpen = null, built = null; // built: the line of the first thing an earlier build wrote // pOpen: the start of an open <p>, or null
   while (i < src.length) {
     const lt = src.indexOf('<', i); if (lt < 0) break;
     if (src.startsWith('<!--', lt)) { const e = src.indexOf('-->', lt + 4); i = e < 0 ? src.length : e + 3; continue; }
     if (src[lt + 1] === '!' || src[lt + 1] === '?') { const e = src.indexOf('>', lt); i = e < 0 ? src.length : e + 1; continue; }
     const t = tagAt(src, lt);
     if (!t) { i = lt + 1; continue; }
-    if (!t.close && RAW.has(t.name)) { const e = src.toLowerCase().indexOf(`</${t.name}`, lt + t.length); i = e < 0 ? src.length : e; continue; }
+    if (!t.close && RAW.has(t.name)) { const e = closeAt(src, t.name, lt + t.length); i = e < 0 ? src.length : e; continue; }
+    while (open.length && lt >= open.at(-1).end) open.pop();
+    while (lives.length && lt >= lives.at(-1).end) lives.pop();
     if (t.close) { if (t.name === 'p') pOpen = null; i = lt + t.length; continue; }
-    if (t.name === 'figure' && /\bdata-dcss-mathml\b/.test(t.rawAttrs)) { const e = src.toLowerCase().indexOf('</figure', lt); i = e < 0 ? src.length : e; continue; } // a formula this build wrote
-    if (t.name === 'p') pOpen = { start: lt, end: lt + t.length };
+    if (/(?:^|\s)data-dcss-scope(?=[\s=]|$)/i.test(t.rawAttrs)) {
+      const line = lineOf(src, lt), end = VOID.has(t.name) || OPTIONAL_END.has(t.name) || t.self ? -2 : endOf(src, lt, t);
+      if (end === -2) throw new Error(`${file}:${line}: data-dcss-scope on <${t.name}>: a scope is an element whose end tag is required (section, div, article, figure…)`);
+      if (end < 0) throw new Error(`${file}:${line}: the data-dcss-scope <${t.name}> is never closed`);
+      const s = { id: scopes.length, parent: open.at(-1)?.id ?? 0, line, start: lt, end, tag: t }; scopes.push(s); open.push(s);
+    }
+    { const a = readAttrs(t.rawAttrs, lt), on = 'aria-live' in a ? a['aria-live'].trim().toLowerCase() !== 'off' : t.name === 'output' || LIVE_ROLES.test(a.role ?? '');
+      if (('aria-live' in a || on) && !t.self && !VOID.has(t.name)) { const end = endOf(src, lt, t); if (end > 0) lives.push({ end, on, at: lt }); } }
+    for (const kind of ['result', 'bind', 'error', 'label']) if (new RegExp(`(?:^|\\s)data-dcss-${kind}(?=[\\s=]|$)`, 'i').test(t.rawAttrs))
+      marks.push({ kind, name: (readAttrs(t.rawAttrs, lt)[`data-dcss-${kind}`] ?? '').trim().normalize('NFKC'), at: lt, tag: t, scope: open.at(-1)?.id ?? 0, line: lineOf(src, lt), live: lives.findLast((r) => r.at !== lt)?.on ?? false });
+    if (t.name === 'table' && !t.close && !/(?:^|\s)data-dcss-series(?=[\s=]|$)/i.test(t.rawAttrs)) { const end = endOf(src, lt, t);
+      if (end > 0 && /data-dcss-series/i.test(src.slice(lt + t.length, end))) for (const c of columnsAt(src, lt, t, end, file) ?? []) { colHeads.add(c.at); series.push({ ...c, scope: open.at(-1)?.id ?? 0 }); } }
+    if (/(?:^|\s)data-dcss-series(?=[\s=]|$)/i.test(t.rawAttrs) && !colHeads.has(lt)) {
+      const end = t.self ? -1 : endOf(src, lt, t); if (end < 0) throw new Error(`${file}:${lineOf(src, lt)}: the data-dcss-series <${t.name}> is never closed`);
+      series.push({ ...seriesAt(src, lt, t, end, file), scope: open.at(-1)?.id ?? 0 });
+    }
+    if (t.name === 'figure' && /\bdata-dcss-mathml\b/.test(t.rawAttrs)) { built ??= lineOf(src, lt); const e = closeAt(src, 'figure', lt); i = e < 0 ? src.length : e; continue; } // a formula this build wrote
+    if (t.name === 'span' && /\bdata-dcss-mathml\b/.test(t.rawAttrs)) { built ??= lineOf(src, lt); const e = endOf(src, lt, t); i = e < 0 ? src.length : e; continue; } // one it wrote in a sentence
+    if (!t.close && /(?:^|\s)data-dcss-built(?=[\s=]|$)/i.test(t.rawAttrs)) built ??= lineOf(src, lt); // a scope or a reader it wrote
+    if (t.name === 'p') pOpen = { start: lt, end: lt + t.length, raw: t.rawAttrs, line: lineOf(src, lt) };
     else if (CLOSES_P.has(t.name)) pOpen = null;
     if (t.name !== 'svg' && t.name !== 'math') { i = lt + t.length; continue; }
-    if (t.name === 'svg') { const e = src.toLowerCase().indexOf('</svg', lt); i = e < 0 ? src.length : e; continue; }
+    if (t.name === 'svg') { const e = closeAt(src, 'svg', lt); i = e < 0 ? src.length : e; continue; }
     let math;
     try { math = parseMath(src, lt); } catch (e) { if (e instanceof Refusal) throw new Error(`${file}:${lineOf(src, e.at)}: ${e.message}`); throw e; }
     i = math.end;
@@ -1194,42 +1851,195 @@ export function toDcss(src, { file = 'page.html' } = {}) {
       if (loose(math)) throw new Error(`${file}:${lineOf(src, math.start)}: Content MathML outside an annotation draws nothing in Chrome and Safari; this build compiles a <math> whose one element is an <apply> or a <piecewise>`);
       continue;
     }
-    let from = math.start, to = math.end;
-    if (pOpen) { // a formula alone in a paragraph takes the paragraph's place; beside text the figure's list would close it
+    let from = math.start, to = math.end, inline = false, pAttrs = '';
+    if (pOpen) { // a formula alone in a paragraph takes the paragraph's place as a figure; beside text it is phrasing, in the sentence
       const before = src.slice(pOpen.end, math.start), after = src.slice(math.end), close = /^\s*<\/p\s*>/i.exec(after), next = /^\s*<([a-z][a-z0-9]*)/i.exec(after);
       const alone = !before.trim() && (close || /^\s*$/.test(after) || (next && CLOSES_P.has(next[1].toLowerCase())));
-      if (!alone) throw new Error(`${file}:${lineOf(src, math.start)}: a formula beside text in a paragraph: the call's list would close the paragraph; give the formula its own line`);
-      from = pOpen.start; to = close ? math.end + close[0].length : math.end; pOpen = null;
+      if (alone) { from = pOpen.start; to = close ? math.end + close[0].length : math.end; // the paragraph's attributes go to the figure
+        if (/(?:^|\s)data-dcss-(scope|series|result|bind|error)(?=[\s=]|$)/i.test(pOpen.raw)) throw new Error(`${file}:${pOpen.line}: a data-dcss- attribute on the paragraph a formula stands alone in: the formula takes the paragraph's place, so put the attribute on an element around it`);
+        pAttrs = pOpen.raw; pOpen = null; }
+      else if ((math.attrs.display ?? '').trim().toLowerCase() === 'block') throw new Error(`${file}:${lineOf(src, math.start)}: a formula with display="block" beside text in a paragraph: a block formula takes its own paragraph; without display="block" it stays in the sentence`);
+      else inline = true;
     }
-    found.push({ from, to, math });
+    found.push({ from, to, math, scope: open.at(-1)?.id ?? 0, inline, pAttrs, live: lives.at(-1)?.on ?? false });
   }
-  // the page's definitions, in document order: each name once, and never one the page sets itself
-  const defs = found.map((f) => definition(elements(f.math)[0])), where = new Map();
-  defs.forEach((d, k) => { if (!d) return; const at = found[k].math.start, line = lineOf(src, at);
-    if (where.has(d[0])) throw new Error(`${file}:${line}: ${d[0]} is defined twice (line ${where.get(d[0]).line} first)`);
+  // a page an earlier build wrote, with something new in it, is refused: the new formulas would be numbered from 1 again
+  // and read the old ones' answers, and the old scopes' steps aren't written again (a built page alone builds to itself)
+  const fresh = [found[0] && lineOf(src, found[0].math.start), marks.find((mk) => !/(?:^|\s)data-dcss-built(?=[\s=]|$)/i.test(mk.tag.rawAttrs))?.line,
+    series.flatMap((q) => q.slots).find((x) => x.kind === 'live' && !x.built)?.line].filter(Boolean);
+  if (built !== null && fresh.length) throw new Error(`${file}:${Math.min(...fresh)}: this page holds what an earlier build wrote (line ${built}) and something new to build: build the source page, not the built one`);
+  // and a built page changed in any other way (a number in a series, a formula's text) is refused too: its folded answers
+  // and its steps were written for the page as built, so each mark carries the SHA-256 of the page the build wrote
+  if (built !== null) { const h = FINGERPRINT.exec(src)?.[1], bare = h && src.replace(new RegExp(`(\\sdata-dcss-(?:built|mathml))="${h}"`, 'g'), '$1');
+    if (!h || fingerprint(bare) !== h) throw new Error(`${file}:${built}: this page holds what an earlier build wrote ${h ? 'and was changed after it' : 'with no fingerprint of it (an older build, or one taken out)'}: build the source page, not the built one`); }
+  // the page's definitions, in document order: each name once in a scope and the scopes around and inside it (sibling
+  // scopes may reuse one), and never one the page sets itself
+  const around = (s) => { const up = new Set(); for (let q = s; q !== null; q = scopes[q].parent) up.add(q); return up; }, ups = scopes.map((s) => around(s.id));
+  const sees = (s, q) => ups[s].has(q); // a formula in scope s sees definitions of scope q
+  const defs = found.map((f) => definition(elements(f.math)[0])), where = [];
+  defs.forEach((d, k) => { if (!d) return; const at = found[k].math.start, line = lineOf(src, at), s = found[k].scope;
+    const twice = where.find((w) => w.name === d[0] && (sees(s, w.scope) || sees(w.scope, s)));
+    if (twice) throw new Error(twice.scope === s ? `${file}:${line}: ${d[0]} is defined twice (line ${twice.line} first)` : `${file}:${line}: ${d[0]} is defined twice, in a data-dcss-scope and one around it (line ${twice.line})`);
     const outside = src.slice(0, found[0].from) + found.map((f, j) => src.slice(f.to, found[j + 1]?.from ?? src.length)).join('');
-    if (new RegExp(`--${d[0].replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\s*:`).test(outside)) throw new Error(`${file}:${line}: the page sets --${d[0]} itself, which this definition would hide from the formulas after it`);
-    where.set(d[0], { k, line }); });
+    const set = new RegExp(`--(${d[0].replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(-ready)?)\\s*:`).exec(outside);
+    if (set) throw new Error(`${file}:${line}: the page sets --${set[1]} itself, which this definition would hide from the formulas after it (a scope's result is --${d[0]} and --${d[0]}-ready)`);
+    where.push({ name: d[0], k, line, scope: s }); });
+  // a series' name and its count's are names of their scope too: once there and around it, and never a definition's
+  const names = [...where.map((w) => ({ name: w.name, line: w.line, scope: w.scope })), ...series.flatMap((q) => [{ name: q.name, line: q.line, scope: q.scope, q }, ...(q.count ? [{ name: q.count, line: q.line, scope: q.scope, q }] : [])])];
+  for (const q of series) for (const nm of [q.name, q.count].filter(Boolean)) {
+    const other = names.find((w) => w.name === nm && w.q !== q && (sees(q.scope, w.scope) || sees(w.scope, q.scope))); // another entry, even on the same line
+    if (other) throw new Error(`${file}:${Math.max(q.line, other.line)}: ${nm} is named twice in a data-dcss-scope or one around it (${q.line === other.line ? `twice on line ${q.line}` : `lines ${Math.min(q.line, other.line)} and ${Math.max(q.line, other.line)}`})`); }
+  // a live slot is kept on its scope's element through the split (five registered integers, inherited, named
+  // --dcss-series-s<scope>q<series>-<slot>: a formula's own renaming leaves them be) with two flags:
+  // p, present (sign(abs(v) + 1), 1 for any number, ±infinity too: an unset, empty or non-numeric value or NaN leaves its
+  // initial 0, so the slot is missing and
+  // voids nothing else), and g, present and below 3.4e38 (Chrome reads a larger number as 3.4e38). Its carrier prints it
+  // what the build adds to an element's start tag (a scope's steps and stores, a reader's style and class), one edit a tag
+  const liveEdits = [], scopeDecls = new Map(), tagAdds = new Map(), add = (at, t, style, more = {}) => { const a = tagAdds.get(at) ?? { t, style: [], props: [], cls: '', css: '' }; tagAdds.set(at, a); a.style.push(...style); if (more.props) a.props.push(...more.props); if (more.cls) a.cls = more.cls; if (more.css) a.css += more.css; if (more.inner) a.inner = more.inner; if (more.attrs) a.attrs = more.attrs; };
+  series.forEach((q) => { const live = q.slots.filter((x) => x.kind === 'live'); if (!live.length) return;
+    if (!q.scope) throw new Error(`${file}:${q.line}: the series ${q.name} has values the page sets: put it in a data-dcss-scope, whose element keeps them`);
+    const j = series.filter((r) => r.scope === q.scope).indexOf(q) + 1, ds = scopeDecls.get(q.scope) ?? []; scopeDecls.set(q.scope, ds);
+    q.slots.forEach((x, i) => { if (x.kind !== 'live') return; const Q = x.store = `--dcss-series-s${q.scope}q${j}-${i}`, v = `var(--${x.name})`;
+      for (const z of 'eabcz') ds.push([`${Q}-${z}`, `calc(${SPLIT[z](Q, v)})`]);
+      ds.push([`${Q}-p`, `calc(sign(abs(${v}) + 1))`], [`${Q}-g`, `calc(1 - min(1, max(0, sign(abs(${v}) - ${FMAX}) + 1)))`]);
+      if (!x.built) liveEdits.push({ from: x.after, to: x.after, html: printed(x.attrs, `calc(${join(Q)} * (1 + 0 / var(${Q}-g)))`) }); }); }); // the slot, as the formulas read it
+  for (const [id, ds] of scopeDecls) add(scopes[id].start, scopes[id].tag, ds.map(([k, v]) => `${k}: ${v}`), { props: ds.map(([k]) => [k, true]) });
+  // each scope's formulas numbered from 1: a scoped formula's private names (its steps, macros and flags) carry its scope
+  // and number, so formulas sharing an element (B5) never share a name; the page's own formulas keep theirs as they are
+  const nth = new Map(), tag = found.map((f) => { const n = (nth.get(f.scope) ?? 0) + 1; nth.set(f.scope, n); return f.scope ? `s${f.scope}r${n}-` : ''; });
+  const answers = new Map(), defAt = new Map(); // a scoped formula's answer's name, by its place on the page
+  // the first formula brings the rule that lays figures out and sets answers in the formulas' font: before its figure, or
+  // inside its span in a sentence, where a sentence's words are read without it
+  const lay = (k, f, html) => k ? html : f.inline ? html.replace(/^<span data-dcss-mathml[^>]*>/, (o) => o + LAYOUT) : LAYOUT + html;
   const edits = found.map((f, k) => {
-    DEFS = new Map(); LATER = new Map();
-    for (const [name, w] of where) if (w.k < k) DEFS.set(name, null); else if (w.k > k) LATER.set(name, w.line);
+    CX.defs = new Map(); CX.later = new Map(); CX.elsewhere = new Map(); CX.series = new Map(); CX.seriesElsewhere = new Map();
+    for (const w of where) if (!sees(f.scope, w.scope)) CX.elsewhere.set(w.name, w.line); else if (w.k < k) CX.defs.set(w.name, null); else if (w.k > k) CX.later.set(w.name, w.line);
+    // the series its scope and those around it hold, wherever they stand in it, and their counts as numbers the build knows
+    for (const q of series) if (sees(f.scope, q.scope)) { CX.series.set(q.name, q); if (q.count) CX.defs.set(q.count, { op: 'id', call: 'id', items: [{ x: q.slots.length, neg: false, mag: `<mn>${q.slots.length}</mn>` }] }); }
+      else { CX.seriesElsewhere.set(q.name, q.line); if (q.count) CX.elsewhere.set(q.count, q.line); }
     let compiled;
     try {
-      for (const [name, w] of where) if (w.k < k) DEFS.set(name, found[w.k].compiled.root.items[1].node);
+      for (const w of where) if (w.k < k && sees(f.scope, w.scope)) { const node = found[w.k].compiled.root.items[1].node;
+      CX.defs.set(w.name, answers.has(w.k) && valueOf(node) === null ? { result: answers.get(w.k) } : node); } // a scope's live result is read, not computed again
       compiled = f.compiled = compile(f.math);
     } catch (e) { if (e instanceof Refusal) throw new Error(`${file}:${lineOf(src, e.at)}: ${e.message}`); throw e; }
-    const each = (n) => { calls.add(n.call); n.items.forEach((x) => x.node && each(x.node)); }; each(compiled.root);
-    // the first figure brings the rule that puts each answer beside its formula, at no specificity, so a page's own wins
-    return { from: f.from, to: f.to, html: (k ? '' : LAYOUT) + write(compiled, f.math, src) };
+    const mine = new Set(), slotsRead = new Set(), uses = new Set(), each = (n) => { calls.add(n.call); mine.add(n.call); if (n.series) slotsRead.add(n.series.name); n.items.forEach((x) => { if (x.node) each(x.node); if (x.slot) slotsRead.add(x.slot); if (x.def) each(x.def); if (x.result) uses.add(x.ci); }); }; each(compiled.root);
+    f.report = { mine, slotsRead, uses };
+    // the first figure brings the rule that puts each answer beside its formula, at no specificity, so a page's own wins (a
+    // sentence's formula needs none, and a <style> there would sit in the paragraph)
+    const T = (x) => (tag[k] ? x.replaceAll('--dcss-dcss-', `--dcss-dcss-${tag[k]}`) : x);
+    if (f.scope && (compiled.kind === 'value' || compiled.kind === 'define')) {
+      // in a scope, a value's steps and its answer go on the scope's element, the answer through the split with a flag,
+      // inherited; the formula's output, a data-dcss-result and a later formula read it from there. A named one is also
+      // --<name> (the double, worked out there and inherited as its tokens) and --<name>-ready (1 while it has an answer,
+      // else 0), for the page's own CSS anywhere inside: width: calc(var(--average) * 2px)
+      const A = `--dcss-answer-s${f.scope}r${tag[k].slice(tag[k].indexOf('r') + 1, -1)}`, V = T(compiled.value); answers.set(k, A); defAt.set(k, f.scope);
+      const own = compiled.decls.map((d) => T(d).replace(/;$/, '')), parts = ANSWER.map((z) => `${A}-${z}`);
+      add(scopes[f.scope].start, scopes[f.scope].tag, [...own, ...'eabcz'.split('').map((z) => `${A}-${z}: calc(${SPLIT[z](A, `clamp(-1 * (pow(2, 1023) * (2 - pow(2, -52))), ${V}, (pow(2, 1023) * (2 - pow(2, -52))))`)})`), `${A}-v: calc(${V} * 0 + 1)`,
+        ...(compiled.kind === 'define' ? [`--${compiled.name}: ${readAnswer(A)}`, `--${compiled.name}-ready: var(${A}-v)`] : [])],
+        { props: [...compiled.ints.map((n) => [T(n), false]), ...parts.map((n) => [n, true])] });
+      return { from: f.from, to: f.to, html: lay(k, f, write({ ...compiled, value: readAnswer(A), decls: [], ints: [] }, f.math, src, f.inline, f.pAttrs, QUIET(f.live))) };
+    }
+    return { from: f.from, to: f.to, html: lay(k, f, T(write(compiled, f.math, src, f.inline, f.pAttrs, QUIET(f.live)))) };
   });
+  // the readers of a scope's results: data-dcss-result prints one (the page's own CSS reads --<name>). Each reads a result
+  // of its own scope or one around it (values flow down)
+  const results = new Map(); where.forEach((w) => results.set(`${w.scope}:${w.name}`, w));
+  // data-dcss-error marks the page's own message for a result: hidden while it has an answer, by a style query on the
+  // element around it (which inherits the result's flag v), so it shows while the result has none
+  for (const mk of marks) {
+    const own = readAttrs(mk.tag.rawAttrs, mk.at), at = `${file}:${mk.line}: `;
+    if (mk.kind === 'bind') throw new Error(`${at}data-dcss-bind="${mk.name}": a result is read by its own name now, var(--${mk.name}) and var(--${mk.name}-ready), anywhere in its scope`);
+    if (/(?:^|\s)data-dcss-built(?=[\s=]|$)/i.test(mk.tag.rawAttrs)) continue; // read by a build already
+    if (mk.kind === 'result') { const e = mk.tag.self ? -1 : endOf(src, mk.at, mk.tag), inner = e < 0 ? '' : src.slice(mk.at + mk.tag.length, src.lastIndexOf('<', e - 1)).replace(/<!--[\s\S]*?-->/g, '');
+      if (/\d/.test(inner.replace(/<[^>]*>/g, ''))) throw new Error(`${at}data-dcss-result="${mk.name}" holds ${JSON.stringify(inner.trim().slice(0, 40))}: what a result's element holds shows while it has no answer, so it holds no digit, which would read as one`); }
+    if (mk.kind === 'error' && scopes[mk.scope]?.start === mk.at) throw new Error(`${at}data-dcss-error on the data-dcss-scope itself: a message reads its result from the element around it, so it goes inside the scope`);
+    let w = null; for (let q = mk.scope; q !== null && !w; q = scopes[q].parent) w = results.get(`${q}:${mk.name}`) ?? null;
+    // where no formula has the name, a series' data-dcss-count: its number of rows, known when the page is built, so a total
+    // can say what it covers ("285 across 2 of 6 months")
+    let rows = null; if (!w) for (let q = mk.scope; q !== null && rows === null; q = scopes[q].parent) rows = series.find((x) => x.scope === q && x.count === mk.name)?.slots.length ?? null;
+    if (rows !== null && mk.kind === 'label') throw new Error(`${at}data-dcss-label="${mk.name}": ${mk.name} is a series' number of rows (data-dcss-count), not d3's maxIndex or minIndex of a series`);
+    if (!w && rows === null) { const there = where.find((x) => x.name === mk.name);
+      throw new Error(there ? `${at}data-dcss-${mk.kind}="${mk.name}": ${mk.name} is ${there.scope ? 'a result of another data-dcss-scope' : 'defined by the page, not a data-dcss-scope'} (line ${there.line}): an element reads the results of its own scope and the scopes around it`
+        : `${at}data-dcss-${mk.kind}="${mk.name}": no formula defines ${mk.name} in this data-dcss-scope or one around it`); }
+    if (w && !w.scope) throw new Error(`${at}data-dcss-${mk.kind}="${mk.name}": ${mk.name} is defined by the page, not a data-dcss-scope (line ${w.line}): put the formula and its readers in one`);
+    const A = w ? answers.get(w.k) : null;
+    if (mk.kind === 'result') { const fmt = (own.class ?? '').split(/\s+/).filter((c) => c.startsWith('dcss-format-')), set = splitStyle(own.style).some(([kk]) => FORMAT_SETTINGS.test(kk));
+      const node = w ? found[w.k].compiled.root.items[1]?.node : null, kv = w ? (node ? valueOf(node) : null) : rows, ff = kv === null ? null : fixedOf((own.class ?? '').split(/\s+/).filter(Boolean), splitStyle(own.style)), text = ff ? fixedText(kv, ff) : null;
+      // what the element holds is shown while it prints no number (no answer, or one its format can't print), and with no
+      // CSS; a dash when it holds nothing. Hidden for an answer written as text, which shows in any case
+      const e = mk.tag.self ? -1 : endOf(src, mk.at, mk.tag), shut = e < 0 ? -1 : src.lastIndexOf('<', e - 1), held = shut < 0 ? '' : src.slice(mk.at + mk.tag.length, shut).replace(/<!--[\s\S]*?-->/g, '').trim();
+      const none = held ? `<span data-dcss-none${text === null ? '' : ' hidden'}>` : text === null ? NONE : ''; if (held) liveEdits.push({ from: shut, to: shut, html: '</span>' });
+      add(mk.at, mk.tag, [`--value: ${A ? readAnswer(A) : rows}`, ...(fmt.length || set ? [] : ['--precision: 6', '--trim: 1', '--comma: 1'])], { cls: [fmt.length ? '' : 'dcss-format-fixed', text === null ? '' : 'dcss-text'].filter(Boolean).join(' '), inner: (text === null ? '' : asText(kv, text)) + none,
+        attrs: mk.tag.name === 'output' && !('aria-live' in own) && !('role' in own) ? QUIET(mk.live) : '' }); }
+    else if (mk.kind === 'label') { // the row header at an index result: every label written, hidden, and the one at the index shown
+      const node = found[w.k].compiled.root.items[1]?.node, q = node?.indexOf, c = `dcss-label-${A.slice('--dcss-answer-'.length)}`, sc = scopes[w.scope];
+      if (!q) throw new Error(`${at}data-dcss-label="${mk.name}": ${mk.name} is not d3's maxIndex or minIndex of a series (line ${w.line}): a label is the row header at that index`);
+      const bare = (q.labels ?? q.slots.map(() => null)).findIndex((l) => !l); // every row its header, or a label could print nothing
+      if (bare >= 0) throw new Error(`${at}data-dcss-label="${mk.name}": ${q.labels?.some(Boolean) ? `row ${bare + 1} of the series ${q.name} (line ${q.line}) has` : `the series ${q.name} (line ${q.line}) has`} no row header, <th scope="row">, to print`);
+      // what the element holds is its text while no row wins (d3's -1, or no answer), and with no CSS. The index is kept
+      // plus one, 0 for none: Chrome 155 matches no style(--i: -1) on a registered integer computed by calc() (facts/style-query-negative-calc.mjs)
+      const e = mk.tag.self ? -1 : endOf(src, mk.at, mk.tag), shut = e < 0 ? -1 : src.lastIndexOf('<', e - 1), own = shut < 0 ? '' : src.slice(mk.at + mk.tag.length, shut);
+      add(mk.at, mk.tag, [], { cls: c, inner: q.labels.map((l, k) => `<span hidden data-dcss-k="${k}">${l}</span>`).join('') + (own.trim() ? '<span data-dcss-k="-1">' : '') });
+      if (own.trim()) liveEdits.push({ from: shut, to: shut, html: '</span>' });
+      if (!(tagAdds.get(sc.start)?.css ?? '').includes(`.${c} `)) add(sc.start, sc.tag, (tagAdds.get(sc.start)?.style ?? []).some((d) => d.startsWith(`${A}-i:`)) ? [] : [`${A}-i: calc(var(${A}-v) * (round(nearest, ${join(A)}, 1) + 1))`],
+        { props: [[`${A}-i`, true]], css: `.${c} > [data-dcss-k="-1"] { display: none; } @container style(${A}-i: 0) { .${c} > [data-dcss-k="-1"] { display: inline; } } ` + q.labels.map((l, k) => (l ? `@container style(${A}-i: ${k + 1}) { .${c} > [data-dcss-k="${k}"] { display: inline; } } ` : '')).join('') }); }
+    else if (!A) add(mk.at, mk.tag, [], { attrs: 'hidden' in own ? '' : ' hidden' }); // a number of rows: always there
+    else { const c = `dcss-unavailable-${A.slice('--dcss-answer-'.length)}`, sc = scopes[w.scope], node = found[w.k].compiled.root.items[1]?.node, kv = node ? valueOf(node) : null;
+      add(mk.at, mk.tag, [], { cls: c, attrs: kv !== null && Number.isFinite(kv) && !('hidden' in own) ? ' hidden' : '' }); // known when built: its message never shows, with CSS or without
+      if (!(tagAdds.get(sc.start)?.css ?? '').includes(`.${c} `)) add(sc.start, sc.tag, [], { css: `@container style(${A}-v: 1) { .${c} { display: none !important; } } ` }); }
+  }
+  for (const [at, a] of tagAdds) { const t = a.t; if (/(?:^|\s)data-dcss-built(?=[\s=]|$)/i.test(t.rawAttrs)) continue; // kept by a build already
+    const close = t.length - (t.self ? 2 : 1), body = a.style.join('; '), open = src.slice(at, at + t.length).replace(/(\/?>)$/, `${a.attrs ?? ''} data-dcss-built\u0001$1`); // marked, for a build of the built page
+    const st = /(\sstyle\s*=\s*)("([^"]*)"|'([^']*)'|([^\s"'=<>`]+))/i.exec(t.rawAttrs), old = st ? st[3] ?? st[4] ?? st[5] ?? '' : '';
+    let tg = st ? open.replace(st[0], `${st[1]}"${old.replace(/;?\s*$/, '').replace(/"/g, '&quot;')}${old.trim() ? '; ' : ''}${body}"`) : `${open.slice(0, close)} style="${body}"${open.slice(close)}`;
+    if (a.cls) { const c = /(\sclass\s*=\s*)("([^"]*)"|'([^']*)'|([^\s"'=<>`]+))/i.exec(tg); tg = c ? tg.replace(c[0], `${c[1]}"${(c[3] ?? c[4] ?? c[5] ?? '').trim()} ${a.cls}"`) : tg.replace(/(\/?>)$/, ` class="${a.cls}"$1`); }
+    if (!a.style.length) tg = tg.replace(/\sstyle=""(?=[\s/>])/, ''); // a class alone
+    const rules = [...a.props.map(([n, inh]) => `@property ${n} { syntax: '<integer>'; inherits: ${inh}; initial-value: 0; }`), ...(a.css ? [a.css] : [])];
+    liveEdits.push({ from: at, to: at + t.length, html: tg + (rules.length ? `<style>${rules.join(' ')}</style>` : '') + (a.inner ?? '') }); }
   let out = '', at = 0;
-  for (const e of edits) { out += src.slice(at, e.from) + e.html; at = e.to; }
+  for (const e of [...edits, ...liveEdits].sort((a, b) => a.from - b.from || a.to - b.to)) { out += src.slice(at, e.from) + e.html.replace(/<(figure|span) data-dcss-mathml(?=[\s>])/g, '<$1 data-dcss-mathml\u0001'); at = e.to; }
   out += src.slice(at);
-  return { ...links(out, edits.length), calls: [...calls], count: edits.length };
+  const report = buildReport(file, src, scopes, series, found, where, marks, answers);
+  const linked = links(out, edits.length + liveEdits.length), print = fingerprint(linked.html.replaceAll('\u0001', '')); // each mark the build wrote carries it
+  return { ...linked, html: linked.html.replaceAll('\u0001', `="${print}"`), calls: [...calls], count: edits.length, series: series.map(({ name, count, line, scope, slots }) => ({ name, count, line, scope, slots })), report };
 }
 
-const LAYOUT = '<style>:where(figure[data-dcss-mathml]) { display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 0.5em; }</style>';
-// the sheets the compiled calls need, linked beside the page's link to dcss (dcss.css, or dcss-array.css as published),
+// the build's report: the page's scopes, the names it reads, its series, each formula's result (folded when the page is
+// built or live, what it reads, and when it has no answer: an input unset or not a number, a value outside the function's
+// range, or too near halfway between two doubles to round), and the elements that read results. Written only when the
+// build succeeds (a refused page has its reason instead)
+const RANGE = { exp: 'x outside -708 to 709', log: 'x not above 2^-1022, or past e^708', trig: '|x| past 2^20 (csc and sec where they are infinite)', tan: '|x| past 2^20 (cot of 0)',
+  acot: 'arccot of 0 or of |x| past 2^996', rhyp: '|x| past 709 for sech and csch, below 2^-1022 for csch and coth', asin: '|x| past 1', asec: '|x| below 1 (arccsc past 2^996)', nroot: 'x below 0 for an even degree', hyp: '|x| past 709 for sinh and cosh', ahyp: 'arccosh below 1, |arctanh| from 1, |x| past about 1.5e307', rahyp: 'arcsech outside 0 to 1, arccoth within ±1, |x| below 2^-1022 or past 2^996', gcd: 'a value not a whole number within ±2^53', lcm: 'a value not a whole number within ±2^53, or an lcm between arguments past it',
+  factorial: 'n not a whole number from 0 to 170', binomial: 'n or k not whole, n past 170, or C(n, k) from 2^50', series: 'no slot present (d3 has no answer)', quotient: 'a or b not whole within ±2^26, or b is 0', rem: 'a or b not whole within ±2^26, or b is 0' };
+const HALFWAY = new Set(['exp', 'log', 'trig', 'tan', 'atan', 'acot', 'asin', 'asec', 'rahyp', 'nroot', 'hyp', 'rhyp', 'ahyp']);
+function buildReport(file, src, scopes, series, found, where, marks, answers) {
+  const reads = (c) => [...new Set([...`${c.value} ${c.decls.join(' ')}`.matchAll(/var\(--([^\s,)]+)/g)].map((x) => x[1]).filter((x) => !x.startsWith('dcss-')))];
+  const results = found.map((f, k) => { const c = f.compiled, live = [...f.report.mine].filter((x) => x in RANGE || HALFWAY.has(x) || x === 'eset'), names = reads(c), slots = [...f.report.slotsRead];
+    const uses = [...f.report.uses], noAnswer = [...(names.length || slots.length ? [`an input it reads is unset, not a number, or from 3.4e38 up${names.length ? ` (${names.map((x) => `--${x}`).join(', ')})` : ''}`] : []),
+      ...(uses.length ? [`a result it reads has none (${uses.join(', ')})`] : []),
+      ...live.filter((x) => RANGE[x]).map((x) => `out of range: ${RANGE[x]}`), ...(live.some((x) => HALFWAY.has(x)) ? ['too near halfway between two doubles to round'] : [])];
+    return { line: lineOf(src, f.math.start), scope: f.scope, kind: c.kind, name: c.name ?? null, inline: !!f.inline, answer: answers.get(k) ?? null,
+      folded: !names.length && !slots.length && !uses.length && !live.length, live, reads: names, uses, series: slots.filter((x) => !x.startsWith('--')), compares: c.compares, noAnswer }; });
+  const inputs = new Map(); results.forEach((r) => r.reads.forEach((x) => { const i = inputs.get(x) ?? { name: x, lines: [] }; i.lines.push(r.line); inputs.set(x, i); }));
+  series.forEach((q) => q.slots.forEach((x) => { if (x.kind !== 'live') return; const i = inputs.get(x.name) ?? { name: x.name, lines: [] }; i.lines.push(x.line); inputs.set(x.name, i); }));
+  return { file, scopes: scopes.slice(1).map(({ id, line, parent }) => ({ id, line, parent })), inputs: [...inputs.values()],
+    series: series.map((q) => ({ name: q.name, line: q.line, scope: q.scope, count: q.count ?? null, slots: q.slots.length, live: q.slots.filter((x) => x.kind === 'live').length, missing: q.slots.filter((x) => x.kind === 'missing').length })),
+    results, readers: marks.map((mk) => ({ kind: mk.kind, name: mk.name, line: mk.line, scope: mk.scope })) };
+}
+
+const FINGERPRINT = /\sdata-dcss-(?:built|mathml)="([0-9a-f]{16})"/, fingerprint = (s) => createHash('sha256').update(s).digest('hex').slice(0, 16);
+// a formula's answer (= 118.5) in the font the browser draws the formula in, so the two read as one; the page's own CSS
+// overrides either rule (no specificity). An answer written as text prints no second copy
+// an output the build writes or reads into is no live region (ARIA's aria-live): one that changes with every input would be
+// announced on each; inside a live region of the page's own (aria-live, a live role, an <output>) it is plain text, and
+// the page's region speaks
+const LIVE_ROLES = /^\s*(status|alert|log|timer|marquee)\b/i, QUIET = (live) => (live ? ' role="none"' : ' aria-live="off"');
+// what an answer shows while it prints no number (none, or one its format can't print): a dash, there with no CSS too,
+// hidden by the rule below once the output's format prints (format.css's --dcss-fmt-error 0 on it)
+const NONE = '<span data-dcss-none>&#x2014;</span>';
+const LAYOUT = '<style>@container style(--dcss-fmt-error: 0) { :where([data-dcss-none]) { display: none; } } :where(figure[data-dcss-mathml]) { display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 0.5em; } :where(figure[data-dcss-mathml] > div, span[data-dcss-mathml]) { font-family: math; } :where(.dcss-text)::after { content: none !important; }</style>';
+// the sheets the compiled calls need, linked beside the page's link to dcss (dcss.css, or dcss-array.css as published until 2026-10-30),
 // unless the page links them or their parts already; with no link to dcss at all, listed in `needs`
 function links(html, count) {
   if (!count) return { html, needs: [] };
@@ -1242,13 +2052,20 @@ function links(html, count) {
   return { html: html.slice(0, core.index + core[0].length) + add + html.slice(core.index + core[0].length), needs: [] };
 }
 
-if (process.argv[1] === fileURLToPath(import.meta.url)) {
-  // node mathml.mjs page.html [built.html]: the built page to the file, written only when the build succeeds, or to stdout
-  const [file, to] = process.argv.slice(2);
-  if (!file) { console.error('usage: node mathml.mjs <page.html> [built.html]  (with no second file, the page goes to stdout)'); process.exit(1); }
-  try {
-    const r = toDcss(readFileSync(file, 'utf8'), { file });
-    if (r.needs.length) { console.error(`${file}: the page links no dcss sheet: link ${manifest.core.file} (it brings ${r.needs.join(', ')} beside it); nothing written`); process.exit(1); }
+// run as a command, by any path to it (a link, macOS's /var for /private/var): a plain comparison of the two paths ran nothing
+if (process.argv[1] && realpathSync(process.argv[1]) === realpathSync(fileURLToPath(import.meta.url))) {
+  // node mathml.mjs page.html [built.html] [--report report.json] [--watch]: the built page to the file, written only when
+  // the build succeeds, or to stdout; with --report, the build's report as JSON beside it, only then too; with --watch,
+  // built again each time page.html is saved, a refusal printed and the last good page left as it was
+  const args = process.argv.slice(2), watch = args.includes('--watch'), rest = args.filter((a) => a !== '--watch'), ri = rest.indexOf('--report'), rep = ri >= 0 ? rest[ri + 1] : null;
+  const [file, to] = rest.filter((_, i) => ri < 0 || (i !== ri && i !== ri + 1));
+  if (!file || (ri >= 0 && !rep) || (watch && !to)) { console.error('usage: node mathml.mjs <page.html> [built.html] [--report report.json] [--watch]  (with no second file, the page goes to stdout; --watch needs it)'); process.exit(1); }
+  const once = () => { const r = toDcss(readFileSync(file, 'utf8'), { file });
+    if (r.needs.length) throw new Error(`${file}: the page links no dcss sheet: link ${manifest.core.file} (it brings ${r.needs.join(', ')} beside it); nothing written`);
     if (to) writeFileSync(to, r.html); else process.stdout.write(r.html);
-  } catch (e) { console.error(e.message); process.exit(1); }
+    if (rep) writeFileSync(rep, JSON.stringify(r.report, null, 2) + '\n');
+    return r; };
+  if (!watch) { try { once(); } catch (e) { console.error(e.message); process.exit(1); } }
+  else { const build = () => { try { const r = once(); console.log(`${to}: ${r.count} formula${r.count === 1 ? '' : 's'}, ${r.series.length} series`); } catch (e) { console.error(e.message); } };
+    let timer = null; build(); watchFile(file, { interval: 200 }, () => { clearTimeout(timer); timer = setTimeout(build, 50); }); console.log(`watching ${file}`); }
 }

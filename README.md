@@ -1,12 +1,40 @@
-# dcss-array.css
+# dcss.css
 
-dcss-array.css computes what d3, the JavaScript library for data charts, computes, in HTML with no script: statistics, ticks and axes, scales, number and date formats, easing, treemaps, UTC time and map projections. A sum is a `<figure>` around a list: the browser lays the list out, and its size is the answer. It works in Chrome and Safari.
+dcss.css computes what d3, the JavaScript library for data charts, computes, in HTML with no script: statistics, ticks and axes, scales, number and date formats, easing, treemaps, UTC time and map projections. It works in Chrome and Safari, not Firefox ([Browsers](#browsers)).
 
-Part of DCSS, Data-Driven CSS: stylesheets that do the data work d3 does in JavaScript. dcss-array does d3-array's job: sums, sorts, bins and search. With [dcss-store](https://github.com/noscripting/dcss-store), [dcss-loop](https://github.com/noscripting/dcss-loop) and [dcss-unround](https://github.com/noscripting/dcss-unround).
+With [noscripting](https://github.com/noscripting/noscripting), [loop](https://github.com/noscripting/loop) and [unround](https://github.com/noscripting/unround).
 
 ## Installation
 
-Each call is a file in `parts/`, named after its class. This page links two parts that come to 6 KB gzipped, and prints a total and an average:
+Write the data as a table and the formula in MathML, then build the page once with `mathml.mjs` and Node.js:
+
+```html
+<!doctype html>
+<link rel="stylesheet" href="dcss.css">
+<style>.sales { --jan: 120; --feb: 95; }</style>
+
+<section class="sales" data-dcss-scope>
+  <table data-dcss-series="sales">
+    <tr><th>January</th><td data-dcss-value="var(--jan)"></td></tr>
+    <tr><th>February</th><td data-dcss-value="var(--feb)"></td></tr>
+    <tr><th>March</th><td data-dcss-value>140</td></tr>
+  </table>
+  <math class="dcss-format-fixed" style="--precision: 1">
+    <apply><eq/><ci>average</ci><apply><mean/><ci>sales</ci></apply></apply>
+  </math>
+  <p>The average is <output class="dcss-format-fixed" style="--precision: 1" data-dcss-result="average"></output>.</p>
+</section>
+```
+
+```sh
+node mathml.mjs page.html built.html
+```
+
+Add `--watch` to build it again each time you save. The built page shows average = mean(sales) = 118.3, and the sentence with the same number. It runs no script: set `--jan` to another number in CSS and both follow. [TUTORIAL.md](TUTORIAL.md) builds a sales summary step by step; [SPEC.md](SPEC.md) A131 to A155 say what the build takes, LaTeXML's output included (LaTeXML itself is optional).
+
+## Without the build
+
+Each call is also a class, and a file in `parts/` named after it. A sum is a `<figure>` around a list: the browser lays the list out, and its size is the answer. This page links two parts that come to 6 KB gzipped, and prints a total and an average:
 
 ```html
 <!doctype html>
@@ -24,19 +52,17 @@ Each call is a file in `parts/`, named after its class. This page links two part
 
 The list is the data, one `--value` per item. What follows it reads `--dcss-sum`, `--dcss-mean` and `--dcss-count`, and `.dcss-format-fixed` prints them as d3.format does: 355 and 118.3. Change a `--value` and they follow.
 
-Or link `dcss-array.css` and the families [Reference](#reference) names, or `dcss-array-all.css`:
+Or link `dcss.css` and the families [Reference](#reference) names, or `dcss-all.css`:
 
 ```html
-<link rel="stylesheet" href="dcss-array.css">
+<link rel="stylesheet" href="dcss.css">
 <link rel="stylesheet" href="families/array.css">
 <link rel="stylesheet" href="families/format.css">
 ```
 
-[TUTORIAL.md](TUTORIAL.md) builds a sales summary step by step.
-
 ## Writing a call
 
-The class goes on a `<figure>`: d3.bisectLeft is `.dcss-bisect-left`. Arguments are custom properties named as d3 names them, such as `--p`.
+The class goes on a `<figure>`: d3.bisectLeft is `.dcss-bisect-left`. Arguments are custom properties with d3's names, such as `--p`.
 
 ```html
 <figure class="dcss-sum">
@@ -64,7 +90,7 @@ A call that can't answer prints nothing and sets `--dcss-err`: 1 for an input it
 
 ## Using two calls together
 
-Put a call inside another's answer. Here a sum feeds a scale:
+Put a call inside another's answer. A sum feeding a scale:
 
 ```html
 <figure class="dcss-sum">
@@ -96,30 +122,13 @@ A median, quantile or variance reads its list through three nested elements. Put
 </figure>
 ```
 
-## Formulas in MathML
-
-`mathml.mjs`, a Node script, builds formulas written in Content MathML into the page before it is served. Numbers work as written, 12.3 included, and readers still see the formula:
-
-```html
-<link rel="stylesheet" href="dcss-array.css">
-<section style="--feb: 91.35">
-  <math class="dcss-format-fixed" style="--precision: 2"><apply><median/>
-    <apply><mean/><cn>120</cn><cn>80.5</cn></apply>
-    <apply><mean/><cn>90</cn><ci>feb</ci></apply>
-    <cn>100</cn>
-  </apply></math>
-</section>
-```
-
-`node mathml.mjs page.html built.html` writes a page that shows the formula = 100.00, and follows `--feb`. [SPEC.md](SPEC.md) A131 to A148 list what it takes, LaTeXML's output included.
-
 ## Grid primitives
 
-Under the calls, `dcss-array.css` has grids whose layout computes. A reader, `<b class="dcss-at">`, gives its `<u>` entry `--dcss-i` as `--dcss-value`:
+Under the calls, `dcss.css` has grids whose layout computes. A reader, `<b class="dcss-at">`, gives its `<u>` entry `--dcss-i` as `--dcss-value`:
 
 ```html
 <!doctype html>
-<link rel="stylesheet" href="dcss-array.css">
+<link rel="stylesheet" href="dcss.css">
 <style>.dcss-at u::after { counter-reset: v var(--dcss-value); content: counter(v); }</style>
 
 <div class="dcss-array dcss-track-count">
@@ -201,7 +210,7 @@ Each call gives its answer as `--dcss-` and its name, with `--dcss-ready` and `-
 
 <!-- /calls -->
 
-### Grid primitives: dcss-array.css
+### Grid primitives: dcss.css
 
 [SPEC.md](SPEC.md) has their markup.
 
@@ -211,13 +220,13 @@ Each call gives its answer as `--dcss-` and its name, with `--dcss-ready` and `-
 - `.dcss-ranked` (`--dcss-desc`, `--dcss-gap`), `.dcss-wide`, `.dcss-group`, `.dcss-group-total`, `.dcss-bars`, `.dcss-labels`, `.dcss-copy`, `.dcss-ranks`, `.dcss-segments`: ranked groups.
 - `.dcss-width-sum`, `.dcss-largest`, `.dcss-scale` (`--dcss-more`), `.dcss-cap` (`--dcss-c`), `.dcss-width-min`, `.dcss-rest`, `.dcss-times` (`--dcss-f`), `.dcss-stack`, `.dcss-tallest`, `.dcss-calc`, `.dcss-collapse` (`--dcss-p`), `.dcss-scope`, `.dcss-minus`, `.dcss-turn` (`--dcss-turn-tick-2`), `.dcss-zoom` (`--dcss-zoom`), `.dcss-hop` (`--dcss-put`), `.dcss-hop-y`, `.dcss-at-x`, `.dcss-at-y`, `.dcss-row`: formulas.
 - `.dcss-text` (`--dcss-text`, `--dcss-each`, `--dcss-tab`), `.dcss-divide`, `.dcss-two`, `.dcss-pair-<table>`, `.dcss-sq`, `.dcss-sqrt`, `.dcss-rom`, `.dcss-rom2` (`--dcss-a`, `--dcss-b`): text reads, in fonts `dcss-preload.html` preloads.
-- `.list` (`--if`), `.pager` (`--page`), `.dcss-size`, `.loop` (`--next`, `--measure`), `.sheet` (`--fold-scale`): in `dcss-array-extras.css`, with [dcss-store.css](https://noscript.ing).
+- `.list` (`--if`), `.pager` (`--page`), `.dcss-size`, `.loop` (`--next`, `--measure`), `.sheet` (`--fold-scale`): in `dcss-extras.css`, with [noscripting.css](https://noscript.ing).
 
 ## Browsers
 
 <!-- browsers -->
 
-Headless Chrome 155 and WebKit 26.4, Safari's engine, pass all 129 requirements of [SPEC.md](SPEC.md), and the calls match d3 on 3,206 of the 7,049 calls in d3's tests. Firefox 158 computes `calc()` in 32-bit floats, so exact sums, dates and most formatting go wrong there: it passes 71. [QUIRKS.md](QUIRKS.md) has the engine bugs.
+Headless Chrome 155 and WebKit 26.4, Safari's engine, pass all 160 requirements of [SPEC.md](SPEC.md), and the calls match d3 on 3,206 of the 7,049 calls in d3's tests. Firefox 158 computes `calc()` in 32-bit floats, so exact sums, dates and most formatting go wrong there: it passes 71. [QUIRKS.md](QUIRKS.md) has the engine bugs.
 
 <!-- /browsers -->
 
@@ -225,7 +234,7 @@ Headless Chrome 155 and WebKit 26.4, Safari's engine, pass all 129 requirements 
 
 <!-- performance -->
 
-The work happens in layout, in the frame a number changes. A family is at most 22 KB gzipped and loads in 15 ms or less in WebKit 26.4 (2026-10-28).
+Layout does the work, in the frame a number changes. A family is at most 22 KB gzipped and loads in 15 ms or less in WebKit 26.4 (2026-10-28). Twenty printed medians, a value moving: 7.6 ms a frame in Chrome, 14.3 in WebKit; variance 22.3, 12.4 (2026-10-30).
 
 <!-- /performance -->
 

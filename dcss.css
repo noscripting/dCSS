@@ -1,7 +1,7 @@
 /* DCSS array: the core sheet
    SPDX-License-Identifier: MIT
    SPDX-FileCopyrightText: 2026 noscript.ing contributors */
-/* dcss-array.css: computation in CSS layout, no script.
+/* dcss.css: computation in CSS layout, no script.
 
    The idea. A grid's tracks are an array: layout sizes each track from the boxes in it, and sums, maxima, sorts and
    packings fall out of the track sizing and placement algorithms (css-grid-2 8.5, 12). A reader is a box laid over

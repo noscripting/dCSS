@@ -1,13 +1,13 @@
 {
   "version": 1,
   "core": {
-    "file": "dcss-array.css",
-    "raw": 284253,
-    "gzip9": 72613,
-    "sha256": "f32ed01ffed4d444923c222f397a9c32bf07b9c070f09e2371bddead07e18538"
+    "file": "dcss.css",
+    "raw": 284247,
+    "gzip9": 72615,
+    "sha256": "b3f9a2ea0a2f628a230796269807d250adda0b168e2268a6303168535b4e93a9"
   },
   "extras": {
-    "file": "dcss-array-extras.css",
+    "file": "dcss-extras.css",
     "raw": 15106,
     "gzip9": 3752,
     "sha256": "49ed2227446d642b0cef81fbd28c9ed043fc4523e1029825f750e802278beb5d"
@@ -84,9 +84,9 @@
         "dcss-sum",
         "dcss-variance"
       ],
-      "raw": 280580,
-      "gzip9": 21751,
-      "sha256": "f21e636298341e72b20483a8a5868e4d05789b873ed5479bc0f60e567ea22f15"
+      "raw": 280276,
+      "gzip9": 21753,
+      "sha256": "21e9476e4513ea5565797d265179ae9d0343870bba9b4868bfe1bcc99469bb51"
     },
     "hierarchy": {
       "file": "families/hierarchy.css",

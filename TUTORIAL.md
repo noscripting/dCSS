@@ -1,156 +1,147 @@
-# dcss-array.css: tutorial
+# dcss.css: tutorial
 
-You build a sales summary for six months: the total, the monthly average, the best month and an axis across the range, all worked out by the stylesheet, and a switch between two years that updates every number.
+You build a sales summary for six months: a table of the months, their total and monthly average written as formulas, the average in a sentence and as a bar, and a switch between years that updates every number.
 
 ## Before you start
 
-You need Chrome or Safari, and from this folder `dcss-array.css` and the `families` folder, saved next to a new file, `sales.html`. Open that file in the browser after each step and reload it to see the change. No script is involved at any point.
+You need Chrome or Safari, Node.js, and from this folder `dcss.css`, the `families` folder and `mathml.mjs`, with a new file, `sales.html`, saved next to them. After each step, build the page and open `built.html`:
 
-## 1. Total and average
+```sh
+node mathml.mjs sales.html built.html
+```
 
-Each calculation is an element whose class is d3's function name. `.dcss-mean` goes on a `<figure>`; the `<ul>` inside it is the data, one `<li>` per value, each saying its number as `--value`. The browser lays that list out, and the layout is the answer. Elements in the `<div>` after the list read it as `--dcss-mean`, and also `--dcss-sum` and `--dcss-count`, since one mean's list gives all three.
+With `--watch` at the end, it builds again each time you save `sales.html`. The build works out the stylesheet's part once. The built page has no script: the browser does the arithmetic again each time a number changes. An answer the build can work out from numbers written in the page, in a format the page writes too, is written as text, so it shows with no CSS, in a feed and when copied; one that reads a number the page sets in CSS is printed by CSS.
 
-The months' numbers are set once, on `.sales`, so later steps can reuse them. `.dcss-format-fixed` prints a number the way d3.format does, with `--precision` decimals. The figure is one line tall and clips the rest: the list itself is drawn one pixel per unit, which you don't want to see. `aria-hidden` keeps a screen reader from announcing that drawing as six empty list items.
+## 1. The months as a table
+
+The months are an ordinary table. `data-dcss-series="sales"` names its rows a series, and each row marks its number's cell with `data-dcss-value`. A cell that says `var(--jan)` takes its number from `--jan`, which the page sets in CSS, and the build makes the cell print it. `data-dcss-count="months"` names the number of rows, which step 2 uses.
+
+`data-dcss-scope` marks the section where the numbers and the formulas live. Everything the formulas work out is read inside it.
 
 ```html
 <!doctype html>
 <meta charset="utf-8">
 <title>Sales</title>
-<link rel="stylesheet" href="dcss-array.css">
-<link rel="stylesheet" href="families/array.css">
-<link rel="stylesheet" href="families/format.css">
+<link rel="stylesheet" href="dcss.css">
 <style>
   body { margin: 24px; font: 16px/1.4 system-ui, sans-serif; }
   .sales { --jan: 120; --feb: 95; --mar: 140; --apr: 80; --may: 160; --jun: 110; }
-  figure { margin: 0; height: 1lh; overflow: clip; }
 </style>
 
-<section class="sales">
-  <figure class="dcss-mean">
-    <ul aria-hidden="true">
-      <li style="--value: var(--jan)"></li> <li style="--value: var(--feb)"></li> <li style="--value: var(--mar)"></li>
-      <li style="--value: var(--apr)"></li> <li style="--value: var(--may)"></li> <li style="--value: var(--jun)"></li>
-    </ul>
-    <div>
-      Total <output class="dcss-format-fixed" style="--value: var(--dcss-sum); --precision: 0"></output>,
-      average <output class="dcss-format-fixed" style="--value: var(--dcss-mean); --precision: 1"></output> a month
-    </div>
-  </figure>
+<section class="sales" data-dcss-scope>
+  <table data-dcss-series="sales" data-dcss-count="months">
+    <thead><tr><th>Month</th><th>Sales</th></tr></thead>
+    <tbody>
+      <tr><th>January</th><td data-dcss-value="var(--jan)"></td></tr>
+      <tr><th>February</th><td data-dcss-value="var(--feb)"></td></tr>
+      <tr><th>March</th><td data-dcss-value="var(--mar)"></td></tr>
+      <tr><th>April</th><td data-dcss-value="var(--apr)"></td></tr>
+      <tr><th>May</th><td data-dcss-value="var(--may)"></td></tr>
+      <tr><th>June</th><td data-dcss-value="var(--jun)"></td></tr>
+    </tbody>
+  </table>
 </section>
 ```
 
-You see "Total 705, average 117.5 a month".
+You see the table with the six months and their numbers.
 
-## 2. The best month
+## 2. Total and average
 
-`.dcss-max-index` takes the same list and gives the position of its largest value, counting from 0: May is 4. A `@counter-style` with the month names turns that position into a word. Add these two rules to the `<style>`:
+A formula is Content MathML, the markup MathML uses for meaning. `<eq/>` with a name alone on its left defines that name. The total adds `sales_i`, month *i*, for *i* from 1 to `months`. The average is `<mean/>` of the series. The build draws each formula and prints its answer after it; `dcss-format-fixed` with `--precision` sets the decimals. Add both after the table, inside the section:
+
+```html
+  <math class="dcss-format-fixed" style="--precision: 0">
+    <apply><eq/><ci>total</ci>
+      <apply><sum/><bvar><ci>i</ci></bvar><lowlimit><cn>1</cn></lowlimit><uplimit><ci>months</ci></uplimit>
+        <apply><csymbol cd="ambiguous">subscript</csymbol><ci>sales</ci><ci>i</ci></apply>
+      </apply>
+    </apply>
+  </math>
+  <math class="dcss-format-fixed" style="--precision: 1">
+    <apply><eq/><ci>average</ci><apply><mean/><ci>sales</ci></apply></apply>
+  </math>
+```
+
+You see total = 705 and average = 117.5, each beside its formula.
+
+## 3. The average in a sentence and a bar
+
+A named answer can be shown anywhere in the section. An empty `<output data-dcss-result="average">` prints it (a dash while there is no answer; words you write inside it, such as `not yet`, show instead, and with no CSS), and your own CSS reads it as `var(--average)`, here a bar's width; `--average-ready` is 1 while there is an answer and 0 when there is none. Add a rule to the `<style>`:
 
 ```css
-@counter-style month { system: fixed 0; symbols: Jan Feb Mar Apr May Jun; }
-.month::after { counter-reset: m var(--dcss-max-index); content: counter(m, month); }
+  .bar { height: 12px; width: calc(var(--average) * 2px); background: teal; }
 ```
 
-And this figure after the first one, inside `.sales`:
+And these after the formulas:
 
 ```html
-  <figure class="dcss-max-index">
-    <ul aria-hidden="true">
-      <li style="--value: var(--jan)"></li> <li style="--value: var(--feb)"></li> <li style="--value: var(--mar)"></li>
-      <li style="--value: var(--apr)"></li> <li style="--value: var(--may)"></li> <li style="--value: var(--jun)"></li>
-    </ul>
-    <div>Best month: <output class="month"></output></div>
-  </figure>
+  <p>The monthly average is <output class="dcss-format-fixed" style="--precision: 1" data-dcss-result="average"></output>.</p>
+  <div class="bar"></div>
 ```
 
-You see a second line, "Best month: May".
-
-## 3. An axis across the range
-
-Three calls nest here, each reading the one around it. `.dcss-extent` gives the smallest and largest values as `--dcss-min` and `--dcss-max`. Inside it, `.dcss-nice` rounds that range out to whole steps, as d3's `nice` does. Inside that, `.dcss-axis-bottom` draws an axis over the rounded range, a tick and a label per `<li>`; give it more `<li>`s than ticks and the spare ones stay hidden.
-
-Link `families/ticks.css` after the other two families, add `.axis { height: 40px; margin-top: 8px; }` to the `<style>`, and add this figure:
-
-```html
-  <figure class="dcss-extent axis">
-    <ul aria-hidden="true">
-      <li style="--value: var(--jan)"></li> <li style="--value: var(--feb)"></li> <li style="--value: var(--mar)"></li>
-      <li style="--value: var(--apr)"></li> <li style="--value: var(--may)"></li> <li style="--value: var(--jun)"></li>
-    </ul>
-    <div>
-      <div class="dcss-nice" style="--start: var(--dcss-min); --stop: var(--dcss-max); --count: 5">
-        <ol class="dcss-axis-bottom" style="--start: var(--dcss-nice-start); --stop: var(--dcss-nice-stop); --count: 5; width: 300px; margin-left: 16px">
-          <li></li> <li></li> <li></li> <li></li> <li></li> <li></li> <li></li> <li></li>
-        </ol>
-      </div>
-    </div>
-  </figure>
-```
-
-You see an axis from 80 to 160 with a label every 20. The left margin keeps the first label inside the figure, which clips anything past its edges.
+You see "The monthly average is 117.5." and a bar 235 pixels wide.
 
 ## 4. Switch the year
 
-The numbers are custom properties, so a selector can change them. Two radio buttons and one `:has()` rule give a second year, and every result follows it: no script, nothing to wire up. Here is the whole page:
+The numbers are custom properties, so a selector can change them. Radio buttons in a form, a `:has()` rule per year, and a reset button that brings back the first year: every number follows, the table's cells included.
+
+2027 has only January and February so far. Setting the other months to `initial` leaves them empty. The average skips a missing month, as d3's mean does. The total names every month by its number, so it has no answer while one is missing, and an element marked `data-dcss-error="total"` shows in its place. Here is the whole page:
 
 ```html
 <!doctype html>
 <meta charset="utf-8">
 <title>Sales</title>
-<link rel="stylesheet" href="dcss-array.css">
-<link rel="stylesheet" href="families/array.css">
-<link rel="stylesheet" href="families/format.css">
-<link rel="stylesheet" href="families/ticks.css">
+<link rel="stylesheet" href="dcss.css">
 <style>
   body { margin: 24px; font: 16px/1.4 system-ui, sans-serif; }
   .sales { --jan: 120; --feb: 95; --mar: 140; --apr: 80; --may: 160; --jun: 110; }
   .sales:has(#y2026:checked) { --jan: 130; --feb: 145; --mar: 90; --apr: 175; --may: 160; --jun: 120; }
-  figure { margin: 0; height: 1lh; overflow: clip; }
-  @counter-style month { system: fixed 0; symbols: Jan Feb Mar Apr May Jun; }
-  .axis { height: 40px; margin-top: 8px; }
-  .month::after { counter-reset: m var(--dcss-max-index); content: counter(m, month); }
+  .sales:has(#y2027:checked) { --jan: 150; --feb: 135; --mar: initial; --apr: initial; --may: initial; --jun: initial; }
+  .bar { height: 12px; width: calc(var(--average) * 2px); background: teal; }
 </style>
 
-<section class="sales">
+<form class="sales" data-dcss-scope>
   <p>
     <label><input type="radio" name="year" id="y2025" checked> 2025</label>
     <label><input type="radio" name="year" id="y2026"> 2026</label>
+    <label><input type="radio" name="year" id="y2027"> 2027</label>
+    <input type="reset" value="Back to 2025">
   </p>
-  <figure class="dcss-mean">
-    <ul aria-hidden="true">
-      <li style="--value: var(--jan)"></li> <li style="--value: var(--feb)"></li> <li style="--value: var(--mar)"></li>
-      <li style="--value: var(--apr)"></li> <li style="--value: var(--may)"></li> <li style="--value: var(--jun)"></li>
-    </ul>
-    <div>
-      Total <output class="dcss-format-fixed" style="--value: var(--dcss-sum); --precision: 0"></output>,
-      average <output class="dcss-format-fixed" style="--value: var(--dcss-mean); --precision: 1"></output> a month
-    </div>
-  </figure>
-  <figure class="dcss-max-index">
-    <ul aria-hidden="true">
-      <li style="--value: var(--jan)"></li> <li style="--value: var(--feb)"></li> <li style="--value: var(--mar)"></li>
-      <li style="--value: var(--apr)"></li> <li style="--value: var(--may)"></li> <li style="--value: var(--jun)"></li>
-    </ul>
-    <div>Best month: <output class="month"></output></div>
-  </figure>
-  <figure class="dcss-extent axis">
-    <ul aria-hidden="true">
-      <li style="--value: var(--jan)"></li> <li style="--value: var(--feb)"></li> <li style="--value: var(--mar)"></li>
-      <li style="--value: var(--apr)"></li> <li style="--value: var(--may)"></li> <li style="--value: var(--jun)"></li>
-    </ul>
-    <div>
-      <div class="dcss-nice" style="--start: var(--dcss-min); --stop: var(--dcss-max); --count: 5">
-        <ol class="dcss-axis-bottom" style="--start: var(--dcss-nice-start); --stop: var(--dcss-nice-stop); --count: 5; width: 300px; margin-left: 16px">
-          <li></li> <li></li> <li></li> <li></li> <li></li> <li></li> <li></li> <li></li>
-        </ol>
-      </div>
-    </div>
-  </figure>
-</section>
+  <table data-dcss-series="sales" data-dcss-count="months">
+    <thead><tr><th>Month</th><th>Sales</th></tr></thead>
+    <tbody>
+      <tr><th>January</th><td data-dcss-value="var(--jan)"></td></tr>
+      <tr><th>February</th><td data-dcss-value="var(--feb)"></td></tr>
+      <tr><th>March</th><td data-dcss-value="var(--mar)"></td></tr>
+      <tr><th>April</th><td data-dcss-value="var(--apr)"></td></tr>
+      <tr><th>May</th><td data-dcss-value="var(--may)"></td></tr>
+      <tr><th>June</th><td data-dcss-value="var(--jun)"></td></tr>
+    </tbody>
+  </table>
+  <math class="dcss-format-fixed" style="--precision: 0">
+    <apply><eq/><ci>total</ci>
+      <apply><sum/><bvar><ci>i</ci></bvar><lowlimit><cn>1</cn></lowlimit><uplimit><ci>months</ci></uplimit>
+        <apply><csymbol cd="ambiguous">subscript</csymbol><ci>sales</ci><ci>i</ci></apply>
+      </apply>
+    </apply>
+  </math>
+  <p data-dcss-error="total">The total waits for every month.</p>
+  <math class="dcss-format-fixed" style="--precision: 1">
+    <apply><eq/><ci>average</ci><apply><mean/><ci>sales</ci></apply></apply>
+  </math>
+  <p>The monthly average is <output class="dcss-format-fixed" style="--precision: 1" data-dcss-result="average"></output>.</p>
+  <div class="bar"></div>
+</form>
 ```
 
-Pick 2026 and the page shows "Total 820, average 136.7 a month", "Best month: Apr" and an axis from 80 to 180. Pick 2025 again and the first numbers come back.
+Pick 2026 and the page shows total = 820 and an average of 136.7. Pick 2027: the table shows two months, the average is 142.5, and "The total waits for every month." takes the total's place. The reset button brings back 2025.
+
+A total of the months there are, as d3's `sum` adds, is d3's own symbol applied to the series: `<apply><csymbol definitionURL="https://d3js.org/d3-array/summarize#sum">sum</csymbol><ci>sales</ci></apply>`, 285 for 2027. With `#count` in place of `#sum` it counts them, 2; `#variance` and `#deviation` give d3's variance and standard deviation, `#quantile` with a `<cn>` after the series, `<cn>0.9</cn>`, its 90th percentile, and `#mode` the value it holds most often. A total that skips months should say so beside it: with those two formulas named `sold` and `known`, `<output data-dcss-result="sold"></output> across <output data-dcss-result="known"></output> of <output data-dcss-result="months"></output> months` reads "285 across 2 of 6 months", `months` being the table's `data-dcss-count`.
 
 ## Next
 
-- [README.md](README.md), section Reference: every call, family by family, with the file each lives in.
-- [SPEC.md](SPEC.md): what each call is required to do, and its result in each browser.
+- The best month: `best` defined as d3's `maxIndex` of the series (`<csymbol definitionURL="https://d3js.org/d3-array/summarize#maxIndex">maxIndex</csymbol>`), and `<span data-dcss-label="best">no month yet</span>` prints that row's header, May, or its own text while no month is set.
+- A table can hold a series a column, one a year: `<th scope="col" data-dcss-series="y2026">2026</th>` in the header row.
+- Screen readers: the build's answers are no live regions (`aria-live="off"`), so a change of year announces nothing by itself. For one sentence read out when the year changes, put `aria-live="polite" aria-atomic="true"` on it: the answers inside it become its text. VoiceOver and NVDA haven't been tried on it yet.
+- An axis across the range is a call that lays the data out: [README.md](README.md), section Reference, with an example.
+- [SPEC.md](SPEC.md): what the build and each call are required to do, and the result in each browser.

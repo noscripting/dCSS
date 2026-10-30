@@ -1,11 +1,11 @@
 {
-  "name": "dcss-array.css",
+  "name": "dcss",
   "version": "1.0.0",
   "description": "d3's data work as CSS: sums, medians, quantiles, extents, scales, ticks, number and UTC date formats, time intervals, treemaps and map projections, computed by the stylesheet in the same frame, with no script.",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/noscripting/dcss-array.git"
+    "url": "git+https://github.com/noscripting/dcss.git"
   },
   "keywords": [
     "css",
@@ -18,10 +18,10 @@
     "no-javascript",
     "css-grid"
   ],
-  "main": "dcss-array.css",
-  "style": "dcss-array.css",
+  "main": "dcss.css",
+  "style": "dcss.css",
   "exports": {
-    ".": "./dcss-array.css",
+    ".": "./dcss.css",
     "./*.css": "./*.css",
     "./families/*.css": "./families/*.css",
     "./parts/*.css": "./parts/*.css",
@@ -30,9 +30,9 @@
     "./mathml.mjs": "./mathml.mjs"
   },
   "files": [
-    "dcss-array.css",
-    "dcss-array-all.css",
-    "dcss-array-extras.css",
+    "dcss.css",
+    "dcss-all.css",
+    "dcss-extras.css",
     "families/",
     "parts/",
     "families.json",
