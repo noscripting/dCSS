@@ -456,6 +456,7 @@ output:is(.dcss-precision-fixed:not([data-dcss-compiled]),.dcss-precision-prefix
 @property --dcss-share-ok { syntax: '<integer>'; inherits: true; initial-value: 0; }
 @property --dcss-share-list-error { syntax: '<integer>'; inherits: true; initial-value: 1; }
 @property --dcss-share-available { syntax: '<length>'; inherits: true; initial-value: 0px; }
+@property --dcss-share-font { syntax: '<length>'; inherits: true; initial-value: 0px; }
 @property --dcss-share-total-whole { syntax: '<integer>'; inherits: true; initial-value: 0; }
 @property --dcss-share-total-frac { syntax: '<integer>'; inherits: true; initial-value: 0; }
 @property --dcss-share-ready { syntax: '<integer>'; inherits: true; initial-value: 0; }
@@ -463,10 +464,11 @@ output:is(.dcss-precision-fixed:not([data-dcss-compiled]),.dcss-precision-prefix
 
 
 figure.dcss-share { --dcss-share-index: 0; --dcss-share-has: 0; --dcss-share-whole: 0; --dcss-share-frac: 0; --dcss-share-offgrid: 0; --dcss-share-ok: 0; --dcss-share-list-error: 1; --dcss-ready: 0; --dcss-err: 0; container-type: inline-size; overflow: clip; }
-figure.dcss-share > :is(ol, ul) { --dcss-share-available: 100cqw; display: grid; grid-template-columns: repeat(64, max-content) minmax(0, 1fr); width: var(--dcss-share-available); margin: 0; padding: 0; border: 0; list-style: none; }
+figure.dcss-share > :is(ol, ul) { --dcss-share-available: 100cqw; --dcss-share-font: 1em; display: grid; grid-template-columns: repeat(64, max-content) minmax(0, 1fr); width: var(--dcss-share-available); margin: 0; padding: 0; border: 0; list-style: none; }
 :where(figure.dcss-share > :is(ol, ul) > li) { --value: initial; }
-figure.dcss-share > :is(ol, ul) > li { display: grid; grid-column: 1 / -1; grid-template-columns: subgrid; grid-template-rows: auto auto auto; min-width: 0; --dcss-share-index: sibling-index(); --dcss-share-raw: var(--value); --dcss-share-has: calc(var(--dcss-share-raw) * 0 + 1); --dcss-share-whole: round(down, var(--dcss-share-raw), 1); --dcss-share-frac: round((var(--dcss-share-raw) - round(down, var(--dcss-share-raw), 1)) * 64); --dcss-share-offgrid: abs(var(--dcss-share-raw) * 64 - round(var(--dcss-share-raw) * 64)); --dcss-share-value: calc(var(--dcss-share-whole) + var(--dcss-share-frac) / 64); --dcss-share-ok: calc(var(--dcss-share-has) * (1 - max(0, sign(max(0 - var(--dcss-share-value), var(--dcss-share-value) - 4095, var(--dcss-share-offgrid)))))); }
-figure.dcss-share > :is(ol, ul) > li::before { content: ''; grid-column: var(--dcss-share-index); grid-row: 1; width: calc((var(--dcss-share-ok) * var(--dcss-share-value) + (1 - var(--dcss-share-ok)) * 262144) * 1px); height: 0; min-width: 0; min-height: 0; overflow: hidden; }
+figure.dcss-share > :is(ol, ul) > li { display: grid; grid-column: 1 / -1; grid-template-columns: subgrid; grid-template-rows: auto auto auto; min-width: 0; margin: 0; padding: 0; border: 0; float: none; font-size: 0; --dcss-share-index: sibling-index(); --dcss-share-raw: var(--value); --dcss-share-has: calc(var(--dcss-share-raw) * 0 + 1); --dcss-share-whole: round(down, var(--dcss-share-raw), 1); --dcss-share-frac: round((var(--dcss-share-raw) - round(down, var(--dcss-share-raw), 1)) * 64); --dcss-share-offgrid: abs(var(--dcss-share-raw) * 64 - round(var(--dcss-share-raw) * 64)); --dcss-share-value: calc(var(--dcss-share-whole) + var(--dcss-share-frac) / 64); --dcss-share-ok: calc(var(--dcss-share-has) * (1 - max(0, sign(max(0 - var(--dcss-share-value), var(--dcss-share-value) - 4095, var(--dcss-share-offgrid)))))); }
+figure.dcss-share > :is(ol, ul) > li::before { content: ''; display: block; position: static; float: none; margin: 0; padding: 0; border: 0; box-sizing: content-box; max-width: none; grid-column: var(--dcss-share-index); grid-row: 1; width: calc((var(--dcss-share-ok) * var(--dcss-share-value) + (1 - var(--dcss-share-ok)) * 262144) * 1px); height: 0; min-width: 0; min-height: 0; overflow: hidden; }
+:where(figure.dcss-share > :is(ol, ul) > li > *) { font-size: var(--dcss-share-font); }
 figure.dcss-share > :is(ol, ul) > li > :not(.dcss-share-read) { grid-column: 1 / -1; grid-row: 2; contain: inline-size; box-sizing: border-box; width: var(--dcss-share-available); min-width: 0; }
 figure.dcss-share > :is(ol, ul):has(> li):not(:has(> li:nth-child(65))) { --dcss-share-list-error: 0; }
 figure.dcss-share > :is(ol, ul):has(> li:nth-child(65)), figure.dcss-share > :is(ol, ul):not(:has(> li)) { --dcss-share-list-error: 1; }
