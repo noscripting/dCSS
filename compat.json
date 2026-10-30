@@ -1916,7 +1916,7 @@
       },
       "A135": {
         "__compat": {
-          "description": "`mathml.mjs` MUST compute `<exp/>`, `<ln/>`, `<log/>` (base 10, or its `<logbase>`), the trigonometric and hyperbolic functions and their inverses, OpenMath's `transc1` symbols, and e to a power, of numbers known when the page is built, with Node's `Math` then, and write that double in (sec x as 1 / Math.cos(x), arcsec x as Math.acos(1 / x), and so on). Of a name the page sets, or with no finite value below 3.4e38, it MUST stop the build with its reason. LaTeXML's 𝑒 MUST read `--e` as 𝜋 reads `--π`, and a value computed through either MUST hold while the page sets neither, MUST be the page's e to that power where it sets `--e` alone among them, and MUST be no answer, error 1, where it sets another.",
+          "description": "`mathml.mjs` MUST compute `<exp/>`, `<ln/>`, `<log/>` (base 10, or its `<logbase>`), the trigonometric and hyperbolic functions and their inverses, OpenMath's `transc1` symbols, and e to a power, of numbers known when the page is built, to the double nearest the true value, rounded once (sec x as 1 / cos x, arcsec x as arccos(1 / x), and so on), and write that double in. Of a name the page sets, or with no finite value below 3.4e38, it MUST stop the build with its reason. LaTeXML's 𝑒 MUST read `--e` as 𝜋 reads `--π`, and a value computed through either MUST hold while the page sets neither, MUST be the page's e to that power where it sets `--e` alone among them, and MUST be no answer, error 1, where it sets another.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {

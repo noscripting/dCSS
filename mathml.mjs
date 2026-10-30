@@ -129,16 +129,73 @@ const CALLS = { brackets: 'id', quotient: 'quotient', rem: 'rem', median: 'media
 const SYMBOLS = { s_data1: ['median', 'mean'], minmax1: ['min', 'max'], arith1: ['plus', 'minus', 'unary_minus', 'times', 'divide', 'power', 'root', 'abs'], rounding1: ['floor', 'ceiling'] };
 // how many arguments each takes, past the statistics' lists
 const ARITY = { brackets: [1, 1], quotient: [2, 2], rem: [2, 2], minus: [1, 2], divide: [2, 2], power: [2, 2], root: [1, 1], abs: [1, 1], floor: [1, 1], ceiling: [1, 1], times: [2, Infinity], plus: [2, Infinity] };
-// CSS's exp(), log() and trigonometric functions round otherwise than JavaScript's Math (to the bit, 300 values each,
-// 2026-10-29: sin() 95 the same in Chrome, tan() 85 in WebKit, log(x, 10) 175 and 131, exp() 266 in both)
-const INEXACT = "CSS's exp(), log() and trigonometric functions don't give JavaScript's Math to the bit (sin(): 95 of 300 values in Chrome; tan(): 85 in WebKit), and JavaScript's own double for them isn't one value (V8 on Apple silicon fuses multiply-adds)";
-// exp, ln, log and the trigonometric and hyperbolic functions of numbers the build knows: computed when the page is built,
-// by Node's Math, and written in as a number (log's base 10 unless a <logbase> says, sec as 1 / cos and so on)
-const MATHFN = { exp: Math.exp, ln: Math.log, log: (x, b) => (b === 10 ? Math.log10(x) : b === 2 ? Math.log2(x) : Math.log(x) / Math.log(b)),
-  sin: Math.sin, cos: Math.cos, tan: Math.tan, sec: (x) => 1 / Math.cos(x), csc: (x) => 1 / Math.sin(x), cot: (x) => 1 / Math.tan(x),
-  arcsin: Math.asin, arccos: Math.acos, arctan: Math.atan, arcsec: (x) => Math.acos(1 / x), arccsc: (x) => Math.asin(1 / x), arccot: (x) => Math.atan(1 / x),
-  sinh: Math.sinh, cosh: Math.cosh, tanh: Math.tanh, sech: (x) => 1 / Math.cosh(x), csch: (x) => 1 / Math.sinh(x), coth: (x) => 1 / Math.tanh(x),
-  arcsinh: Math.asinh, arccosh: Math.acosh, arctanh: Math.atanh, arcsech: (x) => Math.acosh(1 / x), arccsch: (x) => Math.asinh(1 / x), arccoth: (x) => Math.atanh(1 / x) };
+// CSS's exp(), log() and trigonometric functions don't give the double nearest the true value: of 4,000 each (2026-10-30)
+// sin() misses 3,046 in Chrome and 172 in WebKit, tan() 1,895 and 3,612, exp() 6 in both
+const INEXACT = "CSS's exp(), log() and trigonometric functions don't give the double nearest the true value (sin(): 3,046 of 4,000 off in Chrome, tan(): 3,612 in WebKit)";
+// exp, ln, log and the trigonometric and hyperbolic functions of numbers the build knows: computed when the page is built
+// and written in as the double nearest the true value, rounded once (IEEE 754's recommended functions; log's base 10
+// unless a <logbase> says, sec x as 1 / cos x and so on, each composition rounded once too). JavaScript's Math gives
+// that double for exp, log, log10, log2, sin, cos, tan, asin, acos and cbrt in Chrome (200,000 of 200,000, 2026-10-30;
+// probes/dcss/exact-check.mjs), not Node's (exp 993 of 20,000 off) nor Safari's (sin 842).
+// The true value is computed in BigInt fixed point, Q bits past an argument's own binary exponent, then rounded.
+const Q = 640n, QMAX = Q + 1200n;
+const ONEM = 1n << QMAX, atanhInv = (k) => { let s = 0n, t = ONEM / k, n = 1n; while (t) { s += t / n; t /= k * k; n += 2n; } return s; };
+const atanInv = (k) => { let s = 0n, t = ONEM / k, n = 1n, sg = 1n; while (t) { s += sg * t / n; t /= k * k; n += 2n; sg = -sg; } return s; };
+const LN2M = 2n * atanhInv(3n), PIM = 4n * (4n * atanInv(5n) - atanInv(239n)), LN10M = 3n * LN2M + 2n * atanhInv(9n); // ln 10 = 3 ln 2 + 2 atanh(1/9)
+const bitsOf = (x) => { const b = new DataView(new ArrayBuffer(8)); b.setFloat64(0, x); const hi = b.getUint32(0), lo = b.getUint32(4), ex = (hi >>> 20) & 0x7ff, m = (BigInt(hi & 0xfffff) << 32n) | BigInt(lo);
+  return { neg: hi >>> 31 === 1, mant: ex ? m | (1n << 52n) : m, e: BigInt(ex ? ex - 1075 : -1074) }; }; // |x| = mant · 2^e
+const fixed64 = new Map(), at = (P) => { if (fixed64.has(P)) return fixed64.get(P);
+  const ONE = 1n << P, sh = QMAX - P, LN2 = LN2M >> sh, PI = PIM >> sh, LN10 = LN10M >> sh;
+  const mul = (a, b) => { const p = a * b; return p >= 0n ? p >> P : -((-p) >> P); }, div = (a, b) => (a << P) / b;
+  const isqrt = (n) => { if (n < 2n) return n; let x = 1n << BigInt((n.toString(2).length + 1) >> 1); for (;;) { const y = (x + n / x) >> 1n; if (y >= x) return x; x = y; } };
+  const sqrt = (a) => isqrt(a << P), inv = (a) => div(ONE, a);
+  const fix = (x) => { const { neg, mant, e } = bitsOf(x), s = P + e, v = s >= 0n ? mant << s : mant >> -s; return neg ? -v : v; };
+  const exk = (X) => { let k = X / LN2; if (X < 0n) k -= 1n; const r = X - k * LN2; let s = ONE, t = ONE, n = 1n; while (t) { t = mul(t, r) / n; s += t; n++; } return [s, k]; }; // s · 2^k
+  const ex = (X) => { const [s, k] = exk(X); return k >= 0n ? s << k : s >> -k; };
+  const ln = (X) => { const k = BigInt(X.toString(2).length) - 1n - P, y = k >= 0n ? X >> k : X << -k, z = div(y - ONE, y + ONE), z2 = mul(z, z); let s = 0n, t = z, n = 1n; while (t) { s += t / n; t = mul(t, z2); n += 2n; } return 2n * s + k * LN2; };
+  const sin = (X) => { const tp = 2n * PI; let r = X % tp; if (r > PI) r -= tp; if (r < -PI) r += tp; let s = 0n, t = r, n = 1n; while (t) { s += t; t = -mul(mul(t, r), r) / ((n + 1n) * (n + 2n)); n += 2n; } return s; };
+  const cos = (X) => sin(X + PI / 2n);
+  const atan = (X) => { const neg = X < 0n; let x = neg ? -X : X, add = 0n; if (x > ONE) { x = inv(x); add = PI / 2n; }
+    let h = 0n; while (x > ONE >> 4n) { x = div(x, ONE + sqrt(ONE + mul(x, x))); h++; } // atan x = 2 atan(x / (1 + √(1 + x²)))
+    const x2 = mul(x, x); let s = 0n, t = x, n = 1n, sg = 1n; while (t) { s += sg * t / n; t = mul(t, x2); n += 2n; sg = -sg; } s <<= h; const r = add ? add - s : s; return neg ? -r : r; };
+  const asin = (X) => (X === ONE || X === -ONE ? (X > 0n ? PI : -PI) / 2n : atan(div(X, sqrt(ONE - mul(X, X)))));
+  const sinh = (X) => (ex(X) - ex(-X)) / 2n, cosh = (X) => (ex(X) + ex(-X)) / 2n;
+  const r = { P, ONE, fix, mul, div, inv, sqrt, exk, ex, ln, sin, cos, atan, asin, sinh, cosh, LN2, LN10, PI }; fixed64.set(P, r); return r; };
+export const exactAt = (P) => at(P); // for probes/dcss/exact-check.mjs
+// v / 2^P · 2^k as the nearest double (ties to even; subnormals; past the largest, Infinity). v is within 2^64 units of
+// the true value (each series stops at a term of 0 units, a few hundred steps truncating): one that close to halfway
+// between two doubles can't be rounded from it, and is NaN, refused (none in exact-check's 120,000)
+const nearest = (v, P, k = 0n) => { if (v === 0n) return 0; const neg = v < 0n; if (neg) v = -v;
+  const bits = BigInt(v.toString(2).length), e = bits - 1n - P + k; if (e > 1023n) return neg ? -Infinity : Infinity;
+  let sh = bits - 53n; if (e < -1022n) sh += -1022n - e;
+  let m = sh > 0n ? v >> sh : v << -sh; if (sh <= 64n) return NaN;
+  { const rem = v - (m << sh), half = 1n << (sh - 1n), gap = rem - half; if ((gap < 0n ? -gap : gap) <= 1n << 64n) return NaN; if (rem > half) m += 1n; }
+  const q = sh - P + k, y = q > 900n ? Number(m) * 2 ** 900 * 2 ** Number(q - 900n) : q < -900n ? Number(m) * 2 ** -900 * 2 ** Number(q + 900n) : Number(m) * 2 ** Number(q); return neg ? -y : y; };
+// a true value from BigInt steps (f gets the context and x fixed; it returns null where the function has no value), at
+// the precision the argument's size asks for (exp's argument is never tiny or huge where the answer is finite)
+const trueOf = (f, wide = true) => (x, b) => { if (!Number.isFinite(x) || (b !== undefined && !Number.isFinite(b))) return NaN;
+  const e = x === 0 ? 0n : (({ mant, e }) => BigInt(mant.toString(2).length) - 1n + e)(bitsOf(x)), c = at(Q + (wide ? (e < 0n ? -e : e) : 16n));
+  const v = f(c, c.fix(x), b === undefined ? undefined : c.fix(b)); return v === null ? NaN : v === 0n ? (Object.is(x, -0) ? -0 : 0) : nearest(v, c.P); }; // 0 at -0: the odd ones
+const pos = (X) => X > 0n, unit = (c, X) => X >= -c.ONE && X <= c.ONE, nz = (X) => X !== 0n;
+export const MATHFN = {
+  exp: (x) => { if (Number.isNaN(x)) return NaN; if (x > 710) return Infinity; if (x < -746) return 0; const c = at(Q + 16n), [s, k] = c.exk(c.fix(x)); return nearest(s, c.P, k); },
+  ln: trueOf((c, X) => (pos(X) ? c.ln(X) : null)),
+  log: trueOf((c, X, B) => (pos(X) && pos(B) && B !== c.ONE ? (B === 10n * c.ONE ? c.div(c.ln(X), c.LN10) : B === 2n * c.ONE ? c.div(c.ln(X), c.LN2) : c.div(c.ln(X), c.ln(B))) : null)),
+  sin: trueOf((c, X) => c.sin(X)), cos: trueOf((c, X) => c.cos(X)), tan: trueOf((c, X) => c.div(c.sin(X), c.cos(X))),
+  sec: trueOf((c, X) => c.inv(c.cos(X))), csc: trueOf((c, X) => (nz(X) ? c.inv(c.sin(X)) : null)), cot: trueOf((c, X) => (nz(X) ? c.div(c.cos(X), c.sin(X)) : null)),
+  arcsin: trueOf((c, X) => (unit(c, X) ? c.asin(X) : null)), arccos: trueOf((c, X) => (unit(c, X) ? c.PI / 2n - c.asin(X) : null)), arctan: trueOf((c, X) => c.atan(X)),
+  arcsec: trueOf((c, X) => (unit(c, X) && X !== c.ONE && X !== -c.ONE ? null : c.PI / 2n - c.asin(c.inv(X)))), arccsc: trueOf((c, X) => (unit(c, X) && X !== c.ONE && X !== -c.ONE ? null : c.asin(c.inv(X)))),
+  arccot: trueOf((c, X) => (nz(X) ? c.atan(c.inv(X)) : null)),
+  sinh: trueOf((c, X) => c.sinh(X)), cosh: trueOf((c, X) => c.cosh(X)), tanh: trueOf((c, X) => c.div(c.sinh(X), c.cosh(X))),
+  sech: trueOf((c, X) => c.inv(c.cosh(X))), csch: trueOf((c, X) => (nz(X) ? c.inv(c.sinh(X)) : null)), coth: trueOf((c, X) => (nz(X) ? c.div(c.cosh(X), c.sinh(X)) : null)),
+  arcsinh: trueOf((c, X) => (X < 0n ? -1n : 1n) * c.ln((X < 0n ? -X : X) + c.sqrt(c.mul(X, X) + c.ONE))),
+  arccosh: trueOf((c, X) => (X >= c.ONE ? c.ln(X + c.sqrt(c.mul(X, X) - c.ONE)) : null)),
+  arctanh: trueOf((c, X) => (X > -c.ONE && X < c.ONE ? c.ln(c.div(c.ONE + X, c.ONE - X)) / 2n : null)),
+  arcsech: trueOf((c, X) => (X > 0n && X <= c.ONE ? (({ ONE }, Y) => c.ln(Y + c.sqrt(c.mul(Y, Y) - ONE)))(c, c.inv(X)) : null)),
+  arccsch: trueOf((c, X) => (nz(X) ? ((Y) => (Y < 0n ? -1n : 1n) * c.ln((Y < 0n ? -Y : Y) + c.sqrt(c.mul(Y, Y) + c.ONE)))(c.inv(X)) : null)),
+  arccoth: trueOf((c, X) => (X > c.ONE || X < -c.ONE ? ((Y) => c.ln(c.div(c.ONE + Y, c.ONE - Y)) / 2n)(c.inv(X)) : null)),
+  cbrt: trueOf((c, X) => (X === 0n ? 0n : (X < 0n ? -1n : 1n) * c.ex(c.ln(X < 0n ? -X : X) / 3n))),
+};
 const WHY = {
   factorial: 'CSS has no factorial, and d3 none',
   sum: '<sum/> binds a variable over limits; a list of numbers is added with <plus/>',
@@ -246,7 +303,7 @@ function call(apply) {
     if (a !== null && b !== null && !wholeArgs(a, b)) throw refusal(apply.start, `${op} of ${a} and ${b}: MathML's integer division takes whole numbers, within ±2^26 here, and a divisor that isn't 0`); }
   // e to a power is exp(x) (MathML 4: power of exponentiale), not Math.pow(Math.E, x), another double for 92 of 100 x
   if (op === 'power' && (items[0].konst === 'e' || (items[0].ci === 'e' && !items[0].def))) { const seen = new Set(), x = itemValue(items[1], seen);
-    if (x !== null) return fixed('power', Math.exp(x), items, apply.start, items[0].ci ? seen.add('e') : seen, items[0].ci && { op, call: CALLS[op], items }); }
+    if (x !== null) return fixed('power', MATHFN.exp(x), items, apply.start, items[0].ci ? seen.add('e') : seen, items[0].ci && { op, call: CALLS[op], items }); }
   if (op === 'power' && (items[0].konst === 'e' || (items[0].ci === 'e' && !items[0].def))) throw refusal(args[0].start, 'e to a power is exp(x): CSS\'s exp() doesn\'t give JavaScript\'s Math.exp, and Math.pow(Math.E, x) is another double for 92 of 100 x; if e is a quantity of your own, define it in a formula before this one');
   return { op, call: CALLS[op], items, degree, start: apply.start };
 }
@@ -355,9 +412,9 @@ function folded(name, at, args, apply) {
   for (const a of rest) if (!['cn', 'ci', 'apply', 'piecewise'].includes(a.name) && !constantOf(a)) throw refusal(a.start, `<${a.name}> as an argument: only <cn> numbers, <ci> names, π, e and another <apply>`);
   const seen = new Set(), items = [item(rest[0]), ...(base.length ? [item(elements(base[0])[0])] : [])], [x, b] = items.map((i) => itemValue(i, seen));
   if (x === null || (base.length && b === null)) throw refusal(at, `${name} of a name the page sets: ${INEXACT}. Of numbers the build knows it is computed when the page is built`);
-  return fixed(name, MATHFN[name](x, base.length ? b : 10), items, apply.start, seen);
+  return fixed(name, MATHFN[name](x, name === 'log' ? (base.length ? b : 10) : undefined), items, apply.start, seen);
 }
-// a value the build computed (Node's Math): written in as a number, drawn as the formula it came from. Where it took 𝜋 or
+// a value the build computed (the double nearest the true value): written in as a number, drawn as the formula it came from. Where it took 𝜋 or
 // 𝑒 as Math.PI or Math.E, it holds while the page sets no --π or --e (unless); where it sets one, the page shows no
 // answer, or, for 𝑒 to a power where --e is set, live: the power of the page's e
 function fixed(op, v, items, start, seen, live) {
