@@ -111,7 +111,6 @@
 @container dcss-static-range style(--dcss-static-query-ok:0){.dcss-scale-quantile:not([data-dcss-compiled])>:is(ol,ul)+*>*>*>*>*{--dcss-static-selected:var(--unknown,initial)}}
 @container dcss-static-range style(--unknown){.dcss-scale-quantile:not([data-dcss-compiled])>:is(ol,ul)+*>*>*>*>*{--dcss-static-unknown-ok:1}}
 @container dcss-static-range style(--dcss-static-own-error:1){.dcss-scale-quantile:not([data-dcss-compiled])>:is(ol,ul)+*>*>*>*>*{--dcss-static-selected:initial}}
-
 /* DCSS shares: one list, a hidden sum lane, and one descendant result per item (share.mjs). */
 
 /* DCSS bisect, on dcss.css's sort and collection-reader kernel (bisect.mjs, search.mjs). */

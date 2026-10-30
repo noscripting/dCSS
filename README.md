@@ -36,7 +36,7 @@ latexmlmath --cmml=- 'M = \frac{P r}{1 - (1 + r)^{-n}}'
 
 ## Without the build
 
-Each call is a class, and a file in `parts/`. One class per figure; `.dcss-summarize` gives several from one list. A sum is a `<figure>` around a list: the browser lays the list out, and its size is the answer. This page links two parts that come to 7 KB gzipped:
+Each call is a class, and a file in `parts/`. One class per figure; `.dcss-summarize` gives nine at once. A sum is a `<figure>` around a list: the browser lays the list out, and its size is the answer. This page links two parts that come to 7 KB gzipped:
 
 ```html
 <!doctype html>
@@ -166,7 +166,7 @@ Each call gives its answer as `--dcss-` and its name to the elements directly in
 ### Array: families/array.css
 
 - [`.dcss-sum`](https://d3js.org/d3-array/summarize#sum), [`.dcss-mean`](https://d3js.org/d3-array/summarize#mean), [`.dcss-count`](https://d3js.org/d3-array/summarize#count), `.dcss-length`, [`.dcss-min`](https://d3js.org/d3-array/summarize#min), [`.dcss-max`](https://d3js.org/d3-array/summarize#max), [`.dcss-extent`](https://d3js.org/d3-array/summarize#extent): of the list; length counts its items.
-- `.dcss-summarize`: sum, count, length, mean, min, max, variance and deviation of one list.
+- `.dcss-summarize`: sum, count, length, mean, min, max, median, variance and deviation of one list.
 - [`.dcss-min-index`](https://d3js.org/d3-array/summarize#minIndex), [`.dcss-max-index`](https://d3js.org/d3-array/summarize#maxIndex), [`.dcss-least-index`](https://d3js.org/d3-array/summarize#leastIndex), [`.dcss-greatest-index`](https://d3js.org/d3-array/summarize#greatestIndex), [`.dcss-least`](https://d3js.org/d3-array/summarize#least), [`.dcss-greatest`](https://d3js.org/d3-array/summarize#greatest): where the least or greatest is, or its value.
 - [`.dcss-median`](https://d3js.org/d3-array/summarize#median), [`.dcss-quantile`](https://d3js.org/d3-array/summarize#quantile), [`.dcss-quantile-sorted`](https://d3js.org/d3-array/summarize#quantileSorted), [`.dcss-median-index`](https://d3js.org/d3-array/summarize#medianIndex), [`.dcss-quantile-index`](https://d3js.org/d3-array/summarize#quantileIndex), [`.dcss-variance`](https://d3js.org/d3-array/summarize#variance), [`.dcss-deviation`](https://d3js.org/d3-array/summarize#deviation): read three elements deep; `--p` places a quantile.
 - [`.dcss-scale-quantile`](https://d3js.org/d3-scale/quantile#scaleQuantile), [`.dcss-scale-threshold`](https://d3js.org/d3-scale/threshold#scaleThreshold), [`.dcss-scale-quantize`](https://d3js.org/d3-scale/quantize#scaleQuantize): `--value` to `--range-0` to `--range-16` (`--ranges` of them) or `--unknown`, by the list four elements deep or by `--domain-0` to `--domain-15`.
@@ -245,7 +245,7 @@ Headless Chrome 155 and WebKit 26.4, Safari's engine, pass all 161 requirements 
 
 <!-- performance -->
 
-Layout does the work, in the frame a number changes. A family is at most 23 KB gzipped and loads in 15 ms or less in WebKit 26.4 (2026-10-28). Twenty printed medians, a value moving: 7.6 ms a frame in Chrome, 14.3 in WebKit; variance 10.8, 13.6 (2026-10-30).
+Layout does the work, in the frame a number changes. A family is at most 23 KB gzipped and loads in 15 ms or less in WebKit 26.4 (2026-10-28). Twenty printed medians, a value moving: 7.6 ms a frame in Chrome, 14.3 in WebKit; variance 9.5, 14.4 (2026-10-30).
 
 <!-- /performance -->
 

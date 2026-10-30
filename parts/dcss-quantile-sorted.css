@@ -59,7 +59,6 @@
 :is(.dcss-quantile-sorted:not([data-dcss-compiled])):has(>:is(ol,ul)>li:last-child:is(:nth-child(n+64):nth-child(-n+64))){--dcss-static-count-digit-6:1}
 :is(.dcss-quantile-sorted:not([data-dcss-compiled])):has(>:is(ol,ul)>li:nth-child(65)){--dcss-static-count-digit-over:1}
 :is(.dcss-quantile-sorted:not([data-dcss-compiled])){--dcss-static-count:calc((1 - var(--dcss-static-count-digit-over)) * (1 * var(--dcss-static-count-digit-0) + 2 * var(--dcss-static-count-digit-1) + 4 * var(--dcss-static-count-digit-2) + 8 * var(--dcss-static-count-digit-3) + 16 * var(--dcss-static-count-digit-4) + 32 * var(--dcss-static-count-digit-5) + 64 * var(--dcss-static-count-digit-6)) + 65 * var(--dcss-static-count-digit-over))}
-
 /* DCSS shares: one list, a hidden sum lane, and one descendant result per item (share.mjs). */
 
 /* DCSS bisect, on dcss.css's sort and collection-reader kernel (bisect.mjs, search.mjs). */

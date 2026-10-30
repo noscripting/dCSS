@@ -11,7 +11,6 @@
 /* DCSS bisect, on dcss.css's sort and collection-reader kernel (bisect.mjs, search.mjs). */
 
 /* Bounded drop-in calls: a list read through plain elements after it, or none (static.mjs). */@property --dcss-sum{syntax:'*';inherits:false}@property --dcss-count{syntax:'*';inherits:false}@property --dcss-length{syntax:'*';inherits:false}@property --dcss-mean{syntax:'*';inherits:false}@property --dcss-min{syntax:'*';inherits:false}@property --dcss-max{syntax:'*';inherits:false}@property --dcss-variance{syntax:'*';inherits:false}@property --dcss-deviation{syntax:'*';inherits:false}
-
 /* DCSS shares: one list, a hidden sum lane, and one descendant result per item (share.mjs). */
 
 /* DCSS bisect, on dcss.css's sort and collection-reader kernel (bisect.mjs, search.mjs). */
