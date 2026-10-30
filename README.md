@@ -6,7 +6,7 @@ With [noscripting](https://github.com/noscripting/noscripting), [loop](https://g
 
 ## Installation
 
-Write the data as a table and the formula in MathML, then build the page once with `mathml.mjs` and Node.js:
+Write the data once, as a table the reader sees, and each result as a MathML formula over it. Then build the page once with `mathml.mjs` and Node.js:
 
 ```html
 <!doctype html>
@@ -30,11 +30,15 @@ Write the data as a table and the formula in MathML, then build the page once wi
 node mathml.mjs page.html built.html
 ```
 
-Add `--watch` to build it again each time you save. The built page shows average = mean(sales) = 118.3, and the sentence with the same number. It runs no script: set `--jan` to another number in CSS and both follow. [TUTORIAL.md](TUTORIAL.md) builds a sales summary step by step; [SPEC.md](SPEC.md) A131 to A155 say what the build takes, LaTeXML's output included (LaTeXML itself is optional).
+Add `--watch` to build it again each time you save. The built page shows average = mean(sales) = 118.3, and the sentence the same. It runs no script: set `--jan` in CSS and both follow. A median or a maximum is one more `<math>` on the same table. [TUTORIAL.md](TUTORIAL.md) builds a sales summary step by step; [SPEC.md](SPEC.md) A131 to A155 say what the build takes. From LaTeX, [LaTeXML](https://math.nist.gov/~BMiller/LaTeXML/) writes the `<math>`:
+
+```sh
+latexmlmath --cmml=- 'M = \frac{P r}{1 - (1 + r)^{-n}}'
+```
 
 ## Without the build
 
-Each call is also a class, and a file in `parts/` named after it. A sum is a `<figure>` around a list: the browser lays the list out, and its size is the answer. This page links two parts that come to 6 KB gzipped, and prints a total and an average:
+Each call is a class, and a file in `parts/`. One class per figure, each with its own list: two on one figure answer wrong. A sum is a `<figure>` around a list: the browser lays the list out, and its size is the answer. This page links two parts that come to 6 KB gzipped, and prints a total and an average:
 
 ```html
 <!doctype html>
@@ -50,7 +54,7 @@ Each call is also a class, and a file in `parts/` named after it. A sum is a `<f
 </figure>
 ```
 
-The list is the data, one `--value` per item. What follows it reads `--dcss-sum`, `--dcss-mean` and `--dcss-count`, and `.dcss-format-fixed` prints them as d3.format does: 355 and 118.3. Change a `--value` and they follow.
+One `--value` per item; what follows the list reads `--dcss-sum`, `--dcss-mean` and `--dcss-count`. Change a `--value` and they follow.
 
 Or link `dcss.css` and the families [Reference](#reference) names, or `dcss-all.css`:
 
@@ -72,7 +76,7 @@ The class goes on a `<figure>`: d3.bisectLeft is `.dcss-bisect-left`. Arguments 
 </figure>
 ```
 
-The list is drawn at its answer: hide it with a height and `overflow: clip` on the figure, never on the list. Screen readers don't hear a `--value`: say the numbers in a caption. Numbers are exact in 64ths, so give cents as whole numbers.
+The list is drawn at its answer: hide it with a height and `overflow: clip` on the figure, never on the list. Screen readers don't hear a `--value`: say the numbers in a caption. Numbers are exact in 64ths, halves included; give cents as whole numbers.
 
 A call that can't answer prints nothing and sets `--dcss-err`: 1 for an input it can't take, 2 where d3 has no answer. To show a message:
 
@@ -111,6 +115,20 @@ Put a call inside another's answer. A sum feeding a scale:
 </figure>
 ```
 
+An axis on a nice domain reads `.dcss-nice`'s `--dcss-nice-start` and `--dcss-nice-stop`. Give it more `<li>` than ticks:
+
+```html
+<link rel="stylesheet" href="dcss.css">
+<link rel="stylesheet" href="families/ticks.css">
+<style>:root { --lo: -3.5; --hi: 31.2; }</style>
+
+<figure class="dcss-nice" style="--start: var(--lo); --stop: var(--hi); --count: 6">
+  <ol class="dcss-axis-bottom" style="width: 600px; --start: var(--dcss-nice-start); --stop: var(--dcss-nice-stop); --count: 6">
+    <li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li>
+  </ol>   <!-- −5 to 35 by 5, 75 px apart -->
+</figure>
+```
+
 A median, quantile or variance reads its list through three nested elements. Put what reads it in the innermost:
 
 ```html
@@ -121,25 +139,6 @@ A median, quantile or variance reads its list through three nested elements. Put
   </div></div></div>
 </figure>
 ```
-
-## Grid primitives
-
-Under the calls, `dcss.css` has grids whose layout computes. A reader, `<b class="dcss-at">`, gives its `<u>` entry `--dcss-i` as `--dcss-value`:
-
-```html
-<!doctype html>
-<link rel="stylesheet" href="dcss.css">
-<style>.dcss-at u::after { counter-reset: v var(--dcss-value); content: counter(v); }</style>
-
-<div class="dcss-array dcss-track-count">
-  <b class="dcss-out"><b class="dcss-at" style="--dcss-i: 2"><u></u></b></b>
-  <i style="--dcss-n: 12"></i>
-  <i style="--dcss-n: 40"></i>
-  <i style="--dcss-n: 30"></i>
-</div>
-```
-
-It shows 40; with `--dcss-i: 1; --dcss-j: -1`, the sum, 82.
 
 ## Reference
 
@@ -214,7 +213,7 @@ Each call gives its answer as `--dcss-` and its name, with `--dcss-ready` and `-
 
 [SPEC.md](SPEC.md) has their markup.
 
-- `.dcss-array`, `.dcss-out`, `.dcss-at`, `.dcss-packed`, `.dcss-cycle`, `.dcss-xy`, `.dcss-cells`, `.dcss-plain`, `.dcss-window`, `.dcss-slide`, `.dcss-scan`: arrays.
+- `.dcss-array`, `.dcss-track-count`, `.dcss-out`, `.dcss-at`, `.dcss-packed`, `.dcss-cycle`, `.dcss-xy`, `.dcss-cells`, `.dcss-plain`, `.dcss-window`, `.dcss-slide`, `.dcss-scan`: arrays.
 - `.dcss-bins`, `.dcss-bin-max`, `.dcss-below`, `.dcss-nest`, `.dcss-sort`, `.dcss-where`, `.dcss-lo`, `.dcss-hi`, `.dcss-between`, `.dcss-map`, `.dcss-key-range`, `.dcss-in`, `.dcss-mask`: bins, sorts and maps.
 - `.dcss-pack`, `.dcss-tiles`, `.dcss-push`, `.dcss-end`, `.dcss-nested`, `.dcss-overlap`, `.dcss-lines`, `.dcss-groups`, `.dcss-piles`, `.dcss-starts`, `.dcss-shares`, `.dcss-baseline`, `.dcss-columns`, `.dcss-alternate`, `.dcss-flex` (`--dcss-grow`, `--dcss-shrink`, `--dcss-flex-min`, `--dcss-flex-max`): packing and sharing.
 - `.dcss-ranked` (`--dcss-desc`, `--dcss-gap`), `.dcss-wide`, `.dcss-group`, `.dcss-group-total`, `.dcss-bars`, `.dcss-labels`, `.dcss-copy`, `.dcss-ranks`, `.dcss-segments`: ranked groups.

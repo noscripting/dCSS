@@ -107,6 +107,8 @@ All notable changes to dcss are written here. The format follows [Keep a Changel
 
 ### Fixed
 
+- `parts/dcss-axis-*.css` alone print a fractional axis's labels with their leading zeros: 0.01 to 0.09, where they printed 0.1 to 0.9. The parts now carry the six counter styles the labels name through a property (`--dcss-tick-frac`), which were only in `dcss.css`.
+- `mathml.mjs` names on stderr each `<math>` it leaves as written (no Content MathML, such as LaTeX alone), and points to `latexmlmath --cmml=-`; it exited 0 with no word. `--help` prints its usage.
 - arccot of a name past 2^996 (up to 2^1000) had its answer from 1/x rounded once: splitting x to multiply it exactly passed the largest double, and 1/x lost its correction. arccot there now has no answer, and arctan takes 2^996's, π/2.
 - `<data value="1200">9</data>` showed 9 while the page computed with 1200: a `<data>` carrier's text must now show its value, rounded to the digits it shows (1,200, 1.2k, $1,200, 12.5%, (1,200) all do), and is refused otherwise.
 - A built page changed after its build (a number in a series, a word) and built again kept its old answers: each mark the build writes now carries a fingerprint of the page as built, and a changed page, or one without the fingerprint, is refused with its line. Build the source page.

@@ -4,6 +4,12 @@
 @property --dcss-k { syntax: '*'; inherits: false; initial-value: 1fr; }
 @counter-style dcss-tick-int { system: extends decimal; range: 0 infinite; fallback: dcss-tick-none; }
 @counter-style dcss-tick-pad3 { system: extends decimal; pad: 3 "0"; range: 0 infinite; fallback: dcss-tick-none; }
+@counter-style dcss-tick-dec1 { system: extends decimal; pad: 1 "0"; range: 0 infinite; fallback: dcss-tick-none; }
+@counter-style dcss-tick-dec2 { system: extends decimal; pad: 2 "0"; range: 0 infinite; fallback: dcss-tick-none; }
+@counter-style dcss-tick-dec3 { system: extends decimal; pad: 3 "0"; range: 0 infinite; fallback: dcss-tick-none; }
+@counter-style dcss-tick-dec4 { system: extends decimal; pad: 4 "0"; range: 0 infinite; fallback: dcss-tick-none; }
+@counter-style dcss-tick-dec5 { system: extends decimal; pad: 5 "0"; range: 0 infinite; fallback: dcss-tick-none; }
+@counter-style dcss-tick-dec6 { system: extends decimal; pad: 6 "0"; range: 0 infinite; fallback: dcss-tick-none; }
 @counter-style dcss-tick-comma { system: additive; additive-symbols: 1 ",", 0 ""; }
 @counter-style dcss-tick-dot { system: additive; additive-symbols: 1 ".", 0 ""; }
 @counter-style dcss-tick-sign { system: additive; additive-symbols: 1 "\2212", 0 ""; }

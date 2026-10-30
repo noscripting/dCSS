@@ -1,5 +1,5 @@
-// node libraries/dcss/mathml.mjs <page.html>: a page whose formulas are written in Content MathML, each compiled to a
-// calc() the page computes, on stdout; exits 1 with file:line and the reason on a formula it can't take.
+// node mathml.mjs <page.html> [built.html]: a page whose formulas are written in Content MathML, each compiled to a
+// calc() the page computes, to built.html or stdout; exits 1 with file:line and the reason on a formula it can't take.
 // Content MathML (MathML 4, chapter 4) says what a formula means; Chrome and Safari draw none of it and CSS can't read a
 // <cn>'s text, so a page can't compute on it: this build writes each formula as the calc() of d3's own operations, and
 // keeps the formula, as Presentation MathML with the author's Content MathML as its annotation, for readers.
@@ -1803,7 +1803,7 @@ export function toDcss(src, { file = 'page.html' } = {}) {
 }
 function build(src, file) {
   // scopes: 0 is the page; each data-dcss-scope element another, inside the one it sits in
-  const found = [], calls = new Set(), scopes = [{ id: 0, parent: null }], open = [], series = [], marks = [], colHeads = new Set(), lives = []; let i = 0, pOpen = null, built = null; // built: the line of the first thing an earlier build wrote // pOpen: the start of an open <p>, or null
+  const found = [], left = [], calls = new Set(), scopes = [{ id: 0, parent: null }], open = [], series = [], marks = [], colHeads = new Set(), lives = []; let i = 0, pOpen = null, built = null; // built: the line of the first thing an earlier build wrote // pOpen: the start of an open <p>, or null
   while (i < src.length) {
     const lt = src.indexOf('<', i); if (lt < 0) break;
     if (src.startsWith('<!--', lt)) { const e = src.indexOf('-->', lt + 4); i = e < 0 ? src.length : e + 3; continue; }
@@ -1849,7 +1849,7 @@ function build(src, file) {
       // a formula with Content MathML outside an annotation would draw nothing in Chrome and Safari
       const loose = (n) => elements(n).some((c) => c.name === 'annotation-xml' || c.name === 'annotation' ? false : ['apply', 'piecewise', 'cn', 'ci', 'csymbol', 'bind'].includes(c.name) || loose(c));
       if (loose(math)) throw new Error(`${file}:${lineOf(src, math.start)}: Content MathML outside an annotation draws nothing in Chrome and Safari; this build compiles a <math> whose one element is an <apply> or a <piecewise>`);
-      continue;
+      left.push(lineOf(src, math.start)); continue;
     }
     let from = math.start, to = math.end, inline = false, pAttrs = '';
     if (pOpen) { // a formula alone in a paragraph takes the paragraph's place as a figure; beside text it is phrasing, in the sentence
@@ -2002,7 +2002,7 @@ function build(src, file) {
   out += src.slice(at);
   const report = buildReport(file, src, scopes, series, found, where, marks, answers);
   const linked = links(out, edits.length + liveEdits.length), print = fingerprint(linked.html.replaceAll('\u0001', '')); // each mark the build wrote carries it
-  return { ...linked, html: linked.html.replaceAll('\u0001', `="${print}"`), calls: [...calls], count: edits.length, series: series.map(({ name, count, line, scope, slots }) => ({ name, count, line, scope, slots })), report };
+  return { ...linked, html: linked.html.replaceAll('\u0001', `="${print}"`), calls: [...calls], count: edits.length, left, series: series.map(({ name, count, line, scope, slots }) => ({ name, count, line, scope, slots })), report };
 }
 
 // the build's report: the page's scopes, the names it reads, its series, each formula's result (folded when the page is
@@ -2059,10 +2059,14 @@ if (process.argv[1] && realpathSync(process.argv[1]) === realpathSync(fileURLToP
   // built again each time page.html is saved, a refusal printed and the last good page left as it was
   const args = process.argv.slice(2), watch = args.includes('--watch'), rest = args.filter((a) => a !== '--watch'), ri = rest.indexOf('--report'), rep = ri >= 0 ? rest[ri + 1] : null;
   const [file, to] = rest.filter((_, i) => ri < 0 || (i !== ri && i !== ri + 1));
+  if (args.some((a) => /^(-h|--help)$/.test(a))) { console.log('usage: node mathml.mjs <page.html> [built.html] [--report report.json] [--watch]  (with no second file, the page goes to stdout; --watch needs it)'); process.exit(0); }
   if (!file || (ri >= 0 && !rep) || (watch && !to)) { console.error('usage: node mathml.mjs <page.html> [built.html] [--report report.json] [--watch]  (with no second file, the page goes to stdout; --watch needs it)'); process.exit(1); }
   const once = () => { const r = toDcss(readFileSync(file, 'utf8'), { file });
     if (r.needs.length) throw new Error(`${file}: the page links no dcss sheet: link ${manifest.core.file} (it brings ${r.needs.join(', ')} beside it); nothing written`);
     if (to) writeFileSync(to, r.html); else process.stdout.write(r.html);
+    // a <math> with no Content MathML is copied as it is, said once on stderr (a clean-room trial, 2026-10-30: LaTeX in an
+    // annotation built to an unchanged page with no word)
+    if (r.left.length) console.error(`${file}:${r.left.join(', ')}: ${r.left.length} <math> left as written: only Content MathML computes (an <apply> or a <piecewise>); from LaTeX, latexmlmath --cmml=- writes it`);
     if (rep) writeFileSync(rep, JSON.stringify(r.report, null, 2) + '\n');
     return r; };
   if (!watch) { try { once(); } catch (e) { console.error(e.message); process.exit(1); } }
