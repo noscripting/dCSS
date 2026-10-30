@@ -6,6 +6,7 @@ All notable changes to dcss-array.css are written here. The format follows [Keep
 
 ### Added
 
+- `mathml.mjs` takes `<quotient/>` and `<rem/>`, MathML's integer division, as Math.trunc(a / b) and a % b (−0 included) for whole numbers within ±2^26; a fraction, a divisor of 0 or a larger number leaves no answer. Hours and minutes, cents, weeks and days.
 - `mathml.mjs` takes sums and products over an index (MathML's `<sum/>` and `<product/>` with `<bvar>` and limits, LaTeX's `\sum_{i=1}^{n}` through LaTeXML), written out when the page is built and added as JavaScript's loop adds them: weighted sums, a variance with n − 1 written out, a net present value. The bounds are whole numbers the build knows; x_i reads `--x_1`, `--x_2`….
 - `mathml.mjs` takes `<piecewise>`: the first `<piece>` whose condition holds, else `<otherwise>`, as JavaScript's if/else chain (tax brackets, tiered prices, guards). A piece not chosen changes nothing, even where it is NaN or infinite: each piece's value travels in four registered integers, whose NaN is 0.
 - `mathml.mjs` takes π and e as numbers: `<pi/>`, `<exponentiale/>` and OpenMath's `nums1` symbols are Math.PI and Math.E, and LaTeXML's 𝜋 reads the page's `--π` where it sets one, Math.PI where it doesn't (no answer before, unless the page set it). e to a power stops the build: it is exp(x), which CSS doesn't compute to JavaScript's double, and Math.pow(Math.E, x) differs from Math.exp(x) for 92 of 100 x (16 ARQMath formulas compiled it as pow(--e, x)).

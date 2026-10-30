@@ -124,17 +124,17 @@ function number(cn) {
 }
 
 // --- the operators: Content MathML's elements and their OpenMath symbols (MathML 4, appendix E; F.8.3 for s_data1)
-const CALLS = { brackets: 'id', median: 'median', mean: 'mean', min: 'min', max: 'max', plus: 'sum',
+const CALLS = { brackets: 'id', quotient: 'quotient', rem: 'rem', median: 'median', mean: 'mean', min: 'min', max: 'max', plus: 'sum',
   minus: 'minus', times: 'times', divide: 'divide', power: 'power', root: 'root', abs: 'abs', floor: 'floor', ceiling: 'ceiling' };
 const SYMBOLS = { s_data1: ['median', 'mean'], minmax1: ['min', 'max'], arith1: ['plus', 'minus', 'unary_minus', 'times', 'divide', 'power', 'root', 'abs'], rounding1: ['floor', 'ceiling'] };
 // how many arguments each takes, past the statistics' lists
-const ARITY = { brackets: [1, 1], minus: [1, 2], divide: [2, 2], power: [2, 2], root: [1, 1], abs: [1, 1], floor: [1, 1], ceiling: [1, 1], times: [2, Infinity], plus: [2, Infinity] };
+const ARITY = { brackets: [1, 1], quotient: [2, 2], rem: [2, 2], minus: [1, 2], divide: [2, 2], power: [2, 2], root: [1, 1], abs: [1, 1], floor: [1, 1], ceiling: [1, 1], times: [2, Infinity], plus: [2, Infinity] };
 // CSS's exp(), log() and trigonometric functions round otherwise than JavaScript's Math (to the bit, 300 values each,
 // 2026-10-29: sin() 95 the same in Chrome, tan() 85 in WebKit, log(x, 10) 175 and 131, exp() 266 in both)
 const INEXACT = "CSS's exp(), log() and trigonometric functions don't give JavaScript's Math to the bit (sin(): 95 of 300 values in Chrome; tan(): 85 in WebKit)";
 const WHY = {
   ...Object.fromEntries(['exp', 'ln', 'log', 'sin', 'cos', 'tan', 'sec', 'csc', 'cot', 'arcsin', 'arccos', 'arctan', 'arcsec', 'arccsc', 'arccot', 'sinh', 'cosh', 'tanh', 'sech', 'csch', 'coth', 'arcsinh', 'arccosh', 'arctanh'].map((k) => [k, INEXACT])),
-  factorial: 'CSS has no factorial, and d3 none', quotient: 'not yet: integer division', rem: 'not yet: a remainder',
+  factorial: 'CSS has no factorial, and d3 none',
   sum: '<sum/> binds a variable over limits; a list of numbers is added with <plus/>',
   variance: "MathML doesn't say it divides by n - 1, as d3 and dcss do", sdev: "MathML doesn't say it divides by n - 1, as d3 and dcss do",
   mode: 'dcss has no mode', moment: 'dcss has no moment', card: "a set's size drops repeated values, which d3.count counts",
@@ -232,6 +232,8 @@ function call(apply) {
   if (args.length < lo || args.length > hi) throw refusal(apply.start, `${op} of ${args.length} argument${args.length === 1 ? '' : 's'}: it takes ${lo === hi ? lo : hi === Infinity ? `${lo} or more` : `${lo} or ${hi}`}`);
   if (args.length === 1 && args[0].name === 'ci' && !ARITY[op]) throw refusal(args[0].start, `one <ci> alone: MathML reads it as a data set (MathML 4, §4.3.5.13), not one value`);
   const items = args.map((a) => item(a));
+  if (op === 'quotient' || op === 'rem') { const [a, b] = items.map(itemValue);
+    if (a !== null && b !== null && !wholeArgs(a, b)) throw refusal(apply.start, `${op} of ${a} and ${b}: MathML's integer division takes whole numbers, within ±2^26 here, and a divisor that isn't 0`); }
   // e to a power is exp(x) (MathML 4: power of exponentiale), not Math.pow(Math.E, x), another double for 92 of 100 x
   if (op === 'power' && (items[0].konst === 'e' || (items[0].ci === 'e' && !items[0].def))) throw refusal(args[0].start, 'e to a power is exp(x): CSS\'s exp() doesn\'t give JavaScript\'s Math.exp, and Math.pow(Math.E, x) is another double for 92 of 100 x; if e is a quantity of your own, define it in a formula before this one');
   return { op, call: CALLS[op], items, degree, start: apply.start };
@@ -393,6 +395,9 @@ const D3 = {
   minus: (xs) => (xs.length === 1 ? -xs[0] : xs[0] - xs[1]), times: (xs) => xs.reduce((a, b) => a * b), divide: (xs) => xs[0] / xs[1],
   power: (xs) => Math.pow(xs[0], xs[1]), root: (xs, n) => (n.degree === 2 ? Math.sqrt(xs[0]) : Math.pow(xs[0], 1 / n.degree)),
   abs: (xs) => Math.abs(xs[0]), floor: (xs) => Math.floor(xs[0]), ceiling: (xs) => Math.ceil(xs[0]),
+  // MathML 4.3.6.1: integer division, q and r with a = b·q + r, |r| < |b|, r of a's sign; whole numbers within ±2^26 (where
+  // a / b can't round across a whole number), the divisor not 0; past them NaN, no answer
+  quotient: ([a, b]) => (wholeArgs(a, b) ? Math.trunc(a / b) : NaN), rem: ([a, b]) => (wholeArgs(a, b) ? a % b : NaN),
   isum: (xs) => xs.reduce((s, x) => s + x, 0), iproduct: (xs) => xs.reduce((p, x) => p * x, 1),
   sum: (xs) => xs.reduce((s, x) => s + x, 0), mean: (xs) => xs.reduce((s, x) => s + x, 0) / xs.length,
   min: (xs) => Math.min(...xs), max: (xs) => Math.max(...xs), id: (xs) => xs[0],
@@ -402,6 +407,7 @@ const itemValue = (x) => (x.node ? valueOf(x.node) : x.def ? valueOf(x.def) : x.
 const OPS = { lt: (a, b) => a < b, leq: (a, b) => a <= b, gt: (a, b) => a > b, geq: (a, b) => a >= b, eq: (a, b) => a === b, neq: (a, b) => a !== b };
 const condValue = (c) => { if (c.parts) { const vs = c.parts.map(condValue); return vs.includes(null) ? null : c.op === 'and' ? vs.every(Boolean) : vs.some(Boolean); }
   const xs = c.items.map(itemValue); return xs.includes(null) ? null : xs.slice(1).every((b, i) => OPS[c.op](xs[i], b)); };
+const wholeArgs = (a, b) => Number.isInteger(a) && Number.isInteger(b) && Math.abs(a) <= 2 ** 26 && Math.abs(b) <= 2 ** 26 && b !== 0;
 const valueOf = (node) => { const xs = node.items.map(itemValue); if (xs.includes(null)) return null;
   if (node.call !== 'piecewise') return D3[node.call](xs, node);
   for (let j = 0; j < node.conds.length; j++) { const t = condValue(node.conds[j]); if (t === null) return null; if (t) return xs[j]; }
@@ -440,6 +446,13 @@ function former(divide) {
     // d3.sum and d3.mean add from 0, as a loop does: 0 + -0 is 0, so a sum of -0s is 0 (each term after is added exactly)
     const total = () => ['0', ...xs].reduce((a, b) => F(`${a} + ${b}`));
     if (node.call === 'sum' || node.call === 'isum') return total();
+    if (node.call === 'quotient' || node.call === 'rem') {
+      // rem() is JavaScript's % to the bit, -0 included, and floor(|a / b|) · sign(a / b) Math.trunc(a / b) (2,544 pairs, both
+      // engines; WebKit's round(to-zero) gives 0 for -0.9, Math.trunc -0); past the whole numbers within ±2^26, no answer
+      const [a, b] = xs, P = `--dcss-dcss-q${k}`, d = divide(a, b);
+      decls.push([`${P}-ok`, `1 - min(1, abs(sign(rem(${a}, 1))) + abs(sign(rem(${b}, 1))) + max(0, sign(abs(${a}) - 67108864)) + max(0, sign(abs(${b}) - 67108864)) + 1 - abs(sign(${b})))`]);
+      return `(${node.call === 'rem' ? `rem(${a}, ${b})` : `(round(down, abs(${d}), 1) * sign(${d}))`} * (1 + 0 / var(${P}-ok)))`;
+    }
     if (node.call === 'iproduct') return ['1', ...xs].reduce((a, b) => F(`${a} * ${b}`)); // as p = 1, p *= term
     if (node.call === 'mean') return divide(total(), xs.length);
     // a - b as a + -1 · b, the same IEEE double: WebKit's calc() gives -0 - 0 as 0 (JavaScript -0), and 1 / it would flip
