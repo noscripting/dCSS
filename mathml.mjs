@@ -218,6 +218,9 @@ export const EXPK = (() => { const c = at(1200n), dbl = (v) => nearest(v, c.P), 
   const T = Array.from({ length: 64 }, (_, j) => { const v = c.ex((c.LN2 * BigInt(j)) / 64n), h = dbl(v); return [h, dbl(v - c.fix(h)), ...halves(h)].map(splitInts); });
   const C = [3, 4, 5, 6, 7, 8].map((n) => { let f = 1n; for (let i = 2n; i <= BigInt(n); i++) f *= i; return dbl(c.ONE / f); });
   return { L1: dbl(L1), L2: dbl(L2), L3: dbl(L - L1 - L2), INV: dbl((c.ONE << c.P) / L), T, C }; })();
+// 1/ln 10 and 1/ln 2 as pairs, for a live log10 and log2
+export const LOGINV = (() => { const c = at(1200n), dbl = (v) => nearest(v, c.P), pair = (v) => { const h = dbl(v); return [h, dbl(v - c.fix(h))]; };
+  return { 10: pair((c.ONE << c.P) / c.LN10), 2: pair((c.ONE << c.P) / c.LN2) }; })();
 // 0! to 170!, exactly, and as the split's integers of each rounded once (the table a live factorial picks from)
 const FACT = [1n]; for (let i = 1n; i <= 170n; i++) FACT.push(FACT.at(-1) * i);
 export const FACTK = FACT.map((f) => splitInts(Number(f)));
@@ -467,7 +470,9 @@ function folded(name, at, args, apply) {
   for (const a of rest) if (!['cn', 'ci', 'apply', 'piecewise'].includes(a.name) && !constantOf(a)) throw refusal(a.start, `<${a.name}> as an argument: only <cn> numbers, <ci> names, π, e and another <apply>`);
   const seen = new Set(), items = [item(rest[0]), ...(base.length ? [item(elements(base[0])[0])] : [])], [x, b] = items.map((i) => itemValue(i, seen));
   if (name === 'exp' && (x === null || seen.size)) return { op: 'exp', call: 'exp', items, start: apply.start }; // computed in calc(), exactly
-  if (x === null || (base.length && b === null)) throw refusal(at, `${name} of a name the page sets: ${INEXACT}. Of numbers the build knows it is computed when the page is built; exp of a name is computed on the page`);
+  const lb = name === 'ln' ? 'e' : name === 'log' ? (base.length ? b : 10) : null; // ln, and log to base 10 or 2: computed in calc()
+  if ((name === 'ln' || name === 'log') && (x === null || seen.size) && (lb === 'e' || lb === 10 || lb === 2)) return { op: name, call: 'log', base: lb, items, start: apply.start };
+  if (x === null || (base.length && b === null)) throw refusal(at, `${name} of a name the page sets: ${INEXACT}. Of numbers the build knows it is computed when the page is built; exp, ln, log10 and log2 of a name are computed on the page`);
   return fixed(name, MATHFN[name](x, name === 'log' ? (base.length ? b : 10) : undefined), items, apply.start, seen);
 }
 // a value the build computed (the double nearest the true value): written in as a number, drawn as the formula it came from. Where it took 𝜋 or
@@ -614,7 +619,7 @@ function former(divide) {
     const pickers = (n, idx, lo, hi) => { for (let j = lo; j <= hi; j++) decls.push([`${P}-${n}${j}`, `max(0, 1 - abs(${idx} + ${-j}))`]);
       return (name, rows) => { const q = `${P}-${name}`; for (const z of 'eabcz') decls.push([`${q}-${z}`, rows.map((t, j) => (t && t[z] ? `var(${P}-${n}${j}) * ${t[z]}` : '')).filter(Boolean).join(' + ') || '0']); return mac(name, join(q)); }; };
     return { k, P, mac, store, add, sub, mul, num, twoSum, fast, halves, twoProd, ddAdd, ddMul, pickers }; };
-  const liveExp = (xe) => { const { P, mac, store, add, sub, mul, num, twoSum, fast, halves } = kit();
+  const expCore = (xe, often) => { const { P, mac, store, add, sub, mul, num, twoSum, fast, halves } = kit(); // often: z is read many times
     const { L1, L2, L3, INV, T, C } = EXPK, K = `var(${P}-K)`;
     const x = mac('x', xe);
     decls.push([`${P}-d`, `(1 - sign(max(0, -708 + (-1 * ${x})))) * (1 - sign(max(0, ${x} + -709)))`], [`${P}-K`, `round(${x} * ${num(INV)}, 1)`], [`${P}-E`, `round(down, ${K} / 64, 1)`], [`${P}-J`, `${K} + -64 * var(${P}-E)`]);
@@ -631,12 +636,47 @@ function former(divide) {
     const tab = (i) => { const q = `${P}-T${i}`; for (const z of 'eabcz') decls.push([`${q}-${z}`, T.map((t, j) => (t[i][z] ? `var(${P}-I${j}) * ${t[i][z]}` : '')).filter(Boolean).join(' + ') || '0']); return mac(`T${i}`, join(q)); };
     const [Th, Tl, Thh, Thl] = [0, 1, 2, 3].map(tab), [phh, phl] = halves('g', ph), m = mac('m', mul(Th, ph));
     const me = add(add(add(sub(mul(Thh, phh), m), mul(Thh, phl)), mul(Thl, phh)), mul(Thl, phl));
-    const [yh, yt] = fast('y', Th, m), low = mac('lo', add(yt, add(me, add(Tl, add(mul(Th, pl), mul(Tl, ph)))))), [zh, zl0] = fast('z', yh, low), zl = mac('zl', zl0);
+    const [yh, yt] = fast('y', Th, m), lo = add(yt, add(me, add(Tl, add(mul(Th, pl), mul(Tl, ph))))), YH = often ? store('yh', yh) : yh, LO = often ? store('lo', lo) : mac('lo', lo); // stored, z is short
+    const [zh, zl0] = fast('z', YH, LO), zl = mac('zl', zl0);
+    decls.push([`${P}-pf`, `var(${P}-d) * var(${P}-rh-f) * var(${P}-rl-f) * var(${P}-s-f) * var(${P}-p0-f)${often ? ` * var(${P}-yh-f) * var(${P}-lo-f)` : ''}`]); // the pair is fine
+    return { P, zh, zl }; };
+  const liveExp = (xe) => { const { P, zh, zl } = expCore(xe);
     // halfway, on zl's side: zh is in [0.99, 2), so half an ulp is 2^-54 below 1 and 2^-53 from 1 up, but 2^-54 again at
     // zh = 1 with zl below it (the doubles under 1 are twice as close); |zl| must be 2^-72 short of it
     const above = `(1 - sign(max(0, 1 + (-1 * ${zh}))))`, atOneDown = `(1 - abs(sign(${zh} + -1))) * sign(max(0, -1 * ${zl}))`;
-    decls.push([`${P}-ok`, `var(${P}-d) * var(${P}-rh-f) * var(${P}-rl-f) * var(${P}-s-f) * var(${P}-p0-f) * sign(max(0, pow(2, -54) * (1 + ${above} * (1 - ${atOneDown})) + (-1 * abs(${zl})) + ${-(2 ** -72)}))`]);
+    decls.push([`${P}-ok`, `var(${P}-pf) * sign(max(0, pow(2, -54) * (1 + ${above} * (1 - ${atOneDown})) + (-1 * abs(${zl})) + ${-(2 ** -72)}))`]);
     return `(${zh} * pow(2, var(${P}-E)) * (1 + 0 / var(${P}-ok)))`; };
+  // ln, log10 or log2 of a value the page sets, to the double nearest the true value (probes/dcss/log-check.mjs runs these
+  // steps in JavaScript and in the engines): y0 = CSS's log(x), any platform's, as a guess; δ = x · e^(−y0) − 1 from the
+  // exact exp's pair (2^-76 of it); ln x = y0 + δ − δ²/2. Within 2^-10 of 1, where that leaves too little of ln x, the
+  // series of u = x − 1 (exact) instead: u − u²/2 (a pair) + u³/3 − … . Both are computed, each from clamped inputs so
+  // neither turns the other to NaN, and one is picked; times 1/ln 10 or 1/ln 2 as a pair; no answer for x not above
+  // 2^-1022 or past e^708, or where the pair is too near halfway (on zl's side, 2^-73 of ln x or 2^-70 near 1)
+  const liveLog = (xe, base) => { const { P, mac, store, add, sub, mul, num, fast, twoProd, ddMul } = kit();
+    const x = mac('x', xe), y0 = mac('y0', `log(max(${x}, ${2 ** -1022}))`), ge = (a, b) => `(1 - sign(max(0, ${b} + (-1 * ${a}))))`, two = (e) => `pow(2, ${e})`;
+    decls.push([`${P}-d`, `${ge(x, num(2 ** -1022))} * (${x} * 0 + 1) * ${ge(709, `(-1 * ${y0})`)}`], [`${P}-near`, `(1 - sign(max(0, abs(${x} + -1) + ${-(2 ** -10)})))`]);
+    // near 1: the series
+    const u = mac('u', `clamp(${-(2 ** -10)}, ${x} + -1, ${2 ** -10})`), [sq, sqe] = twoProd('q', u, u);
+    const t = [8, 7, 6, 5, 4, 3].reduce((acc, n) => add(num((n % 2 ? 1 : -1) / n), mul(u, acc)), num(1 / 9)), [h, e] = fast('a', u, `(-0.5 * ${sq})`);
+    const [ah, al] = fast('b', h, add(e, add(`(-0.5 * ${sqe})`, mul(mul(mul(u, u), u), t))));
+    // elsewhere: the guess and one exp
+    const ex = expCore(`clamp(-708, -1 * ${y0}, 709)`, true), EZH = ex.zh, EZL = ex.zl;
+    const xs = mac('xs', `(${x} * ${two(`var(${ex.P}-E)`)})`), [p, pe] = twoProd('r', xs, EZH);
+    const dl = store('dl', add(sub(p, '1'), add(pe, mul(xs, EZL)))), [bh, bl] = fast('c', y0, sub(dl, mul(mul(dl, dl), '0.5')));
+    // picked, stored, scaled to the base
+    const near = `var(${P}-near)`, pickd = (a, b) => `(${sel(near, a)} + ${sel(`(1 - ${near})`, b)})`;
+    let y = [store('yh', pickd(ah, bh)), store('yl', pickd(al, bl))];
+    if (base !== 'e') { const m = ddMul('m', y, LOGINV[base].map(num)); y = [store('wh', m[0]), store('wl', m[1])]; }
+    const [zh0, zl0] = fast('z', y[0], y[1]), zh = mac('zh', store('zh', zh0)), zl = mac('zl', zl0);
+    // halfway on zl's side: zh's exponent from CSS's log2, corrected by two comparisons; half an ulp is 2^(ez − 53), half that
+    // at a power of 2 with zl toward 0; ln 1 = 0 is exact
+    const az = `abs(${zh})`; decls.push([`${P}-z0`, `round(down, log(max(${az}, ${2 ** -1074}), 2), 1)`]);
+    const sc = `(${az} * ${two(`(-1 * var(${P}-z0))`)})`; decls.push([`${P}-ez`, `var(${P}-z0) + ${ge(sc, 2)} + (-1 * (1 - ${ge(sc, 1)}))`]);
+    const atPow2 = `(1 - abs(sign(${az} + (-1 * ${two(`var(${P}-ez)`)}))))`, toward0 = `abs(sign(${zl})) * (1 - abs(sign(sign(${zl}) + sign(${zh}))))`;
+    const half = `(${two(`(var(${P}-ez) + -53)`)} / (1 + ${atPow2} * ${toward0}))`, B = `(${near} * ${num(2 ** -70)} + (1 - ${near}) * ${num(2 ** -73)} / max(abs(${y0}), ${2 ** -10}))`;
+    const one = `(1 - abs(sign(${x} + -1)))`;
+    decls.push([`${P}-ok`, `var(${P}-d) * max(${one}, (1 - ${near} * 0) * var(${P}-yh-f) * var(${P}-yl-f) * var(${P}-zh-f) * (${near} + (1 - ${near}) * var(${ex.P}-pf)) * sign(max(0, ${half} + (-1 * abs(${zl})) + (-1 * ${B} * ${az}))))`]);
+    return `(${zh} * (1 + 0 / var(${P}-ok)))`; };
   // n! of a value the page sets: picked from FACTK by round(n), an answer only for a whole n from 0 to 170
   const liveFactorial = (ne) => { const { P, mac, pickers } = kit(), n = mac('n', ne);
     decls.push([`${P}-n`, `round(${n}, 1)`], [`${P}-ok`, `(1 - abs(sign(${n} + (-1 * var(${P}-n))))) * (1 - sign(max(0, -1 * ${n}))) * (1 - sign(max(0, ${n} + -170)))`]);
@@ -654,6 +694,7 @@ function former(divide) {
     if (node.call === 'binomial') return liveBinomial(arg(node.items[0]), arg(node.items[1]));
     if (node.call === 'factorial') return liveFactorial(arg(node.items[0]));
     if (node.call === 'exp') return liveExp(arg(node.items.at(-1)));
+    if (node.call === 'log') return liveLog(arg(node.items[0]), node.base);
     if (node.call === 'eset') return expr({ call: 'piecewise', conds: [{ set: ['e'] }], otherwise: true, items: [{ node: { call: 'power', items: node.items } }, { node: { call: 'exp', items: node.items.slice(1) } }] });
     if (node.call === 'fixed' && node.unless) { // as a piecewise: the live power where --e is set, no answer where another is
       const others = node.unless.filter((n) => !(node.live && n === 'e')), conds = [...(node.live ? [{ set: ['e'] }] : []), ...(others.length ? [{ set: others }] : [])];
