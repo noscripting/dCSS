@@ -98,8 +98,8 @@
         "dcss-treemap-slice-dice"
       ],
       "raw": 6595,
-      "gzip9": 903,
-      "sha256": "de6e243cb5c4ba04d9f96254670206c9dc6e537bd929612c01d789737686414f"
+      "gzip9": 902,
+      "sha256": "7d21a2f47a3f17b9fcb2fd851374483832908e424d18d91188af28d129029b48"
     },
     "scale": {
       "file": "families/scale.css",

@@ -12,5 +12,5 @@
 :is( .dcss-treemap-slice) li { flex: 0 1 auto; display: grid; white-space: nowrap; }
 .dcss-treemap-slice :is(ul, ol) { flex-direction: column; }
 .dcss-treemap-slice li { grid-template: 0px minmax(0px, auto) / 100%; }
-.dcss-treemap-slice li > :is(ul, ol) { grid-area: 1 / 1 / 3 / 2; }
+.dcss-treemap-slice li > :is(ul, ol) { grid-area: 2 / 1 / 3 / 2; }
 .dcss-treemap-slice li:not(:has(> :is(ul, ol))) { contain: size; contain-intrinsic-block-size: calc(var(--value, 0) * 100cqh / 64); }

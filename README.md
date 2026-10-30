@@ -741,6 +741,8 @@ d3.treemap() with that tile, after hierarchy.sum(): each `<li>` of a nested list
 
 Output: the `<li>`s, laid out: draw on them.
 
+The total can be from 64 to 2^31 divided by the figure's width in pixels, its height for a slice (3.3 million at 640 px, 2.2 million at 960); under 64, the layout is narrower than the figure, and past it the boxes are drawn far outside it with no error, so give larger data in thousands or millions. Text in an `<li>`, a label, takes no room from the boxes. In slice-dice each inner `<li>` grows by its own `--value`, so no total is too large.
+
 #### `.dcss-partition`
 
 d3.partition(), up to 12 levels; the top band is the root's, so wrap the list in one `<li>` to draw it. Source: [d3.partition](https://d3js.org/d3-hierarchy/partition#partition).
@@ -760,7 +762,7 @@ d3.partition(), up to 12 levels; the top band is the root's, so wrap the list in
 
 Output: the `<li>`s, laid out: draw on them.
 
-The total can be from 64 to 2^31 times the figure's width in pixels (2.2 million at 960 px); under 64, the layout is narrower than the figure.
+The total can be from 64 to 2^31 divided by the figure's width in pixels (3.3 million at 640 px, 2.2 million at 960); under 64, the layout is narrower than the figure, and past it the boxes are drawn far outside it with no error, so give larger data in thousands or millions. Text in an `<li>`, a label, takes no room from the boxes.
 
 ### Scale: families/scale.css
 
