@@ -19,8 +19,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": "≤158"
@@ -42,8 +42,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": "≤158"
@@ -65,8 +65,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": "≤158"
@@ -88,8 +88,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": "≤158"
@@ -111,8 +111,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": "≤158"
@@ -134,8 +134,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": "≤158"
@@ -157,8 +157,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": "≤158"
@@ -180,8 +180,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": "≤158"
@@ -203,8 +203,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": "≤158"
@@ -226,8 +226,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": "≤158"
@@ -249,8 +249,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": "≤158"
@@ -272,8 +272,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": "≤158"
@@ -295,8 +295,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": "≤158"
@@ -318,8 +318,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": "≤158"
@@ -341,8 +341,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": "≤158"
@@ -364,8 +364,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": "≤158"
@@ -387,8 +387,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": "≤158"
@@ -410,8 +410,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": "≤158"
@@ -433,8 +433,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": "≤158"
@@ -456,8 +456,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": "≤158"
@@ -479,8 +479,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": "≤158"
@@ -502,8 +502,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": "≤158"
@@ -525,8 +525,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": "≤158"
@@ -548,8 +548,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": "≤158"
@@ -571,8 +571,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": "≤158"
@@ -594,8 +594,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": "≤158"
@@ -617,8 +617,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": "≤158"
@@ -640,8 +640,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": "≤158"
@@ -663,8 +663,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": "≤158"
@@ -686,8 +686,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": "≤158"
@@ -709,8 +709,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": "≤158"
@@ -732,8 +732,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": "≤158"
@@ -755,8 +755,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": "≤158"
@@ -778,8 +778,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": "≤158"
@@ -801,8 +801,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": "≤158"
@@ -824,8 +824,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": "≤158"
@@ -847,8 +847,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": "≤158"
@@ -870,8 +870,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": "≤158"
@@ -893,8 +893,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": false,
@@ -917,8 +917,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": "≤158"
@@ -940,8 +940,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": "≤158"
@@ -963,8 +963,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": false,
@@ -987,8 +987,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": "≤158"
@@ -1010,8 +1010,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": "≤158"
@@ -1033,8 +1033,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": "≤158"
@@ -1056,8 +1056,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": "≤158"
@@ -1079,8 +1079,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": "≤158"
@@ -1102,8 +1102,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": false,
@@ -1126,8 +1126,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": "≤158"
@@ -1149,8 +1149,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": "≤158"
@@ -1172,8 +1172,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": "≤158"
@@ -1195,8 +1195,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": "≤158"
@@ -1218,8 +1218,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": "≤158"
@@ -1241,8 +1241,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": "≤158"
@@ -1264,8 +1264,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": "≤158"
@@ -1287,8 +1287,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": "≤158"
@@ -1310,8 +1310,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": "≤158"
@@ -1333,8 +1333,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": "≤158"
@@ -1356,8 +1356,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": false,
@@ -1380,8 +1380,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": "≤158"
@@ -1403,8 +1403,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": false,
@@ -1427,8 +1427,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": "≤158"
@@ -1450,8 +1450,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": false,
@@ -1474,8 +1474,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": false,
@@ -1498,8 +1498,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": false,
@@ -1522,12 +1522,35 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": false,
               "notes": "FAIL: all 50 supported recorded calls; 1,023 of 1,030 seeded and 27 of 28 live/reader checks (single-precision arithmetic)"
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A132": {
+        "__compat": {
+          "description": "Every call over a list MUST give the same answer, error and printed digits when its `<li>`s hold text and under a page's own rules on lists, items and their `::before` and `::after` (margin, padding, border, position, float, display, box-sizing, line height) loaded after dcss.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
+            },
+            "firefox": {
+              "version_added": null
             }
           },
           "status": {
@@ -1546,8 +1569,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": "≤158"
@@ -1569,8 +1592,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": null,
@@ -1593,8 +1616,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": "≤158"
@@ -1616,8 +1639,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": false,
@@ -1640,8 +1663,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": false,
@@ -1664,8 +1687,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": false,
@@ -1688,8 +1711,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": false,
@@ -1712,8 +1735,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": false,
@@ -1736,8 +1759,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": false,
@@ -1760,8 +1783,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": false,
@@ -1784,8 +1807,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": "≤158"
@@ -1807,8 +1830,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": false,
@@ -1831,8 +1854,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": false,
@@ -1855,8 +1878,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": false,
@@ -1879,8 +1902,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": false,
@@ -1903,8 +1926,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": "≤158"
@@ -1926,8 +1949,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": "≤158"
@@ -1949,8 +1972,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": false,
@@ -1973,8 +1996,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": "≤158"
@@ -1996,8 +2019,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": "≤158"
@@ -2019,8 +2042,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": "≤158"
@@ -2042,8 +2065,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": false,
@@ -2066,8 +2089,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": null,
@@ -2090,8 +2113,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": "≤158"
@@ -2113,8 +2136,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": false,
@@ -2137,8 +2160,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": false,
@@ -2161,8 +2184,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": false,
@@ -2185,8 +2208,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": "≤158"
@@ -2208,8 +2231,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": false,
@@ -2232,8 +2255,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": false,
@@ -2256,8 +2279,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": false,
@@ -2280,8 +2303,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": false,
@@ -2304,8 +2327,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": false,
@@ -2328,8 +2351,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": false,
@@ -2352,8 +2375,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": false,
@@ -2376,8 +2399,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": false,
@@ -2400,8 +2423,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": false,
@@ -2424,8 +2447,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": false,
@@ -2448,8 +2471,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": "≤158"
@@ -2471,8 +2494,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": "≤158"
@@ -2494,8 +2517,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": "≤158"
@@ -2517,8 +2540,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": "≤158"
@@ -2540,8 +2563,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": false,
@@ -2564,8 +2587,8 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
               "version_added": false,
@@ -2588,11 +2611,11 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": false,
+              "version_added": null,
               "notes": "PRECONDITION_FAILED: no view timelines, which dcss-store.css's store needs"
             }
           },
@@ -2612,11 +2635,11 @@
               "version_added": "≤155"
             },
             "safari": {
-              "version_added": "≤26.4",
-              "notes": "Measured in Playwright's WebKit 26.4, headless, which is not Safari."
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": false,
+              "version_added": null,
               "notes": "PRECONDITION_FAILED: no view timelines, which dcss-store.css's store needs"
             }
           },

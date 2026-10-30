@@ -5,7 +5,7 @@ dcss-array.css computes with CSS layout: indexed reads, sums, ranks, sorts, keye
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in BCP 14 [RFC2119] [RFC8174] when, and only when, they appear in all capitals, as shown here.
 
 Measured 2026-10-29, headless: Chrome 155.0.8059.86, WebKit 26.4, Firefox 158.0.
-Conformance: Chrome 112/112, WebKit 112/112, Firefox 71/112.
+Conformance: Chrome 113/113, WebKit 113/113, Firefox 71/113.
 Additional paired cases measured 2026-10-26 in Chrome/WebKit; the Firefox report is unchanged.
 The checks, probes and scripts this document names are in the noscript.ing repository ([github.com/noscripting/noscript.ing](https://github.com/noscripting/noscript.ing)), under `libraries/dcss/`; this package carries the sheets and their documents.
 
@@ -217,6 +217,9 @@ for selection or computation. Packaging does not expand any function's bounds.
   1,024 sorted whole-number keys within ±2^24, finite query `--value`, and whole bounds 0 <= lo <= hi <= length.
   The result MUST reach reader descendants in the same frame. Invalid searched keys or missing query MUST flag an error
   and suppress the empty output.
+- **A132** Every call over a list MUST give the same answer, error and printed digits when its `<li>`s hold text and
+  under a page's own rules on lists, items and their `::before` and `::after` (margin, padding, border, position, float,
+  display, box-sizing, line height) loaded after dcss.
 
 ### Compiled HTML composition
 
@@ -413,6 +416,7 @@ for selection or computation. Packaging does not expand any function's bounds.
 | A65 | probes/dcss/scale/scale-check.mjs: every ticks, nice and tickFormat question d3-scale's log tests ask, each value compared exactly; 599 seeded ticks, 300 nice, 600 labels | PASS: ticks 38 of 38, nice 10 of 10, labels 453 of 453 (the 7 through 0 and 134 labels in types format does not print not taken); seeded 1,481 of 1,499 (12 base-e tick sets and 6 nice a last bit off: exp(-10) is not V8's Math.exp(-10)) | PASS: the same | FAIL: ticks 34 of 38; nice 10 of 10; labels 453 of 453 |
 | A67 | probes/dcss/format/format-check.mjs and probes/si-carry-check.mjs: one coefficient round with decimal-tail integer pieces split at build time; 5,364 decimal-midpoint carry cases; SI printed text, 109 supported recorded calls, 1,567 seeded, 944 prefix boundaries, 1,165 decimal ties; 5 rejected inputs | PASS: all; also 30 existing f/% calls, 2,948 seeded and 600 ties; all 5,364 carry cases | PASS: all, including 5,364 carry cases | FAIL: d3-format's tests 121 of 139, seeded 2,011 of 2,939 print d3's text (2026-10-29) |
 | A68 | probes/dcss/bisect-check.mjs; probes/dcss/discrete/inherited-check.mjs: recorded calls, 515 seeded cases per side, native changes, printing, nested readers and invalid inputs | PASS: 25/42 left and 25/37 right; 1,030 seeded; 28 live/reader checks plus four nested missing-query states | PASS: the same | FAIL: all 50 supported recorded calls; 1,023 of 1,030 seeded and 27 of 28 live/reader checks (single-precision arithmetic) |
+| A132 | readme-check.mjs: README's 32 examples as written, with a word of text in each empty `<li>` (18), and under a site's rules on lists, items, figures and outputs, each output's counters and error against the written run's | PASS: 85 outputs (2026-10-29) | PASS: 85 outputs (2026-10-29) | NOTRUN |
 | A69 | pipeline/contract-check.mjs; probes/dcss/compiled-check.mjs: native values, exact sum/scale, four d3 texts, invalid bindings | PASS: 144 build checks with optional mathfont; 10/10 states per implementation | PASS: same build checks; 10/10 states per implementation | PASS: 10/10 states, the arithmetic implementation (compiled-check.mjs) (2026-10-29) |
 | A70 | pipeline/contract-check.mjs; probes/dcss/composition-cost.mjs and composition-cost-summary.mjs: reader counts, matching complete workloads, per-engine selection and authored semantic structure; pipeline/bytes.mjs | PASS: 144 build checks; six paired workloads retain arithmetic; twelve semantic projections; 320 prior pages/models unchanged in the earlier refactor | PASS: same build checks; same workload choices | NOTRUN: the selection compares Chrome's and WebKit's medians |
 | A71 | probes/dcss/compiled-check.mjs: invalid values, native reset; variable/glyph pending, delivered and failed fonts | PASS: 10/10 states each; 3/3 guards per font encoding | PASS: 10/10 states each; 3/3 guards per font encoding | PASS: 10/10 states in each mode; 3/3 guards per font encoding (FONT_ROM=1) (2026-10-29) |
