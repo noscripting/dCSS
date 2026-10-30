@@ -23,6 +23,7 @@ All notable changes to dcss-array.css are written here. The format follows [Keep
 
 ### Changed
 
+- `.dcss-format-si` rounds once, exactly, with no tables: 20 outputs moving every frame took 61 to 75 ms of rendering a frame in Safari, now 14 (Chrome 1.3 to 0.9), and `families/format.css` is 135 KB (237). Every digit is still d3's, including the 527 doubles that come closest to a tie past 10^22, now in the check.
 - `.dcss-format-general` runs on the fixed format's exact rounding (d3's general notation is toPrecision, which rounds as toFixed does at its digits less one less the exponent): 20 outputs moving every frame took 70 ms of rendering a frame in Safari, now 11. It also prints a value that rounds up to 0.000001, which it left blank.
 - The sum, mean, min, max and extent no longer round a value off the 1/64 grid to the nearest 64th: it leaves no answer, `--dcss-err` 1, as the median and variance already did (12.3 and 7.85 summed to 20.140625). An item with no number is skipped quietly by them too (`--dcss-err` 0, their `<output>` printing the answer), and a value past a call's range is error 1, not 2.
 - Every call measures across and down whatever the page's `writing-mode` (in `vertical-rl` a median read -64,895.5).

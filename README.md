@@ -50,7 +50,7 @@ A page that uses many calls can link the core, `dcss-array.css`, and the familie
 | `array.css` | sum, count, mean, min, max, extent, length; ascending, descending; the index extrema; bisect, bisector; share; median, quantile and their indexes, the discrete scales, cumsum; bin; variance, deviation; the precision helpers; range | 22 KB |
 | `hierarchy.css` | slice, dice and slice-dice treemaps, partition | 0.9 KB |
 | `scale.css` | linear, pow, sqrt, log, band and identity scales | 7.5 KB |
-| `format.css` | format types f, %, s and general; a log scale's ticks and labels; an Arabic locale | 18 KB |
+| `format.css` | format types f, %, s and general; a log scale's ticks and labels; an Arabic locale | 11 KB |
 | `ease.css` | every d3-ease function | 2.9 KB |
 | `time.css` | UTC time intervals: day, week, month, year, hour, minute, second | 15 KB |
 | `date-format.css` | utcFormat in 41 formats | 4.2 KB |
@@ -1310,7 +1310,7 @@ In WebKit, the median of three cold loads beside the core (2026-10-28):
 | `array.css` | 281 KB | 15 ms |
 | `hierarchy.css` | 6.6 KB | 10 ms |
 | `scale.css` | 120 KB | 12 ms |
-| `format.css` | 237 KB | 15 ms |
+| `format.css` | 136 KB | 15 ms |
 | `ease.css` | 41 KB | 10 ms |
 | `time.css` | 315 KB | 15 ms |
 | `date-format.css` | 36 KB | 10 ms |
@@ -1324,7 +1324,7 @@ The core is 284 KB, 73 KB gzipped; `dcss-array-extras.css`, the lists, loops and
 | `array.css` | 38 | 1.8 KB (0.8–5.8) | 22 KB |
 | `hierarchy.css` | 4 | 0.6 KB (0.6–0.7) | 0.9 KB |
 | `scale.css` | 6 | 2.3 KB (0.5–3.0) | 7.5 KB |
-| `format.css` | 9 | 3.7 KB (1.3–11.9) | 18 KB |
+| `format.css` | 9 | 3.7 KB (1.3–5.0) | 11 KB |
 | `ease.css` | 37 | 0.7 KB (0.5–1.0) | 2.9 KB |
 | `time.css` | 65 | 0.8 KB (0.8–3.7) | 15 KB |
 | `date-format.css` | 41 | 3.4 KB (3.3–3.5) | 4.2 KB |
