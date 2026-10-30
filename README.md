@@ -140,12 +140,12 @@ A median, quantile, variance or summary reads its list through three nested elem
 One list, several answers:
 
 ```html
-<figure class="dcss-summarize">
+<figure class="dcss-summarize" style="height: 3lh">  <!-- one line tall unless given a height -->
   <ul><li style="--value: 72.5"></li> <li style="--value: 88"></li> <li style="--value: 95"></li> <li style="--value: 47"></li></ul>
   <div><div><div>
-    <output class="dcss-format-fixed" style="--value: var(--dcss-mean); --precision: 1"></output>   <!-- 75.6 -->
-    <output class="dcss-format-fixed" style="--value: var(--dcss-max); --precision: 1"></output>    <!-- 95.0 -->
-    <output class="dcss-format-fixed" style="--value: var(--dcss-deviation); --precision: 1"></output>  <!-- 21.3 -->
+    <output class="dcss-format-fixed" style="--value: var(--dcss-mean); --precision: 1; display: block"></output>   <!-- 75.6 -->
+    <output class="dcss-format-fixed" style="--value: var(--dcss-max); --precision: 1; display: block"></output>    <!-- 95.0 -->
+    <output class="dcss-format-fixed" style="--value: var(--dcss-deviation); --precision: 1; display: block"></output>  <!-- 21.3 -->
   </div></div></div>
 </figure>
 ```
