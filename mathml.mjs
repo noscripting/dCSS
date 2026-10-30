@@ -328,7 +328,20 @@ function indexed(ix, apply) {
     if (v === null) throw refusal(el.start, `a ${ix.op}'s bound the page sets at run time: this build unrolls the ${ix.op} when the page is built, so a bound is a number, or a name a formula above defines with numbers`);
     if (!Number.isInteger(v)) throw refusal(el.start, `a ${ix.op}'s bound of ${v}: the index runs over whole numbers`);
     return [it, v]; };
-  const [loItem, lo] = bound(ix.lo), [hiItem, hi] = bound(ix.hi);
+  const [loItem, lo] = bound(ix.lo), hiLive = item(ix.hi);
+  // a bound the page sets: min(n, 100), a ceiling the build knows beside it; the terms are written out to the ceiling, and
+  // each counts while its i is at most the bound's value, as JavaScript's loop runs i <= Math.min(n, 100)
+  if (itemValue(hiLive) === null) {
+    const caps = hiLive.node?.op === 'min' && hiLive.node.items.length > 1 ? hiLive.node.items.map((x) => itemValue(x)).filter((v) => v !== null) : [];
+    if (!caps.length || caps.some((v) => !Number.isFinite(v))) throw refusal(ix.hi.start, `a ${ix.op}'s bound the page sets at run time with no ceiling: write it min(n, 100), with the most terms it can take, and the build writes them out to 100`);
+    const cap = Math.floor(Math.min(...caps));
+    if (cap - lo + 1 > MAX_LIVE) throw refusal(ix.at, `a ${ix.op} of up to ${cap - lo + 1} terms to a bound the page sets, past the ${MAX_LIVE} this build writes out (each term takes seven registered steps)`);
+    const display = withIndex(ix.name, null, () => item(ix.body)), terms = [];
+    for (let v = lo; v <= cap; v++) terms.push(withIndex(ix.name, v, () => item(ix.body)));
+    const call = ix.op === 'sum' ? 'isum' : 'iproduct';
+    return { op: call, call, items: terms, display, index: ix.name, loItem, hiItem: hiLive, live: hiLive.node, lo, start: apply.start };
+  }
+  const [hiItem, hi] = bound(ix.hi);
   if (hi - lo + 1 > MAX_TERMS) throw refusal(ix.at, `a ${ix.op} of ${hi - lo + 1} terms, past the ${MAX_TERMS} this build writes out`);
   const display = withIndex(ix.name, null, () => item(ix.body)), terms = [];
   for (let v = lo; v <= hi; v++) terms.push(withIndex(ix.name, v, () => item(ix.body)));
@@ -438,7 +451,7 @@ const OPS = { lt: (a, b) => a < b, leq: (a, b) => a <= b, gt: (a, b) => a > b, g
 const condValue = (c, seen) => { if (c.parts) { const vs = c.parts.map((q) => condValue(q, seen)); return vs.includes(null) ? null : c.op === 'and' ? vs.every(Boolean) : vs.some(Boolean); }
   const xs = c.items.map((x) => itemValue(x, seen)); return xs.includes(null) ? null : xs.slice(1).every((b, i) => OPS[c.op](xs[i], b)); };
 const wholeArgs = (a, b) => Number.isInteger(a) && Number.isInteger(b) && Math.abs(a) <= 2 ** 26 && Math.abs(b) <= 2 ** 26 && b !== 0;
-const valueOf = (node, seen) => { if (node.call === 'fixed') { if (!node.unless) return node.value; if (!seen) return null; node.unless.forEach((n) => seen.add(n)); return node.value; }
+const valueOf = (node, seen) => { if (node.live) return null; if (node.call === 'fixed') { if (!node.unless) return node.value; if (!seen) return null; node.unless.forEach((n) => seen.add(n)); return node.value; }
   const xs = node.items.map((x) => itemValue(x, seen)); if (xs.includes(null)) return null;
   if (node.call !== 'piecewise') return D3[node.call](xs, node);
   for (let j = 0; j < node.conds.length; j++) { const t = condValue(node.conds[j], seen); if (t === null) return null; if (t) return xs[j]; }
@@ -446,19 +459,34 @@ const valueOf = (node, seen) => { if (node.call === 'fixed') { if (!node.unless)
 // a median of n values the page sets compares n · (n - 1) pairs: 2,048 is a median of 45 names, 93 KB of style, a change
 // 0.1 ms of style work in Chrome and WebKit (2026-10-29)
 const MAX_COMPARES = 2048;
+// a sum or product to a bound the page sets writes each term to its ceiling in seven registered steps: 100 terms are
+// 260 KB of style, and a change of the bound 4.2 ms of style and layout in Chrome, 9 in WebKit (360: 13.5 and 36; 2026-10-30)
+const MAX_LIVE = 100;
 // the formula in one form of division: the answer's expression and the registered steps before it, as [name, expression]
 // the CSS of formulas in one form of division: expr(node) is a node's expression; the registered steps it needs collect in
 // decls, as [name, expression], and the names the page sets in names
 function former(divide) {
   const decls = [], names = new Set(), f = { decls, names, compares: 0 }; let id = 0;
+  const arg = (x) => (x.node ? expr(x.node) : x.def ? expr(x.def) : x.ci ? (x.fallback ? `var(--${x.ci}, ${x.fallback})` : (names.add(x.ci), `var(--${x.ci})`)) : Object.is(x.x, -0) ? '(-1 * 0)' : String(x.x));
   const expr = f.expr = (node) => {
     if (node.call === 'fixed' && node.unless) { // as a piecewise: the live power where --e is set, no answer where another is
       const others = node.unless.filter((n) => !(node.live && n === 'e')), conds = [...(node.live ? [{ set: ['e'] }] : []), ...(others.length ? [{ set: others }] : [])];
       return expr({ call: 'piecewise', conds, otherwise: true, items: [...(node.live ? [{ node: node.live }] : []), ...(others.length ? [{ x: NaN }] : []), { x: node.value }] }); }
     if (node.call === 'fixed') return Object.is(node.value, -0) ? '(-1 * 0)' : String(node.value);
+    if (node.live) { // a sum or product to a bound the page sets (indexed): each term to the ceiling in four registered
+      // integers with its finiteness, and whether it counts (i <= the bound, as an integer: an unset var() voids only its
+      // own term); a term not counted adds 0 (a product's is to the power 0), even where the page sets none of its names
+      const kept = [...names]; names.clear(); const k = ++id, xs = node.items.map(arg); names.clear(); kept.forEach((n) => names.add(n));
+      const P = `--dcss-dcss-u${k}`, hi = expr(node.live);
+      xs.forEach((x, j) => { const q = `${P}-v${j}`, c = `clamp(-1 * pow(2, 1023), ${x}, pow(2, 1023))`; for (const z of 'eabcz') decls.push([`${q}-${z}`, SPLIT[z](q, c)]);
+        decls.push([`${P}-vf${j}`, `${x} * 0 + 1`], [`${P}-in${j}`, `clamp(0, round(down, ${hi}, 1) - ${node.lo + j - 1}, 1)`]); });
+      decls.push([`${P}-hf`, `${hi} * 0 + 1`], [`${P}-ok`, `1 - min(1, ${[...xs.map((_, j) => `var(${P}-in${j}) * (1 - var(${P}-vf${j}))`), `1 - var(${P}-hf)`].join(' + ')})`]);
+      const parts = xs.map((_, j) => (node.call === 'isum' ? `var(${P}-in${j}) * ${join(`${P}-v${j}`)}` : `pow(${join(`${P}-v${j}`)}, var(${P}-in${j}))`));
+      return `(${[node.call === 'isum' ? '0' : '1', ...parts].reduce((a, b) => F(`${a} ${node.call === 'isum' ? '+' : '*'} ${b}`))} * (1 + 0 / var(${P}-ok)))`;
+    }
     // a number as JavaScript reads it: -0 kept (String(-0) is "0", and 1 / -0 is -Infinity); a name with a fallback (LaTeXML's
     // 𝜋) reads the page's value when it sets one, else the fallback, so an unset one is no missing name
-    const k = ++id, xs = node.items.map((x) => (x.node ? expr(x.node) : x.def ? expr(x.def) : x.ci ? (x.fallback ? `var(--${x.ci}, ${x.fallback})` : (names.add(x.ci), `var(--${x.ci})`)) : Object.is(x.x, -0) ? '(-1 * 0)' : String(x.x)));
+    const k = ++id, xs = node.items.map(arg);
     if (node.call === 'id') return xs[0];
     if (node.call === 'piecewise') {
       // each condition's truth and its sides' finiteness, and each value in four registered integers with its own

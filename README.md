@@ -252,7 +252,7 @@ A function of numbers the build knows is worked out once, when the page is built
 
 A formula is not laid out: the build sees every number, so the page's number is d3's own double, or JavaScript's for arithmetic, with no 1/64 grid. 12.3 is 12.3, the mean of 1, 2 and 4 is 2.3333333333333335, and a formula inside a formula takes it as d3 composes calls. The build adds in d3's order, divides as IEEE does in each engine (so the advice in Format against `/` is about a `calc()` you write yourself, not a formula), and ranks a median's values against each other where the page sets them. Numbers stay below 3.4e38, a 32-bit float's largest ([Browsers](#browsers)): the build refuses a larger `<cn>`, a name the page sets that large leaves no answer, and so does an answer past the largest double. With that default an answer from 9,007,199,255 up prints nothing, with error 1 (its millionths pass 2^53): give it `.dcss-format-si`.
 
-A sum or product over an index, ∑ from i = 1 to n of a term, is written out when the page is built: MathML's `<sum/>` (or `<product/>`) with `<bvar><ci>i</ci></bvar>`, `<lowlimit>` and `<uplimit>`, or LaTeX's `\sum_{i=1}^{n}` as LaTeXML writes it. Inside the term, i is the number and x_i reads `--x_1`, `--x_2` and so on; the terms are added as JavaScript's loop adds them, from 0 (a product from 1). The bounds are whole numbers the build knows: written, or a name a formula above defines (`<apply><eq/><ci>n</ci><cn>12</cn></apply>`), up to 1,000 terms; an infinite sum, or a bound the page sets at run time, stops the build.
+A sum or product over an index, ∑ from i = 1 to n of a term, is written out when the page is built: MathML's `<sum/>` (or `<product/>`) with `<bvar><ci>i</ci></bvar>`, `<lowlimit>` and `<uplimit>`, or LaTeX's `\sum_{i=1}^{n}` as LaTeXML writes it. Inside the term, i is the number and x_i reads `--x_1`, `--x_2` and so on; the terms are added as JavaScript's loop adds them, from 0 (a product from 1). The bounds are whole numbers the build knows: written, or a name a formula above defines (`<apply><eq/><ci>n</ci><cn>12</cn></apply>`), up to 1,000 terms. An upper bound the page sets is written with its ceiling, min(n, 100): the build writes the terms out to 100, and each counts while i ≤ n, as JavaScript's loop runs `i <= Math.min(n, 100)`; a term past n is never read, so its names needn't be set. Such a sum takes up to 100 terms ([Performance](#performance)). An infinite sum, or a bound the page sets with no ceiling, stops the build.
 
 ```html
 <math><apply><sum/><bvar><ci>t</ci></bvar><lowlimit><cn>1</cn></lowlimit><uplimit><cn>3</cn></uplimit>
@@ -1289,7 +1289,7 @@ A sheet is a `<table class="sheet">` whose cells are stored numbers and whose fo
 
 <!-- browsers -->
 
-Chrome and Safari's engine both run everything: headless Chrome 155 and WebKit 26.4 (Playwright's build of Safari's engine, not Safari itself) pass all 116 requirements in [SPEC.md](SPEC.md). The d3 calls give d3's own answer to 3,206 of the 7,049 calls d3's tests make (45%), and cover 26 of d3's 508 functions in full and 73 more in part; SPEC.md's implementation report has the count for each call. Easings and scales come within 1e-12 of d3. A treemap's boxes are within 2/64 px per level of d3's for totals up to 50,000; near a million, WebKit is 0.3 px off and Chrome 0.02 px.
+Chrome and Safari's engine both run everything: headless Chrome 155 and WebKit 26.4 (Playwright's build of Safari's engine, not Safari itself) pass all 117 requirements in [SPEC.md](SPEC.md). The d3 calls give d3's own answer to 3,206 of the 7,049 calls d3's tests make (45%), and cover 26 of d3's 508 functions in full and 73 more in part; SPEC.md's implementation report has the count for each call. Easings and scales come within 1e-12 of d3. A treemap's boxes are within 2/64 px per level of d3's for totals up to 50,000; near a million, WebKit is 0.3 px off and Chrome 0.02 px.
 
 A reduction's list wider or taller than 262,144 px (2^18) can read without its 64ths, in Chrome and in Safari, so a sum, mean, min, max or extent whose list passes that size gives no answer, `--dcss-err` 1, when an item may hold a fraction or none: one whose style attribute has a decimal point, an exponent, `var()` or `calc()`, or that has no style attribute. Whole numbers written in the items stay exact while the list is under 2^24 px (a sum of cents to $167,772.14); a list that size gives no answer, error 1, whatever its items hold. The sizes: a sum's and a mean's list are 1 px more than what they hold, so a sum whose positives or negatives reach 262,143, a mean whose sum and 1024 for each negative value do, or whose count and 4,096 for each negative value do (64 negative values), a min, max or extent whose values spread past 131,072.
 
@@ -1297,7 +1297,7 @@ Chrome reads a number from 3.4e38 up, written or brought by `var()`, as 3.4e38, 
 
 Safari drops an input copied into one formula past 65,535 tokens: a scale's answer is short enough to be another scale's domain stop or exponent, or a projection's point; a scale's inverse copies its stops up to 34 times and its exponent up to 86, and a projection's answer (about 12,000 tokens) is too long for those inputs.
 
-Firefox 158 computes `calc()` in 32-bit floats, so the calls that need a double's exact digits (exact sums, dates, most formatting) give wrong answers there, and it has no view timelines, which loops and sheets need. It passes 71 of the 116 requirements. `@function` runs only in Chrome: WebKit 26.4 and Firefox 158 don't parse it, and the classes work everywhere. [QUIRKS.md](QUIRKS.md) has the engine bugs the sheet works around.
+Firefox 158 computes `calc()` in 32-bit floats, so the calls that need a double's exact digits (exact sums, dates, most formatting) give wrong answers there, and it has no view timelines, which loops and sheets need. It passes 71 of the 117 requirements. `@function` runs only in Chrome: WebKit 26.4 and Firefox 158 don't parse it, and the classes work everywhere. [QUIRKS.md](QUIRKS.md) has the engine bugs the sheet works around.
 
 <!-- /browsers -->
 
@@ -1403,6 +1403,8 @@ Formulas, an update forced:
 | a page without formulas, 1,000 array readers | unchanged | unchanged |
 
 Share a result through a reader rather than copy a computation into each formula, and keep stages few.
+
+A MathML sum to a bound the page sets, min(n, C), writes each term out with seven registered steps; a change of n, style and layout forced (2026-10-30): C = 10, 60, 100 and 360 take 0.9, 3.6, 4.2 and 13.5 ms in Chrome, 2, 7, 9 and 36 ms in WebKit 26.4. The build takes C up to 100.
 
 ## Build
 

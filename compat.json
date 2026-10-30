@@ -1870,7 +1870,30 @@
       },
       "A134": {
         "__compat": {
-          "description": "`mathml.mjs` MUST compile a `<sum/>` or `<product/>` over an index (`<bvar>` with `<lowlimit>` and `<uplimit>` or a closed `<interval>`, or LaTeXML's ∑ and ∏ with i = lo below and hi above) to JavaScript's loop over i from lo to hi, s = 0, s += term (p = 1, p *= term), to the bit, with i a number in the term and x_i read from `--x_<i>`. Its bounds MUST be whole numbers known when the page is built, at most 1,000 terms apart. An infinite bound, or one the page sets at run time, MUST stop the build with its reason.",
+          "description": "`mathml.mjs` MUST compile a `<sum/>` or `<product/>` over an index (`<bvar>` with `<lowlimit>` and `<uplimit>` or a closed `<interval>`, or LaTeXML's ∑ and ∏ with i = lo below and hi above) to JavaScript's loop over i from lo to hi, s = 0, s += term (p = 1, p *= term), to the bit, with i a number in the term and x_i read from `--x_<i>`. Its bounds MUST be whole numbers known when the page is built, at most 1,000 terms apart. An infinite bound, or one the page sets at run time with no ceiling (A136), MUST stop the build with its reason.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
+            },
+            "firefox": {
+              "version_added": null
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A136": {
+        "__compat": {
+          "description": "`mathml.mjs` MUST compile a `<sum/>` or `<product/>` whose upper bound is a `<min/>` of formulas the page sets and numbers the build knows to JavaScript's loop from the lower bound while i <= that `<min/>`'s value, to the bit, writing the terms out to the smallest of those numbers, at most 100 terms. A term past the bound MUST change nothing, whether its names are unset or it is NaN or infinite. A term within the bound with a name the page doesn't set or no finite value, and a bound that is NaN, MUST leave no answer, error 1.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
