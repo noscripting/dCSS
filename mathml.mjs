@@ -205,6 +205,19 @@ export const MATHFN = {
   arccoth: trueOf((c, X) => (X > c.ONE || X < -c.ONE ? ((Y) => c.ln(c.div(c.ONE + Y, c.ONE - Y)) / 2n)(c.inv(X)) : null)),
   cbrt: trueOf((c, X) => (X === 0n ? 0n : (X < 0n ? -1n : 1n) * c.ex(c.ln(X < 0n ? -X : X) / 3n))),
 };
+// a double as the split's integers (e, a, b, c, z), as SPLIT computes them and join() reads them back
+const splitInts = (v) => { if (v === 0) return { e: -1074, a: 0, b: 0, c: 0, z: Object.is(v, -0) ? 1 : 0 };
+  const { mant, e } = bitsOf(v), E = Number(BigInt(mant.toString(2).length) - 1n + e), m = v * 2 ** (17 - E), a = Math.trunc(m), f = (m - a) * 524288, b = Math.trunc(f);
+  return { e: E, a, b, c: (f - b) * 524288, z: 0 }; };
+// exp of a name the page sets, computed in calc() to the double nearest the true value or no answer (EXPS below): the
+// constants, from the same BigInt values. ln 2 / 64 in three parts, the first two of 36 bits so that k times them is
+// exact for |k| < 2^17; 2^(j/64) for j = 0..63 as a double and the double nearest what it leaves; 1/n! for n = 3..8
+export const EXPK = (() => { const c = at(1200n), dbl = (v) => nearest(v, c.P), keep36 = (v) => { const drop = BigInt(v.toString(2).length) - 36n; return (v >> drop) << drop; };
+  const L = c.LN2 / 64n, L1 = keep36(L), L2 = keep36(L - L1);
+  const halves = (a) => { const t = 134217729 * a, hi = t - (t - a); return [hi, a - hi]; };
+  const T = Array.from({ length: 64 }, (_, j) => { const v = c.ex((c.LN2 * BigInt(j)) / 64n), h = dbl(v); return [h, dbl(v - c.fix(h)), ...halves(h)].map(splitInts); });
+  const C = [3, 4, 5, 6, 7, 8].map((n) => { let f = 1n; for (let i = 2n; i <= BigInt(n); i++) f *= i; return dbl(c.ONE / f); });
+  return { L1: dbl(L1), L2: dbl(L2), L3: dbl(L - L1 - L2), INV: dbl((c.ONE << c.P) / L), T, C }; })();
 // the n-th root of a number the build knows, odd ones of negatives (an operator, <root/>, not one of the functions above)
 export const rootOf = (x, n) => (x === 0 ? x : x < 0 ? (n % 2 ? -rootOf(-x, n) : NaN) : trueOf((c, X) => c.ex(c.ln(X) / BigInt(n)))(x));
 const WHY = {
@@ -315,7 +328,8 @@ function call(apply) {
   // e to a power is exp(x) (MathML 4: power of exponentiale), not Math.pow(Math.E, x), another double for 92 of 100 x
   if (op === 'power' && (items[0].konst === 'e' || (items[0].ci === 'e' && !items[0].def))) { const seen = new Set(), x = itemValue(items[1], seen);
     if (x !== null) return fixed('power', MATHFN.exp(x), items, apply.start, items[0].ci ? seen.add('e') : seen, items[0].ci && { op, call: CALLS[op], items }); }
-  if (op === 'power' && (items[0].konst === 'e' || (items[0].ci === 'e' && !items[0].def))) throw refusal(args[0].start, 'e to a power is exp(x): CSS\'s exp() doesn\'t give JavaScript\'s Math.exp, and Math.pow(Math.E, x) is another double for 92 of 100 x; if e is a quantity of your own, define it in a formula before this one');
+  // e to a power the page sets: exp computed on the page; LaTeXML's 𝑒 is the page's --e where it sets one (Math.pow then)
+  if (op === 'power' && (items[0].konst === 'e' || (items[0].ci === 'e' && !items[0].def))) return { op, call: items[0].konst ? 'exp' : 'eset', items, start: apply.start };
   // a root of a degree other than a power of 2: of a number the build knows, the double nearest the true root (∛64 is 4);
   // of a name the page sets, refused, as CSS has no such root and pow(x, 1/3) misses whole roots
   if (op === 'root' && degree & (degree - 1)) { const x = itemValue(items[0]);
@@ -427,7 +441,8 @@ function folded(name, at, args, apply) {
   if (rest.length !== 1) throw refusal(apply.start, `${name} of ${rest.length} arguments: it takes 1`);
   for (const a of rest) if (!['cn', 'ci', 'apply', 'piecewise'].includes(a.name) && !constantOf(a)) throw refusal(a.start, `<${a.name}> as an argument: only <cn> numbers, <ci> names, π, e and another <apply>`);
   const seen = new Set(), items = [item(rest[0]), ...(base.length ? [item(elements(base[0])[0])] : [])], [x, b] = items.map((i) => itemValue(i, seen));
-  if (x === null || (base.length && b === null)) throw refusal(at, `${name} of a name the page sets: ${INEXACT}. Of numbers the build knows it is computed when the page is built`);
+  if (name === 'exp' && (x === null || seen.size)) return { op: 'exp', call: 'exp', items, start: apply.start }; // computed in calc(), exactly
+  if (x === null || (base.length && b === null)) throw refusal(at, `${name} of a name the page sets: ${INEXACT}. Of numbers the build knows it is computed when the page is built; exp of a name is computed on the page`);
   return fixed(name, MATHFN[name](x, name === 'log' ? (base.length ? b : 10) : undefined), items, apply.start, seen);
 }
 // a value the build computed (the double nearest the true value): written in as a number, drawn as the formula it came from. Where it took 𝜋 or
@@ -550,7 +565,43 @@ function former(divide) {
     for (const z of 'eabcz') decls.push([`${q}-${z}`, SPLIT[z](q, `clamp(-1 * pow(2, 1023), ${x}, pow(2, 1023))`)]);
     decls.push([`${q}-f`, `${x} * 0 + 1`]); return `(${join(q)} * (1 + 0 / var(${q}-f)))`; };
   const chain = (op, xs) => xs.reduce((a, b) => keep(F(`${a} ${op} ${b}`)));
+  // exp of a value the page sets, to the double nearest the true value (a model of these steps in JavaScript matched the
+  // BigInt exp on 200,000 arguments, its error at most 2^-76.4; probes/dcss/exact-check.mjs): k = round(x · 64 / ln 2),
+  // x = k (ln 2 / 64) + r by three exact parts, e^x = 2^(k div 64) · T(k mod 64) · e^r, e^r − 1 to degree 8 with r² exact
+  // (Dekker), assembled as a double-double z (TwoSum, TwoProduct, each step fenced: exact in both engines, 5,000 of 5,000
+  // each); the answer is z's high part unless its low part is within 2^-72 of half an ulp, too near halfway to round from,
+  // and then there is none, as outside -708 ≤ x ≤ 709. A value used more than once is a macro, an unregistered custom
+  // property: the same tokens compute the same double each time; each stage's results go through the split, so no
+  // declaration brings past 65,535 tokens (WebKit's most through one var())
+  const liveExp = (xe) => { const k = ++id, P = `--dcss-dcss-x${k}`, mac = (n, v) => (decls.push([`--dcss-dcss-y${k}-${n}`, `(${v})`]), `var(--dcss-dcss-y${k}-${n})`);
+    const store = (n, v) => { const q = `${P}-${n}`; for (const z of 'eabcz') decls.push([`${q}-${z}`, SPLIT[z](q, `clamp(-1 * pow(2, 1023), ${v}, pow(2, 1023))`)]); decls.push([`${q}-f`, `${v} * 0 + 1`]); return join(q); };
+    const add = (a, b) => F(`${a} + ${b}`), sub = (a, b) => F(`${a} + (-1 * ${b})`), mul = (a, b) => F(`${a} * ${b}`), num = (v) => String(v);
+    const twoSum = (n, a, b) => { const s = mac(`${n}s`, add(a, b)), bb = mac(`${n}b`, sub(s, a)); return [s, add(sub(a, sub(s, bb)), sub(b, bb))]; };
+    const fast = (n, a, b) => { const s = mac(`${n}s`, add(a, b)); return [s, sub(b, sub(s, a))]; };
+    const halves = (n, a) => { const t = mac(`${n}t`, mul('134217729', a)), hi = mac(`${n}h`, sub(t, sub(t, a))); return [hi, mac(`${n}l`, sub(a, hi))]; };
+    const { L1, L2, L3, INV, T, C } = EXPK, K = `var(${P}-K)`;
+    const x = mac('x', xe);
+    decls.push([`${P}-d`, `(1 - sign(max(0, -708 + (-1 * ${x})))) * (1 - sign(max(0, ${x} + -709)))`], [`${P}-K`, `round(${x} * ${num(INV)}, 1)`], [`${P}-E`, `round(down, ${K} / 64, 1)`], [`${P}-J`, `${K} + -64 * var(${P}-E)`]);
+    // stage 1: r = rh + rl, rh cut to 26 bits so that rh² is exact
+    const [s1, e1] = twoSum('r', mac('ra', sub(x, `(${K} * ${num(L1)})`)), `(-1 * ${K} * ${num(L2)})`), [rh, r2] = halves('h', s1);
+    const RH = store('rh', rh), RL = store('rl', add(r2, sub(e1, `(${K} * ${num(L3)})`)));
+    // stage 2: e^r − 1 = s + pl0, rh + rh²/2 exactly as a pair, the rest in doubles (rd = rh + rl in the polynomial)
+    const rd = mac('rd', add(RH, RL)), poly = C.slice(0, -1).reduceRight((acc, c) => add(num(c), mul(rd, acc)), num(C.at(-1)));
+    const [s, e] = fast('s', RH, mul(mul(RH, RH), '0.5')), S = store('s', s);
+    const PL0 = store('p0', add(e, add(RL, add(mul(RH, RL), add(mul(mul(RL, RL), '0.5'), mul(mul(mul(rd, rd), rd), poly))))));
+    // stage 3: z = T (1 + p); T, its low part and its two halves picked from 64 as the split's integers
+    const [ph, pl0] = fast('p', S, PL0), pl = mac('pl', pl0);
+    for (let j = 0; j < 64; j++) decls.push([`${P}-I${j}`, `max(0, 1 - abs(var(${P}-J) + ${-j}))`]); // J = j, registered once
+    const tab = (i) => { const q = `${P}-T${i}`; for (const z of 'eabcz') decls.push([`${q}-${z}`, T.map((t, j) => (t[i][z] ? `var(${P}-I${j}) * ${t[i][z]}` : '')).filter(Boolean).join(' + ') || '0']); return mac(`T${i}`, join(q)); };
+    const [Th, Tl, Thh, Thl] = [0, 1, 2, 3].map(tab), [phh, phl] = halves('g', ph), m = mac('m', mul(Th, ph));
+    const me = add(add(add(sub(mul(Thh, phh), m), mul(Thh, phl)), mul(Thl, phh)), mul(Thl, phl));
+    const [yh, yt] = fast('y', Th, m), low = mac('lo', add(yt, add(me, add(Tl, add(mul(Th, pl), mul(Tl, ph)))))), [zh, zl0] = fast('z', yh, low), zl = mac('zl', zl0);
+    // halfway: half an ulp of zh (2^-53 below 1, 2^-52 from 1; zh is in [0.99, 2)) against |zl|, with 2^-72 to spare
+    decls.push([`${P}-ok`, `var(${P}-d) * var(${P}-rh-f) * var(${P}-rl-f) * var(${P}-s-f) * var(${P}-p0-f) * sign(max(0, pow(2, -54) * (2 - sign(max(0, 1 + (-1 * ${zh})))) + (-1 * abs(${zl})) + ${-(2 ** -72)}))`]);
+    return `(${zh} * pow(2, var(${P}-E)) * (1 + 0 / var(${P}-ok)))`; };
   const build = (node) => {
+    if (node.call === 'exp') return liveExp(arg(node.items.at(-1)));
+    if (node.call === 'eset') return expr({ call: 'piecewise', conds: [{ set: ['e'] }], otherwise: true, items: [{ node: { call: 'power', items: node.items } }, { node: { call: 'exp', items: node.items.slice(1) } }] });
     if (node.call === 'fixed' && node.unless) { // as a piecewise: the live power where --e is set, no answer where another is
       const others = node.unless.filter((n) => !(node.live && n === 'e')), conds = [...(node.live ? [{ set: ['e'] }] : []), ...(others.length ? [{ set: others }] : [])];
       return expr({ call: 'piecewise', conds, otherwise: true, items: [...(node.live ? [{ node: node.live }] : []), ...(others.length ? [{ x: NaN }] : []), { x: node.value }] }); }
@@ -652,7 +703,7 @@ function form(root, divide) {
 // ratio as 0 (facts/calc-negative-zero.mjs), so there a formula with a division whose answer is -0 gives 0: the same
 // text printed; 1 / it isn't taken further on the page
 const both = (plain, length) => ({ value: `calc(${either(plain.value, length.value)})`, decls: plain.decls.map(([k, v], i) => `${k}: calc(${either(v, length.decls[i][1])});`),
-  ints: plain.decls.map(([k]) => k), compares: plain.compares });
+  ints: plain.decls.map(([k]) => k).filter((k) => !k.startsWith('--dcss-dcss-y')), compares: plain.compares }); // the y's are macros, unregistered
 const emit = (root) => both(form(root, DIVIDE.plain), form(root, DIVIDE.length));
 // inequalities: each pair's truth as JavaScript's operator gives it on the two doubles (the sign of a fenced difference,
 // exact for finite doubles), the chain's the least of them; --dcss-dcss-fin is 0 when a side is NaN or infinite or
