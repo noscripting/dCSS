@@ -256,12 +256,13 @@ function item(a, defining = false) {
     // a CSS identifier: letters past ASCII too (𝑚)
     if (!/^-?[_a-zA-Z\u0080-\u{10FFFF}][-_a-zA-Z0-9\u0080-\u{10FFFF}]*$/u.test(id)) throw refusal(a.start, `<ci>${id}</ci>: a name must be a CSS identifier`);
     if (RESERVED.test(id)) throw refusal(a.start, `<ci>${id}</ci>: --${id} is a name dcss itself reads or writes`);
-    if (id === 'π' && !defining && !DEFS.has(id) && !LATER.has(id)) return CONSTANTS.pi;
+    if (id === 'π' && !defining && !DEFS.has(id) && !LATER.has(id)) return { ci: 'π', fallback: String(Math.PI) }; // π, or the page's --π
     return named({ ci: id }, a, defining);
   }
 }
-// π and e as numbers: MathML 4's <pi/> and <exponentiale/>, OpenMath's nums1 symbols, and LaTeXML's 𝜋 (a <ci>) where
-// the page defines no π of its own; Math.PI and Math.E written out, the same double a <cn> of their digits gives
+// π and e as numbers: MathML 4's <pi/> and <exponentiale/> and OpenMath's nums1 symbols are Math.PI and Math.E written
+// out, the same double a <cn> of their digits gives; LaTeXML's 𝜋 (a <ci>) where the page defines no π in a formula reads
+// --π, falling back to Math.PI where the page sets none
 const CONSTANTS = { pi: { x: Math.PI, neg: false, mag: '<mi>π</mi>', konst: 'pi' }, e: { x: Math.E, neg: false, mag: '<mi>e</mi>', konst: 'e' } };
 function constantOf(a) {
   if ((a.name === 'pi' || a.name === 'exponentiale') && blank(a) && !elements(a).length) return CONSTANTS[a.name === 'pi' ? 'pi' : 'e'];
@@ -316,7 +317,8 @@ function degreeOf(cn) { const { x } = number(cn); if (!Number.isInteger(x) || x 
 // No 1/64 grid and no layout: the build sees every operand, so nothing has to be laid out to be summed or ordered.
 const F = (x) => `min(${x}, infinity)`;
 const W = 'abs(sign(3 / 10 - 0.3))'; // 1 in WebKit, whose division of numbers isn't IEEE's (number.mjs ENGINE_W)
-const sel = (g, x) => `clamp(-1 * (pow(2, 2000 * ${g}) - 1), ${x}, pow(2, 2000 * ${g}) - 1)`;
+// x where g is 1, -0 where it is 0 (both bounds -0, so adding the unchosen form keeps a chosen -0: x + -0 is x)
+const sel = (g, x) => `clamp(-1 * (pow(2, 2000 * ${g}) - 1), ${x}, -1 * (1 - pow(2, 2000 * ${g})))`;
 // Chrome divides numbers exactly and lengths as a · (1/b), WebKit the other way round (number.mjs cssDiv), and in Chrome a
 // length anywhere under a division makes it a length's (a mean of means read 1 ulp off): so each declaration is written
 // twice, every division a number's and every division a length's, and the engine's flag picks one whole form
@@ -328,8 +330,10 @@ const either = (plain, length) => (plain === length ? plain : `${sel(`(1 - ${W})
 const half = (k) => `round(down, (${k}) / 2, 1)`, by2 = (x, k) => `(${x} * pow(2, ${half(k)}) * pow(2, ${k} - ${half(k)}))`;
 const scaled = (n, v) => by2(v, `17 - var(${n}-e)`);
 const SPLIT = { e: (n, v) => `round(down, log(max(abs(${v}), pow(2, -1074)), 2))`, a: (n, v) => `round(to-zero, ${scaled(n, v)})`,
-  b: (n, v) => `round(to-zero, rem(${scaled(n, v)}, 1) * 524288)`, c: (n, v) => `calc(rem(${scaled(n, v)} * 524288, 1) * 524288)` };
-const join = (n) => by2(`(var(${n}-a) + var(${n}-b) / 524288 + var(${n}-c) / 274877906944)`, `var(${n}-e) - 17`);
+  b: (n, v) => `round(to-zero, rem(${scaled(n, v)}, 1) * 524288)`, c: (n, v) => `calc(rem(${scaled(n, v)} * 524288, 1) * 524288)`,
+  // and a fifth, 1 for -0 (an integer has no sign of zero; 1 / -0 is -Infinity), multiplied back in
+  z: (n, v) => `(1 - abs(sign(${v}))) * max(0, -1 * sign(1 / ${v}))` };
+const join = (n) => `(${by2(`(var(${n}-a) + var(${n}-b) / 524288 + var(${n}-c) / 274877906944)`, `var(${n}-e) - 17`)} * (1 - 2 * var(${n}-z)))`;
 // d3's answer in JavaScript's doubles (JavaScript's Math where d3 has no call), when every number under it is written
 // (null with a <ci> under it); CSS's pow() and sqrt() are Math.pow's and Math.sqrt's to the bit (sqrt 300 of 300; pow 50,000 of 50,000, random and
 // compound-interest pairs, both engines on macOS, 2026-10-30; other systems' pow() not measured)
@@ -358,7 +362,9 @@ const MAX_COMPARES = 2048;
 function former(divide) {
   const decls = [], names = new Set(), f = { decls, names, compares: 0 }; let id = 0;
   const expr = f.expr = (node) => {
-    const k = ++id, xs = node.items.map((x) => (x.node ? expr(x.node) : x.def ? expr(x.def) : x.ci ? (names.add(x.ci), `var(--${x.ci})`) : String(x.x)));
+    // a number as JavaScript reads it: -0 kept (String(-0) is "0", and 1 / -0 is -Infinity); a name with a fallback (LaTeXML's
+    // 𝜋) reads the page's value when it sets one, else the fallback, so an unset one is no missing name
+    const k = ++id, xs = node.items.map((x) => (x.node ? expr(x.node) : x.def ? expr(x.def) : x.ci ? (x.fallback ? `var(--${x.ci}, ${x.fallback})` : (names.add(x.ci), `var(--${x.ci})`)) : Object.is(x.x, -0) ? '(-1 * 0)' : String(x.x)));
     if (node.call === 'id') return xs[0];
     if (node.call === 'piecewise') {
       // each condition's truth and its sides' finiteness, and each value in four registered integers with its own
@@ -369,28 +375,34 @@ function former(divide) {
         const ss = c.items.map((x) => expr(asNode(x))), hs = ss.slice(1).map((b, i) => CHECK[c.op](ss[i], b));
         return { t: hs.length === 1 ? hs[0] : `min(${hs.join(', ')})`, sides: ss }; };
       node.conds.forEach((c, j) => { const { t, sides } = cond(c); decls.push([`${P}-t${j}`, t], [`${P}-cf${j}`, `${sides.map((x) => `${x} * 0`).join(' + ')} + 1`]); });
-      xs.forEach((x, j) => { const q = `${P}-v${j}`, c = `clamp(-1 * pow(2, 1023), ${x}, pow(2, 1023))`; for (const z of 'eabc') decls.push([`${q}-${z}`, SPLIT[z](q, c)]); decls.push([`${P}-vf${j}`, `${x} * 0 + 1`]); });
+      xs.forEach((x, j) => { const q = `${P}-v${j}`, c = `clamp(-1 * pow(2, 1023), ${x}, pow(2, 1023))`; for (const z of 'eabcz') decls.push([`${q}-${z}`, SPLIT[z](q, c)]); decls.push([`${P}-vf${j}`, `${x} * 0 + 1`]); });
       const reached = (j) => (j ? Array.from({ length: j }, (_, i) => `(1 - ${v(`t${i}`)})`).join(' * ') : '1');
       const gate = (j) => (j < m ? `${v(`t${j}`)} * ${reached(j)}` : reached(m));
       const err = [...xs.map((_, j) => `${gate(j)} * (1 - ${v(`vf${j}`)})`), ...node.conds.map((_, j) => `${reached(j)} * (1 - ${v(`cf${j}`)})`), `(1 - (${xs.map((_, j) => gate(j)).join(' + ')}))`];
       decls.push([`${P}-ok`, `1 - min(1, ${err.join(' + ')})`]);
-      return `(${xs.map((_, j) => `${gate(j)} * ${join(`${P}-v${j}`)}`).reduce((a, b) => F(`${a} + ${b}`))} + 0 / ${v('ok')})`;
+      // the chosen piece alone is not 0, so a sum of all of them is it, -0 aside: the chosen one's sign of zero is put back
+      const zero = xs.map((_, j) => `${gate(j)} * var(${P}-v${j}-z)`).join(' + ');
+      return `(${xs.map((_, j) => `${gate(j)} * ${join(`${P}-v${j}`)}`).reduce((a, b) => F(`${a} + ${b}`))} * (1 - 2 * (${zero})) * (1 + 0 / ${v('ok')}))`;
     }
-    const total = () => xs.reduce((a, b) => F(`${a} + ${b}`));
+    // d3.sum and d3.mean add from 0, as a loop does: 0 + -0 is 0, so a sum of -0s is 0 (each term after is added exactly)
+    const total = () => ['0', ...xs].reduce((a, b) => F(`${a} + ${b}`));
     if (node.call === 'sum') return total();
     if (node.call === 'mean') return divide(total(), xs.length);
-    if (node.call === 'minus') return xs.length === 1 ? `(-1 * ${xs[0]})` : F(`${xs[0]} - ${xs[1]}`);
+    // a - b as a + -1 · b, the same IEEE double: WebKit's calc() gives -0 - 0 as 0 (JavaScript -0), and 1 / it would flip
+    if (node.call === 'minus') return xs.length === 1 ? `(-1 * ${xs[0]})` : F(`${xs[0]} + (-1 * ${xs[1]})`);
     if (node.call === 'times') return xs.reduce((a, b) => F(`${a} * ${b}`));
     if (node.call === 'divide') return divide(xs[0], xs[1]);
     if (node.call === 'power') return `pow(${xs[0]}, ${xs[1]})`;
     if (node.call === 'root') return node.degree === 2 ? `sqrt(${xs[0]})` : `pow(${xs[0]}, ${String(1 / node.degree)})`;
     if (node.call === 'abs') return `abs(${xs[0]})`;
-    if (node.call === 'floor' || node.call === 'ceiling') return `round(${node.call === 'floor' ? 'down' : 'up'}, ${xs[0]}, 1)`;
+    // a ceiling as -floor(-x): WebKit's round(up) gives 0 where Math.ceil(-0.5) is -0
+    if (node.call === 'floor') return `round(down, ${xs[0]}, 1)`;
+    if (node.call === 'ceiling') return `(-1 * round(down, -1 * ${xs[0]}, 1))`;
     if (node.call !== 'median') return `${node.call}(${xs.join(', ')})`;
     const n = xs.length; if (n === 1) return xs[0];
     const known = node.items.map((x) => (x.node ? valueOf(x.node) : x.def ? valueOf(x.def) : x.ci ? null : x.x));
     const live = known.includes(null); // with every value known the order is the build's, and nothing is compared in CSS
-    const ref = xs.map((x, i) => { if (!live || !(node.items[i].node || node.items[i].def)) return x; const p = `--dcss-dcss-m${k}-${i}`; for (const q of 'eabc') decls.push([`${p}-${q}`, SPLIT[q](p, x)]); return join(p); });
+    const ref = xs.map((x, i) => { if (!live || !(node.items[i].node || node.items[i].def)) return x; const p = `--dcss-dcss-m${k}-${i}`; for (const q of 'eabcz') decls.push([`${p}-${q}`, SPLIT[q](p, x)]); return join(p); });
     // j goes before i when it is smaller, or equal and earlier
     const rank = xs.map((_, i) => { let c = 0; const terms = [];
       for (let j = 0; j < n; j++) if (j !== i) {
@@ -402,7 +414,9 @@ function former(divide) {
       return hits.length === 1 ? hits[0] : `(${hits.join(' + ')})`; };
     const i0 = Math.floor((n - 1) / 2);
     // every expression stands alone (a fenced sum, a function, a parenthesis), so what is written around it can't regroup it
-    return n % 2 ? pick(i0) : F(`${F(pick(i0))} + ${F(`${F(`${pick(i0 + 1)} - ${pick(i0)}`)} * 0.5`)}`);
+    // d3.quantile's value0 + (value1 - value0) * (i - i0), its factor 0 for an odd count: -0 comes out 0, and an
+    // infinite value1 makes it NaN (d3.median([1, 2, Infinity]) is NaN)
+    return F(`${F(pick(i0))} + ${F(`${F(`${pick(i0 + 1)} + (-1 * ${pick(i0)})`)} * ${n % 2 ? 0 : 0.5}`)}`);
   };
   return f;
 }
@@ -415,9 +429,12 @@ function form(root, divide) {
   const f = former(divide), value = f.expr(root);
   if (f.names.size) f.decls.push(okDecl(f.names));
   f.decls.push(['--dcss-dcss-fin', `calc(${value} * 0 + 1)`]);
-  return { value: `${value}${f.names.size ? ' + 0 / var(--dcss-dcss-ok)' : ''} + 0 / var(--dcss-dcss-fin)`, decls: f.decls, compares: f.compares };
+  // times 1 + 0 / flag, not plus: a sum would turn -0 into 0
+  return { value: `(${value}) * (1${f.names.size ? ' + 0 / var(--dcss-dcss-ok)' : ''} + 0 / var(--dcss-dcss-fin))`, decls: f.decls, compares: f.compares };
 }
-// each declaration in both forms of division, the engine's flag picking one
+// each declaration in both forms of division, the engine's flag picking one. Chrome adds -0 and a clamp() over a px
+// ratio as 0 (facts/calc-negative-zero.mjs), so there a formula with a division whose answer is -0 gives 0: the same
+// text printed; 1 / it isn't taken further on the page
 const both = (plain, length) => ({ value: `calc(${either(plain.value, length.value)})`, decls: plain.decls.map(([k, v], i) => `${k}: calc(${either(v, length.decls[i][1])});`),
   ints: plain.decls.map(([k]) => k), compares: plain.compares });
 const emit = (root) => both(form(root, DIVIDE.plain), form(root, DIVIDE.length));
