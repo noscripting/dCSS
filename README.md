@@ -252,9 +252,9 @@ Each call gives its answer as `--dcss-` and its name to the elements directly in
 
 ### Math: families/math.css
 
-- `.dcss-solve`: where the page's own function reaches `--target` (0 without it): `--from`, `--to` on it, nested `<i>`s, the page's rule setting `--dcss-fn` from `--dcss-at` on each; inside the deepest, `--dcss-solve` and `--dcss-solve-interval`.
+- `.dcss-solve`: where the page's own function reaches `--target` (0 without it): `--from`, `--to` on it, nested `<i>`s (or `data-dcss-steps` and the build writes them), the page's rule setting `--dcss-fn` from `--dcss-at` on each; inside the deepest, `--dcss-solve` and `--dcss-solve-interval`.
 - `.dcss-solve-newton`: with `.dcss-solve`, Newton's steps kept in the bracket: `--dcss-slope`, f's slope (its derivative), beside f; `--guess` optional.
-- `.dcss-invert`: the inverse of the page's own function on every row of the box at once: `--from`, `--to` across it, `--top`, `--bottom` down it, its first child's pairs of `<i>`s, the page's rule setting `--dcss-fn` from `--dcss-at` on each; each line starts where f reaches its value.
+- `.dcss-invert`: the inverse of the page's own function on every row of the box at once: `--from`, `--to` across it, `--top`, `--bottom` down it, its first child's pairs of `<i>`s (or `data-dcss-steps`), the page's rule setting `--dcss-fn` from `--dcss-at` on each; each line starts where f reaches its value.
 - `.dcss-ode`: on store.css's frame cell (`data-store`), the page's own equation of motion, a leapfrog step a frame: `--dcss-ode-a` from `--dcss-ode-x` and `--dcss-ode-v`, `--dcss-ode-x0`, `-v0`, `-range`, `-v-range`, `-h`; on it and inside it, `--dcss-ode-x` and `--dcss-ode-v`.
 - [`.dcss-geo-natural-earth1-raw-invert`](https://d3js.org/d3-geo/cylindrical#geoNaturalEarth1), [`.dcss-geo-equal-earth-raw-invert`](https://d3js.org/d3-geo/cylindrical#geoEqualEarth): 12 nested `<i>`s, Newton's steps from `--y` with d3's derivative, `--x`, `--y` on it; inside the deepest, `--dcss-geo-x`, `--dcss-geo-y` in radians.
 
@@ -265,8 +265,8 @@ Each call gives its answer as `--dcss-` and its name to the elements directly in
 Write your formula once, as an ordinary rule, and `.dcss-solve` (families/math.css) finds the input where it reaches a value you give, `--target` (0 without one), between two numbers you give, by halving: a spreadsheet's Goal Seek. Here it solves Kepler's equation for an orbit's eccentric anomaly, E − e sin E = M:
 
 ```html
-<div class="dcss-solve orbit" style="--e: 0.6">
-  <i><i><i> ... 13 in all ... <i><span class="planet"></span></i> ... </i></i></i>
+<div class="dcss-solve orbit" data-dcss-steps="13" style="--e: 0.6">
+  <span class="planet"></span>
 </div>
 ```
 
@@ -281,7 +281,7 @@ Write your formula once, as an ordinary rule, and `.dcss-solve` (families/math.c
 }
 ```
 
-`--dcss-fn` is your formula and `--dcss-at` the input it is tried at; your rule runs once on every `<i>`, and each `<i>` is one try: the first at `--from`, the second at `--to`, and each one after halves what is left. So 13 `<i>`s are 2 ends and 11 halvings, and the answer is within |to − from| / 2¹² (0.0015 here); 26 give |to − from| / 2²⁵, 54 a double's last digit. Animate `--m` and the planet moves, every frame; each `<i>` costs about as much as any other element restyled, so an animated page keeps its solves to tens and its `<i>`s to the precision it draws.
+`--dcss-fn` is your formula and `--dcss-at` the input it is tried at; your rule runs once on every `<i>`, and each `<i>` is one try: the first at `--from`, the second at `--to`, and each one after halves what is left. So 13 `<i>`s are 2 ends and 11 halvings, and the answer is within |to − from| / 2¹² (0.0015 here); 26 give |to − from| / 2²⁵, 54 a double's last digit. The build, `node mathml.mjs page.html built.html`, writes the 13 `<i>`s around what is inside (no script on the built page); without it, write them yourself, `<i><i><i> … <span class="planet"></span> … </i></i></i>`. Animate `--m` and the planet moves, every frame; each `<i>` costs about as much as any other element restyled, so an animated page keeps its solves to tens and its `<i>`s to the precision it draws.
 
 - Every element inside the deepest `<i>` that isn't an `<i>` gets `--dcss-solve` and `--dcss-solve-interval`, the width left. An `<i>` there would be one more try. The `<i>`s draw no boxes (`display: contents`), so the planet lays out as the solve's own child.
 - `--dcss-ready` is 0, `--dcss-err` 1 and `--dcss-solve` NaN when the formula is on the same side of the target at both ends, isn't a number at some `<i>`, or the solve has no formula or no `--from` and `--to` of its own. A NaN `translate` falls back to none, so `opacity: var(--dcss-ready)` hides a refused answer instead of drawing it in the wrong place.
@@ -293,8 +293,8 @@ Write your formula once, as an ordinary rule, and `.dcss-solve` (families/math.c
 Give the formula's slope (its derivative) too and the same solve takes Newton's steps, so far fewer `<i>`s reach the last digit:
 
 ```html
-<div class="dcss-solve dcss-solve-newton orbit" style="--e: 0.6; --guess: 1.6">
-  <i><i><i><i><i><span class="planet"></span></i></i></i></i></i>
+<div class="dcss-solve dcss-solve-newton orbit" data-dcss-steps="5" style="--e: 0.6; --guess: 1.6">
+  <span class="planet"></span>
 </div>
 ```
 
@@ -311,11 +311,10 @@ The inverts of naturalEarth1 and equalEarth above are solves like this one, with
 
 ### Every row at once
 
-When many things need one formula's answer (24 moons on one orbit, the ticks of an eased axis, labels on a curve), `.dcss-invert` answers every row of a box in one layout. The page writes its formula once, as for `.dcss-solve`; pairs of `<i>`s sample it, and each line in the box starts where the formula reaches that line's value:
+When many things need one formula's answer (24 moons on one orbit, the ticks of an eased axis, labels on a curve), `.dcss-invert` answers every row of a box in one layout. The page writes its formula once, as for `.dcss-solve`; 32 straight pieces sample it (the build writes them, a first `<span>` of 32 pairs `<i><i></i></i>`), and each line in the box starts where the formula reaches that line's value:
 
 ```html
-<div class="dcss-invert orbit" style="--from: 0; --to: 6.2832; --top: 0; --bottom: 6.2832; height: 240px">
-  <span><i><i></i></i><i><i></i></i> … 32 pairs … </span>
+<div class="dcss-invert orbit" data-dcss-steps="32" style="--from: 0; --to: 6.2832; --top: 0; --bottom: 6.2832; height: 240px">
   <p><b class="moon"></b></p> <p><b class="moon"></b></p> …
 </div>
 ```
@@ -394,7 +393,7 @@ A browser without `@function` drops the declaration, so write a plain value befo
 
 <!-- browsers -->
 
-Headless Chrome 155 and WebKit 26.4, Safari's engine, pass all 193 requirements of [SPEC.md](SPEC.md), and the calls match d3 on 3,206 of the 7,049 calls in d3's tests. Firefox 158 computes `calc()` in 32-bit floats, so exact sums, dates and most formatting go wrong there: it passes 70. [QUIRKS.md](QUIRKS.md) has the engine bugs.
+Headless Chrome 155 and WebKit 26.4, Safari's engine, pass all 194 requirements of [SPEC.md](SPEC.md), and the calls match d3 on 3,206 of the 7,049 calls in d3's tests. Firefox 158 computes `calc()` in 32-bit floats, so exact sums, dates and most formatting go wrong there: it passes 70. [QUIRKS.md](QUIRKS.md) has the engine bugs.
 
 <!-- /browsers -->
 

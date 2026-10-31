@@ -6,6 +6,7 @@ All notable changes to dcss are written here. The format follows [Keep a Changel
 
 ### Added
 
+- `data-dcss-steps="13"` on a `.dcss-solve` or a `.dcss-invert`: the build (`node mathml.mjs page.html built.html`) writes its nested `<i>`s or its pairs, so a page never counts them; the built page has no script and is what a hand-written one would be.
 - `.dcss-ode`, in families/math.css, on store.css's frame cell: the page writes an acceleration once (`--dcss-ode-a` from `--dcss-ode-x` and `--dcss-ode-v`) and the element takes a leapfrog step a frame, so a pendulum, a spring or a pull toward the pointer moves by its own equation, keeping its swing for minutes.
 - `.dcss-invert`, in families/math.css: the inverse of the page's own formula on every row of a box at once, in one layout. The page writes its formula once (`--dcss-fn` from `--dcss-at`) on pairs of `<i>`s, `--from` and `--to` across the box and `--top` and `--bottom` down it, and each line starts where the formula reaches its value, so what starts the line sits on the answer: 24 moons on one orbit, the ticks of an eased axis. Within half a pixel on a 1,000 px box at 32 to 64 pairs.
 - `.dcss-solve-newton`, with `.dcss-solve`: give the formula's slope `--dcss-slope` beside it, and `--guess` if you have one, and each `<i>` after the two ends is one of Newton's steps, kept inside the bracket. Kepler's equation to a double's last digit in 8 to 10 `<i>`s where halving takes 54, at about half the cost a frame.

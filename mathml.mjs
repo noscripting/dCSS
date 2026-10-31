@@ -7,7 +7,7 @@
 // becomes a figure with the formula as its caption and an <output> whose --value is d3.median([d3.mean([4, 1.5]),
 // jan]) to the bit, jan read from --jan on an ancestor (unset: no answer, --dcss-err 1). Only a <math> whose one element
 // child is an <apply> of an operator it takes, or a <piecewise>, is compiled; the rest of the page is copied byte for byte, so the build
-// run on its own output changes nothing.
+// run on its own output changes nothing. It also writes the <i>s of a .dcss-solve or .dcss-invert with data-dcss-steps.
 import { createHash } from 'node:crypto';
 import { readFileSync, realpathSync, watchFile, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
@@ -1804,7 +1804,39 @@ function columnsAt(src, lt, t, end, file) {
 }
 export function toDcss(src, { file = 'page.html' } = {}) {
   const was = CX; CX = { defs: new Map(), later: new Map(), elsewhere: new Map(), index: new Map(), series: new Map(), seriesElsewhere: new Map(), scope: 0, welford: new Set(), welfordNow: new Set() };
-  try { return build(src, file); } finally { CX = was; }
+  try { return build(stepsPass(src, file), file); } finally { CX = was; }
+}
+// data-dcss-steps="n" on a solve or an invert: the build writes its <i>s, so the page never counts them. A solve's
+// content goes inside n nested <i>s; an invert gets a first child of n pairs, <span><i><i></i></i>…</span>. Nothing
+// adds a line, so every line number stays the page's; an element that holds its <i>s already is left as it is (the
+// build run on its own output changes nothing), and one holding a different count is refused.
+const NESTED = /(?:^|\s)dcss-(?:solve|geo-natural-earth1-raw-invert|geo-equal-earth-raw-invert)(?=\s|$)/, NEWTONS = /(?:^|\s)dcss-(?:solve-newton|geo-natural-earth1-raw-invert|geo-equal-earth-raw-invert)(?=\s|$)/;
+function stepsPass(src, file) {
+  const edits = []; let i = 0;
+  while (i < src.length) {
+    const lt = src.indexOf('<', i); if (lt < 0) break;
+    if (src.startsWith('<!--', lt)) { const e = src.indexOf('-->', lt + 4); i = e < 0 ? src.length : e + 3; continue; }
+    const t = tagAt(src, lt); if (!t) { i = lt + 1; continue; }
+    if (!t.close && RAW.has(t.name)) { const e = closeAt(src, t.name, lt + t.length); i = e < 0 ? src.length : e; continue; }
+    i = lt + t.length;
+    if (t.close || !/(?:^|\s)data-dcss-steps(?=[\s=]|$)/i.test(t.rawAttrs)) continue;
+    const a = readAttrs(t.rawAttrs, lt), cls = a.class ?? '', line = lineOf(src, lt), n = Number((a['data-dcss-steps'] ?? '').trim());
+    const nested = NESTED.test(cls), invert = /(?:^|\s)dcss-invert(?=\s|$)/.test(cls);
+    if (!nested && !invert) throw new Error(`${file}:${line}: data-dcss-steps on an element that is neither a .dcss-solve nor a .dcss-invert`);
+    const [lo, hi] = invert ? [1, 1000] : NEWTONS.test(cls) ? [3, 14] : [3, 54];
+    if (!Number.isInteger(n) || n < lo || n > hi) throw new Error(`${file}:${line}: data-dcss-steps="${a['data-dcss-steps']}": ${invert ? 'an invert takes 1 to 1,000 pieces' : `this solve takes ${lo} to ${hi} steps`}`);
+    const end = t.self || VOID.has(t.name) ? -1 : endOf(src, lt, t); if (end < 0) throw new Error(`${file}:${line}: the data-dcss-steps <${t.name}> is never closed`);
+    const inner = lt + t.length, close = src.lastIndexOf('</', end - 1), body = src.slice(inner, close);
+    // how many it holds already: leading <i>s (a solve), or pairs in a first <span> (an invert)
+    const had = invert ? (/^\s*<span>((?:\s*<i><i><\/i><\/i>)*)\s*<\/span>/.exec(body)?.[1].match(/<i><i>/g)?.length ?? 0) : (/^(?:\s*<i>)*/.exec(body)[0].match(/<i>/g)?.length ?? 0);
+    if (had === n) continue;
+    if (had) throw new Error(`${file}:${line}: data-dcss-steps="${n}" on an element that holds ${had} ${invert ? 'pairs' : '<i>s'} already: write the attribute or the <i>s, not both`);
+    // the walk goes on inside, so a solve in another's answer gets its own steps
+    edits.push(invert ? [inner, `<span>${'<i><i></i></i>'.repeat(n)}</span>`] : [inner, '<i>'.repeat(n)], ...(invert ? [] : [[close, '</i>'.repeat(n)]]));
+  }
+  let out = src;
+  for (const [at, text] of edits.sort((x, y) => y[0] - x[0])) out = out.slice(0, at) + text + out.slice(at);
+  return out;
 }
 function build(src, file) {
   // scopes: 0 is the page; each data-dcss-scope element another, inside the one it sits in

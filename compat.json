@@ -4444,6 +4444,29 @@
           }
         }
       },
+      "A223": {
+        "__compat": {
+          "description": "`mathml.mjs` MUST write, for `data-dcss-steps=\"n\"` on a `.dcss-solve` (n 3 to 54; 3 to 14 with `.dcss-solve-newton`) or a geo raw invert (3 to 14), n nested `<i>` elements around the element's content, and on a `.dcss-invert` (n 1 to 1,000) a first child `<span>` of n pairs `<i><i></i></i>`, adding no line; leave an element that holds that many already as it is; and refuse, with the line, the attribute on any other element, a count out of range, or one beside a different number of `<i>`s.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
+            },
+            "firefox": {
+              "version_added": null
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
       "A51": {
         "__compat": {
           "description": "A loop (`.loop`, `.loop-flow`, `.loop-in`, `.loop-cell`, `.loop-core`) MUST have store.css and dcss-extras.css on the page; its cells, read through `[data-store-read]` and `[data-store-read-3]` naming them by `--store-of`, MUST settle on the iteration's fixed point: a 12-cell power iteration's vector and eigenvalue equal NumPy's, as a flow and as a table row.",
