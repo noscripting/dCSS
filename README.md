@@ -238,6 +238,22 @@ Each call gives its answer as `--dcss-` and its name to the elements directly in
 
 <!-- /calls -->
 
+### As CSS functions
+
+Where the browser has `@function` (Chrome; Safari Technology Preview), these calls are also functions, with no element and no list. Their arguments are the class's inputs in order, and a value the class refuses gives NaN:
+
+- `--dcss-ease-<name>(t)`, with the exponent, overshoot, amplitude or period after `t`: `--dcss-ease-cubic-in-out(0.25)` is 0.0625.
+- `--dcss-scale-linear(x, d0, d1, r0, r1, clamp, round)`, and `-pow` (the exponent after `r1`), `-sqrt` and `-log`.
+- `--dcss-scale-band(i, n, r0, r1, padding-inner, padding-outer, align, round)`: the `i`-th of `n` bands. A point scale is padding-inner 1.
+- `--dcss-utc-<interval>-floor(t)`, `-ceil(t)`, `-round(t)`, `-offset(t, step)` and `-count(start, stop)` for `day`, `hour`, `minute`, `second` and `sunday` to `saturday`.
+- `--dcss-geo-<projection>-x(lon, lat, scale, translate-x, translate-y, rotate-lambda, rotate-phi, rotate-gamma, center-lambda, center-phi, angle, reflect-x, reflect-y)` and `-y`, with `-invert` before `-x`, for `equirectangular`, `mercator` and `transverse-mercator`; `identity` has no rotate or center, and `--dcss-geo-rotation-x(lon, lat, lambda, phi, gamma)` only the angles. `--dcss-geo-distance(lon-a, lat-a, lon-b, lat-b)` is in radians.
+
+A browser without `@function` drops the declaration, so write a plain value before it:
+
+```css
+.dot { translate: 0 0; translate: calc(--dcss-geo-mercator-x(-58.38, -34.6) * 1px) calc(--dcss-geo-mercator-y(-58.38, -34.6) * 1px); }
+```
+
 ### Grid primitives: dcss.css
 
 [SPEC.md](SPEC.md) has their markup.

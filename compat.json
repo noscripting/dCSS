@@ -3472,7 +3472,7 @@
       },
       "A119": {
         "__compat": {
-          "description": "Where the browser parses `@function`, each easing and the two-stop linear scale MUST also be functions (`--dcss-ease-<name>(t, ...)`, `--dcss-scale-linear(x, d0, d1, r0, r1, clamp, round)`) equal to their classes within 1e-12. Elsewhere a declaration calling one MUST fall back to its earlier plain value.",
+          "description": "Where the browser parses `@function`, each easing, the two-stop linear scale, the band scale, the UTC day, hour, minute, second and weekday intervals, the identity, equirectangular, Mercator and transverse Mercator projections, the rotation and the distance MUST also be functions (`--dcss-ease-<name>(t, ...)`, `--dcss-scale-linear(x, d0, d1, r0, r1, clamp, round)`, `--dcss-scale-band(i, n, r0, r1, ...)`, `--dcss-utc-day-floor(t)`, `--dcss-utc-day-count(start, stop)`, `--dcss-geo-mercator-x(lon, lat, ...)` and `-y`, `--dcss-geo-distance(lon-a, lat-a, lon-b, lat-b)`) equal to their classes within 1e-12, the intervals to d3-time to the millisecond, the band to d3 within 1e-12 the projections to d3-geo within 1e-6 and the distance within 1e-12. Elsewhere a declaration calling one MUST fall back to its earlier plain value.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {

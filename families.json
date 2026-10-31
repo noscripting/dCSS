@@ -113,9 +113,9 @@
         "dcss-scale-pow",
         "dcss-scale-sqrt"
       ],
-      "raw": 119905,
-      "gzip9": 7532,
-      "sha256": "a309d306c194384fa4260e6253f13a1615cd040bc6620614180178d7beaf681e"
+      "raw": 120914,
+      "gzip9": 7769,
+      "sha256": "655104efd8603a34053ab75dc9bf75e43857761ec11d236cddd9582752a10bbb"
     },
     "format": {
       "file": "families/format.css",
@@ -251,9 +251,9 @@
         "dcss-utc-year-offset",
         "dcss-utc-year-round"
       ],
-      "raw": 315456,
-      "gzip9": 14500,
-      "sha256": "37835f153ae29767b4bcfdf138d7c7e8549ca25f513db7edd30c7e783a1a3b02"
+      "raw": 389115,
+      "gzip9": 16078,
+      "sha256": "abc843cf4e9f0a0c303bf3d9bb3e6989896572ce7acc0547fe5770edd2bdc6a1"
     },
     "date-format": {
       "file": "families/date-format.css",
@@ -330,9 +330,9 @@
         "dcss-geo-transverse-mercator-extent",
         "dcss-geo-transverse-mercator-invert"
       ],
-      "raw": 248081,
-      "gzip9": 16243,
-      "sha256": "1efb3c571ccc7279ef2a69853fe0e8dabd48acfe8eb20405d8a65ecc48aae202"
+      "raw": 348281,
+      "gzip9": 20384,
+      "sha256": "2be0d46a69b20e92f53efa67c85186d1804585f1af67e0912b0c126efa0e69b1"
     }
   },
   "owners": {
