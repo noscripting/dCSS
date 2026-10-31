@@ -866,7 +866,7 @@ function former(divide) {
   // declaration brings past 65,535 tokens (WebKit's most through one var())
   // the steps both live functions build from: macros, stores through the split, fenced IEEE operations, the error-free
   // transformations (TwoSum, FastTwoSum, Veltkamp's halves, Dekker's TwoProduct) and pairs (double-doubles) added and multiplied
-  const kit = () => { const k = ++id, P = `--dcss-dcss-x${k}`, named = new Set();
+  const kit = (P0) => { const k = ++id, P = P0 ?? `--dcss-dcss-x${k}`, named = new Set();
     const mac = (n, v) => { if (named.has(n)) throw new Error(`macro ${n} twice`); named.add(n); decls.push([`--dcss-dcss-y${k}-${n}`, `(${v})`]); return `var(--dcss-dcss-y${k}-${n})`; };
     // a stored step's −0 flag is 0: no step of these functions passes a sign of zero on (sin's answer takes x's). Its
     // finiteness flag is checked only on an answer (checked): every step between is bounded, and a NaN or infinite x is
@@ -1307,12 +1307,17 @@ function former(divide) {
     // the sum, every operation IEEE's and fenced; a missing slot leaves both as they were (its step adds -0). Then sum /
     // (count - 1), none under two present values; d3.deviation is its square root (CSS's sqrt() is Math.sqrt's). Neither
     // the mean nor the sum is ever -0 (both start at 0, and 0 + -0 is 0), so the split's -0 flag of 0 loses nothing
+    // In a scope, a series' steps are named by the scope and the series, so its variance and its deviation (or the same
+    // one twice) share them: the first formula on the scope's element writes them, later ones read its last sum
     if (op === 'variance' || op === 'deviation') { let mean = '0', sum = '0', count = '0';
-      sl.forEach((x, i) => { if (x.p === '0') return; count = x.p === '1' ? (count === '0' ? '1' : `${count} + 1`) : (count === '0' ? x.p : `${count} + ${x.p}`);
-        const c = mac(`c${i}`, count); count = c; const d = mac(`d${i}`, F(`${x.v} + (-1 * ${mean})`)), step = (e) => (x.p === '1' ? e : sel(x.p, e));
+      const key = CX.scope ? `${CX.scope}-${q.name}` : null, W = key && `--dcss-w${key}`, last = sl.findLastIndex((x) => x.p !== '0');
+      if (key) CX.welfordNow.add(key);
+      if (key && CX.welford.has(key)) sum = last < 0 ? '0' : join(`${W}-s${last}`);
+      else { const S = W ? kit(W) : K; sl.forEach((x, i) => { if (x.p === '0') return; count = x.p === '1' ? (count === '0' ? '1' : `${count} + 1`) : (count === '0' ? x.p : `${count} + ${x.p}`);
+        const c = S.mac(`c${i}`, count); count = c; const d = S.mac(`d${i}`, F(`${x.v} + (-1 * ${mean})`)), step = (e) => (x.p === '1' ? e : sel(x.p, e));
         // each step's mean and sum stored through the split: as macros, each would hold the last one's text twice
-        mean = K.store(`m${i}`, F(`${mean} + ${step(divide(d, x.p === '1' ? c : `max(${c}, 1)`))}`));
-        sum = K.store(`s${i}`, F(`${sum} + ${step(F(`${d} * ${F(`${x.v} + (-1 * ${mean})`)}`))}`)); });
+        mean = S.store(`m${i}`, F(`${mean} + ${step(divide(d, x.p === '1' ? c : `max(${c}, 1)`))}`));
+        sum = S.store(`s${i}`, F(`${sum} + ${step(F(`${d} * ${F(`${x.v} + (-1 * ${mean})`)}`))}`)); }); }
       const v = `(${divide(sum, `(${n} - 1)`)} * (1 + 0 / sign(max(0, ${n} - 1))))`;
       return guard(op === 'variance' ? v : `sqrt(${v})`); }
     // d3.mode: each present slot's count of present slots equal to it (±0 equal), registered integers; the first slot whose
@@ -1798,7 +1803,7 @@ function columnsAt(src, lt, t, end, file) {
   return named.map(({ name, count, at, slots, labels }) => ({ name, count, line: lineOf(src, at), at, slots, labels }));
 }
 export function toDcss(src, { file = 'page.html' } = {}) {
-  const was = CX; CX = { defs: new Map(), later: new Map(), elsewhere: new Map(), index: new Map(), series: new Map(), seriesElsewhere: new Map() };
+  const was = CX; CX = { defs: new Map(), later: new Map(), elsewhere: new Map(), index: new Map(), series: new Map(), seriesElsewhere: new Map(), scope: 0, welford: new Set(), welfordNow: new Set() };
   try { return build(src, file); } finally { CX = was; }
 }
 function build(src, file) {
@@ -1921,7 +1926,11 @@ function build(src, file) {
     try {
       for (const w of where) if (w.k < k && sees(f.scope, w.scope)) { const node = found[w.k].compiled.root.items[1].node;
       CX.defs.set(w.name, answers.has(w.k) && valueOf(node) === null ? { result: answers.get(w.k) } : node); } // a scope's live result is read, not computed again
-      compiled = f.compiled = compile(f.math);
+      CX.scope = f.scope; CX.welfordNow = new Set(); compiled = f.compiled = compile(f.math);
+      // shared steps are read from the scope's element only by a formula whose own steps go there too
+      const onScope = f.scope && (compiled.kind === 'value' || compiled.kind === 'define');
+      if (onScope) for (const w of CX.welfordNow) CX.welford.add(w);
+      else if ([...CX.welfordNow].some((w) => CX.welford.has(w))) { const kept = CX.welford; CX.welford = new Set(); compiled = f.compiled = compile(f.math); CX.welford = kept; }
     } catch (e) { if (e instanceof Refusal) throw new Error(`${file}:${lineOf(src, e.at)}: ${e.message}`); throw e; }
     const mine = new Set(), slotsRead = new Set(), uses = new Set(), each = (n) => { calls.add(n.call); mine.add(n.call); if (n.series) slotsRead.add(n.series.name); n.items.forEach((x) => { if (x.node) each(x.node); if (x.slot) slotsRead.add(x.slot); if (x.def) each(x.def); if (x.result) uses.add(x.ci); }); }; each(compiled.root);
     f.report = { mine, slotsRead, uses };

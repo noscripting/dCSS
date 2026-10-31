@@ -262,7 +262,7 @@ Headless Chrome 155 and WebKit 26.4, Safari's engine, pass all 162 requirements 
 
 <!-- performance -->
 
-Layout does the work, in the frame a number changes. A family is at most 29 KB gzipped and loads in 15 ms or less in WebKit 26.4 (2026-10-28). Twenty printed medians, a value moving: 6.3 ms a frame in Chrome, 9.6 in WebKit; variance 8.2, 10.3 (2026-10-30).
+Layout does the work, in the frame a number changes. A family is at most 30 KB gzipped and loads in 15 ms or less in WebKit 26.4 (2026-10-28). Twenty printed medians, a value moving: 6.3 ms a frame in Chrome, 9.6 in WebKit; variance 8.2, 10.3 (2026-10-30).
 
 <!-- /performance -->
 
