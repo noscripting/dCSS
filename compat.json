@@ -4421,6 +4421,29 @@
           }
         }
       },
+      "A222": {
+        "__compat": {
+          "description": "`.dcss-ode` on a store.css frame cell (`data-store`), with the page's rule setting `--dcss-ode-a` from `--dcss-ode-x` and `--dcss-ode-v`, MUST step once a frame from `--dcss-ode-x0` and `--dcss-ode-v0` by v + h a, then x + h v (h `--dcss-ode-h`, 1/60 without one), x kept to `--dcss-ode-range` / 500,000 and v to `--dcss-ode-v-range` / 500,000, and give the cell's element and everything inside it `--dcss-ode-x` and `--dcss-ode-v` within 0.5 px of what the same step in doubles keeps (a spring's amplitude, a pendulum's swing), on a scrolled page and in a cell inside another; `--dcss-err` 1 while x or v is past its range, 0 otherwise; no `--dcss-ode-a` moves x on at v.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
+            },
+            "firefox": {
+              "version_added": null
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
       "A51": {
         "__compat": {
           "description": "A loop (`.loop`, `.loop-flow`, `.loop-in`, `.loop-cell`, `.loop-core`) MUST have store.css and dcss-extras.css on the page; its cells, read through `[data-store-read]` and `[data-store-read-3]` naming them by `--store-of`, MUST settle on the iteration's fixed point: a 12-cell power iteration's vector and eigenvalue equal NumPy's, as a flow and as a table row.",

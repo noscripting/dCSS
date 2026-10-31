@@ -382,12 +382,13 @@
         "dcss-geo-equal-earth-raw-invert",
         "dcss-geo-natural-earth1-raw-invert",
         "dcss-invert",
+        "dcss-ode",
         "dcss-root",
         "dcss-root-newton"
       ],
-      "raw": 175440,
-      "gzip9": 5766,
-      "sha256": "4bf4007244fde128f725262099c78d396a07358133b5d93789db6fc4a7f90878"
+      "raw": 176880,
+      "gzip9": 6059,
+      "sha256": "bbd7a8881b75f0c11aee62c87774eee2d9aa120f85ed5aaf78b064505744be63"
     }
   },
   "owners": {
@@ -653,6 +654,7 @@
     "dcss-geo-equal-earth-raw-invert": "root",
     "dcss-geo-natural-earth1-raw-invert": "root",
     "dcss-invert": "root",
+    "dcss-ode": "root",
     "dcss-root": "root",
     "dcss-root-newton": "root"
   },
@@ -6478,6 +6480,10 @@
         "role": "style-only"
       },
       "dcss-invert": {
+        "family": "root",
+        "role": "style-only"
+      },
+      "dcss-ode": {
         "family": "root",
         "role": "style-only"
       },

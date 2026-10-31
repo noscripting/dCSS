@@ -255,6 +255,7 @@ Each call gives its answer as `--dcss-` and its name to the elements directly in
 - `.dcss-root`: a root of the page's own equation: `--dcss-root-from`, `--dcss-root-to` on it, nested `<i>`s, the page's rule setting `--dcss-root-f` from `--dcss-root-x` on each; inside the deepest, `--dcss-root` and `--dcss-root-interval`.
 - `.dcss-root-newton`: with `.dcss-root`, Newton's steps kept in the bracket: `--dcss-root-df`, f's derivative, beside f; `--dcss-root-guess` optional.
 - `.dcss-invert`: the inverse of the page's own function on every row of the box at once: `--dcss-invert-from`, `-to` across it, `--dcss-invert-min`, `-max` down it, its first child's pairs of `<i>`s, the page's rule setting `--dcss-invert-f` from `--dcss-invert-x` on each; each line starts where f reaches its value.
+- `.dcss-ode`: on store.css's frame cell (`data-store`), the page's own equation of motion, a leapfrog step a frame: `--dcss-ode-a` from `--dcss-ode-x` and `--dcss-ode-v`, `--dcss-ode-x0`, `-v0`, `-range`, `-v-range`, `-h`; on it and inside it, `--dcss-ode-x` and `--dcss-ode-v`.
 - [`.dcss-geo-natural-earth1-raw-invert`](https://d3js.org/d3-geo/cylindrical#geoNaturalEarth1), [`.dcss-geo-equal-earth-raw-invert`](https://d3js.org/d3-geo/cylindrical#geoEqualEarth): 12 nested `<i>`s, Newton's steps from `--y` with d3's derivative, `--x`, `--y` on it; inside the deepest, `--dcss-geo-x`, `--dcss-geo-y` in radians.
 
 <!-- /calls -->
@@ -328,6 +329,22 @@ When many things need one equation's answer (24 moons on one orbit, the ticks of
 
 x runs across the box, from `--dcss-invert-from` at its left edge to `--dcss-invert-to` at its right; values run down it, from `--dcss-invert-min` at the top to `--dcss-invert-max` at the bottom. A line whose bottom edge is at value v starts at the x where f(x) = v, so whatever starts the line sits on the answer: the answer is a position, not a number. Give the thing at a line's start no width (draw it with a pseudo-element): content wider than the room left beside the curve drops to a line below. f must rise down the box: for a falling f, put the larger value in `--dcss-invert-min`. Where f turns back, a line starts at the last column f has passed its value. The answer follows straight pieces between the n + 1 values: on a 1,000 px box, 32 pairs keep Kepler's inverse at e = 0.6 within 0.42 px and 64 within 0.25 (probes/dcss/invert/check.mjs). Fewer rows cost less: 100 rows with f moving take a few ms a frame, 1,000 rows about 15 (Performance).
 
+### Motion by your own equation
+
+For something that moves by a force (a pendulum, a spring that follows the pointer, a ball pulled by gravity), write its acceleration once and `.dcss-ode` steps it a frame at a time. It runs on store.css's frame cell, so link store.css and put `data-store` on the element:
+
+```html
+<div data-store class="dcss-ode pendulum"><b class="bob"></b></div>
+```
+
+```css
+.pendulum { --dcss-ode-x0: 1.2; --dcss-ode-range: 4; --dcss-ode-v-range: 20;
+            --dcss-ode-a: calc(-6.5 * sin(var(--dcss-ode-x) * 1rad)); }
+.bob { rotate: calc(var(--dcss-ode-x) * 1rad); }
+```
+
+The element and everything inside it get `--dcss-ode-x` and `--dcss-ode-v`, the position and the speed. Each frame the cell takes one leapfrog step: v changes by h × a, then x by h × v. A spring or a pendulum stepped this way keeps its swing for minutes instead of slowly gaining or losing it. `--dcss-ode-a` may read x and v (damping is a term in v), and anything else the page sets, such as the pointer's position. `--dcss-ode-x0` and `--dcss-ode-v0` are where it starts (0); `--dcss-ode-h` is the time a frame (1/60): a screen that draws faster runs it faster. The cell keeps x and v as whole numbers, so each has a range: `--dcss-ode-range` for x (500, kept to 1/1000) and `--dcss-ode-v-range` for v (5,000, kept to 1/100). Pick ranges a little wider than the motion; `--dcss-err` is 1 while either is past its range. `--dcss-ready` is 1 from the frame the cell has its first numbers back. Two numbers a cell: for x and y that move apart, nest two cells and copy the outer's x into a property of your own first, since the inner cell sets its own.
+
 ### As CSS functions
 
 Where the browser has `@function` (Chrome; Safari Technology Preview), these calls are also functions, with no element and no list. They are a sheet of their own, `families/functions.css`, or one call's in `parts/functions/<class>.css` (`parts/functions/dcss-geo-mercator.css`); the class sheets don't carry them. Their arguments are the class's inputs in order, and a value the class refuses gives NaN:
@@ -361,7 +378,7 @@ A browser without `@function` drops the declaration, so write a plain value befo
 
 <!-- browsers -->
 
-Headless Chrome 155 and WebKit 26.4, Safari's engine, pass all 192 requirements of [SPEC.md](SPEC.md), and the calls match d3 on 3,206 of the 7,049 calls in d3's tests. Firefox 158 computes `calc()` in 32-bit floats, so exact sums, dates and most formatting go wrong there: it passes 70. [QUIRKS.md](QUIRKS.md) has the engine bugs.
+Headless Chrome 155 and WebKit 26.4, Safari's engine, pass all 193 requirements of [SPEC.md](SPEC.md), and the calls match d3 on 3,206 of the 7,049 calls in d3's tests. Firefox 158 computes `calc()` in 32-bit floats, so exact sums, dates and most formatting go wrong there: it passes 70. [QUIRKS.md](QUIRKS.md) has the engine bugs.
 
 <!-- /browsers -->
 
@@ -373,7 +390,7 @@ Layout does the work, in the frame a number changes. A family is at most 30 KB g
 
 <!-- /performance -->
 
-`.dcss-invert` with f animated, 32 pairs (2026-10-31): 100 rows 2.3 ms a frame in Chrome, 2.9 in WebKit; 1,000 rows 14.7 and 14.3.
+`.dcss-invert` with f animated, 32 pairs (2026-10-31): 100 rows 2.3 ms a frame in Chrome, 2.9 in WebKit; 1,000 rows 14.7 and 14.3. Twenty `.dcss-ode` pendulums swinging: 4.7 and 5.2.
 
 ## License
 

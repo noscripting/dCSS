@@ -5,7 +5,7 @@ dcss.css computes with CSS layout: indexed reads, sums, ranks, sorts, keyed maps
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in BCP 14 [RFC2119] [RFC8174] when, and only when, they appear in all capitals, as shown here.
 
 Measured 2026-10-29, headless: Chrome 155.0.8059.86, WebKit 26.4, Firefox 158.0.
-Conformance: Chrome 192/192, WebKit 192/192, Firefox 70/192.
+Conformance: Chrome 193/193, WebKit 193/193, Firefox 70/193.
 Additional paired cases measured 2026-10-26 in Chrome/WebKit; the Firefox report is unchanged.
 The checks, probes and scripts this document names are in the noscript.ing repository ([github.com/noscripting/noscript.ing](https://github.com/noscripting/noscript.ing)), under `libraries/dcss/`; this package carries the sheets and their documents.
 
@@ -455,6 +455,12 @@ for selection or computation. Packaging does not expand any function's bounds.
   bottom edge (min at the box's top, max at its bottom), or at a value within its band, when the straight pieces
   between f's n + 1 values at x = from + k (to − from) / n are within 1 px of f's inverse; and again after an input of f
   changes.
+- **A222** `.dcss-ode` on a store.css frame cell (`data-store`), with the page's rule setting `--dcss-ode-a` from
+  `--dcss-ode-x` and `--dcss-ode-v`, MUST step once a frame from `--dcss-ode-x0` and `--dcss-ode-v0` by v + h a, then
+  x + h v (h `--dcss-ode-h`, 1/60 without one), x kept to `--dcss-ode-range` / 500,000 and v to `--dcss-ode-v-range` /
+  500,000, and give the cell's element and everything inside it `--dcss-ode-x` and `--dcss-ode-v` within 0.5 px of what
+  the same step in doubles keeps (a spring's amplitude, a pendulum's swing), on a scrolled page and in a cell inside
+  another; `--dcss-err` 1 while x or v is past its range, 0 otherwise; no `--dcss-ode-a` moves x on at v.
 
 ### On the board
 
@@ -661,6 +667,7 @@ for selection or computation. Packaging does not expand any function's bounds.
 | A219 | probes/dcss/root/check.mjs: the same points inverted at 12 `<i>`s, against d3's invert and the point projected | PASS: 1,000 of 1,000; 9.8e-15 from the point, d3's own 4.2e-11 (2026-10-31) | PASS: 1,000 of 1,000; 3.1e-14 from the point (2026-10-31) | NOTRUN |
 | A220 | probes/dcss/root/check.mjs: Kepler's equation, 40 orbits at 10 `<i>`s from the middle and 8 from a guess, within 1e-14; the cubic-bezier(.42, 0, .58, 1) inverse at 41 progresses, 6 `<i>`s; x³ − 2x + 2 and atan(x − 0.3), where plain Newton cycles and diverges, 10 `<i>`s; a 0 at either end; same sign at both ends and no f′ | PASS: 127 of 127, worst 1.8e-15 (2026-10-31) | PASS: 127 of 127, worst 1.8e-15 (2026-10-31) | NOTRUN |
 | A221 | probes/dcss/invert/check.mjs: Kepler's equation at e 0.6 on 32 and 64 pairs and after e changes to 0.3, x³ on [−1, 1], a falling 1 − x² with min above max, 30 pairs in a 999 px box; 1 px rows, each line's start against the inverse in doubles over its band | PASS: 3,900 of 3,900 rows, worst 0.47 px (2026-10-31) | PASS: 3,900 of 3,900 rows, worst 0.47 px (2026-10-31) | NOTRUN |
+| A222 | probes/dcss/ode/check.mjs: a 100 px spring, a pendulum from 1.2 rad, a spring's x read inside a second cell nested in it, the spring with the page scrolled 300 px, a cell run past its range and one started past it, a cell with no acceleration; sampled every 100 ms for 8 s against the same step in doubles | PASS: 7 of 7, worst 0.016 px outside what the step keeps, 59.2 steps a second (2026-10-31) | PASS: 7 of 7, worst 0.016 px, 59.2 steps a second (2026-10-31) | NOTRUN |
 | A51 | coverage/board.mjs: bd-power-12-loop-classes, bd-power-12-loop-table | PASS: 13 of 13 each, against NumPy | PASS: 13 of 13 each, against NumPy | PRECONDITION_FAILED: no view timelines, which store.css's store needs |
 | A52 | sheets/check.mjs: loan | PASS: 50 of 50 cells as written and after 2 changes | PASS: 50 of 50 cells as written and after 2 changes | PRECONDITION_FAILED: no view timelines, which store.css's store needs |
 

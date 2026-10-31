@@ -6,6 +6,7 @@ All notable changes to dcss are written here. The format follows [Keep a Changel
 
 ### Added
 
+- `.dcss-ode`, in families/root.css, on store.css's frame cell: the page writes an acceleration once (`--dcss-ode-a` from `--dcss-ode-x` and `--dcss-ode-v`) and the element takes a leapfrog step a frame, so a pendulum, a spring or a pull toward the pointer moves by its own equation, keeping its swing for minutes.
 - `.dcss-invert`, in families/root.css: the inverse of the page's own function on every row of a box at once, in one layout. The page writes f once on pairs of `<i>`s, and each line in the box starts where f reaches its value, so what starts the line sits on the answer: 24 moons on one orbit, the ticks of an eased axis. Within half a pixel on a 1,000 px box at 32 to 64 pairs.
 - `.dcss-root-newton`, with `.dcss-root`: give f's derivative `--dcss-root-df` beside f, and `--dcss-root-guess` if you have one, and each `<i>` after the two ends is one of Newton's steps, kept inside the bracket. Kepler's equation to a double's last digit in 8 to 10 `<i>`s where halving takes 54, at about half the cost a frame.
 - A root of the page's own equation, in a new family, `families/root.css`: `.dcss-root` halves a range over nested `<i>`s, the page's rule setting `--dcss-root-f` from `--dcss-root-x` on each, to `--dcss-root` and `--dcss-root-interval`; d3-geo's naturalEarth1Raw and equalEarthRaw, forward in `families/geo.css` and inverted on it.

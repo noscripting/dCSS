@@ -28,3 +28,5 @@
 .dcss-geo-equal-earth-raw-invert i>:not(i){--dcss-geo-x:calc(0.8660254037844386 * var(--x, calc(NaN)) * (1.340264 + -0.24331799999999998 * (var(--dcss-root) * var(--dcss-root)) + ((var(--dcss-root) * var(--dcss-root)) * (var(--dcss-root) * var(--dcss-root)) * (var(--dcss-root) * var(--dcss-root))) * (0.0062510000000000005 + 0.034164 * (var(--dcss-root) * var(--dcss-root)))) / cos(var(--dcss-root) * 1rad));--dcss-geo-y:calc(asin(clamp(-1, sin(var(--dcss-root) * 1rad) / 0.8660254037844386, 1)) / 1rad)}
 
 /* The inverse of the page's own function on every row, by layout (invert.mjs). */
+
+/* The page's own equation of motion, stepped a frame on store.css's frame cell (ode.mjs). */
