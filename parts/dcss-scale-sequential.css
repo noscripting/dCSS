@@ -1,0 +1,28 @@
+/* DCSS array: parts/dcss-scale-sequential.css, the dcss-scale-sequential call alone (parts.mjs)
+   SPDX-License-Identifier: MIT
+   SPDX-FileCopyrightText: 2026 noscript.ing contributors */
+:where([class*="dcss-"]) { writing-mode: horizontal-tb; }
+/* DCSS bar chart: d3.scaleBand and d3.scaleLinear([0, max]) over a list (scale.mjs). */
+@property --dcss-max{syntax:'*';inherits:false}
+
+/* DCSS d3.scaleLinear: up to 8 stops, clamp, rangeRound (linear.mjs). */
+
+/* DCSS d3.scalePow and scaleSqrt (linear.mjs). */
+
+/* DCSS d3.scaleLog: map and invert (linear.mjs). */
+
+/* DCSS d3.scaleBand and scalePoint as single calls, by index or by value (ordinal.mjs). */
+
+/* DCSS d3.scaleOrdinal: a value's place in the domain picks the range item (ordinal.mjs). */
+
+/* DCSS d3.scaleSymlog (continuous.mjs). */
+
+/* DCSS d3.scaleRadial (continuous.mjs). */
+
+/* DCSS d3.scaleSequential and its log, pow, sqrt and symlog (continuous.mjs). */
+@property --dcss-sq-z { syntax: '<integer>'; inherits: false; initial-value: 0; }
+.dcss-scale-sequential { --dcss-sq-t0: calc(var(--domain-0, 0)); --dcss-sq-t1: calc(var(--domain-1, 1)); --dcss-sq-tx: calc(var(--value)); --dcss-sq-z: calc(1 - abs(sign(var(--dcss-sq-t1) - var(--dcss-sq-t0)))); --dcss-sq-k: calc((1 - var(--dcss-sq-z)) * 1 / (var(--dcss-sq-t1) - var(--dcss-sq-t0) + var(--dcss-sq-z))); --dcss-sq-u: calc((var(--dcss-sq-tx) - var(--dcss-sq-t0)) * var(--dcss-sq-k)); --dcss-sq-t: calc(var(--dcss-sq-z) * 0.5 + (1 - var(--dcss-sq-z)) * (var(--clamp, 0) * clamp(0, var(--dcss-sq-u), 1) + (1 - var(--clamp, 0)) * var(--dcss-sq-u))); --dcss-sq-y: calc(var(--range-0, 0) * (1 - var(--dcss-sq-t)) + var(--range-1, 1) * var(--dcss-sq-t));
+  --dcss-scale-sequential: calc((var(--round, 0) * round(var(--dcss-sq-y)) + (1 - var(--round, 0)) * var(--dcss-sq-y)) + 0 * sign(var(--value))); }
+:where(.dcss-scale-sequential) > * { --value: initial; }
+
+/* DCSS d3.scaleDiverging and its log, pow, sqrt and symlog (continuous.mjs). */

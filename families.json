@@ -21,7 +21,8 @@
     "ease",
     "time",
     "date-format",
-    "geo"
+    "geo",
+    "shape"
   ],
   "families": {
     "ticks": {
@@ -107,15 +108,29 @@
       "dependencies": [],
       "classes": [
         "dcss-scale-band",
+        "dcss-scale-diverging",
+        "dcss-scale-diverging-log",
+        "dcss-scale-diverging-pow",
+        "dcss-scale-diverging-sqrt",
+        "dcss-scale-diverging-symlog",
         "dcss-scale-identity",
         "dcss-scale-linear",
         "dcss-scale-log",
+        "dcss-scale-ordinal",
+        "dcss-scale-point",
         "dcss-scale-pow",
-        "dcss-scale-sqrt"
+        "dcss-scale-radial",
+        "dcss-scale-sequential",
+        "dcss-scale-sequential-log",
+        "dcss-scale-sequential-pow",
+        "dcss-scale-sequential-sqrt",
+        "dcss-scale-sequential-symlog",
+        "dcss-scale-sqrt",
+        "dcss-scale-symlog"
       ],
-      "raw": 120914,
-      "gzip9": 7769,
-      "sha256": "655104efd8603a34053ab75dc9bf75e43857761ec11d236cddd9582752a10bbb"
+      "raw": 255746,
+      "gzip9": 14670,
+      "sha256": "09d6ca25e31cd3ab0e492d97a6b0383554f1f939d1f41fd40e57a2f5c6b43a89"
     },
     "format": {
       "file": "families/format.css",
@@ -177,9 +192,9 @@
         "dcss-ease-sin-in-out",
         "dcss-ease-sin-out"
       ],
-      "raw": 41457,
-      "gzip9": 2920,
-      "sha256": "281d216f4bdd9f46a7deffa04aa49457bb8738e0c768db179c036f5bb443bbab"
+      "raw": 23347,
+      "gzip9": 1917,
+      "sha256": "0cf9bfb72548e72a0f7f955c8898ec2feff46fc40f8b9fe9f2f02e5b3cfe4a05"
     },
     "time": {
       "file": "families/time.css",
@@ -251,9 +266,9 @@
         "dcss-utc-year-offset",
         "dcss-utc-year-round"
       ],
-      "raw": 389115,
-      "gzip9": 16078,
-      "sha256": "abc843cf4e9f0a0c303bf3d9bb3e6989896572ce7acc0547fe5770edd2bdc6a1"
+      "raw": 315457,
+      "gzip9": 14502,
+      "sha256": "99ef9e3453f98e4169b19ccd305fba692b15cdd0cd239ad0ca54d1b2d81e49a8"
     },
     "date-format": {
       "file": "families/date-format.css",
@@ -330,9 +345,32 @@
         "dcss-geo-transverse-mercator-extent",
         "dcss-geo-transverse-mercator-invert"
       ],
-      "raw": 348281,
-      "gzip9": 20384,
-      "sha256": "2be0d46a69b20e92f53efa67c85186d1804585f1af67e0912b0c126efa0e69b1"
+      "raw": 248081,
+      "gzip9": 16243,
+      "sha256": "1efb3c571ccc7279ef2a69853fe0e8dabd48acfe8eb20405d8a65ecc48aae202"
+    },
+    "shape": {
+      "file": "families/shape.css",
+      "dependencies": [],
+      "classes": [
+        "dcss-arc",
+        "dcss-area",
+        "dcss-curve-bump-x",
+        "dcss-curve-bump-y",
+        "dcss-curve-step",
+        "dcss-curve-step-after",
+        "dcss-curve-step-before",
+        "dcss-line",
+        "dcss-pie",
+        "dcss-shape-stack",
+        "dcss-stack-offset-diverging",
+        "dcss-stack-offset-expand",
+        "dcss-stack-offset-silhouette",
+        "dcss-stack-order-reverse"
+      ],
+      "raw": 43120,
+      "gzip9": 3720,
+      "sha256": "f552de92ba4e61976f05332ccea8d560a6dd78d3a522afb4ea0dde5a29503204"
     }
   },
   "owners": {
@@ -388,11 +426,25 @@
     "dcss-treemap-slice": "hierarchy",
     "dcss-treemap-slice-dice": "hierarchy",
     "dcss-scale-band": "scale",
+    "dcss-scale-diverging": "scale",
+    "dcss-scale-diverging-log": "scale",
+    "dcss-scale-diverging-pow": "scale",
+    "dcss-scale-diverging-sqrt": "scale",
+    "dcss-scale-diverging-symlog": "scale",
     "dcss-scale-identity": "scale",
     "dcss-scale-linear": "scale",
     "dcss-scale-log": "scale",
+    "dcss-scale-ordinal": "scale",
+    "dcss-scale-point": "scale",
     "dcss-scale-pow": "scale",
+    "dcss-scale-radial": "scale",
+    "dcss-scale-sequential": "scale",
+    "dcss-scale-sequential-log": "scale",
+    "dcss-scale-sequential-pow": "scale",
+    "dcss-scale-sequential-sqrt": "scale",
+    "dcss-scale-sequential-symlog": "scale",
     "dcss-scale-sqrt": "scale",
+    "dcss-scale-symlog": "scale",
     "dcss-format-fixed": "format",
     "dcss-format-general": "format",
     "dcss-format-locale": "format",
@@ -564,7 +616,28 @@
     "dcss-geo-transverse-mercator": "geo",
     "dcss-geo-transverse-mercator-config": "geo",
     "dcss-geo-transverse-mercator-extent": "geo",
-    "dcss-geo-transverse-mercator-invert": "geo"
+    "dcss-geo-transverse-mercator-invert": "geo",
+    "dcss-arc": "shape",
+    "dcss-area": "shape",
+    "dcss-curve-bump-x": "shape",
+    "dcss-curve-bump-y": "shape",
+    "dcss-curve-step": "shape",
+    "dcss-curve-step-after": "shape",
+    "dcss-curve-step-before": "shape",
+    "dcss-line": "shape",
+    "dcss-pie": "shape",
+    "dcss-shape-stack": "shape",
+    "dcss-stack-offset-diverging": "shape",
+    "dcss-stack-offset-expand": "shape",
+    "dcss-stack-offset-silhouette": "shape",
+    "dcss-stack-order-reverse": "shape"
+  },
+  "functions": {
+    "file": "families/functions.css",
+    "count": 130,
+    "raw": 216538,
+    "gzip9": 8660,
+    "sha256": "9c150f8a8a01aacb0f7650288b2b1826d2897ffa0b40533b29c328f02a8ec936"
   },
   "operations": {
     "owned": {
@@ -6076,7 +6149,35 @@
         "family": "scale",
         "role": "style-only"
       },
+      "dcss-scale-diverging": {
+        "family": "scale",
+        "role": "style-only"
+      },
+      "dcss-scale-diverging-log": {
+        "family": "scale",
+        "role": "style-only"
+      },
+      "dcss-scale-diverging-pow": {
+        "family": "scale",
+        "role": "style-only"
+      },
+      "dcss-scale-diverging-sqrt": {
+        "family": "scale",
+        "role": "style-only"
+      },
+      "dcss-scale-diverging-symlog": {
+        "family": "scale",
+        "role": "style-only"
+      },
       "dcss-scale-log": {
+        "family": "scale",
+        "role": "style-only"
+      },
+      "dcss-scale-ordinal": {
+        "family": "scale",
+        "role": "style-only"
+      },
+      "dcss-scale-point": {
         "family": "scale",
         "role": "style-only"
       },
@@ -6084,7 +6185,35 @@
         "family": "scale",
         "role": "style-only"
       },
+      "dcss-scale-radial": {
+        "family": "scale",
+        "role": "style-only"
+      },
+      "dcss-scale-sequential": {
+        "family": "scale",
+        "role": "style-only"
+      },
+      "dcss-scale-sequential-log": {
+        "family": "scale",
+        "role": "style-only"
+      },
+      "dcss-scale-sequential-pow": {
+        "family": "scale",
+        "role": "style-only"
+      },
+      "dcss-scale-sequential-sqrt": {
+        "family": "scale",
+        "role": "style-only"
+      },
+      "dcss-scale-sequential-symlog": {
+        "family": "scale",
+        "role": "style-only"
+      },
       "dcss-scale-sqrt": {
+        "family": "scale",
+        "role": "style-only"
+      },
+      "dcss-scale-symlog": {
         "family": "scale",
         "role": "style-only"
       },
@@ -6250,6 +6379,62 @@
       },
       "dcss-ease-sin-out": {
         "family": "ease",
+        "role": "style-only"
+      },
+      "dcss-arc": {
+        "family": "shape",
+        "role": "style-only"
+      },
+      "dcss-area": {
+        "family": "shape",
+        "role": "style-only"
+      },
+      "dcss-curve-bump-x": {
+        "family": "shape",
+        "role": "style-only"
+      },
+      "dcss-curve-bump-y": {
+        "family": "shape",
+        "role": "style-only"
+      },
+      "dcss-curve-step": {
+        "family": "shape",
+        "role": "style-only"
+      },
+      "dcss-curve-step-after": {
+        "family": "shape",
+        "role": "style-only"
+      },
+      "dcss-curve-step-before": {
+        "family": "shape",
+        "role": "style-only"
+      },
+      "dcss-line": {
+        "family": "shape",
+        "role": "style-only"
+      },
+      "dcss-pie": {
+        "family": "shape",
+        "role": "style-only"
+      },
+      "dcss-shape-stack": {
+        "family": "shape",
+        "role": "style-only"
+      },
+      "dcss-stack-offset-diverging": {
+        "family": "shape",
+        "role": "style-only"
+      },
+      "dcss-stack-offset-expand": {
+        "family": "shape",
+        "role": "style-only"
+      },
+      "dcss-stack-offset-silhouette": {
+        "family": "shape",
+        "role": "style-only"
+      },
+      "dcss-stack-order-reverse": {
+        "family": "shape",
         "role": "style-only"
       }
     },

@@ -1,0 +1,28 @@
+/* DCSS array: parts/dcss-scale-sequential-symlog.css, the dcss-scale-sequential-symlog call alone (parts.mjs)
+   SPDX-License-Identifier: MIT
+   SPDX-FileCopyrightText: 2026 noscript.ing contributors */
+:where([class*="dcss-"]) { writing-mode: horizontal-tb; }
+/* DCSS bar chart: d3.scaleBand and d3.scaleLinear([0, max]) over a list (scale.mjs). */
+@property --dcss-max{syntax:'*';inherits:false}
+
+/* DCSS d3.scaleLinear: up to 8 stops, clamp, rangeRound (linear.mjs). */
+
+/* DCSS d3.scalePow and scaleSqrt (linear.mjs). */
+
+/* DCSS d3.scaleLog: map and invert (linear.mjs). */
+
+/* DCSS d3.scaleBand and scalePoint as single calls, by index or by value (ordinal.mjs). */
+
+/* DCSS d3.scaleOrdinal: a value's place in the domain picks the range item (ordinal.mjs). */
+
+/* DCSS d3.scaleSymlog (continuous.mjs). */
+
+/* DCSS d3.scaleRadial (continuous.mjs). */
+
+/* DCSS d3.scaleSequential and its log, pow, sqrt and symlog (continuous.mjs). */
+@property --dcss-sq-symlog-z { syntax: '<integer>'; inherits: false; initial-value: 0; }
+.dcss-scale-sequential-symlog { --dcss-sq-symlog-t0: calc((sign(var(--domain-0, 0)) * log(1 + abs((clamp(-1 * (pow(2, 2000 * (1 - abs(sign(3 / 10 - 0.3)))) - 1), var(--domain-0, 0) / var(--constant, 1), pow(2, 2000 * (1 - abs(sign(3 / 10 - 0.3)))) - 1) + clamp(-1 * (pow(2, 2000 * abs(sign(3 / 10 - 0.3))) - 1), (var(--domain-0, 0) * 1px) / (var(--constant, 1) * 1px), pow(2, 2000 * abs(sign(3 / 10 - 0.3))) - 1)))))); --dcss-sq-symlog-t1: calc((sign(var(--domain-1, 1)) * log(1 + abs((clamp(-1 * (pow(2, 2000 * (1 - abs(sign(3 / 10 - 0.3)))) - 1), var(--domain-1, 1) / var(--constant, 1), pow(2, 2000 * (1 - abs(sign(3 / 10 - 0.3)))) - 1) + clamp(-1 * (pow(2, 2000 * abs(sign(3 / 10 - 0.3))) - 1), (var(--domain-1, 1) * 1px) / (var(--constant, 1) * 1px), pow(2, 2000 * abs(sign(3 / 10 - 0.3))) - 1)))))); --dcss-sq-symlog-tx: calc((sign(var(--value)) * log(1 + abs((clamp(-1 * (pow(2, 2000 * (1 - abs(sign(3 / 10 - 0.3)))) - 1), var(--value) / var(--constant, 1), pow(2, 2000 * (1 - abs(sign(3 / 10 - 0.3)))) - 1) + clamp(-1 * (pow(2, 2000 * abs(sign(3 / 10 - 0.3))) - 1), (var(--value) * 1px) / (var(--constant, 1) * 1px), pow(2, 2000 * abs(sign(3 / 10 - 0.3))) - 1)))))); --dcss-sq-symlog-z: calc(1 - abs(sign(var(--dcss-sq-symlog-t1) - var(--dcss-sq-symlog-t0)))); --dcss-sq-symlog-k: calc((1 - var(--dcss-sq-symlog-z)) * 1 / (var(--dcss-sq-symlog-t1) - var(--dcss-sq-symlog-t0) + var(--dcss-sq-symlog-z))); --dcss-sq-symlog-u: calc((var(--dcss-sq-symlog-tx) - var(--dcss-sq-symlog-t0)) * var(--dcss-sq-symlog-k)); --dcss-sq-symlog-t: calc(var(--dcss-sq-symlog-z) * 0.5 + (1 - var(--dcss-sq-symlog-z)) * (var(--clamp, 0) * clamp(0, var(--dcss-sq-symlog-u), 1) + (1 - var(--clamp, 0)) * var(--dcss-sq-symlog-u))); --dcss-sq-symlog-y: calc(var(--range-0, 0) * (1 - var(--dcss-sq-symlog-t)) + var(--range-1, 1) * var(--dcss-sq-symlog-t));
+  --dcss-scale-sequential-symlog: calc((var(--round, 0) * round(var(--dcss-sq-symlog-y)) + (1 - var(--round, 0)) * var(--dcss-sq-symlog-y)) + 0 * sign(var(--value))); }
+:where(.dcss-scale-sequential-symlog) > * { --value: initial; }
+
+/* DCSS d3.scaleDiverging and its log, pow, sqrt and symlog (continuous.mjs). */

@@ -1,0 +1,33 @@
+/* DCSS array: parts/dcss-scale-diverging-pow.css, the dcss-scale-diverging-pow call alone (parts.mjs)
+   SPDX-License-Identifier: MIT
+   SPDX-FileCopyrightText: 2026 noscript.ing contributors */
+:where([class*="dcss-"]) { writing-mode: horizontal-tb; }
+/* DCSS bar chart: d3.scaleBand and d3.scaleLinear([0, max]) over a list (scale.mjs). */
+@property --dcss-max{syntax:'*';inherits:false}
+
+/* DCSS d3.scaleLinear: up to 8 stops, clamp, rangeRound (linear.mjs). */
+
+/* DCSS d3.scalePow and scaleSqrt (linear.mjs). */
+
+/* DCSS d3.scaleLog: map and invert (linear.mjs). */
+
+/* DCSS d3.scaleBand and scalePoint as single calls, by index or by value (ordinal.mjs). */
+
+/* DCSS d3.scaleOrdinal: a value's place in the domain picks the range item (ordinal.mjs). */
+
+/* DCSS d3.scaleSymlog (continuous.mjs). */
+
+/* DCSS d3.scaleRadial (continuous.mjs). */
+
+/* DCSS d3.scaleSequential and its log, pow, sqrt and symlog (continuous.mjs). */
+
+/* DCSS d3.scaleDiverging and its log, pow, sqrt and symlog (continuous.mjs). */
+@property --dcss-dv-pow-z10 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-dv-pow-z21 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-dv-pow-s { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-dv-pow-g { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-dv-pow-i { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-dv-pow-id { syntax: '<integer>'; inherits: false; initial-value: 1; }
+.dcss-scale-diverging-pow { --dcss-dv-pow-t0: calc(((1 - abs(sign(var(--exponent, 1) - 1))) * var(--domain-0, 0) + (1 - (1 - abs(sign(var(--exponent, 1) - 1)))) * (sign(var(--domain-0, 0)) * ((1 - abs(sign(var(--exponent, 1) - 0.5))) * sqrt(abs(var(--domain-0, 0))) + (1 - (1 - abs(sign(var(--exponent, 1) - 0.5)))) * pow(abs(var(--domain-0, 0)), var(--exponent, 1)))))); --dcss-dv-pow-t1: calc(((1 - abs(sign(var(--exponent, 1) - 1))) * var(--domain-1, 0.5) + (1 - (1 - abs(sign(var(--exponent, 1) - 1)))) * (sign(var(--domain-1, 0.5)) * ((1 - abs(sign(var(--exponent, 1) - 0.5))) * sqrt(abs(var(--domain-1, 0.5))) + (1 - (1 - abs(sign(var(--exponent, 1) - 0.5)))) * pow(abs(var(--domain-1, 0.5)), var(--exponent, 1)))))); --dcss-dv-pow-t2: calc(((1 - abs(sign(var(--exponent, 1) - 1))) * var(--domain-2, 1) + (1 - (1 - abs(sign(var(--exponent, 1) - 1)))) * (sign(var(--domain-2, 1)) * ((1 - abs(sign(var(--exponent, 1) - 0.5))) * sqrt(abs(var(--domain-2, 1))) + (1 - (1 - abs(sign(var(--exponent, 1) - 0.5)))) * pow(abs(var(--domain-2, 1)), var(--exponent, 1)))))); --dcss-dv-pow-tx: calc(((1 - abs(sign(var(--exponent, 1) - 1))) * var(--value) + (1 - (1 - abs(sign(var(--exponent, 1) - 1)))) * (sign(var(--value)) * ((1 - abs(sign(var(--exponent, 1) - 0.5))) * sqrt(abs(var(--value))) + (1 - (1 - abs(sign(var(--exponent, 1) - 0.5)))) * pow(abs(var(--value)), var(--exponent, 1)))))); --dcss-dv-pow-z10: calc(1 - abs(sign(var(--dcss-dv-pow-t1) - var(--dcss-dv-pow-t0)))); --dcss-dv-pow-z21: calc(1 - abs(sign(var(--dcss-dv-pow-t2) - var(--dcss-dv-pow-t1)))); --dcss-dv-pow-k10: calc((1 - var(--dcss-dv-pow-z10)) * 0.5 / (var(--dcss-dv-pow-t1) - var(--dcss-dv-pow-t0) + var(--dcss-dv-pow-z10))); --dcss-dv-pow-k21: calc((1 - var(--dcss-dv-pow-z21)) * 0.5 / (var(--dcss-dv-pow-t2) - var(--dcss-dv-pow-t1) + var(--dcss-dv-pow-z21))); --dcss-dv-pow-s: calc(1 - 2 * clamp(0, sign(var(--dcss-dv-pow-t0) - var(--dcss-dv-pow-t1)), 1)); --dcss-dv-pow-g: calc(clamp(0, sign(var(--dcss-dv-pow-s) * var(--dcss-dv-pow-t1) - var(--dcss-dv-pow-s) * var(--dcss-dv-pow-tx)), 1)); --dcss-dv-pow-u: calc(0.5 + (var(--dcss-dv-pow-tx) - var(--dcss-dv-pow-t1)) * (var(--dcss-dv-pow-g) * var(--dcss-dv-pow-k10) + (1 - var(--dcss-dv-pow-g)) * var(--dcss-dv-pow-k21))); --dcss-dv-pow-t: calc((var(--clamp, 0) * clamp(0, var(--dcss-dv-pow-u), 1) + (1 - var(--clamp, 0)) * var(--dcss-dv-pow-u))); --dcss-dv-pow-i: calc(clamp(0, round(down, var(--dcss-dv-pow-t) * 2), 1)); --dcss-dv-pow-v: calc(var(--dcss-dv-pow-t) * 2 - var(--dcss-dv-pow-i)); --dcss-dv-pow-y: calc((var(--dcss-dv-pow-i) * var(--range-1, 0.5) + (1 - var(--dcss-dv-pow-i)) * var(--range-0, 0)) * (1 - var(--dcss-dv-pow-v)) + (var(--dcss-dv-pow-i) * var(--range-2, 1) + (1 - var(--dcss-dv-pow-i)) * var(--range-1, 0.5)) * var(--dcss-dv-pow-v)); --dcss-dv-pow-id: calc(0 * var(--range-0));
+  --dcss-scale-diverging-pow: calc((var(--dcss-dv-pow-id) * var(--dcss-dv-pow-t) + (1 - var(--dcss-dv-pow-id)) * (var(--round, 0) * round(var(--dcss-dv-pow-y)) + (1 - var(--round, 0)) * var(--dcss-dv-pow-y))) + 0 * sign(var(--value))); }
+:where(.dcss-scale-diverging-pow) > * { --value: initial; }

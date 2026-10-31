@@ -1,0 +1,1 @@
+@function --dcss-utc-second-offset(--value, --step: 1) { --r: calc((sign(var(--value)) * round(down,abs(var(--value)))) + round(down,var(--step)) * 1000); --ok: calc((1 - min(1,sign(max(0,abs((sign(var(--value)) * round(down,abs(var(--value))))) - 8000000000000)))) * min(1,sign(max(0,8000000000000 + 1 - abs(var(--r)))))); result: calc(var(--ok) / var(--ok) * var(--r)); }

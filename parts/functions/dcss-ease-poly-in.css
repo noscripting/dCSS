@@ -1,0 +1,1 @@
+@function --dcss-ease-poly-in(--value, --exponent: 3) { result: calc(pow(var(--value), var(--exponent, 3))); }

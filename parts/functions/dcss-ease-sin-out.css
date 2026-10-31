@@ -1,0 +1,1 @@
+@function --dcss-ease-sin-out(--value) { result: calc(sin(var(--value) * (pi / 2))); }

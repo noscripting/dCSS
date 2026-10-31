@@ -17,3 +17,15 @@
 @property --dcss-identity-error{syntax:'<integer>';inherits:false;initial-value:1}
 .dcss-scale-identity{--dcss-scale-identity:calc(var(--value));--dcss-scale-identity-invert:calc(var(--value));--dcss-identity-present:calc(var(--dcss-scale-identity) * 0 + 1);--dcss-identity-error:calc(1 - var(--dcss-identity-present));--dcss-ready:var(--dcss-identity-present);--dcss-err:var(--dcss-identity-error);--dcss-scale-identity-ready:var(--dcss-identity-present);--dcss-scale-identity-error:var(--dcss-identity-error);}
 :where(.dcss-scale-identity)>*{--value:initial}
+
+/* DCSS d3.scaleBand and scalePoint as single calls, by index or by value (ordinal.mjs). */
+
+/* DCSS d3.scaleOrdinal: a value's place in the domain picks the range item (ordinal.mjs). */
+
+/* DCSS d3.scaleSymlog (continuous.mjs). */
+
+/* DCSS d3.scaleRadial (continuous.mjs). */
+
+/* DCSS d3.scaleSequential and its log, pow, sqrt and symlog (continuous.mjs). */
+
+/* DCSS d3.scaleDiverging and its log, pow, sqrt and symlog (continuous.mjs). */

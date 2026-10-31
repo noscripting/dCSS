@@ -1,0 +1,1 @@
+@function --dcss-ease-quad-in(--value) { result: calc((var(--value) * var(--value))); }

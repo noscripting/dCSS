@@ -1,0 +1,28 @@
+/* DCSS array: parts/dcss-scale-sequential-log.css, the dcss-scale-sequential-log call alone (parts.mjs)
+   SPDX-License-Identifier: MIT
+   SPDX-FileCopyrightText: 2026 noscript.ing contributors */
+:where([class*="dcss-"]) { writing-mode: horizontal-tb; }
+/* DCSS bar chart: d3.scaleBand and d3.scaleLinear([0, max]) over a list (scale.mjs). */
+@property --dcss-max{syntax:'*';inherits:false}
+
+/* DCSS d3.scaleLinear: up to 8 stops, clamp, rangeRound (linear.mjs). */
+
+/* DCSS d3.scalePow and scaleSqrt (linear.mjs). */
+
+/* DCSS d3.scaleLog: map and invert (linear.mjs). */
+
+/* DCSS d3.scaleBand and scalePoint as single calls, by index or by value (ordinal.mjs). */
+
+/* DCSS d3.scaleOrdinal: a value's place in the domain picks the range item (ordinal.mjs). */
+
+/* DCSS d3.scaleSymlog (continuous.mjs). */
+
+/* DCSS d3.scaleRadial (continuous.mjs). */
+
+/* DCSS d3.scaleSequential and its log, pow, sqrt and symlog (continuous.mjs). */
+@property --dcss-sq-log-z { syntax: '<integer>'; inherits: false; initial-value: 0; }
+.dcss-scale-sequential-log { --dcss-sq-log-t0: calc(((1 - 2 * clamp(0, -1 * sign(var(--domain-0, 1)), 1)) * log(abs(var(--domain-0, 1))))); --dcss-sq-log-t1: calc(((1 - 2 * clamp(0, -1 * sign(var(--domain-0, 1)), 1)) * log(abs(var(--domain-1, 10))))); --dcss-sq-log-tx: calc(((1 - 2 * clamp(0, -1 * sign(var(--domain-0, 1)), 1)) * log(abs(var(--value))))); --dcss-sq-log-z: calc(1 - abs(sign(var(--dcss-sq-log-t1) - var(--dcss-sq-log-t0)))); --dcss-sq-log-k: calc((1 - var(--dcss-sq-log-z)) * 1 / (var(--dcss-sq-log-t1) - var(--dcss-sq-log-t0) + var(--dcss-sq-log-z))); --dcss-sq-log-u: calc((var(--dcss-sq-log-tx) - var(--dcss-sq-log-t0)) * var(--dcss-sq-log-k)); --dcss-sq-log-t: calc(var(--dcss-sq-log-z) * 0.5 + (1 - var(--dcss-sq-log-z)) * (var(--clamp, 0) * clamp(0, var(--dcss-sq-log-u), 1) + (1 - var(--clamp, 0)) * var(--dcss-sq-log-u))); --dcss-sq-log-y: calc(var(--range-0, 0) * (1 - var(--dcss-sq-log-t)) + var(--range-1, 1) * var(--dcss-sq-log-t));
+  --dcss-scale-sequential-log: calc((var(--round, 0) * round(var(--dcss-sq-log-y)) + (1 - var(--round, 0)) * var(--dcss-sq-log-y)) + 0 * sign(var(--value))); }
+:where(.dcss-scale-sequential-log) > * { --value: initial; }
+
+/* DCSS d3.scaleDiverging and its log, pow, sqrt and symlog (continuous.mjs). */

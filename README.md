@@ -202,7 +202,11 @@ Each call gives its answer as `--dcss-` and its name to the elements directly in
 
 - [`.dcss-scale-linear`](https://d3js.org/d3-scale/linear#scaleLinear), [`.dcss-scale-pow`](https://d3js.org/d3-scale/pow#scalePow), [`.dcss-scale-sqrt`](https://d3js.org/d3-scale/pow#scaleSqrt), [`.dcss-scale-log`](https://d3js.org/d3-scale/log#scaleLog), [`.dcss-scale-identity`](https://d3js.org/d3-scale/linear#scaleIdentity): `--value` from `--domain-0`, `--domain-1` to `--range-0`, `--range-1`, and back as `-invert`.
 - `.dcss-piecewise`: up to 8 stops, `--stops`.
-- [`.dcss-scale-band`](https://d3js.org/d3-scale/band#scaleBand): with `.dcss-scale-linear`, a bar chart: `--padding`, `--padding-inner`, `--padding-outer`, `--align`.
+- [`.dcss-scale-symlog`](https://d3js.org/d3-scale/symlog#scaleSymlog), [`.dcss-scale-radial`](https://d3js.org/d3-scale/linear#scaleRadial): as `.dcss-scale-linear`, with `-invert`, `--clamp`, `--round` and `.dcss-piecewise`; symlog's `--constant` is 1 if not set.
+- [`.dcss-scale-sequential`](https://d3js.org/d3-scale/sequential#scaleSequential), [`.dcss-scale-sequential-log`](https://d3js.org/d3-scale/sequential#scaleSequentialLog), [`.dcss-scale-sequential-pow`](https://d3js.org/d3-scale/sequential#scaleSequentialPow), [`.dcss-scale-sequential-sqrt`](https://d3js.org/d3-scale/sequential#scaleSequentialSqrt), [`.dcss-scale-sequential-symlog`](https://d3js.org/d3-scale/sequential#scaleSequentialSymlog): `--value` from `--domain-0`, `--domain-1` to `--range-0`, `--range-1` (0 and 1 if not set), with `--clamp`, `--round`, and `--exponent` or `--constant`.
+- [`.dcss-scale-diverging`](https://d3js.org/d3-scale/diverging#scaleDiverging), [`.dcss-scale-diverging-log`](https://d3js.org/d3-scale/diverging#scaleDivergingLog), [`.dcss-scale-diverging-pow`](https://d3js.org/d3-scale/diverging#scaleDivergingPow), [`.dcss-scale-diverging-sqrt`](https://d3js.org/d3-scale/diverging#scaleDivergingSqrt), [`.dcss-scale-diverging-symlog`](https://d3js.org/d3-scale/diverging#scaleDivergingSymlog): the same over three stops, `--domain-0` to `--domain-2` and `--range-0` to `--range-2`; with no `--range-0` on the element or above it, the answer is d3's identity interpolator's, the scale's t.
+- [`.dcss-scale-band`](https://d3js.org/d3-scale/band#scaleBand), [`.dcss-scale-point`](https://d3js.org/d3-scale/point#scalePoint): the `--index`-th of `--domains` bands (or `--value`'s place in `--domain-0` to `--domain-15`, to everything inside) from `--range-0` to `--range-1`, with `--padding`, `--padding-inner`, `--padding-outer`, `--align`, `--round`: `--dcss-scale-band`, `--dcss-scale-band-bandwidth`, `--dcss-scale-band-step` (`--dcss-scale-point`, `--dcss-scale-point-bandwidth`, `--dcss-scale-point-step`). With `.dcss-scale-linear`, a band scale is a bar chart.
+- [`.dcss-scale-ordinal`](https://d3js.org/d3-scale/ordinal#scaleOrdinal): `--value`'s place in `--domain-0` to `--domain-15` (`--domains` of them) picks `--range-0` to `--range-15` (`--ranges` of them, cycled), to everything inside: `--dcss-scale-ordinal`; a value in no slot takes `--unknown`, else the range at `--domains`, none with `--implicit: 0`.
 
 ### Format: families/format.css
 
@@ -236,14 +240,24 @@ Each call gives its answer as `--dcss-` and its name to the elements directly in
 - [`.dcss-geo-<projection>`](https://d3js.org/d3-geo/projection#geoProjection): `--x`, `--y` by `identity`, `equirectangular`, `mercator`, `transverse-mercator`, `stereographic` or `rotation`, with `-invert`, `-config` or `-extent` after it.
 - [`.dcss-geo-distance`](https://d3js.org/d3-geo/math#geoDistance): in radians.
 
+### Shape: families/shape.css
+
+- [`.dcss-pie`](https://d3js.org/d3-shape/pie#pie): each item's `--dcss-pie-start-angle`, `-end-angle`, `-pad-angle` and `-index`, read four elements deep, from `--start-angle`, `--end-angle`, `--pad-angle` and `--sort-values` (-1 descending, 1 ascending, 0 list order).
+- [`.dcss-arc`](https://d3js.org/d3-shape/arc#arc): `--dcss-arc-centroid-x`, `-y`, its path's corners and radii, and drawn as its `clip-path`, from `--inner-radius`, `--outer-radius`, `--start-angle`, `--end-angle`.
+- [`.dcss-shape-stack`](https://d3js.org/d3-shape/stack#stack): a `<ul>` a point, a `<li>` with `--value` a key; inside each item's first element, `--dcss-y0`, `--dcss-y1` and `--dcss-stack-index`.
+- [`.dcss-stack-offset-expand`](https://d3js.org/d3-shape/stack#stackOffsetExpand), [`.dcss-stack-offset-silhouette`](https://d3js.org/d3-shape/stack#stackOffsetSilhouette), [`.dcss-stack-offset-diverging`](https://d3js.org/d3-shape/stack#stackOffsetDiverging), [`.dcss-stack-order-reverse`](https://d3js.org/d3-shape/stack#stackOrderReverse): beside `.dcss-shape-stack`, its offset and order (none without a class).
+- [`.dcss-line`](https://d3js.org/d3-shape/line#line), [`.dcss-area`](https://d3js.org/d3-shape/area#area): the list drawn in its own box, which the page sizes, each `<li>` a point at `--x`, `--y` and its segment from the one before; an item missing either draws nothing and breaks the line (d3's `defined`); an area runs down to the list's `--y0`; `--stroke-width` (1.5).
+- [`.dcss-curve-step`](https://d3js.org/d3-shape/curve#curveStep), [`.dcss-curve-step-before`](https://d3js.org/d3-shape/curve#curveStepBefore), [`.dcss-curve-step-after`](https://d3js.org/d3-shape/curve#curveStepAfter), [`.dcss-curve-bump-x`](https://d3js.org/d3-shape/curve#curveBumpX), [`.dcss-curve-bump-y`](https://d3js.org/d3-shape/curve#curveBumpY): on the figure, its curve; linear without one.
+
 <!-- /calls -->
 
 ### As CSS functions
 
-Where the browser has `@function` (Chrome; Safari Technology Preview), these calls are also functions, with no element and no list. Their arguments are the class's inputs in order, and a value the class refuses gives NaN:
+Where the browser has `@function` (Chrome; Safari Technology Preview), these calls are also functions, with no element and no list. They are a sheet of their own, `families/functions.css` (7.5 KB gzipped), or one call's in `parts/functions/<class>.css` (`parts/functions/dcss-geo-mercator.css`); the class sheets don't carry them. Their arguments are the class's inputs in order, and a value the class refuses gives NaN:
 
 - `--dcss-ease-<name>(t)`, with the exponent, overshoot, amplitude or period after `t`: `--dcss-ease-cubic-in-out(0.25)` is 0.0625.
 - `--dcss-scale-linear(x, d0, d1, r0, r1, clamp, round)`, and `-pow` (the exponent after `r1`), `-sqrt` and `-log`.
+- `--dcss-scale-symlog(x, d0, d1, r0, r1, constant, clamp, round)` and `--dcss-scale-radial(x, d0, d1, r0, r1, clamp, round)`; `--dcss-scale-sequential(x, d0, d1, r0, r1, clamp, round)` and `--dcss-scale-diverging(x, d0, d1, d2, r0, r1, r2, clamp, round)`, each also `-log`, `-pow` (the exponent after the range), `-sqrt` and `-symlog` (the constant after the range).
 - `--dcss-scale-band(i, n, r0, r1, padding-inner, padding-outer, align, round)`: the `i`-th of `n` bands. A point scale is padding-inner 1.
 - `--dcss-utc-<interval>-floor(t)`, `-ceil(t)`, `-round(t)`, `-offset(t, step)` and `-count(start, stop)` for `day`, `hour`, `minute`, `second` and `sunday` to `saturday`.
 - `--dcss-geo-<projection>-x(lon, lat, scale, translate-x, translate-y, rotate-lambda, rotate-phi, rotate-gamma, center-lambda, center-phi, angle, reflect-x, reflect-y)` and `-y`, with `-invert` before `-x`, for `equirectangular`, `mercator` and `transverse-mercator`; `identity` has no rotate or center, and `--dcss-geo-rotation-x(lon, lat, lambda, phi, gamma)` only the angles. `--dcss-geo-distance(lon-a, lat-a, lon-b, lat-b)` is in radians.
@@ -270,7 +284,7 @@ A browser without `@function` drops the declaration, so write a plain value befo
 
 <!-- browsers -->
 
-Headless Chrome 155 and WebKit 26.4, Safari's engine, pass all 162 requirements of [SPEC.md](SPEC.md), and the calls match d3 on 3,206 of the 7,049 calls in d3's tests. Firefox 158 computes `calc()` in 32-bit floats, so exact sums, dates and most formatting go wrong there: it passes 70. [QUIRKS.md](QUIRKS.md) has the engine bugs.
+Headless Chrome 155 and WebKit 26.4, Safari's engine, pass all 185 requirements of [SPEC.md](SPEC.md), and the calls match d3 on 3,206 of the 7,049 calls in d3's tests. Firefox 158 computes `calc()` in 32-bit floats, so exact sums, dates and most formatting go wrong there: it passes 70. [QUIRKS.md](QUIRKS.md) has the engine bugs.
 
 <!-- /browsers -->
 

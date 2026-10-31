@@ -1,0 +1,12 @@
+/* DCSS array: parts/dcss-stack-order-reverse.css, the dcss-stack-order-reverse call alone (parts.mjs)
+   SPDX-License-Identifier: MIT
+   SPDX-FileCopyrightText: 2026 noscript.ing contributors */
+:where([class*="dcss-"]) { writing-mode: horizontal-tb; }
+/* d3-shape: pie (pie.mjs). */
+
+/* d3-shape: arc (pie.mjs). */
+
+/* d3.stack: a point a list, a key an item (stack.mjs). */@property --dcss-stack-r{syntax:'<integer>';inherits:true;initial-value:0}@property --dcss-y0{syntax:'*';inherits:false}@property --dcss-y1{syntax:'*';inherits:false}@property --dcss-stack-index{syntax:'*';inherits:false}
+.dcss-shape-stack.dcss-stack-order-reverse>:is(ol,ul)>li{--dcss-stack-r:calc(var(--dcss-stack-n) - sibling-index())}
+
+/* d3.line and d3.area, drawn: each item's segment from the point before it (line.mjs). */

@@ -1,0 +1,1 @@
+@function --dcss-ease-back-out(--value, --overshoot: 1.70158) { result: calc(((var(--value) - 1) * (var(--value) - 1) * (var(--value) * var(--overshoot, 1.70158) + (var(--value) - 1)) + 1)); }
