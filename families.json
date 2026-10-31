@@ -22,7 +22,8 @@
     "time",
     "date-format",
     "geo",
-    "shape"
+    "shape",
+    "root"
   ],
   "families": {
     "ticks": {
@@ -325,6 +326,7 @@
       "dependencies": [],
       "classes": [
         "dcss-geo-distance",
+        "dcss-geo-equal-earth-raw",
         "dcss-geo-equirectangular",
         "dcss-geo-equirectangular-config",
         "dcss-geo-equirectangular-invert",
@@ -335,6 +337,7 @@
         "dcss-geo-mercator-config",
         "dcss-geo-mercator-extent",
         "dcss-geo-mercator-invert",
+        "dcss-geo-natural-earth1-raw",
         "dcss-geo-rotation",
         "dcss-geo-rotation-invert",
         "dcss-geo-stereographic",
@@ -345,9 +348,9 @@
         "dcss-geo-transverse-mercator-extent",
         "dcss-geo-transverse-mercator-invert"
       ],
-      "raw": 248081,
-      "gzip9": 16243,
-      "sha256": "1efb3c571ccc7279ef2a69853fe0e8dabd48acfe8eb20405d8a65ecc48aae202"
+      "raw": 252037,
+      "gzip9": 16634,
+      "sha256": "a2e1d6869d8fc72660b912a5a58e3aa7e45dbdfc005791f78c51914d4a638e81"
     },
     "shape": {
       "file": "families/shape.css",
@@ -371,6 +374,18 @@
       "raw": 43120,
       "gzip9": 3720,
       "sha256": "f552de92ba4e61976f05332ccea8d560a6dd78d3a522afb4ea0dde5a29503204"
+    },
+    "root": {
+      "file": "families/root.css",
+      "dependencies": [],
+      "classes": [
+        "dcss-geo-equal-earth-raw-invert",
+        "dcss-geo-natural-earth1-raw-invert",
+        "dcss-root"
+      ],
+      "raw": 71665,
+      "gzip9": 3293,
+      "sha256": "8241d3cb84e28f4684b9e56b52229444c4de598c79d553c5926f9a378266a8f6"
     }
   },
   "owners": {
@@ -598,6 +613,7 @@
     "dcss-date-format-8": "date-format",
     "dcss-date-format-9": "date-format",
     "dcss-geo-distance": "geo",
+    "dcss-geo-equal-earth-raw": "geo",
     "dcss-geo-equirectangular": "geo",
     "dcss-geo-equirectangular-config": "geo",
     "dcss-geo-equirectangular-invert": "geo",
@@ -608,6 +624,7 @@
     "dcss-geo-mercator-config": "geo",
     "dcss-geo-mercator-extent": "geo",
     "dcss-geo-mercator-invert": "geo",
+    "dcss-geo-natural-earth1-raw": "geo",
     "dcss-geo-rotation": "geo",
     "dcss-geo-rotation-invert": "geo",
     "dcss-geo-stereographic": "geo",
@@ -630,7 +647,10 @@
     "dcss-stack-offset-diverging": "shape",
     "dcss-stack-offset-expand": "shape",
     "dcss-stack-offset-silhouette": "shape",
-    "dcss-stack-order-reverse": "shape"
+    "dcss-stack-order-reverse": "shape",
+    "dcss-geo-equal-earth-raw-invert": "root",
+    "dcss-geo-natural-earth1-raw-invert": "root",
+    "dcss-root": "root"
   },
   "functions": {
     "file": "families/functions.css",
@@ -6381,6 +6401,14 @@
         "family": "ease",
         "role": "style-only"
       },
+      "dcss-geo-equal-earth-raw": {
+        "family": "geo",
+        "role": "style-only"
+      },
+      "dcss-geo-natural-earth1-raw": {
+        "family": "geo",
+        "role": "style-only"
+      },
       "dcss-arc": {
         "family": "shape",
         "role": "style-only"
@@ -6435,6 +6463,18 @@
       },
       "dcss-stack-order-reverse": {
         "family": "shape",
+        "role": "style-only"
+      },
+      "dcss-geo-equal-earth-raw-invert": {
+        "family": "root",
+        "role": "style-only"
+      },
+      "dcss-geo-natural-earth1-raw-invert": {
+        "family": "root",
+        "role": "style-only"
+      },
+      "dcss-root": {
+        "family": "root",
         "role": "style-only"
       }
     },

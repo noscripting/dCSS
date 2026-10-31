@@ -6,6 +6,7 @@ All notable changes to dcss are written here. The format follows [Keep a Changel
 
 ### Added
 
+- A root of the page's own equation, in a new family, `families/root.css`: `.dcss-root` halves a range over nested `<i>`s, the page's rule setting `--dcss-root-f` from `--dcss-root-x` on each, to `--dcss-root` and `--dcss-root-interval`; d3-geo's naturalEarth1Raw and equalEarthRaw, forward in `families/geo.css` and inverted on it.
 - `.dcss-scale-band` and `.dcss-scale-point` as single calls, d3's band and point scales: `--index` of `--domains`, or `--value`'s place in `--domain-0` to `--domain-15`, to `--dcss-scale-band`, its `-bandwidth` and `-step`, with d3's paddings, align and round; and `.dcss-scale-ordinal`, `--value`'s place in the domain picking `--range-0` to `--range-15`, cycled, with `--unknown` or d3's implicit place. Equal to d3's own tests in Chrome and Safari: 102 of 102 band, 12 of 12 point and 57 of 62 ordinal calls that compute (5 pass objects).
 - The CSS functions are a sheet of their own, `families/functions.css`, and one file per call in `parts/functions/`; the family sheets and parts hold the classes only, as before the functions (the Mercator part 17.7 KB again, not 29.2).
 - d3-shape's pie and arc, in a new family, `families/shape.css`: `.dcss-pie` gives each item its start, end and pad angle and index, sorted by layout; `.dcss-arc` its centroid, its path's corners and radii, and draws it as a `clip-path` (no corner radius or padding yet).

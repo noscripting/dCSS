@@ -239,6 +239,7 @@ Each call gives its answer as `--dcss-` and its name to the elements directly in
 
 - [`.dcss-geo-<projection>`](https://d3js.org/d3-geo/projection#geoProjection): `--x`, `--y` by `identity`, `equirectangular`, `mercator`, `transverse-mercator`, `stereographic` or `rotation`, with `-invert`, `-config` or `-extent` after it.
 - [`.dcss-geo-distance`](https://d3js.org/d3-geo/math#geoDistance): in radians.
+- [`.dcss-geo-natural-earth1-raw`](https://d3js.org/d3-geo/cylindrical#geoNaturalEarth1), [`.dcss-geo-equal-earth-raw`](https://d3js.org/d3-geo/cylindrical#geoEqualEarth): `--x`, `--y` in radians to the plane, `--dcss-geo-x`, `--dcss-geo-y`; their inverts are root solves, below.
 
 ### Shape: families/shape.css
 
@@ -249,7 +250,29 @@ Each call gives its answer as `--dcss-` and its name to the elements directly in
 - [`.dcss-line`](https://d3js.org/d3-shape/line#line), [`.dcss-area`](https://d3js.org/d3-shape/area#area): the list drawn in its own box, which the page sizes, each `<li>` a point at `--x`, `--y` and its segment from the one before; an item missing either draws nothing and breaks the line (d3's `defined`); an area runs down to the list's `--y0`; `--stroke-width` (1.5).
 - [`.dcss-curve-step`](https://d3js.org/d3-shape/curve#curveStep), [`.dcss-curve-step-before`](https://d3js.org/d3-shape/curve#curveStepBefore), [`.dcss-curve-step-after`](https://d3js.org/d3-shape/curve#curveStepAfter), [`.dcss-curve-bump-x`](https://d3js.org/d3-shape/curve#curveBumpX), [`.dcss-curve-bump-y`](https://d3js.org/d3-shape/curve#curveBumpY): on the figure, its curve; linear without one.
 
+### Root: families/root.css
+
+- `.dcss-root`: a root of the page's own equation: `--dcss-root-from`, `--dcss-root-to` on it, nested `<i>`s, the page's rule setting `--dcss-root-f` from `--dcss-root-x` on each; inside the deepest, `--dcss-root` and `--dcss-root-interval`.
+- [`.dcss-geo-natural-earth1-raw-invert`](https://d3js.org/d3-geo/cylindrical#geoNaturalEarth1), [`.dcss-geo-equal-earth-raw-invert`](https://d3js.org/d3-geo/cylindrical#geoEqualEarth): the same nested `<i>`s with `--x`, `--y` on it; inside the deepest, `--dcss-geo-x`, `--dcss-geo-y` in radians.
+
 <!-- /calls -->
+
+### A root of your own equation
+
+Write the equation as an ordinary rule, and `.dcss-root` (families/root.css) finds where it is 0 between two numbers you give, by halving. Here it solves Kepler's equation for an orbit's eccentric anomaly, E − e sin E = M:
+
+```html
+<div class="dcss-root orbit" style="--dcss-root-from: 0; --dcss-root-to: 6.283185307179586; --e: 0.7; --m: 1.2">
+  <i><i><i> ... 54 in all ... <i><span class="planet"></span></i> ... </i></i></i>
+</div>
+```
+
+```css
+.orbit i { --dcss-root-f: calc(var(--dcss-root-x) - var(--e) * sin(var(--dcss-root-x) * 1rad) - var(--m)); }
+.planet { translate: calc(cos(var(--dcss-root) * 1rad) * 100px) calc(sin(var(--dcss-root) * 1rad) * 100px); }
+```
+
+The first `<i>` works the rule out at `--dcss-root-from`, the second at `--dcss-root-to`, and each one after halves what is left, so 54 give the root to a double's last digit and 26 to about 1/10⁸ of the range. Inside the deepest, every element that isn't an `<i>` gets `--dcss-root` and `--dcss-root-interval`, the width left. `--dcss-ready` is 0 and `--dcss-root` is NaN when the rule has the same sign at both ends or isn't a number at some `<i>`. Write the rule for every `<i>` of the solve, and don't register `--dcss-root-f` with `@property`: Safari hands a registered number on with 6 decimals, which stops the root short. The inverts of naturalEarth1 and equalEarth above are solves like this one, with d3's equations as the rule.
 
 ### As CSS functions
 
@@ -284,7 +307,7 @@ A browser without `@function` drops the declaration, so write a plain value befo
 
 <!-- browsers -->
 
-Headless Chrome 155 and WebKit 26.4, Safari's engine, pass all 185 requirements of [SPEC.md](SPEC.md), and the calls match d3 on 3,206 of the 7,049 calls in d3's tests. Firefox 158 computes `calc()` in 32-bit floats, so exact sums, dates and most formatting go wrong there: it passes 70. [QUIRKS.md](QUIRKS.md) has the engine bugs.
+Headless Chrome 155 and WebKit 26.4, Safari's engine, pass all 190 requirements of [SPEC.md](SPEC.md), and the calls match d3 on 3,206 of the 7,049 calls in d3's tests. Firefox 158 computes `calc()` in 32-bit floats, so exact sums, dates and most formatting go wrong there: it passes 70. [QUIRKS.md](QUIRKS.md) has the engine bugs.
 
 <!-- /browsers -->
 

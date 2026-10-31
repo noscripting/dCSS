@@ -4260,6 +4260,121 @@
           }
         }
       },
+      "A215": {
+        "__compat": {
+          "description": "`.dcss-root` with `--dcss-root-from` and `--dcss-root-to`, n nested `<i>` elements in it (3 to 54) and the page's rule setting `--dcss-root-f` from `--dcss-root-x` on every one, MUST give every element inside the deepest `<i>` that is not an `<i>` a `--dcss-root` within |to − from| / 2^(n − 1) and 4 ulps of a root of f between from and to, and `--dcss-root-interval` |to − from| / 2^(n − 2), with `--dcss-ready` 1 and `--dcss-err` 0.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
+            },
+            "firefox": {
+              "version_added": null
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A216": {
+        "__compat": {
+          "description": "`.dcss-root` MUST give `--dcss-ready` 0, `--dcss-err` 1 and `--dcss-root` NaN when f has the same sign, not 0, at both ends, when f is not a number or is not set at an `<i>`, or when `--dcss-root-from` or `--dcss-root-to` is not set; a 0 of f at an end is a root, and from above to is a bracket.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
+            },
+            "firefox": {
+              "version_added": null
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A217": {
+        "__compat": {
+          "description": "A `.dcss-root` inside another's answer, its page rule after the outer one's, MUST give its own root of an equation that reads the outer `--dcss-root`, as A215.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
+            },
+            "firefox": {
+              "version_added": null
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A218": {
+        "__compat": {
+          "description": "`.dcss-geo-natural-earth1-raw` and `.dcss-geo-equal-earth-raw` with `--x` and `--y` (radians) MUST give `--dcss-geo-x` and `--dcss-geo-y` within 1e-12 of d3-geo 3.1.1's geoNaturalEarth1Raw and geoEqualEarthRaw.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
+            },
+            "firefox": {
+              "version_added": null
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A219": {
+        "__compat": {
+          "description": "`.dcss-geo-natural-earth1-raw-invert` and `.dcss-geo-equal-earth-raw-invert`, with `--x` and `--y` and 54 nested `<i>` elements, MUST give everything inside the deepest that is not an `<i>` `--dcss-geo-x` and `--dcss-geo-y` within 1e-11 of d3-geo 3.1.1's raw invert, or nearer the longitude and latitude the point was projected from than d3's invert is (d3 stops Newton's method at a step under 1e-6 or 1e-12), for latitudes within 0.999 × π/2.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
+            },
+            "firefox": {
+              "version_added": null
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
       "A51": {
         "__compat": {
           "description": "A loop (`.loop`, `.loop-flow`, `.loop-in`, `.loop-cell`, `.loop-core`) MUST have store.css and dcss-extras.css on the page; its cells, read through `[data-store-read]` and `[data-store-read-3]` naming them by `--store-of`, MUST settle on the iteration's fixed point: a 12-cell power iteration's vector and eigenvalue equal NumPy's, as a flow and as a table row.",

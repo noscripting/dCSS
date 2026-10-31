@@ -5,7 +5,7 @@ dcss.css computes with CSS layout: indexed reads, sums, ranks, sorts, keyed maps
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in BCP 14 [RFC2119] [RFC8174] when, and only when, they appear in all capitals, as shown here.
 
 Measured 2026-10-29, headless: Chrome 155.0.8059.86, WebKit 26.4, Firefox 158.0.
-Conformance: Chrome 185/185, WebKit 185/185, Firefox 70/185.
+Conformance: Chrome 190/190, WebKit 190/190, Firefox 70/190.
 Additional paired cases measured 2026-10-26 in Chrome/WebKit; the Firefox report is unchanged.
 The checks, probes and scripts this document names are in the noscript.ing repository ([github.com/noscripting/noscript.ing](https://github.com/noscripting/noscript.ing)), under `libraries/dcss/`; this package carries the sheets and their documents.
 
@@ -422,6 +422,24 @@ for selection or computation. Packaging does not expand any function's bounds.
 - **A196** `.dcss-stack-order-reverse` MUST stack the keys in d3-shape's stackOrderReverse, the last key first, and give each its place in that order as `--dcss-stack-index`.
 - **A195** `.dcss-shape-stack`, a `<ul>` (or `<ol>`) a point of d3's data and in it a `<li>` with `--value` a key, up to 64 keys of values in 64ths within ±1024, MUST give everything inside each item's first element `--dcss-y0` and `--dcss-y1`, d3.stack's [y0, y1] for that key at that point under stackOrderNone and stackOffsetNone, exactly, and `--dcss-stack-index`, the key's place in the order (d3's series.index). A key with no `--value`, or one that isn't a number, MUST add nothing to the keys after it and get d3's y0 and no y1, error 2.
 
+### Root
+
+- **A215** `.dcss-root` with `--dcss-root-from` and `--dcss-root-to`, n nested `<i>` elements in it (3 to 54) and the
+  page's rule setting `--dcss-root-f` from `--dcss-root-x` on every one, MUST give every element inside the deepest `<i>`
+  that is not an `<i>` a `--dcss-root` within |to − from| / 2^(n − 1) and 4 ulps of a root of f between from and to,
+  and `--dcss-root-interval` |to − from| / 2^(n − 2), with `--dcss-ready` 1 and `--dcss-err` 0.
+- **A216** `.dcss-root` MUST give `--dcss-ready` 0, `--dcss-err` 1 and `--dcss-root` NaN when f has the same sign, not 0,
+  at both ends, when f is not a number or is not set at an `<i>`, or when `--dcss-root-from` or `--dcss-root-to` is not
+  set; a 0 of f at an end is a root, and from above to is a bracket.
+- **A217** A `.dcss-root` inside another's answer, its page rule after the outer one's, MUST give its own root of an
+  equation that reads the outer `--dcss-root`, as A215.
+- **A218** `.dcss-geo-natural-earth1-raw` and `.dcss-geo-equal-earth-raw` with `--x` and `--y` (radians) MUST give
+  `--dcss-geo-x` and `--dcss-geo-y` within 1e-12 of d3-geo 3.1.1's geoNaturalEarth1Raw and geoEqualEarthRaw.
+- **A219** `.dcss-geo-natural-earth1-raw-invert` and `.dcss-geo-equal-earth-raw-invert`, with `--x` and `--y` and 54
+  nested `<i>` elements, MUST give everything inside the deepest that is not an `<i>` `--dcss-geo-x` and `--dcss-geo-y`
+  within 1e-11 of d3-geo 3.1.1's raw invert, or nearer the longitude and latitude the point was projected from than
+  d3's invert is (d3 stops Newton's method at a step under 1e-6 or 1e-12), for latitudes within 0.999 × π/2.
+
 ### On the board
 
 - **A51** A loop (`.loop`, `.loop-flow`, `.loop-in`, `.loop-cell`, `.loop-core`) MUST have store.css and dcss-extras.css on the page;
@@ -620,6 +638,11 @@ for selection or computation. Packaging does not expand any function's bounds.
 | A197 | probes/dcss/stack/check.mjs: d3-shape's 3 stackOffsetExpand and 3 stackOffsetSilhouette calls, the expand stack(…) call and 60 seeded tables | PASS: 7 of 7 calls; expand within 1e-12, silhouette exact (2026-10-31) | PASS: the same (2026-10-31) | NOTRUN |
 | A196 | probes/dcss/stack/check.mjs: d3-shape's 6 stackOrderReverse calls, the reverse stack(…) call and 60 seeded tables | PASS: 7 of 7 calls, every index and key exact (2026-10-31) | PASS: the same (2026-10-31) | NOTRUN |
 | A195 | probes/dcss/stack/check.mjs: d3-shape's stack(…) calls with data (3 of 6; 3 take a keys or value function), 14 stackOrderNone and 2 of 3 stackOffsetNone calls (one starts a series at y0 1), 120 seeded tables (30 an offset, half reversed) of 1 to 16 keys and 1 to 6 points with missing and NaN values; 4,179 keys in all | PASS: every taken call; 4,179 of 4,179 keys (2026-10-31) | PASS: the same (2026-10-31) | NOTRUN |
+| A215 | probes/dcss/root/check.mjs: Kepler's equation, 40 orbits, 54 and 26 nested `<i>`s, against Newton's method | PASS: 40 and 40 of 40, worst 8.9e-16 (2026-10-31) | PASS: 40 and 40 of 40, worst 8.9e-16 (2026-10-31) | NOTRUN |
+| A216 | probes/dcss/root/check.mjs: the same sign at both ends, f NaN, no f, no bracket; a 0 at either end; from above to | PASS: 7 of 7 (2026-10-31) | PASS: 7 of 7 (2026-10-31) | NOTRUN |
+| A217 | probes/dcss/root/check.mjs: x³ equal to Kepler's E, solved inside the outer solve's answer | PASS: off 0 (2026-10-31) | PASS: off 0 (2026-10-31) | NOTRUN |
+| A218 | probes/dcss/root/check.mjs: 500 seeded points through each raw projection against d3-geo 3.1.1 | PASS: 1,000 of 1,000, worst 8.9e-16 (2026-10-31) | PASS: 1,000 of 1,000, worst 8.9e-16 (2026-10-31) | NOTRUN |
+| A219 | probes/dcss/root/check.mjs: the same points inverted, against d3's invert and the point projected | PASS: 1,000 of 1,000; 1.6e-14 from the point, d3's own 4.2e-11 (2026-10-31) | PASS: 1,000 of 1,000; 3.1e-14 from the point (2026-10-31) | NOTRUN |
 | A51 | coverage/board.mjs: bd-power-12-loop-classes, bd-power-12-loop-table | PASS: 13 of 13 each, against NumPy | PASS: 13 of 13 each, against NumPy | PRECONDITION_FAILED: no view timelines, which store.css's store needs |
 | A52 | sheets/check.mjs: loan | PASS: 50 of 50 cells as written and after 2 changes | PASS: 50 of 50 cells as written and after 2 changes | PRECONDITION_FAILED: no view timelines, which store.css's store needs |
 
