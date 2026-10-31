@@ -253,7 +253,7 @@ Each call gives its answer as `--dcss-` and its name to the elements directly in
 ### Math: families/math.css
 
 - `.dcss-solve`: where the page's own function reaches `--target` (0 without it): `--from`, `--to` on it, nested `<i>`s (or `data-dcss-steps` and the build writes them), the page's rule setting `--dcss-fn` from `--dcss-at` on each; inside the deepest, `--dcss-solve` and `--dcss-solve-interval`.
-- `.dcss-solve-newton`: with `.dcss-solve`, Newton's steps kept in the bracket: `--dcss-slope`, f's slope (its derivative), beside f; `--guess` optional.
+- `.dcss-solve-newton`: with `.dcss-solve`, Newton's steps kept in the bracket: `--dcss-slope`, f's slope (its derivative), beside f (the build writes it from f); `--guess` optional.
 - `.dcss-invert`: the inverse of the page's own function on every row of the box at once: `--from`, `--to` across it, `--top`, `--bottom` down it, its first child's pairs of `<i>`s (or `data-dcss-steps`), the page's rule setting `--dcss-fn` from `--dcss-at` on each; each line starts where f reaches its value.
 - `.dcss-sample`: with a list call (`.dcss-sum`, `.dcss-max`, `.dcss-mean`…), the page's own function as the list: `--from`, `--to` on it, each item's `--value` the page's `--dcss-fn` at `--dcss-at`, the item's middle, rounded to 64ths.
 - `.dcss-ode`: on store.css's frame cell (`data-store`), the page's own equation of motion, a leapfrog step a frame: `--dcss-ode-a` from `--dcss-ode-x` and `--dcss-ode-v`, `--dcss-ode-x0`, `-v0`, `-range`, `-v-range`, `-h`; on it and inside it, `--dcss-ode-x` and `--dcss-ode-v`.
@@ -291,7 +291,7 @@ Write your formula once, as an ordinary rule, and `.dcss-solve` (families/math.c
 - Register nothing the formula computes: in Safari a registered `<number>` loses digits on the way down, which stops the answer short. Do register what a solve takes from its place. An unregistered `--k: sibling-index()` is worked out again on every `<i>`, where it is 1; with `@property --k { syntax: '<integer>'; inherits: true; initial-value: 0 }` each of 40 solves keeps its own index, and 40 dots spaced evenly along a spiral each solve their share of its length.
 - A solve inside another's answer reads the outer `--dcss-solve` on itself (`.inner { --E: var(--dcss-solve) }`). Write each formula in `@scope (.X) to (.dcss-solve)` and the rules can come in any order; unscoped, the inner's must come after the outer's.
 
-Give the formula's slope (its derivative) too and the same solve takes Newton's steps, so far fewer `<i>`s reach the last digit:
+Add `.dcss-solve-newton` and the same solve takes Newton's steps, so far fewer `<i>`s reach the last digit:
 
 ```html
 <div class="dcss-solve dcss-solve-newton orbit" data-dcss-steps="5" style="--e: 0.6; --guess: 1.6">
@@ -301,10 +301,11 @@ Give the formula's slope (its derivative) too and the same solve takes Newton's 
 
 ```css
 @scope (.orbit) to (.dcss-solve) {
-  i { --dcss-fn:    calc(var(--dcss-at) - var(--e) * sin(var(--dcss-at) * 1rad));
-      --dcss-slope: calc(1 - var(--e) * cos(var(--dcss-at) * 1rad)); }
+  i { --dcss-fn: calc(var(--dcss-at) - var(--e) * sin(var(--dcss-at) * 1rad)); }
 }
 ```
+
+Newton needs the formula's slope, its derivative, as `--dcss-slope`, and the build works it out from your formula's text: on a page with a `.dcss-solve-newton`, `node mathml.mjs page.html built.html` writes `--dcss-slope: calc(1 - var(--e) * cos(var(--dcss-at) * 1rad))` beside each `--dcss-fn` in the page's `<style>`s, on the same line. It takes `+ - * /`, `pow()`, `sqrt()`, `exp()`, `log()`, `sin()` and the other trigonometric functions and their inverses, `hypot()`, `abs()`, `sign()`, `min()`, `max()`, `clamp()`, `round()`, `mod()` and `rem()`, and keeps the formula's units (an angle in `deg` or `rad`). Every `var()` but `--dcss-at` is a number that doesn't change with it. The build refuses, with the line, a formula that reads a property the page works out from `--dcss-at`, a percentage, or a function it has no slope for; write `--dcss-slope` yourself there, or to skip the build. A slope you write is left as it is; the build's own says so in a comment and follows the formula when you change it.
 
 After the two ends, each `<i>` is one step from x to x − f/f′, from `--guess` (the middle without one). A step that would leave what is left of the bracket, or move x more than half its width, halves the bracket instead, so it can't cycle or run off the way plain Newton can. For a drawing, a pixel is enough: from a guess, 5 `<i>`s put Kepler's planet within 0.2 px on a 100 px orbit, and 4 put a cubic-bezier's t within 4e-8. A double's last digit takes 8, and 10 from the middle, where halving takes 54; an animated frame costs about half. Up to 14 `<i>`s; `--dcss-ready` is 0 also when the slope is missing or not a number.
 
@@ -334,17 +335,16 @@ Inputs run across the box, from `--from` at its left edge to `--to` at its right
 Put `.dcss-sample` beside a list call and each item's value is your formula at that item's middle, so every list call reads the curve: `.dcss-sum` its area (times the step), `.dcss-max` its highest value, `.dcss-mean` its average.
 
 ```html
+<style>
+  .wave li { --dcss-fn: sin(var(--dcss-at) * 1rad); }   /* the same --dcss-fn from --dcss-at as a solve's */
+</style>
 <figure class="dcss-sum dcss-sample wave" style="--from: 0; --to: 3.14159">
-  <ul aria-hidden="true"><li></li> … 64 … </ul>
-  <output class="dcss-format-fixed" style="--value: calc(var(--dcss-sum) * 3.14159 / 64); --precision: 2"></output>
+  <ul aria-hidden="true"><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li></ul>
+  <output class="dcss-format-fixed" style="--value: calc(var(--dcss-sum) * 3.14159 / 16); --precision: 2"></output> <!-- 2.00 -->
 </figure>
 ```
 
-```css
-.wave li { --dcss-fn: calc(sin(var(--dcss-at) * 1rad)); }   /* the same --dcss-fn from --dcss-at as a solve's */
-```
-
-That prints 2.00, the area under one hump of a sine. Each value is rounded to the list's 64ths, so write the formula in units where 1/64 is close enough (pixels are); `--dcss-err` is 1 when the items have no formula, or the figure no `--from` and `--to`. While the formula moves, a sampled list costs a frame what any list of its length does, so a page keeps to a few (Performance).
+That prints 2.00, the area under one hump of a sine, from 16 values. Each value is rounded to the list's 64ths, so write the formula in units where 1/64 is close enough (pixels are); `--dcss-err` is 1 when the items have no formula, or the figure no `--from` and `--to`. While the formula moves, a sampled list costs a frame what any list of its length does, so a page keeps to a few (Performance).
 
 One rule can feed every call at once: `.demo :is(i, li) { --dcss-fn: … }` on a wrapper holding a `.dcss-invert`, a `.dcss-solve` and a `.dcss-sample`, and dots on the curve, where it reaches a value and the area under it all follow the one formula (probes/dcss/sample/curve.html, with no script: radio buttons change it).
 
@@ -397,7 +397,7 @@ A browser without `@function` drops the declaration, so write a plain value befo
 
 <!-- browsers -->
 
-Headless Chrome 155 and WebKit 26.4, Safari's engine, pass all 195 requirements of [SPEC.md](SPEC.md), and the calls match d3 on 3,206 of the 7,049 calls in d3's tests. Firefox 158 computes `calc()` in 32-bit floats, so exact sums, dates and most formatting go wrong there: it passes 70. [QUIRKS.md](QUIRKS.md) has the engine bugs.
+Headless Chrome 155 and WebKit 26.4, Safari's engine, pass all 196 requirements of [SPEC.md](SPEC.md), and the calls match d3 on 3,206 of the 7,049 calls in d3's tests. Firefox 158 computes `calc()` in 32-bit floats, so exact sums, dates and most formatting go wrong there: it passes 70. [QUIRKS.md](QUIRKS.md) has the engine bugs.
 
 <!-- /browsers -->
 

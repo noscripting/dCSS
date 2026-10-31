@@ -6,6 +6,7 @@ All notable changes to dcss are written here. The format follows [Keep a Changel
 
 ### Added
 
+- The build writes a formula's slope: on a page with a `.dcss-solve-newton`, `node mathml.mjs page.html built.html` writes `--dcss-slope`, the derivative of each `--dcss-fn` in the page's `<style>`s, beside it, so Newton's steps need only the formula. A slope the page writes is left as it is.
 - `.dcss-sample`, beside a list call: each item's value is the page's own formula (`--dcss-fn` from `--dcss-at`, as for `.dcss-solve` and `.dcss-invert`) at the item's middle between `--from` and `--to`, so `.dcss-sum` gives the area under a curve, `.dcss-max` its highest value, `.dcss-mean` its average. One rule can feed a solve, an invert and a sample at once.
 - `data-dcss-steps="13"` on a `.dcss-solve` or a `.dcss-invert`: the build (`node mathml.mjs page.html built.html`) writes its nested `<i>`s or its pairs, so a page never counts them; the built page has no script and is what a hand-written one would be.
 - `.dcss-ode`, in families/math.css, on store.css's frame cell: the page writes an acceleration once (`--dcss-ode-a` from `--dcss-ode-x` and `--dcss-ode-v`) and the element takes a leapfrog step a frame, so a pendulum, a spring or a pull toward the pointer moves by its own equation, keeping its swing for minutes.

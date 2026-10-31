@@ -7,7 +7,8 @@
 // becomes a figure with the formula as its caption and an <output> whose --value is d3.median([d3.mean([4, 1.5]),
 // jan]) to the bit, jan read from --jan on an ancestor (unset: no answer, --dcss-err 1). Only a <math> whose one element
 // child is an <apply> of an operator it takes, or a <piecewise>, is compiled; the rest of the page is copied byte for byte, so the build
-// run on its own output changes nothing. It also writes the <i>s of a .dcss-solve or .dcss-invert with data-dcss-steps.
+// run on its own output changes nothing. It also writes the <i>s of a .dcss-solve or .dcss-invert with data-dcss-steps,
+// and on a page with a .dcss-solve-newton, --dcss-slope beside each --dcss-fn that has none.
 import { createHash } from 'node:crypto';
 import { readFileSync, realpathSync, watchFile, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
@@ -1804,7 +1805,7 @@ function columnsAt(src, lt, t, end, file) {
 }
 export function toDcss(src, { file = 'page.html' } = {}) {
   const was = CX; CX = { defs: new Map(), later: new Map(), elsewhere: new Map(), index: new Map(), series: new Map(), seriesElsewhere: new Map(), scope: 0, welford: new Set(), welfordNow: new Set() };
-  try { return build(stepsPass(src, file), file); } finally { CX = was; }
+  try { return build(stepsPass(slopePass(src, file), file), file); } finally { CX = was; }
 }
 // data-dcss-steps="n" on a solve or an invert: the build writes its <i>s, so the page never counts them. A solve's
 // content goes inside n nested <i>s; an invert gets a first child of n pairs, <span><i><i></i></i>…</span>. Nothing
@@ -1838,6 +1839,166 @@ function stepsPass(src, file) {
   for (const [at, text] of edits.sort((x, y) => y[0] - x[0])) out = out.slice(0, at) + text + out.slice(at);
   return out;
 }
+// On a page with a .dcss-solve-newton, the build writes --dcss-slope beside each --dcss-fn in its <style>s that has
+// none: the formula's derivative in --dcss-at, worked out from its text. A slope the page wrote is left; one this build
+// wrote (its comment says so) is written again, so a changed formula gets a new slope and the build stays its own fixed
+// point. Nothing adds a line. Units are kept: a derivative has its formula's type (sin's argument in deg or rad, an
+// angle from asin). A var() other than --dcss-at is a constant, a number unless written with a unit; one that the page
+// works out from --dcss-at is refused, since its own slope isn't in the text.
+const { slopeOf: slopeOfText, slopePass } = (() => { // its own scope: its small names (add, mul, D) stay inside
+const SLOPE_MARK = '/* the slope, written by mathml.mjs */';
+const ANGLE = { deg: Math.PI / 180, rad: 1, grad: Math.PI / 200, turn: 2 * Math.PI };
+class NoSlope extends Error {}
+const CONSTS = new Set(['e', 'pi', 'infinity', '-infinity', 'nan']), ROUNDS = new Set(['nearest', 'up', 'down', 'to-zero']);
+function parseCalc(text) {
+  const toks = [], re = /\s+|([+-]?(?:\d+\.?\d*|\.\d+)(?:e[+-]?\d+)?)(%|[a-z]+)?|(var)\(\s*(--[\w-]+)\s*(?:,[^()]*(?:\([^()]*\)[^()]*)*)?\)|([a-z][a-z0-9-]*)(\()?|([-+*/(),])/giy;
+  for (let m; re.lastIndex < text.length;) {
+    const at = re.lastIndex; if (!(m = re.exec(text))) throw new NoSlope(`it can't read "${text.slice(at, at + 12)}"`);
+    if (m[1] !== undefined) toks.push({ k: 'num', t: m[1] + (m[2] ?? ''), v: Number(m[1]), u: (m[2] ?? '').toLowerCase() });
+    else if (m[3]) toks.push(m[4] === '--dcss-at' ? { k: 'x' } : { k: 'c', t: m[0].replace(/\s+/g, ' '), name: m[4] });
+    else if (m[5]) toks.push(m[6] ? { k: 'f', f: m[5].toLowerCase() } : { k: 'id', t: m[5].toLowerCase() });
+    else if (m[7]) toks.push({ k: m[7] });
+  }
+  // a sign written against a number after an operand is the operator: "x -1" never parses as x and -1
+  for (let i = 1; i < toks.length; i++) if (toks[i].k === 'num' && /^[+-]/.test(toks[i].t) && ['num', 'x', 'c', 'id', ')'].includes(toks[i - 1].k)) {
+    const s = toks[i].t[0]; toks.splice(i, 1, { k: s }, { ...toks[i], t: toks[i].t.slice(1), v: Math.abs(toks[i].v) }); }
+  let p = 0; const peek = () => toks[p], take = (k) => { if (toks[p]?.k !== k) throw new NoSlope(`it expected "${k}"`); return toks[p++]; };
+  const sum = () => { let a = product(); while (peek()?.k === '+' || peek()?.k === '-') { const o = toks[p++].k; a = { k: o, a, b: product() }; } return a; };
+  const product = () => { let a = unary(); while (peek()?.k === '*' || peek()?.k === '/') { const o = toks[p++].k; a = { k: o, a, b: unary() }; } return a; };
+  const unary = () => { if (peek()?.k === '-') { p++; return { k: 'neg', a: unary() }; } if (peek()?.k === '+') { p++; return unary(); } return atom(); };
+  const atom = () => {
+    const t = toks[p++]; if (!t) throw new NoSlope('it ends early');
+    if (t.k === 'num') { if (t.u === '%') throw new NoSlope('a percentage has no type the build can know'); return t; }
+    if (t.k === 'x' || t.k === 'c') return t;
+    if (t.k === '(') { const a = sum(); take(')'); return a; }
+    if (t.k === 'id') { if (CONSTS.has(t.t)) return { k: 'num', t: t.t, v: NaN, u: '' }; throw new NoSlope(`"${t.t}" is no constant`); }
+    if (t.k === 'f') {
+      if (t.f === 'calc') { const a = sum(); take(')'); return a; }
+      const args = []; let mode = null;
+      if (t.f === 'round' && peek()?.k === 'id' && ROUNDS.has(peek().t)) { mode = toks[p++].t; take(','); }
+      if (peek()?.k !== ')') for (;;) { args.push(sum()); if (peek()?.k === ',') { p++; continue; } break; }
+      take(')'); return { k: 'fn', f: t.f, args, mode };
+    }
+    throw new NoSlope(`it can't read "${t.k}" there`);
+  };
+  const tree = sum(); if (p < toks.length) throw new NoSlope('it has more after the formula'); return tree;
+}
+const typeOf = (n) => {
+  switch (n.k) {
+    case 'num': return n.u in ANGLE ? 'angle' : n.u;
+    case 'x': case 'c': return '';
+    case 'neg': return typeOf(n.a);
+    case '+': case '-': { const a = typeOf(n.a), b = typeOf(n.b); if (a !== b) throw new NoSlope(`it adds a ${a || 'number'} to a ${b || 'number'}`); return a; }
+    case '*': { const a = typeOf(n.a), b = typeOf(n.b); if (a && b) throw new NoSlope(`it multiplies a ${a} by a ${b}`); return a || b; }
+    case '/': { const a = typeOf(n.a), b = typeOf(n.b); if (b && a !== b) throw new NoSlope(`it divides a ${a || 'number'} by a ${b}`); return b ? '' : a; }
+    case 'fn': {
+      const ts = n.args.map(typeOf), same = () => { if (ts.some((t) => t !== ts[0])) throw new NoSlope(`${n.f}() mixes types`); return ts[0]; };
+      if (['sin', 'cos', 'tan'].includes(n.f)) { if (ts[0] && ts[0] !== 'angle') throw new NoSlope(`${n.f}() of a ${ts[0]}`); return ''; }
+      if (['asin', 'acos', 'atan'].includes(n.f)) { if (ts[0]) throw new NoSlope(`${n.f}() of a ${ts[0]}`); return 'angle'; }
+      if (n.f === 'atan2') { if (same()) throw new NoSlope('atan2() of dimensions'); return 'angle'; }
+      if (['pow', 'sqrt', 'exp', 'log', 'sign'].includes(n.f)) { if (n.f !== 'sign' && ts.some(Boolean)) throw new NoSlope(`${n.f}() of a ${ts.find(Boolean)}`); return ''; }
+      if (n.f === 'hypot') { if (same()) throw new NoSlope('hypot() of dimensions'); return ''; }
+      if (['abs', 'min', 'max', 'clamp', 'round', 'mod', 'rem'].includes(n.f)) return same();
+      throw new NoSlope(`it has no derivative for ${n.f}()`);
+    }
+  }
+};
+const ARGS = { sin: 1, cos: 1, tan: 1, asin: 1, acos: 1, atan: 1, atan2: 2, pow: 2, sqrt: 1, exp: 1, sign: 1, abs: 1, mod: 2, rem: 2 };
+const num = (v, u = '') => ({ k: 'num', t: String(v) + u, v, u }), ZERO = num(0), ONE = num(1), RAD = num(1, 'rad');
+const zero = (n) => n.k === 'num' && n.v === 0, one = (n) => n.k === 'num' && n.v === 1 && !n.u, plain = (n) => n.k === 'num' && !n.u && Number.isFinite(n.v) && /^-?[\d.]+$/.test(n.t);
+const fn = (f, ...args) => ({ k: 'fn', f, args });
+const neg = (a) => zero(a) ? ZERO : a.k === 'neg' ? a.a : plain(a) ? num(-a.v) : { k: 'neg', a };
+const add = (a, b) => zero(a) ? b : zero(b) ? a : b.k === 'neg' ? sub(a, b.a) : { k: '+', a, b };
+const sub = (a, b) => zero(b) ? a : zero(a) ? neg(b) : b.k === 'neg' ? add(a, b.a) : { k: '-', a, b };
+const mul = (a, b) => zero(a) || zero(b) ? ZERO : one(a) ? b : one(b) ? a : plain(a) && a.v === -1 ? neg(b) : plain(b) && b.v === -1 ? neg(a) : plain(a) && plain(b) ? num(a.v * b.v) : a.k === 'neg' ? neg(mul(a.a, b)) : b.k === 'neg' ? neg(mul(a, b.a)) : { k: '*', a, b };
+const same = (a, b) => a.k === 'num' && b.k === 'num' && a.t === b.t; // 1rad and 1rad
+const div = (a, b) => zero(a) ? ZERO : one(b) ? a : same(a, b) ? ONE : a.k === 'num' && b.k === 'num' && a.u && a.u === b.u && /^[\d.]+$/.test(a.t.slice(0, -a.u.length) + b.t.slice(0, -b.u.length)) ? num(a.v / b.v) : a.k === '*' && same(a.a, b) ? a.b : a.k === '*' && same(a.b, b) ? a.a : a.k === 'neg' ? neg(div(a.a, b)) : { k: '/', a, b };
+const half = (s) => div(s, num(2));
+function D(n) {
+  switch (n.k) {
+    case 'num': case 'c': return ZERO;
+    case 'x': return ONE;
+    case 'neg': return neg(D(n.a));
+    case '+': return add(D(n.a), D(n.b));
+    case '-': return sub(D(n.a), D(n.b));
+    case '*': return add(mul(D(n.a), n.b), mul(n.a, D(n.b)));
+    case '/': { const da = D(n.a), db = D(n.b); return zero(db) ? div(da, n.b) : div(sub(da, mul(div(n.a, n.b), db)), n.b); }
+  }
+  const [a, b] = n.args, da = a && D(a), db = b && D(b);
+  if (ARGS[n.f] !== undefined && n.args.length !== ARGS[n.f]) throw new NoSlope(`${n.f}() takes ${ARGS[n.f]} argument${ARGS[n.f] > 1 ? 's' : ''}`);
+  const rad = (d) => typeOf(a) === 'angle' ? div(d, RAD) : d; // sin's argument in an angle: its slope over 1rad, a number
+  switch (n.f) {
+    case 'sin': return mul(fn('cos', a), rad(da));
+    case 'cos': return neg(mul(fn('sin', a), rad(da)));
+    case 'tan': return div(rad(da), mul(fn('cos', a), fn('cos', a)));
+    case 'asin': return mul(RAD, div(da, fn('sqrt', sub(ONE, mul(a, a)))));
+    case 'acos': return neg(mul(RAD, div(da, fn('sqrt', sub(ONE, mul(a, a))))));
+    case 'atan': return mul(RAD, div(da, add(ONE, mul(a, a))));
+    case 'atan2': return mul(RAD, div(sub(mul(b, da), mul(a, db)), add(mul(a, a), mul(b, b))));
+    case 'pow': if (zero(db)) return mul(mul(b, fn('pow', a, plain(b) ? num(b.v - 1) : sub(b, ONE))), da);
+      return mul(n, add(mul(db, fn('log', a)), div(mul(b, da), a)));
+    case 'sqrt': return div(da, mul(num(2), n));
+    case 'exp': return mul(n, da);
+    case 'log': return b ? D({ k: '/', a: fn('log', a), b: fn('log', b) }) : div(da, a);
+    case 'hypot': return n.args.length === 1 ? mul(fn('sign', a), da) : div(n.args.map((x) => mul(x, D(x))).reduce(add), n);
+    case 'abs': return mul(fn('sign', a), da);
+    case 'sign': case 'round': return ZERO;
+    case 'min': case 'max': { if (n.args.length === 1) return da; const rest = n.args.length > 2 ? { ...n, args: n.args.slice(1) } : b, dr = D(rest);
+      if (zero(da) && zero(dr)) return ZERO;
+      const s = fn('sign', sub(a, rest)), pick = n.f === 'min' ? half(sub(ONE, s)) : half(add(ONE, s)); // 1 where a is the one taken, ½ at a tie
+      return add(mul(pick, da), mul(n.f === 'min' ? half(add(ONE, s)) : half(sub(ONE, s)), dr)); }
+    case 'clamp': if (n.args.length !== 3) throw new NoSlope('clamp() takes 3 arguments'); return D(fn('max', n.args[0], fn('min', n.args[1], n.args[2])));
+    case 'mod': case 'rem': return sub(da, mul(db, { k: 'fn', f: 'round', mode: n.f === 'mod' ? 'down' : 'to-zero', args: [div(a, b)] }));
+  }
+  throw new NoSlope(`it has no derivative for ${n.f}()`);
+}
+const PREC = { '+': 1, '-': 1, '*': 2, '/': 2, neg: 2 };
+function emit(n, outer = 0, right = false) {
+  let s, p = PREC[n.k] ?? 3;
+  switch (n.k) {
+    case 'num': s = n.t; break;
+    case 'x': s = 'var(--dcss-at)'; break;
+    case 'c': s = n.t; break;
+    case 'neg': s = `-1 * ${emit(n.a, 2, true)}`; break;
+    case '+': case '-': case '*': case '/': s = `${emit(n.a, p)} ${n.k} ${emit(n.b, p, true)}`; break;
+    case 'fn': s = `${n.f}(${n.mode ? `${n.mode}, ` : ''}${n.args.map((x) => emit(x)).join(', ')})`; break;
+  }
+  return p < outer || (right && p === outer && p < 3) ? `(${s})` : s;
+}
+function slopeOf(text) { const t = parseCalc(text.replace(/\/\*[\s\S]*?\*\//g, '').trim()); typeOf(t); const d = D(t); return d.k === 'num' ? d.t : `calc(${emit(d)})`; }
+const SOLVE_NEWTON = /\bclass\s*=\s*(?:"[^"]*\bdcss-solve-newton\b[^"]*"|'[^']*\bdcss-solve-newton\b[^']*'|dcss-solve-newton\b)/i;
+function slopePass(src, file) {
+  if (!SOLVE_NEWTON.test(src)) return src;
+  const edits = [], styles = [], reStyle = /<style\b[^>]*>/gi;
+  for (let m; (m = reStyle.exec(src));) { const from = m.index + m[0].length, to = closeAt(src, 'style', from); if (to < 0) break; styles.push([from, to]); reStyle.lastIndex = to; }
+  const css = styles.map(([f, t]) => src.slice(f, t)).join('\n').replace(/\/\*[\s\S]*?\*\//g, '');
+  // the page's own names worked out from --dcss-at: a formula reading one has a slope the text doesn't show
+  const fromAt = new Set([...css.matchAll(/(--[\w-]+)\s*:([^;{}]*)/g)].filter(([, k, v]) => k !== '--dcss-fn' && k !== '--dcss-slope' && /--dcss-at\b/.test(v)).map(([, k]) => k));
+  const valueEnd = (s, i) => { let d = 0; for (; i < s.length; i++) { const c = s[i]; if (c === '(') d++; else if (c === ')') d--; else if (d <= 0 && (c === ';' || c === '}')) return i; else if (c === '/' && s[i + 1] === '*') { const e = s.indexOf('*/', i + 2); i = e < 0 ? s.length : e + 1; } } return s.length; };
+  for (const [from, to] of styles) {
+    const body = src.slice(from, to), re = /(?<![\w-])--dcss-fn\s*:/g;
+    for (let m; (m = re.exec(body));) {
+      const vStart = m.index + m[0].length, vEnd = valueEnd(body, vStart), at = from + m.index, line = lineOf(src, at);
+      let open = body.lastIndexOf('{', m.index), close = body.indexOf('}', vEnd); if (close < 0) close = body.length;
+      const block = body.slice(open + 1, close), own = /(?<![\w-])--dcss-slope\s*:/.exec(block);
+      let old = null;
+      if (own) { const s = open + 1 + own.index, e = valueEnd(body, s + own[0].length); if (!body.slice(s, e).includes(SLOPE_MARK)) continue; old = [s, e]; }
+      const value = body.slice(vStart, vEnd).trim(), reads = [...value.matchAll(/var\(\s*(--[\w-]+)/g)].map((r) => r[1]).find((k) => fromAt.has(k));
+      let slope;
+      try { if (reads) throw new NoSlope(`it reads ${reads}, which the page works out from --dcss-at`); slope = slopeOf(value); }
+      catch (e) { if (e instanceof NoSlope) throw new Error(`${file}:${line}: the slope of --dcss-fn: ${e.message}; write --dcss-slope beside it yourself`); throw e; }
+      const decl = `--dcss-slope: ${slope} ${SLOPE_MARK}`;
+      if (old) { const [s, e] = old; if (body.slice(s, e) !== decl) edits.push([from + s, from + e, decl]); }
+      else edits.push(body[vEnd] === ';' ? [from + vEnd + 1, from + vEnd + 1, ` ${decl};`] : [from + vEnd, from + vEnd, `; ${decl}`]);
+    }
+  }
+  let out = src;
+  for (const [s, e, text] of edits.sort((x, y) => y[0] - x[0])) out = out.slice(0, s) + text + out.slice(e);
+  return out;
+}
+return { slopeOf, slopePass };
+})();
+export const slopeOf = slopeOfText; // for probes/dcss/slope/check.mjs
 function build(src, file) {
   // scopes: 0 is the page; each data-dcss-scope element another, inside the one it sits in
   const found = [], left = [], calls = new Set(), scopes = [{ id: 0, parent: null }], open = [], series = [], marks = [], colHeads = new Set(), lives = []; let i = 0, pOpen = null, built = null; // built: the line of the first thing an earlier build wrote // pOpen: the start of an open <p>, or null

@@ -4490,6 +4490,29 @@
           }
         }
       },
+      "A225": {
+        "__compat": {
+          "description": "On a page with an element of class `dcss-solve-newton`, `mathml.mjs` MUST write beside each `--dcss-fn` declaration in its `<style>` elements whose rule has no `--dcss-slope` a `--dcss-slope` declaration, on the same line: the derivative of the formula in `--dcss-at`, as calc() computes it, other `var()`s constant; write it again where the rule's `--dcss-slope` is one it wrote and the formula changed; leave one the page wrote; and refuse, with the line, a formula with a percentage, a function it has no derivative for, mixed types, or a `var()` of a property the page's styles work out from `--dcss-at`.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
+            },
+            "firefox": {
+              "version_added": null
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
       "A51": {
         "__compat": {
           "description": "A loop (`.loop`, `.loop-flow`, `.loop-in`, `.loop-cell`, `.loop-core`) MUST have store.css and dcss-extras.css on the page; its cells, read through `[data-store-read]` and `[data-store-read-3]` naming them by `--store-of`, MUST settle on the iteration's fixed point: a 12-cell power iteration's vector and eigenvalue equal NumPy's, as a flow and as a table row.",

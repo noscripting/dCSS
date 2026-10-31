@@ -5,7 +5,7 @@ dcss.css computes with CSS layout: indexed reads, sums, ranks, sorts, keyed maps
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in BCP 14 [RFC2119] [RFC8174] when, and only when, they appear in all capitals, as shown here.
 
 Measured 2026-10-29, headless: Chrome 155.0.8059.86, WebKit 26.4, Firefox 158.0.
-Conformance: Chrome 195/195, WebKit 195/195, Firefox 70/195.
+Conformance: Chrome 196/196, WebKit 196/196, Firefox 70/196.
 Additional paired cases measured 2026-10-26 in Chrome/WebKit; the Firefox report is unchanged.
 The checks, probes and scripts this document names are in the noscript.ing repository ([github.com/noscripting/noscript.ing](https://github.com/noscripting/noscript.ing)), under `libraries/dcss/`; this package carries the sheets and their documents.
 
@@ -473,6 +473,12 @@ for selection or computation. Packaging does not expand any function's bounds.
   from `--dcss-at` on its items, MUST give item k of n the `--value` `--dcss-fn` at from + (k − 1/2)(to − from) / n,
   rounded to 64ths, so the call answers as for those values; and `--dcss-err` 1 when the items have no `--dcss-fn` or
   the figure no `--from` and `--to`. `--from` and `--to` MUST NOT reach inside it.
+- **A225** On a page with an element of class `dcss-solve-newton`, `mathml.mjs` MUST write beside each `--dcss-fn`
+  declaration in its `<style>` elements whose rule has no `--dcss-slope` a `--dcss-slope` declaration, on the same
+  line: the derivative of the formula in `--dcss-at`, as calc() computes it, other `var()`s constant; write it again
+  where the rule's `--dcss-slope` is one it wrote and the formula changed; leave one the page wrote; and refuse, with the
+  line, a formula with a percentage, a function it has no derivative for, mixed types, or a `var()` of a property the
+  page's styles work out from `--dcss-at`.
 
 ### On the board
 
@@ -682,6 +688,7 @@ for selection or computation. Packaging does not expand any function's bounds.
 | A222 | probes/dcss/ode/check.mjs: a 100 px spring, a pendulum from 1.2 rad, a spring's x read inside a second cell nested in it, the spring with the page scrolled 300 px, a cell run past its range and one started past it, a cell with no acceleration; sampled every 100 ms for 8 s against the same step in doubles | PASS: 7 of 7, worst 0.016 px outside what the step keeps, 59.2 steps a second (2026-10-31) | PASS: 7 of 7, worst 0.016 px, 59.2 steps a second (2026-10-31) | NOTRUN |
 | A223 | probes/dcss/root/steps-check.mjs: the Kepler page's 3 solves written with `data-dcss-steps="5"` against the hand-written page, a built page rebuilt, a solve in another's answer, an invert of 32, a geo invert of 14, five refusals; the built page's planets in the engines, and the page never built | PASS: 15 of 15, the page byte for byte (2026-10-31) | PASS: 15 of 15, the page byte for byte (2026-10-31) | NOTRUN |
 | A224 | probes/dcss/sample/check.mjs: 64 sin on [0, π] summed at 64 and 300 items, 64 x² on [−1, 2] at 30 items its max and mean, exactly against the same samples in doubles; one rule feeding a sample and a solve; no formula, no from and to | PASS: 8 of 8, exact (2026-10-31) | PASS: 8 of 8, exact (2026-10-31) | NOTRUN |
+| A225 | probes/dcss/slope/check.mjs: 26 formulas at 4 points, the written slope against the formula's central difference in doubles; the same text in the engine against doubles; the Kepler page with its slope left out, built: the hand-written slope, no line added, built to itself, its planets where the hand-written page puts them; a slope the page wrote left; the build's own following a changed formula; 4 refusals | PASS: 15 of 15, within 3.7e-10 (2026-10-31) | PASS: 15 of 15, within 3.7e-10 (2026-10-31) | NOTRUN |
 | A51 | coverage/board.mjs: bd-power-12-loop-classes, bd-power-12-loop-table | PASS: 13 of 13 each, against NumPy | PASS: 13 of 13 each, against NumPy | PRECONDITION_FAILED: no view timelines, which store.css's store needs |
 | A52 | sheets/check.mjs: loan | PASS: 50 of 50 cells as written and after 2 changes | PASS: 50 of 50 cells as written and after 2 changes | PRECONDITION_FAILED: no view timelines, which store.css's store needs |
 
