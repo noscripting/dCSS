@@ -388,9 +388,9 @@
         "dcss-solve-rows",
         "dcss-solve-turning-point"
       ],
-      "raw": 183445,
-      "gzip9": 6555,
-      "sha256": "0e9bc3e5c3ee65511c6f6320349830b75d6a36bc9b72f64357ac5afe9e4d3512"
+      "raw": 183703,
+      "gzip9": 6607,
+      "sha256": "9bc214028042b87a9fcc942eed4ec70a929841aefd399c9ba41f39a56ef2d841"
     }
   },
   "owners": {

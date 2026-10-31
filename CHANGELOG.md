@@ -5,6 +5,7 @@ All notable changes to dcss are written here. The format follows [Keep a Changel
 ## [Unreleased]
 
 ### Added
+- A math call's ends (`--from`, `--to`, a solve's `--target` and `--guess`, a solve-rows' `--top` and `--bottom`) are read only as set on the call itself; a value from an element around it, such as a chart mark's `--from`, gives `--dcss-err` 1 instead of an answer on the wrong range.
 
 - `.dcss-solve-turning-point` with `.dcss-solve`: where the page's own formula is highest or lowest between `--from` and `--to`, from the slope the build writes.
 - `data-dcss-within="0.002"` on a `.dcss-solve`: say how close the answer must be, in the formula's own units, and the build counts the tries and writes them, the fewest that reach it.

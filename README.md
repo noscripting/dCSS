@@ -287,7 +287,7 @@ Write your formula once, as an ordinary rule, and `.dcss-solve` (families/math.c
 
 - Every element inside the deepest `<i>` that isn't an `<i>` gets `--dcss-solve` and `--dcss-solve-width`, the width left. An `<i>` there would be one more try. The `<i>`s draw no boxes (`display: contents`), so the planet lays out as the solve's own child.
 - `--dcss-ready` is 0, `--dcss-err` 1 and `--dcss-solve` NaN when the formula is on the same side of the target at both ends, isn't a number at some `<i>`, or the solve has no formula or no `--from` and `--to` of its own. A NaN `translate` falls back to none, so `opacity: var(--dcss-ready)` hides a refused answer instead of drawing it in the wrong place.
-- `--from`, `--to`, `--target` and `--guess` are the solve's own: they are reset inside it, so nothing inside reads them, and a solve inside another sets its own.
+- `--from`, `--to`, `--target` and `--guess` are the solve's own: set them on the solve itself (its style or a rule on it). A value set only on an element around it is not read, so a solve inside a chart mark that sets its own `--from` refuses instead of answering on the mark's range; nothing inside reads them, and a solve inside another sets its own. The same holds for a sample's ends and a solve-rows' four. To share ends, set them on the calls with one rule: `.demo :is(.dcss-solve, .dcss-sample) { --from: 0; --to: 1; }`.
 - The formula must be continuous between the two numbers: a sign change around a pole, like 1/(x − 0.3) on 0 to 1, halves down to the pole. Where it reaches the target more than once, the answer is one of them.
 - Register nothing the formula computes: in Safari a registered `<number>` loses digits on the way down, which stops the answer short. Do register what a solve takes from its place. An unregistered `--k: sibling-index()` is worked out again on every `<i>`, where it is 1; with `@property --k { syntax: '<integer>'; inherits: true; initial-value: 0 }` each of 40 solves keeps its own index, and 40 dots spaced evenly along a spiral each solve their share of its length.
 - A solve inside another's answer reads the outer `--dcss-solve` on itself (`.inner { --E: var(--dcss-solve) }`). Write each formula in `@scope (.X) to (.dcss-solve)` and the rules can come in any order; unscoped, the inner's must come after the outer's.
@@ -413,7 +413,7 @@ A browser without `@function` drops the declaration, so write a plain value befo
 
 <!-- browsers -->
 
-Headless Chrome 155 and WebKit 26.4, Safari's engine, pass all 198 requirements of [SPEC.md](SPEC.md), and the calls match d3 on 3,206 of the 7,049 calls in d3's tests. Firefox 158 computes `calc()` in 32-bit floats, so exact sums, dates and most formatting go wrong there: it passes 70. [QUIRKS.md](QUIRKS.md) has the engine bugs.
+Headless Chrome 155 and WebKit 26.4, Safari's engine, pass all 199 requirements of [SPEC.md](SPEC.md), and the calls match d3 on 3,206 of the 7,049 calls in d3's tests. Firefox 158 computes `calc()` in 32-bit floats, so exact sums, dates and most formatting go wrong there: it passes 70. [QUIRKS.md](QUIRKS.md) has the engine bugs.
 
 <!-- /browsers -->
 
