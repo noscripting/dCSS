@@ -36,23 +36,21 @@ latexmlmath --cmml=- 'M = \frac{P r}{1 - (1 + r)^{-n}}'
 
 ## Without the build
 
-Each call is a class, and a file in `parts/`. One class per figure; `.dcss-summarize` gives nine at once. A sum is a `<figure>` around a list: the browser lays the list out, and its size is the answer. This page links two parts that come to 7 KB gzipped:
+Each call is a class, and a file in `parts/`. One class per figure; `.dcss-summarize` gives nine at once. A sum is a `<figure>` around a list: the browser lays the list out, and its size is the answer. This page links two parts that come to 8 KB gzipped:
 
 ```html
 <!doctype html>
 <link rel="stylesheet" href="parts/dcss-mean.css">
 <link rel="stylesheet" href="parts/dcss-format-fixed.css">
 
-<figure class="dcss-mean" style="height: 1lh; overflow: clip">
+<figure class="dcss-mean dcss-format-fixed">
   <ul><li style="--value: 120"></li> <li style="--value: 95"></li> <li style="--value: 140"></li></ul>
-  <div>
-    <output class="dcss-format-fixed" style="--value: var(--dcss-sum); --precision: 0"></output>   <!-- 355 -->
-    <output class="dcss-format-fixed" style="--value: var(--dcss-mean); --precision: 1"></output>  <!-- 118.3 -->
-  </div>
+  <output style="--value: var(--dcss-sum); --precision: 0"></output>   <!-- 355 -->
+  <output style="--value: var(--dcss-mean); --precision: 1"></output>  <!-- 118.3 -->
 </figure>
 ```
 
-One `--value` per item; the outputs read `--dcss-sum`, `--dcss-mean` and `--dcss-count`, and follow a changed `--value`.
+One `--value` per item; each element after the list reads `--dcss-sum`, `--dcss-mean` and `--dcss-count`, on a line of its own, and follows a changed `--value`.
 
 Or link `dcss.css` and the families [Reference](#reference) names, or `dcss-all.css`:
 
@@ -99,16 +97,14 @@ Put a call inside another's answer. A sum feeding a scale:
   <ul>
     <li style="--value: 12"></li> <li style="--value: 40"></li> <li style="--value: 30"></li>
   </ul>
-  <div>
-    <div class="dcss-scale-linear"
-         style="--value: var(--dcss-sum);
-                --domain-0: 0; --domain-1: 2000;
-                --range-0: 0; --range-1: 1000">
-      <output class="dcss-format-si"
-              style="--value: var(--dcss-scale-linear); --precision: 3"></output> <!-- 41.0 -->
-      <output class="dcss-format-fixed"
-              style="--value: calc(var(--dcss-scale-linear) * 2); --precision: 2"></output> <!-- 82.00 -->
-    </div>
+  <div class="dcss-scale-linear"
+       style="--value: var(--dcss-sum);
+              --domain-0: 0; --domain-1: 2000;
+              --range-0: 0; --range-1: 1000">
+    <output class="dcss-format-si"
+            style="--value: var(--dcss-scale-linear); --precision: 3"></output> <!-- 41.0 -->
+    <output class="dcss-format-fixed"
+            style="--value: calc(var(--dcss-scale-linear) * 2); --precision: 2"></output> <!-- 82.00 -->
   </div>
 </figure>
 ```
@@ -265,7 +261,7 @@ Headless Chrome 155 and WebKit 26.4, Safari's engine, pass all 162 requirements 
 
 <!-- performance -->
 
-Layout does the work, in the frame a number changes. A family is at most 27 KB gzipped and loads in 15 ms or less in WebKit 26.4 (2026-10-28). Twenty printed medians, a value moving: 6.3 ms a frame in Chrome, 9.6 in WebKit; variance 8.2, 10.3 (2026-10-30).
+Layout does the work, in the frame a number changes. A family is at most 28 KB gzipped and loads in 15 ms or less in WebKit 26.4 (2026-10-28). Twenty printed medians, a value moving: 6.3 ms a frame in Chrome, 9.6 in WebKit; variance 8.2, 10.3 (2026-10-30).
 
 <!-- /performance -->
 

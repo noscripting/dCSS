@@ -5,8 +5,8 @@
 @property --dcss-err { syntax: '<integer>'; inherits: true; initial-value: 0; }
 :where([class*="dcss-"]) { writing-mode: horizontal-tb; }
 /* DCSS reductions: d3.sum, count, mean, min, max, extent and the list's length, in a figure (reduce.mjs). */
-/* the reader out of flow, placed in the list's cell: in flow, grid lays it out several times a frame, and what it holds
-   is restyled each time (a printed mean, 20 moving: 40.8 ms a frame to 11.2 in Chrome, 49 to 41.3 in WebKit, 2026-10-30) */
+/* the list at the figure's padding corner, out of flow and hidden, so what follows it is laid out as written; the figure's ::before on that corner, the list's ::after on its far one */
+/* each element after the list a block of its own (a page's own display wins), the answers handed down to it and what it holds */
 
 /* DCSS bisect, on dcss.css's sort and collection-reader kernel (bisect.mjs, search.mjs). */
 
@@ -54,7 +54,7 @@
 .dcss-scale-quantile:not([data-dcss-compiled])::before{margin:0;padding:0;border:0;float:none;display:block;position:static;min-width:0;min-height:0;max-width:none;max-height:none;box-sizing:content-box;content:'';position:absolute;top:0;left:0;width:1px;height:1px;visibility:hidden;grid-area:2/1;view-timeline:--dcss-static-q-qa x,--dcss-static-q-qb y;view-timeline-inset:-1px calc(100% + 1px - 4300800px),-1px calc(100% + 1px - 4300800px)}
 .dcss-scale-quantile:not([data-dcss-compiled])::after{margin:0;padding:0;border:0;float:none;display:block;position:static;min-width:0;min-height:0;max-width:none;max-height:none;box-sizing:content-box;content:'';position:absolute;top:0;left:0;width:1px;height:1px;visibility:hidden;grid-column:2;grid-row:2;view-timeline:--dcss-static-q-qc x,--dcss-static-q-qc2 x;view-timeline-inset:-1px calc(100% + 1px - 4300800px),4194303px calc(100% + 1px - 8495104px)}
 .dcss-scale-quantile:not([data-dcss-compiled])>:is(ol,ul){display:grid;grid-column:1/-2;grid-row:2;grid-auto-flow:column;grid-template-columns:subgrid;grid-template-rows:repeat(max(1,var(--dcss-static-total)),auto);height:0;gap:0;border:0;margin:0;padding:0;list-style:none;visibility:hidden;position:relative}
-.dcss-scale-quantile:not([data-dcss-compiled])>:is(ol,ul)::before{margin:0;padding:0;border:0;float:none;display:block;position:static;min-width:0;min-height:0;max-width:none;max-height:none;box-sizing:content-box;content:'';position:absolute;top:0;left:0;width:1px;height:1px;visibility:hidden;grid-row:1/-1;grid-column:1;top:100%;view-timeline:--dcss-static-q-qe y;view-timeline-inset:-1px calc(100% + 1px - 4300800px)}
+.dcss-scale-quantile:not([data-dcss-compiled])>:is(ol,ul)::before{margin:0;padding:0;border:0;float:none;display:block;position:static;min-width:0;min-height:0;max-width:none;max-height:none;box-sizing:content-box;content:'';position:absolute;top:0;left:0;width:1px;height:1px;visibility:hidden;grid-row:1/-1;grid-column:1;top:auto;bottom:-1px;view-timeline:--dcss-static-q-qe y;view-timeline-inset:-1px calc(100% + 1px - 4300800px)}
 .dcss-scale-quantile:not([data-dcss-compiled])>:is(ol,ul)::after{margin:0;padding:0;border:0;float:none;display:block;position:static;min-width:0;min-height:0;max-width:none;max-height:none;box-sizing:content-box;content:'';position:absolute;top:0;left:0;width:1px;height:1px;visibility:hidden;grid-column:3;grid-row:1;view-timeline:--dcss-static-q-qd x,--dcss-static-q-qd2 x;view-timeline-inset:-1px calc(100% + 1px - 4300800px),4194303px calc(100% + 1px - 8495104px)}
 :where(.dcss-scale-quantile:not([data-dcss-compiled])>:is(ol,ul)>li){--value:initial}
 .dcss-scale-quantile:not([data-dcss-compiled])>:is(ol,ul){font-size:0;line-height:0}.dcss-scale-quantile:not([data-dcss-compiled])>:is(ol,ul)>li>*{display:none}

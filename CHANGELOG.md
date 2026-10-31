@@ -67,6 +67,7 @@ All notable changes to dcss are written here. The format follows [Keep a Changel
 
 ### Changed
 
+- `.dcss-sum`, `.dcss-count`, `.dcss-mean`, `.dcss-min`, `.dcss-max` and `.dcss-extent` give their answer to each element after the list, everything inside it and their `::before` and `::after`, read by the figure (was the element after the list's own children); each is a block in flow, a `<figcaption>` stays where it is written, and the figure grows to hold them (no `height` needed). `.dcss-median-index` and `.dcss-quantile-index` lay out what follows the list the same way. A sum's or mean's list of 16,777,215 px or more (was 2^24) has no answer, error 1. In a list of whole numbers, an item with a style attribute but no number now voids a min, max, extent or mean (error 1).
 - `.dcss-median`, `.dcss-quantile`, `.dcss-quantile-sorted`, `.dcss-median-index`, `.dcss-quantile-index` and `.dcss-scale-quantile` give their answer to each element after the list and everything inside it, as `.dcss-summarize` does, in place of three or four plain `<div>`s. A list with a value written with a point or a function takes 1/64 steps within ±65,536 (was ±131,072); whole-number lists keep -131,072 to 8,257,535.
 - `.dcss-variance` and `.dcss-deviation` are read by the page's own element after the list, in place of three plain `<div>`s. A list with a fraction now takes values whose sum, each 1025 more, is under 132,735 (it was 2^18).
 
