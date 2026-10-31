@@ -152,10 +152,11 @@ Everything inside such an element reads them too, so answers sit in a sentence:
 </figure>
 ```
 
-The figure is one line tall, two with a `<figcaption>`, unless you give it a height:
+A caption and any number of outputs lay out in the order written, and the figure grows to hold them:
 
 ```html
-<figure class="dcss-summarize dcss-format-fixed" style="--precision: 1; height: 3lh">
+<figure class="dcss-summarize dcss-format-fixed" style="--precision: 1">
+  <figcaption>Scores</figcaption>
   <ul><li style="--value: 72.5"></li> <li style="--value: 88"></li> <li style="--value: 95"></li> <li style="--value: 47"></li></ul>
   <output style="--value: var(--dcss-mean)"></output>       <!-- 75.6 -->
   <output style="--value: var(--dcss-max)"></output>        <!-- 95.0 -->
@@ -261,7 +262,7 @@ Headless Chrome 155 and WebKit 26.4, Safari's engine, pass all 162 requirements 
 
 <!-- performance -->
 
-Layout does the work, in the frame a number changes. A family is at most 28 KB gzipped and loads in 15 ms or less in WebKit 26.4 (2026-10-28). Twenty printed medians, a value moving: 6.3 ms a frame in Chrome, 9.6 in WebKit; variance 8.2, 10.3 (2026-10-30).
+Layout does the work, in the frame a number changes. A family is at most 29 KB gzipped and loads in 15 ms or less in WebKit 26.4 (2026-10-28). Twenty printed medians, a value moving: 6.3 ms a frame in Chrome, 9.6 in WebKit; variance 8.2, 10.3 (2026-10-30).
 
 <!-- /performance -->
 
