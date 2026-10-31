@@ -137,21 +137,21 @@ A median, quantile, variance or summary reads its list through three nested elem
   </div></div></div>
 </figure>
 ```
-One list, every answer. Each element after the list reads the sum, count, length, mean, min, max, median, variance and deviation, on a line of its own:
+One list, every answer. Each element after the list reads the sum, count, length, mean, min, max, median, variance and deviation, on a line of its own, and a format on the figure formats every output in it:
 
 ```html
-<figure class="dcss-summarize">
+<figure class="dcss-summarize dcss-format-fixed" style="--precision: 1">
   <ul><li style="--value: 72.5"></li> <li style="--value: 88"></li> <li style="--value: 95"></li> <li style="--value: 47"></li></ul>
-  <output class="dcss-format-fixed" style="--value: var(--dcss-mean); --precision: 1"></output>  <!-- 75.6 -->
+  <output style="--value: var(--dcss-mean)"></output>  <!-- 75.6 -->
 </figure>
 ```
 
-Everything inside such an element reads them too, so one format serves a sentence:
+Everything inside such an element reads them too, so answers sit in a sentence:
 
 ```html
-<figure class="dcss-summarize">
+<figure class="dcss-summarize dcss-format-fixed" style="--precision: 1">
   <ul><li style="--value: 72.5"></li> <li style="--value: 88"></li> <li style="--value: 95"></li> <li style="--value: 47"></li></ul>
-  <p class="dcss-format-fixed" style="--precision: 1">
+  <p>
     Mean <output style="--value: var(--dcss-mean)"></output>,   <!-- 75.6 -->
     least <output style="--value: var(--dcss-min)"></output>    <!-- 47.0 -->
   </p>
@@ -161,13 +161,14 @@ Everything inside such an element reads them too, so one format serves a sentenc
 The figure is one line tall, two with a `<figcaption>`, unless you give it a height:
 
 ```html
-<figure class="dcss-summarize" style="height: 3lh">
+<figure class="dcss-summarize dcss-format-fixed" style="--precision: 1; height: 3lh">
   <ul><li style="--value: 72.5"></li> <li style="--value: 88"></li> <li style="--value: 95"></li> <li style="--value: 47"></li></ul>
-  <output class="dcss-format-fixed" style="--value: var(--dcss-mean); --precision: 1"></output>       <!-- 75.6 -->
-  <output class="dcss-format-fixed" style="--value: var(--dcss-max); --precision: 1"></output>        <!-- 95.0 -->
-  <output class="dcss-format-fixed" style="--value: var(--dcss-deviation); --precision: 1"></output>  <!-- 21.3 -->
+  <output style="--value: var(--dcss-mean)"></output>       <!-- 75.6 -->
+  <output style="--value: var(--dcss-max)"></output>        <!-- 95.0 -->
+  <output style="--value: var(--dcss-deviation)"></output>  <!-- 21.3 -->
 </figure>
 ```
+
 
 
 
