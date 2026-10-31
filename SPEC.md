@@ -5,7 +5,7 @@ dcss.css computes with CSS layout: indexed reads, sums, ranks, sorts, keyed maps
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in BCP 14 [RFC2119] [RFC8174] when, and only when, they appear in all capitals, as shown here.
 
 Measured 2026-10-29, headless: Chrome 155.0.8059.86, WebKit 26.4, Firefox 158.0.
-Conformance: Chrome 191/191, WebKit 191/191, Firefox 70/191.
+Conformance: Chrome 192/192, WebKit 192/192, Firefox 70/192.
 Additional paired cases measured 2026-10-26 in Chrome/WebKit; the Firefox report is unchanged.
 The checks, probes and scripts this document names are in the noscript.ing repository ([github.com/noscripting/noscript.ing](https://github.com/noscripting/noscript.ing)), under `libraries/dcss/`; this package carries the sheets and their documents.
 
@@ -448,6 +448,13 @@ for selection or computation. Packaging does not expand any function's bounds.
   when it lands in what is left of the bracket and moves x under half its width, the middle of what is left otherwise;
   `--dcss-root-interval` the width left; a 0 of f at an end as A216; and refuse as A216, and when f′ is not set or not a
   number at an `<i>`.
+- **A221** `.dcss-invert` with a height, `--dcss-invert-from`, `--dcss-invert-to`, `--dcss-invert-min` and
+  `--dcss-invert-max`, its first child holding n pairs of nested `<i>` elements, and the page's rule setting
+  `--dcss-invert-f` from `--dcss-invert-x` on every `<i>`, for an f that rises from min to max, MUST start each line box
+  in it within 1 px of the x (from at the box's left edge, to at its right) where f reaches the value at the line's
+  bottom edge (min at the box's top, max at its bottom), or at a value within its band, when the straight pieces
+  between f's n + 1 values at x = from + k (to − from) / n are within 1 px of f's inverse; and again after an input of f
+  changes.
 
 ### On the board
 
@@ -653,6 +660,7 @@ for selection or computation. Packaging does not expand any function's bounds.
 | A218 | probes/dcss/root/check.mjs: 500 seeded points through each raw projection against d3-geo 3.1.1 | PASS: 1,000 of 1,000, worst 8.9e-16 (2026-10-31) | PASS: 1,000 of 1,000, worst 8.9e-16 (2026-10-31) | NOTRUN |
 | A219 | probes/dcss/root/check.mjs: the same points inverted at 12 `<i>`s, against d3's invert and the point projected | PASS: 1,000 of 1,000; 9.8e-15 from the point, d3's own 4.2e-11 (2026-10-31) | PASS: 1,000 of 1,000; 3.1e-14 from the point (2026-10-31) | NOTRUN |
 | A220 | probes/dcss/root/check.mjs: Kepler's equation, 40 orbits at 10 `<i>`s from the middle and 8 from a guess, within 1e-14; the cubic-bezier(.42, 0, .58, 1) inverse at 41 progresses, 6 `<i>`s; x³ − 2x + 2 and atan(x − 0.3), where plain Newton cycles and diverges, 10 `<i>`s; a 0 at either end; same sign at both ends and no f′ | PASS: 127 of 127, worst 1.8e-15 (2026-10-31) | PASS: 127 of 127, worst 1.8e-15 (2026-10-31) | NOTRUN |
+| A221 | probes/dcss/invert/check.mjs: Kepler's equation at e 0.6 on 32 and 64 pairs and after e changes to 0.3, x³ on [−1, 1], a falling 1 − x² with min above max, 30 pairs in a 999 px box; 1 px rows, each line's start against the inverse in doubles over its band | PASS: 3,900 of 3,900 rows, worst 0.47 px (2026-10-31) | PASS: 3,900 of 3,900 rows, worst 0.47 px (2026-10-31) | NOTRUN |
 | A51 | coverage/board.mjs: bd-power-12-loop-classes, bd-power-12-loop-table | PASS: 13 of 13 each, against NumPy | PASS: 13 of 13 each, against NumPy | PRECONDITION_FAILED: no view timelines, which store.css's store needs |
 | A52 | sheets/check.mjs: loan | PASS: 50 of 50 cells as written and after 2 changes | PASS: 50 of 50 cells as written and after 2 changes | PRECONDITION_FAILED: no view timelines, which store.css's store needs |
 

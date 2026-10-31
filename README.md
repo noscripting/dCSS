@@ -254,6 +254,7 @@ Each call gives its answer as `--dcss-` and its name to the elements directly in
 
 - `.dcss-root`: a root of the page's own equation: `--dcss-root-from`, `--dcss-root-to` on it, nested `<i>`s, the page's rule setting `--dcss-root-f` from `--dcss-root-x` on each; inside the deepest, `--dcss-root` and `--dcss-root-interval`.
 - `.dcss-root-newton`: with `.dcss-root`, Newton's steps kept in the bracket: `--dcss-root-df`, f's derivative, beside f; `--dcss-root-guess` optional.
+- `.dcss-invert`: the inverse of the page's own function on every row of the box at once: `--dcss-invert-from`, `-to` across it, `--dcss-invert-min`, `-max` down it, its first child's pairs of `<i>`s, the page's rule setting `--dcss-invert-f` from `--dcss-invert-x` on each; each line starts where f reaches its value.
 - [`.dcss-geo-natural-earth1-raw-invert`](https://d3js.org/d3-geo/cylindrical#geoNaturalEarth1), [`.dcss-geo-equal-earth-raw-invert`](https://d3js.org/d3-geo/cylindrical#geoEqualEarth): 12 nested `<i>`s, Newton's steps from `--y` with d3's derivative, `--x`, `--y` on it; inside the deepest, `--dcss-geo-x`, `--dcss-geo-y` in radians.
 
 <!-- /calls -->
@@ -306,6 +307,27 @@ After the two ends, each `<i>` is one step from x to x − f/f′, from `--dcss-
 
 The inverts of naturalEarth1 and equalEarth above are solves like this one, with d3's equations as the rule.
 
+### Every row at once
+
+When many things need one equation's answer (24 moons on one orbit, the ticks of an eased axis, labels on a curve), `.dcss-invert` answers every row of a box in one layout. The page writes f once, as for `.dcss-root`; pairs of `<i>`s sample it, and each line in the box starts where f reaches that line's value:
+
+```html
+<div class="dcss-invert orbit" style="--dcss-invert-from: 0; --dcss-invert-to: 6.2832;
+     --dcss-invert-min: 0; --dcss-invert-max: 6.2832; height: 240px">
+  <span><i><i></i></i><i><i></i></i> … 32 pairs … </span>
+  <p><b class="moon"></b></p> <p><b class="moon"></b></p> …
+</div>
+```
+
+```css
+@scope (.orbit) to (.dcss-invert) {
+  i { --dcss-invert-f: calc(var(--dcss-invert-x) - 0.6 * sin(var(--dcss-invert-x) * 1rad)); }
+}
+.moon { display: inline-block; width: 0; }   /* drawn by its ::before, which may overflow it */
+```
+
+x runs across the box, from `--dcss-invert-from` at its left edge to `--dcss-invert-to` at its right; values run down it, from `--dcss-invert-min` at the top to `--dcss-invert-max` at the bottom. A line whose bottom edge is at value v starts at the x where f(x) = v, so whatever starts the line sits on the answer: the answer is a position, not a number. Give the thing at a line's start no width (draw it with a pseudo-element): content wider than the room left beside the curve drops to a line below. f must rise down the box: for a falling f, put the larger value in `--dcss-invert-min`. Where f turns back, a line starts at the last column f has passed its value. The answer follows straight pieces between the n + 1 values: on a 1,000 px box, 32 pairs keep Kepler's inverse at e = 0.6 within 0.42 px and 64 within 0.25 (probes/dcss/invert/check.mjs). Fewer rows cost less: 100 rows with f moving take a few ms a frame, 1,000 rows about 15 (Performance).
+
 ### As CSS functions
 
 Where the browser has `@function` (Chrome; Safari Technology Preview), these calls are also functions, with no element and no list. They are a sheet of their own, `families/functions.css`, or one call's in `parts/functions/<class>.css` (`parts/functions/dcss-geo-mercator.css`); the class sheets don't carry them. Their arguments are the class's inputs in order, and a value the class refuses gives NaN:
@@ -339,7 +361,7 @@ A browser without `@function` drops the declaration, so write a plain value befo
 
 <!-- browsers -->
 
-Headless Chrome 155 and WebKit 26.4, Safari's engine, pass all 191 requirements of [SPEC.md](SPEC.md), and the calls match d3 on 3,206 of the 7,049 calls in d3's tests. Firefox 158 computes `calc()` in 32-bit floats, so exact sums, dates and most formatting go wrong there: it passes 70. [QUIRKS.md](QUIRKS.md) has the engine bugs.
+Headless Chrome 155 and WebKit 26.4, Safari's engine, pass all 192 requirements of [SPEC.md](SPEC.md), and the calls match d3 on 3,206 of the 7,049 calls in d3's tests. Firefox 158 computes `calc()` in 32-bit floats, so exact sums, dates and most formatting go wrong there: it passes 70. [QUIRKS.md](QUIRKS.md) has the engine bugs.
 
 <!-- /browsers -->
 
@@ -350,6 +372,8 @@ Headless Chrome 155 and WebKit 26.4, Safari's engine, pass all 191 requirements 
 Layout does the work, in the frame a number changes. A family is at most 30 KB gzipped and loads in 15 ms or less in WebKit 26.4 (2026-10-28). Twenty printed medians, a value moving: 6.3 ms a frame in Chrome, 9.6 in WebKit; variance 8.2, 10.3 (2026-10-30).
 
 <!-- /performance -->
+
+`.dcss-invert` with f animated, 32 pairs (2026-10-31): 100 rows 2.3 ms a frame in Chrome, 2.9 in WebKit; 1,000 rows 14.7 and 14.3.
 
 ## License
 
