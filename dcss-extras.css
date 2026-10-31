@@ -17,7 +17,7 @@
 .list { position: relative; }
 .list > .dcss-size { position: absolute; inset: 0; max-width: none; max-height: none; container-type: size; }
 .list > .dcss-size > u { display: block; --dcss-width: calc(100cqw / 1px); --dcss-height: calc(100cqh / 1px); text-decoration: none; }
-/* Loops (SPEC.md A51): a while loop on noscripting.css's board cells, written by hand. The cells are the
+/* Loops (SPEC.md A51): a while loop on store.css's board cells, written by hand. The cells are the
    items of one flow, which is also the loop's one shared reader; one more cell under the flow keeps the clock and the
    total. A page writes its cells, its neighbours' names, and its step as a rule:
      <div class="loop power">
@@ -36,7 +36,7 @@
    the largest change. The core cell (published as --loop) keeps the total in its first number and the clock in its
    second: iteration k = floor(t / --loop-period) (10), phase t mod period. It takes the flow's width in phases
    --loop-settle (5) onwards; a cell stores --next once an iteration, in phases 0 to --loop-compute - 1 (3), and only
-   when the loop's read has arrived (its second number is the board's: it remembers k + 1). The clock starts at
+   when the loop's read has arrived (its second number is store.css's: it remembers k + 1). The clock starts at
    --loop-settle (the total measures the start before any cell moves) and stops for good when, at an iteration's end,
    the largest change is at most --loop-tolerance (0), after three iterations and with the total below a cell's
    ceiling: then nothing computes again and the cells rest. Inside .loop-flow: --loop-total, --loop-t, --loop-ok; inside a
@@ -67,7 +67,7 @@ table.loop { border-collapse: collapse; border-spacing: 0; } table.loop td { pad
   --store-next: calc(var(--loop-win) * round(100cqw / 1px) + (1 - var(--loop-win)) * var(--store-value));
   --store-next-y: calc(var(--store-y) + 1 - var(--loop-done)); }
 
-/* Sheets (SPEC.md A52): a <table class="sheet"> whose cells compute on noscripting.css's board, as a
+/* Sheets (SPEC.md A52): a <table class="sheet"> whose cells compute on store.css's board, as a
    spreadsheet does. A cell is a stored number with a name; a formula is a rule on a class, written once a column (fill
    down); a reader around a cell names what it reads ([data-store-read] one name, [data-store-read-3] up to three), and
    inside it they are --in-a, --in-b, --in-c (a reader inside
@@ -75,16 +75,16 @@ table.loop { border-collapse: collapse; border-spacing: 0; } table.loop td { pad
      <td data-store-read-3 style="--store-of: --e2; --store-of-2: --rate">
        <b data-store class="interest" style="--store-name: --c3"><output class="money"></output></b></td>
      .interest { --store-next: round(var(--in-a) * var(--in-b) / 120000); }
-   A cell read only by cells after it in the page is a frame faster with the board's --store-name-scope: following.
+   A cell read only by cells after it in the page is a frame faster with store.css's --store-name-scope: following.
    A fold reads a column into one number: readers with class sum, mean, max or min, three names each, nested up to four
    deep (twelve names), the <output> innermost; it reads --fold (and --fold-count, the names that have arrived):
      <span data-store-read-3 class="sum" style="--store-of: --c1; --store-of-2: --c2; --store-of-3: --c3">
        <span data-store-read-3 class="sum" style="--store-of: --c4"><output class="money"></output></span></span>
-   A cell inside a fold can keep it (--store-next: var(--fold)) for formulas to read. A lookup is the board's
+   A cell inside a fold can keep it (--store-next: var(--fold)) for formulas to read. A lookup is store.css's
    [data-store-table] with a [data-store-at] reader; in a sheet the value it found is --found.
    A mean's output may set --fold-scale (10 shows whole numbers' mean in tenths). Formats: money (cents as 12.34), int,
    pct (12%), tenths (123 as 12.3), bp (basis points as 7.50%), grade (tenths of a point as a letter: A from 90.0, B 80.0,
-   C 70.0, D 60.0, else F). Typed inputs are the board's [data-store-input]. */
+   C 70.0, D 60.0, else F). Typed inputs are store.css's [data-store-input]. */
 @property --fold { syntax: '<number>'; inherits: true; initial-value: 0; }
 @property --fold-count { syntax: '<number>'; inherits: true; initial-value: 0; }
 @property --sheet-v { syntax: '<number>'; inherits: false; initial-value: 0; }

@@ -28,7 +28,7 @@ for selection or computation. Packaging does not expand any function's bounds.
 | CSS Flexible Box Layout Module Level 1 | Editor's Draft, 2026-05-08 | `.dcss-flex`: shares with weights, floors and caps (§9.7) |
 | CSS Counter Styles Level 3 | Editor's Draft, 2026-10-08 | `dcss-tally`, `dcss-table` and the text operators |
 | CSS Fonts Module Level 4 | Editor's Draft, 2026-10-16 | the lookup fonts and the ROM fonts' variation axes |
-| noscripting.css | store 4f37d4eb | the stored cells and readers the loops and sheets run on |
+| store.css | store 4f37d4eb | the stored cells and readers the loops and sheets run on |
 
 ## 2. Requirements
 
@@ -345,7 +345,7 @@ for selection or computation. Packaging does not expand any function's bounds.
 
 - **A103** Identity-scale ticks MUST expose the complete array length and every active item within the qualified bounds and authored capacity. Default labels MUST compute precision from live domain/count inputs and match rendered d3 text. Both branches MUST preserve item/status addresses, integer summary fields, changing input/reset and downstream reuse; malformed summary metadata MUST be refused.
 
-- **A104** Retired 2026-10-28: seeded draws over a list; noscripting.css's random part gives a page random numbers.
+- **A104** Retired 2026-10-28: seeded draws over a list; store.css's random part gives a page random numbers.
 
 - **A105** Retired 2026-10-28: one fixed zone, America/Los_Angeles, served d3's tests only; time is UTC.
 
@@ -386,10 +386,10 @@ for selection or computation. Packaging does not expand any function's bounds.
 
 ### On the board
 
-- **A51** A loop (`.loop`, `.loop-flow`, `.loop-in`, `.loop-cell`, `.loop-core`) MUST have noscripting.css and dcss-extras.css on the page;
+- **A51** A loop (`.loop`, `.loop-flow`, `.loop-in`, `.loop-cell`, `.loop-core`) MUST have store.css and dcss-extras.css on the page;
   its cells, read through `[data-store-read]` and `[data-store-read-3]` naming them by `--store-of`, MUST settle on the
   iteration's fixed point: a 12-cell power iteration's vector and eigenvalue equal NumPy's, as a flow and as a table row.
-- **A52** A `<table class="sheet">` on noscripting.css's board, with dcss-extras.css, MUST show every cell and fold equal to the sheet's own
+- **A52** A `<table class="sheet">` on store.css's board, with dcss-extras.css, MUST show every cell and fold equal to the sheet's own
   model as written and after each change to its inputs.
 
 
@@ -559,8 +559,8 @@ for selection or computation. Packaging does not expand any function's bounds.
 | A129 | probes/dcss/bin/check.mjs: 300 seeded figures (0 to 64 values, whole and 64ths, outside the domain, empty items; 0 to 32 thresholds, some outside the domain or on its ends), 150 with `--count` (1 to 12.5; domains and values whole, in tenths or in 64ths; some empty), 4 with no answer, a live move | PASS: 4,434 of 4,434 bins (2026-10-28) | PASS: the same (2026-10-28) | PASS: the same (2026-10-28) |
 | A130 | probes/dcss/variance/check.mjs: d3's 49 test calls on numbers, plain or unboxed (24 with no answer), 300 seeded lists of 0 to 64 values (whole, eighths and 64ths, spans 1 to 1024, items with none), 4 with no answer, a live move; the engine's own value and the published text | PASS: 632 of 632 answers the true value to the bit (2026-10-30) | PASS: the same (2026-10-30) | FAIL: 0 of 632 (no view timelines in release Firefox 158) (2026-10-30) |
 | A120 | probes/dcss/token-check.mjs: every call in families.json with a 20,000-token `--value`; three chains (a linear scale into an easing and into a pow scale, a pow scale into a UTC Monday) read through a registered number | PASS: 478 of 478 calls copy it at most once; the largest answer 12,221 tokens; 3 of 3 chains | PASS: the same | FAIL: 478 of 478 at most once; the date chain 81,600,000 ms off (32-bit `calc()`) |
-| A51 | coverage/board.mjs: bd-power-12-loop-classes, bd-power-12-loop-table | PASS: 13 of 13 each, against NumPy | PASS: 13 of 13 each, against NumPy | PRECONDITION_FAILED: no view timelines, which noscripting.css's store needs |
-| A52 | sheets/check.mjs: loan | PASS: 50 of 50 cells as written and after 2 changes | PASS: 50 of 50 cells as written and after 2 changes | PRECONDITION_FAILED: no view timelines, which noscripting.css's store needs |
+| A51 | coverage/board.mjs: bd-power-12-loop-classes, bd-power-12-loop-table | PASS: 13 of 13 each, against NumPy | PASS: 13 of 13 each, against NumPy | PRECONDITION_FAILED: no view timelines, which store.css's store needs |
+| A52 | sheets/check.mjs: loan | PASS: 50 of 50 cells as written and after 2 changes | PASS: 50 of 50 cells as written and after 2 changes | PRECONDITION_FAILED: no view timelines, which store.css's store needs |
 
 
 ### Architecture qualification (26 October 2026)
@@ -581,7 +581,7 @@ The new count/mean compiler subset matches 5 of the 45 original recorded calls i
 
 - Quantiles outside A74's grid bounds; invalid-observation filtering beyond A122's, coercion, accessors, signed-zero identity, dynamic probability and index-returning quantile variants.
 - d3.format's types outside f, %, s and A90's bounded general decimal notation; fill, align, width and zero; SI outside A67's bounds; trim outside SI, log labels or bounded general notation; nonfinite inputs. Linear/pow fixed-prefix SI labels remain unported.
-- Loops between grids (`.loop-flow`, `.loop-in`, `[data-store-read]`, `--store-of`) without noscripting.css or store.css on the page: their cells are the board's stored numbers.
+- Loops between grids (`.loop-flow`, `.loop-in`, `[data-store-read]`, `--store-of`) without store.css or store.css on the page: their cells are store.css's stored numbers.
 - Entries of any tag but `<i>`, and readers of any tag but `<b>`.
 - Ranks past 32 in one bin (rank 33 reads 1), and bins in use counted past the box's width in px.
 - A count of bins in use in `.dcss-bins.dcss-bin-max`, whose 32 bins are an auto-repeat that takes no `max-content`.

@@ -3732,7 +3732,7 @@
       },
       "A51": {
         "__compat": {
-          "description": "A loop (`.loop`, `.loop-flow`, `.loop-in`, `.loop-cell`, `.loop-core`) MUST have noscripting.css and dcss-extras.css on the page; its cells, read through `[data-store-read]` and `[data-store-read-3]` naming them by `--store-of`, MUST settle on the iteration's fixed point: a 12-cell power iteration's vector and eigenvalue equal NumPy's, as a flow and as a table row.",
+          "description": "A loop (`.loop`, `.loop-flow`, `.loop-in`, `.loop-cell`, `.loop-core`) MUST have store.css and dcss-extras.css on the page; its cells, read through `[data-store-read]` and `[data-store-read-3]` naming them by `--store-of`, MUST settle on the iteration's fixed point: a 12-cell power iteration's vector and eigenvalue equal NumPy's, as a flow and as a table row.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -3744,7 +3744,7 @@
             },
             "firefox": {
               "version_added": null,
-              "notes": "PRECONDITION_FAILED: no view timelines, which noscripting.css's store needs"
+              "notes": "PRECONDITION_FAILED: no view timelines, which store.css's store needs"
             }
           },
           "status": {
@@ -3756,7 +3756,7 @@
       },
       "A52": {
         "__compat": {
-          "description": "A `<table class=\"sheet\">` on noscripting.css's board, with dcss-extras.css, MUST show every cell and fold equal to the sheet's own model as written and after each change to its inputs.",
+          "description": "A `<table class=\"sheet\">` on store.css's board, with dcss-extras.css, MUST show every cell and fold equal to the sheet's own model as written and after each change to its inputs.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -3768,7 +3768,7 @@
             },
             "firefox": {
               "version_added": null,
-              "notes": "PRECONDITION_FAILED: no view timelines, which noscripting.css's store needs"
+              "notes": "PRECONDITION_FAILED: no view timelines, which store.css's store needs"
             }
           },
           "status": {

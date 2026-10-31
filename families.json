@@ -8,9 +8,9 @@
   },
   "extras": {
     "file": "dcss-extras.css",
-    "raw": 15106,
-    "gzip9": 3752,
-    "sha256": "49ed2227446d642b0cef81fbd28c9ed043fc4523e1029825f750e802278beb5d"
+    "raw": 15094,
+    "gzip9": 3748,
+    "sha256": "4874c493fde68be637b1c5fc1f115b9afa76c915fb879710186510f5b30d4541"
   },
   "order": [
     "ticks",
@@ -131,9 +131,9 @@
         "dcss-ticks-log",
         "dcss-ticks-log-format"
       ],
-      "raw": 167439,
-      "gzip9": 12079,
-      "sha256": "28ad44b39719759bec6128a56d06509c46ce0fdcedcd704219d039081475cf67"
+      "raw": 167385,
+      "gzip9": 12054,
+      "sha256": "fce94f667476499bdde7cef99366467e10a0c1c3b83c80ebb8700b08643472cc"
     },
     "ease": {
       "file": "families/ease.css",
