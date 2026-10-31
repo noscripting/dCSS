@@ -4582,6 +4582,75 @@
           }
         }
       },
+      "A229": {
+        "__compat": {
+          "description": "`.dcss-evaluate` MUST give every element inside it `--dcss-evaluate`, the page's `--dcss-formula` at `--dcss-input` equal to its `--at` (set on the call itself, as A228), and `--dcss-slope` where the page has one; `mathml.mjs` MUST wrap what the call holds in one `<i>` and write the slope (as A225); the call MUST give `--dcss-ready` 0 and `--dcss-err` 1 when the value or `--at` is not a number, `--at` is set only on an outer element, or the `<i>` was never built.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
+            },
+            "firefox": {
+              "version_added": null
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A230": {
+        "__compat": {
+          "description": "`mathml.mjs` MUST cut a `.dcss-solve-every`'s range into `data-dcss-pieces` pieces, or the least whole number of pieces no wider than `data-dcss-apart`, each a `.dcss-solve` with the call's other classes, its tries (`data-dcss-steps` or `data-dcss-within` per piece, as A226) and a copy of what the call holds, and refuse, with the line, a Newton solve, a count outside 2 to 200, and copied content with an `id`, `for` or ARIA reference; each piece MUST answer as `.dcss-solve` on its part, adjacent pieces sharing their end bit for bit, an exact answer on a shared end found by the right piece only; a piece with no answer MUST give `--dcss-ready` 0 and hide its copy with `visibility: hidden`.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
+            },
+            "firefox": {
+              "version_added": null
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A231": {
+        "__compat": {
+          "description": "`.dcss-sample` with `--columns` c MUST lay its n items in rows of c: item k's `--dcss-input` the middle of column (k − 1) mod c between `--from` and `--to`, its `--dcss-input-y` the middle of row ⌊(k − 1) / c⌋ of n / c between `--from-y` and `--to-y`, each set on the call itself; each item MUST give `--dcss-ready` 0 and `--dcss-err` 1 when c is not a positive whole number dividing n, or its value is not a number; without `--columns` the items MUST be one row, as A224.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
+            },
+            "firefox": {
+              "version_added": null
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
       "A51": {
         "__compat": {
           "description": "A loop (`.loop`, `.loop-flow`, `.loop-in`, `.loop-cell`, `.loop-core`) MUST have store.css and dcss-extras.css on the page; its cells, read through `[data-store-read]` and `[data-store-read-3]` naming them by `--store-of`, MUST settle on the iteration's fixed point: a 12-cell power iteration's vector and eigenvalue equal NumPy's, as a flow and as a table row.",

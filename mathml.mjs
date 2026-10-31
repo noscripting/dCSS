@@ -1818,9 +1818,9 @@ const NESTED = /(?:^|\s)dcss-(?:solve|geo-natural-earth1-raw-invert|geo-equal-ea
 // is left), so n is the least that reaches t, 3 at least. The build reads --from and --to as numbers from the element's
 // style or a <style> rule on one of its own classes; anything else (a var(), a Newton solve, an invert, whose steps
 // buy no fixed width) is refused with its line.
-function withinSteps(src, a, cls, invert, where) {
+function withinSteps(src, a, cls, invert, where, parts = 1) {
   if ('data-dcss-steps' in a) throw new Error(`${where}: data-dcss-within beside data-dcss-steps: write one, how close or how many`);
-  if (invert || !/(?:^|\s)dcss-solve(?=\s|$)/.test(cls) || NEWTONS.test(cls)) throw new Error(`${where}: data-dcss-within on ${invert ? 'a .dcss-solve-rows' : 'a solve that takes Newton\'s steps'}: how close its answer gets has no fixed count; write data-dcss-steps`);
+  if (invert || !/(?:^|\s)dcss-solve(?:-every)?(?=\s|$)/.test(cls) || NEWTONS.test(cls)) throw new Error(`${where}: data-dcss-within on ${invert ? 'a .dcss-solve-rows' : 'a solve that takes Newton\'s steps'}: how close its answer gets has no fixed count; write data-dcss-steps`);
   const t = Number((a['data-dcss-within'] ?? '').trim());
   if (!(t > 0) || !Number.isFinite(t)) throw new Error(`${where}: data-dcss-within="${a['data-dcss-within']}": write how close the answer must be, a number above 0`);
   const num = '(-?(?:\\d+\\.?\\d*|\\.\\d+)(?:e[+-]?\\d+)?)\\s*(?:;|$|!)';
@@ -1831,8 +1831,9 @@ function withinSteps(src, a, cls, invert, where) {
       for (const m of css.matchAll(new RegExp(`(?:^|[}\\s,])\\.${c.replace(/[^\w-]/g, '')}\\s*\\{([^}]*)\\}`, 'g'))) { const v = re.exec(m[1]); if (v) return Number(v[1]); }
     return null; };
   const from = find('from'), to = find('to');
+  if (parts === 'range') return [from, to];
   if (from === null || to === null) throw new Error(`${where}: data-dcss-within needs --from and --to as numbers on the element's style or a rule on one of its classes; write data-dcss-steps where they come from elsewhere`);
-  const n = Math.max(3, Math.ceil(Math.log2(Math.abs(to - from) / t) - 1e-12) + 1);
+  const n = Math.max(3, Math.ceil(Math.log2(Math.abs(to - from) / parts / t) - 1e-12) + 1);
   if (n > 54) throw new Error(`${where}: data-dcss-within="${a['data-dcss-within']}" on ${from} to ${to} takes ${n} tries, past a double's 54`);
   return n;
 }
@@ -1844,10 +1845,45 @@ function stepsPass(src, file) {
     const t = tagAt(src, lt); if (!t) { i = lt + 1; continue; }
     if (!t.close && RAW.has(t.name)) { const e = closeAt(src, t.name, lt + t.length); i = e < 0 ? src.length : e; continue; }
     i = lt + t.length;
+    // .dcss-evaluate: the build writes the <i> the page's formula runs on, around what the call holds
+    if (!t.close && /dcss-evaluate/.test(t.rawAttrs) && /(?:^|\s)dcss-evaluate(?=\s|$)/.test(readAttrs(t.rawAttrs, lt).class ?? '')) {
+      const end = t.self || VOID.has(t.name) ? -1 : endOf(src, lt, t); if (end < 0) throw new Error(`${file}:${lineOf(src, lt)}: the .dcss-evaluate <${t.name}> is never closed`);
+      const inner = lt + t.length, close = src.lastIndexOf('</', end - 1);
+      if (!/^\s*<i>/.test(src.slice(inner, close))) edits.push([inner, '<i>'], [close, '</i>']);
+      continue;
+    }
     if (t.close || !/(?:^|\s)data-dcss-(?:steps|within)(?=[\s=]|$)/i.test(t.rawAttrs)) continue;
     const a = readAttrs(t.rawAttrs, lt), cls = a.class ?? '', line = lineOf(src, lt);
     const nested = NESTED.test(cls), invert = /(?:^|\s)dcss-solve-rows(?=\s|$)/.test(cls);
     if (/(?:^|\s)dcss-solve-turning-point(?=\s|$)/.test(cls) && NEWTONS.test(cls)) throw new Error(`${file}:${line}: .dcss-solve-turning-point beside .dcss-solve-newton: a highest or lowest point is found by halving; drop .dcss-solve-newton`);
+    // .dcss-solve-every: n pieces, each its own .dcss-solve holding its <i>s and a copy of what the call holds
+    if (/(?:^|\s)dcss-solve-every(?=\s|$)/.test(cls)) {
+      const where = `${file}:${line}`;
+      if (NEWTONS.test(cls)) throw new Error(`${where}: .dcss-solve-every beside .dcss-solve-newton: its pieces halve; drop .dcss-solve-newton`);
+      if ('data-dcss-apart' in a && 'data-dcss-pieces' in a) throw new Error(`${where}: data-dcss-apart beside data-dcss-pieces: write one, how far apart or how many`);
+      let p = Number((a['data-dcss-pieces'] ?? '').trim());
+      // data-dcss-apart="d": the fewest pieces no wider than d, so two crossings at least d apart fall in two pieces
+      if ('data-dcss-apart' in a) {
+        const d = Number(a['data-dcss-apart'].trim()), [from, to] = withinSteps(src, { style: a.style, 'data-dcss-within': '1' }, cls, false, where, 'range');
+        if (!(d > 0) || !Number.isFinite(d)) throw new Error(`${where}: data-dcss-apart="${a['data-dcss-apart']}": write how far apart two crossings may be, a number above 0`);
+        if (from === null || to === null) throw new Error(`${where}: data-dcss-apart needs --from and --to as numbers on the element's style or a rule on one of its classes; write data-dcss-pieces where they come from elsewhere`);
+        p = Math.max(2, Math.ceil(Math.abs(to - from) / d - 1e-12));
+      }
+      if (!Number.isInteger(p) || p < 2 || p > 200) throw new Error(`${where}: ${'data-dcss-apart' in a ? `data-dcss-apart="${a['data-dcss-apart']}" takes ${p} pieces` : `data-dcss-pieces="${a['data-dcss-pieces'] ?? ''}"`}: a .dcss-solve-every takes 2 to 200 pieces`);
+      const n = 'data-dcss-within' in a ? withinSteps(src, a, cls, false, where, p) : Number((a['data-dcss-steps'] ?? '').trim());
+      if (!Number.isInteger(n) || n < 3 || n > 54) throw new Error(`${where}: data-dcss-steps="${a['data-dcss-steps']}": each piece takes 3 to 54 steps`);
+      const end = t.self || VOID.has(t.name) ? -1 : endOf(src, lt, t); if (end < 0) throw new Error(`${where}: the .dcss-solve-every <${t.name}> is never closed`);
+      const inner = lt + t.length, close = src.lastIndexOf('</', end - 1), body = src.slice(inner, close);
+      // each piece carries the call's classes (so a page's @scope (.wave) to (.dcss-solve) reaches its <i>s, a
+      // turning-point solve takes its slope) and .dcss-solve
+      const pc = ['dcss-solve', ...cls.split(/\s+/).filter((c) => c && c !== 'dcss-solve' && c !== 'dcss-solve-every')].join(' ');
+      const piece = /^\s*<div class="[^"]*\bdcss-solve\b[^"]*">/;
+      if (piece.test(body)) { const had = body.match(/<div class="[^"]*\bdcss-solve\b[^"]*">/g).length; if (had < p) throw new Error(`${where}: data-dcss-pieces="${p}" on an element that holds ${had} pieces already: write the attribute or the pieces, not both`); continue; }
+      if (/\s(?:id|for|aria-labelledby|aria-describedby|aria-controls)\s*=/i.test(body)) throw new Error(`${where}: a .dcss-solve-every's content is copied into each of its ${p} pieces, so it holds no id, for or aria reference to one`);
+      const copy = stepsPass(body, file);
+      edits.push([inner, `<div class="${pc}">${'<i>'.repeat(n)}${copy}${'</i>'.repeat(n)}</div>`.repeat(p), close - inner]);
+      i = close; continue;
+    }
     if (!nested && !invert) throw new Error(`${file}:${line}: data-dcss-${'data-dcss-steps' in a ? 'steps' : 'within'} on an element that is neither a .dcss-solve nor a .dcss-solve-rows`);
     const n = 'data-dcss-within' in a ? withinSteps(src, a, cls, invert, `${file}:${line}`) : Number((a['data-dcss-steps'] ?? '').trim());
     const [lo, hi] = invert ? [1, 1000] : NEWTONS.test(cls) ? [3, 14] : [3, 54];
@@ -1862,7 +1898,7 @@ function stepsPass(src, file) {
     edits.push(invert ? [inner, `<span>${'<i><i></i></i>'.repeat(n)}</span>`] : [inner, '<i>'.repeat(n)], ...(invert ? [] : [[close, '</i>'.repeat(n)]]));
   }
   let out = src;
-  for (const [at, text] of edits.sort((x, y) => y[0] - x[0])) out = out.slice(0, at) + text + out.slice(at);
+  for (const [at, text, cut = 0] of edits.sort((x, y) => y[0] - x[0])) out = out.slice(0, at) + text + out.slice(at + cut);
   return out;
 }
 // On a page with a .dcss-solve-newton, the build writes --dcss-slope beside each --dcss-formula in its <style>s that has
@@ -1992,7 +2028,7 @@ function emit(n, outer = 0, right = false) {
   return p < outer || (right && p === outer && p < 3) ? `(${s})` : s;
 }
 function slopeOf(text) { const t = parseCalc(text.replace(/\/\*[\s\S]*?\*\//g, '').trim()); typeOf(t); const d = D(t); return d.k === 'num' ? d.t : `calc(${emit(d)})`; }
-const SOLVE_NEWTON = /\bclass\s*=\s*(?:"[^"]*\bdcss-solve-(?:newton|turning-point)\b[^"]*"|'[^']*\bdcss-solve-(?:newton|turning-point)\b[^']*'|dcss-solve-(?:newton|turning-point)\b)/i; // the solves that read a slope
+const SOLVE_NEWTON = /\bclass\s*=\s*(?:"[^"]*\b(?:dcss-solve-(?:newton|turning-point)|dcss-evaluate)\b[^"]*"|'[^']*\b(?:dcss-solve-(?:newton|turning-point)|dcss-evaluate)\b[^']*'|(?:dcss-solve-(?:newton|turning-point)|dcss-evaluate)\b)/i; // the solves that read a slope
 function slopePass(src, file) {
   if (!SOLVE_NEWTON.test(src)) return { src, skipped: [] };
   const skipped = [], edits = [], styles = [], reStyle = /<style\b[^>]*>/gi;

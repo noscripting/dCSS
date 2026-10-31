@@ -7,6 +7,10 @@
 /* Where the page's own function reaches a target, by bisection (root.mjs). */
 /* A solve by Newton's method kept inside the bracket (root.mjs). */
 
+/* Every input where the page's own function reaches a target (every.mjs). */
+
+/* The page's own function at one input (evaluate.mjs). */
+
 /* The inverse of the page's own function on every row, by layout (invert.mjs). */
 
 /* The page's own function sampled as a list (sample.mjs). */

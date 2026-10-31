@@ -255,8 +255,10 @@ Each call gives its answer as `--dcss-` and its name to the elements directly in
 - `.dcss-solve`: where the page's own function reaches `--target` (0 without it): `--from`, `--to` on it, nested `<i>`s (or `data-dcss-steps` and the build writes them), the page's rule setting `--dcss-formula` from `--dcss-input` on each; inside the deepest, `--dcss-solve` and `--dcss-solve-width`.
 - `.dcss-solve-newton`: with `.dcss-solve`, Newton's steps kept in the bracket: `--dcss-slope`, f's slope (its derivative), beside f (the build writes it from f); `--guess` optional.
 - `.dcss-solve-turning-point`: with `.dcss-solve`, where the page's own function is highest or lowest between `--from` and `--to`, one hump: where its slope, `--dcss-slope` (the build writes it from f), reaches 0; halving, with `data-dcss-within` or `data-dcss-steps`.
+- `.dcss-solve-every`: every input between `--from` and `--to` where the page's own function reaches `--target`: the range cut into `data-dcss-pieces` (or `data-dcss-apart`, how far apart two answers may be) and each piece a `.dcss-solve` the build writes, with a copy of what the call holds; a piece with no answer hides its copy. With `.dcss-solve-turning-point`, every peak and dip.
+- `.dcss-evaluate`: the page's own function at one input, `--at` on it; inside its `<i>` (the build writes it), `--dcss-evaluate` and `--dcss-slope` (the build writes it from f).
 - `.dcss-solve-rows`: the inverse of the page's own function on every row of the box at once: `--from`, `--to` across it, `--top`, `--bottom` down it, its first child's pairs of `<i>`s (or `data-dcss-steps`), the page's rule setting `--dcss-formula` from `--dcss-input` on each; each line starts where f reaches its value.
-- `.dcss-sample`: with a list call (`.dcss-sum`, `.dcss-max`, `.dcss-mean`…), the page's own function as the list: `--from`, `--to` on it, each item's `--value` the page's `--dcss-formula` at `--dcss-input`, the item's middle, rounded to 64ths.
+- `.dcss-sample`: with a list call (`.dcss-sum`, `.dcss-max`, `.dcss-mean`…), the page's own function as the list: `--from`, `--to` on it, each item's `--value` the page's `--dcss-formula` at `--dcss-input`, the item's middle, rounded to 64ths; with `--columns`, a grid, and `--dcss-input-y` from `--from-y` to `--to-y` down its rows. Alone, without a list call, its items are drawn (a heat map), each with `--dcss-ready`.
 - `.dcss-motion`: on store.css's frame cell (`data-store`), the page's own equation of motion, a leapfrog step a frame: `--dcss-motion-acceleration` from `--dcss-motion-position` and `--dcss-motion-speed`, `--dcss-motion-start-position`, `-start-speed`, `-position-range`, `-speed-range`, `-time-step`; on it and inside it, `--dcss-motion-position` and `--dcss-motion-speed`.
 - [`.dcss-geo-natural-earth1-raw-invert`](https://d3js.org/d3-geo/cylindrical#geoNaturalEarth1), [`.dcss-geo-equal-earth-raw-invert`](https://d3js.org/d3-geo/cylindrical#geoEqualEarth): 12 nested `<i>`s, Newton's steps from `--y` with d3's derivative, `--x`, `--y` on it; inside the deepest, `--dcss-geo-x`, `--dcss-geo-y` in radians.
 
@@ -327,6 +329,38 @@ The marker sits at 1, where x e⁻ˣ peaks, within 0.001. The build writes the f
 
 The inverts of naturalEarth1 and equalEarth above are solves like this one, with d3's equations as the formula.
 
+### Every place it reaches a value
+
+A solve finds one answer in its range. `.dcss-solve-every` finds each one: the build cuts the range into pieces, makes each piece a solve of its own and copies what the call holds into each, so every answer gets its own copy (a dot, a label):
+
+```html
+<style>
+  .wave i { --dcss-formula: sin(var(--dcss-input) * 1rad); }
+  .wave { position: relative; height: 20px; }
+  .dot { position: absolute; left: calc(var(--dcss-solve) * 40px); width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+</style>
+<div class="dcss-solve-every wave" data-dcss-apart="1" data-dcss-within="0.01" style="--from: 0; --to: 12.566; --target: 0.5">
+  <b class="dot"></b>
+</div>
+```
+
+Four dots, where the wave reaches 0.5 (0.52, 2.62, 6.81, 8.90). `data-dcss-apart="1"` says how close two answers may be: the build cuts the range into pieces that wide (13 here) and each piece finds at most one, so two answers closer than that show as one; `data-dcss-pieces="13"` gives the count instead. `data-dcss-within` is how close each answer is, as for a solve. A piece with no answer hides its copy (`visibility`, so a screen reader skips it too), and `--dcss-ready` is 0 there. An answer exactly where two pieces meet is found once. A formula that touches the value without crossing it (x² reaching 0) has no answer here: its touches are the turning points, so add `.dcss-solve-turning-point` and the call finds every peak and dip instead. What the call holds is copied, so it holds no `id`. Each piece carries the call's classes, so a rule written `@scope (.wave) to (.dcss-solve)` reaches its tries too.
+
+### The formula at one input
+
+`.dcss-evaluate` gives your formula's value at one number, `--at`: a label on a curve, a price at 30 items, a point to draw a tangent from.
+
+```html
+<style>
+  .square i { --dcss-formula: calc(var(--dcss-input) * var(--dcss-input)); }
+</style>
+<p class="dcss-evaluate square" style="--at: 0.3">
+  <output class="dcss-format-fixed" style="--value: var(--dcss-evaluate); --precision: 2"></output> <!-- 0.09 -->
+</p>
+```
+
+The build writes an `<i>` around what the call holds, and your rule runs on it at `--dcss-input` = `--at`. Everything inside gets `--dcss-evaluate`, the value, and `--dcss-slope`, how steeply the formula rises there (0.6 here), which the build writes from your formula as for Newton's solve. `--dcss-ready` is 1 when the value is a number; `--dcss-err` is 1 when it isn't, or `--at` isn't a number set on the call itself. The slope is in your formula's units; to draw it on screen, scale it by your axes (pixels per input across, pixels per value up).
+
 ### Every row at once
 
 When many things need one formula's answer (24 moons on one orbit, the ticks of an eased axis, labels on a curve), `.dcss-solve-rows` answers every row of a box in one layout. The page writes its formula once, as for `.dcss-solve`; 32 straight pieces sample it (the build writes them, a first `<span>` of 32 pairs `<i><i></i></i>`), and each line in the box starts where the formula reaches that line's value:
@@ -361,6 +395,25 @@ Put `.dcss-sample` beside a list call and each item's value is your formula at t
 ```
 
 That prints 2.00, the area under one hump of a sine, from 16 values. Each value is rounded to the list's 64ths, so write the formula in units where 1/64 is close enough (pixels are); `--dcss-err` is 1 when the items have no formula, or the figure no `--from` and `--to`. While the formula moves, a sampled list costs a frame what any list of its length does, so a page keeps to a few (Performance).
+
+A formula of two inputs samples on a grid: `--columns` lays the items out in rows of that many, `--dcss-input` runs across a row from `--from` to `--to` and `--dcss-input-y` down the rows from `--from-y` to `--to-y`. Alone, without a list call, the items are yours to draw, a heat map; beside `.dcss-sum`, the sum times both cell sizes is the volume under the formula (a list call keeps its list hidden, so draw and sum in two figures):
+
+```html
+<style>
+  .hill li { --dcss-formula: calc(64 * exp(-1 * (var(--dcss-input) * var(--dcss-input) + var(--dcss-input-y) * var(--dcss-input-y)))); }
+  .map ul { display: grid; grid-template-columns: repeat(var(--columns), 20px); padding: 0; margin: 0; list-style: none; }
+  .map li { height: 20px; background: color-mix(in oklab, gold calc(var(--value) / 64 * 100%), navy); }
+</style>
+<figure class="dcss-sample hill map" style="--from: -1; --to: 1; --from-y: -1; --to-y: 1; --columns: 4">
+  <ul aria-hidden="true"><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li></ul>
+</figure>
+<figure class="dcss-sum dcss-sample hill" style="--from: -1; --to: 1; --from-y: -1; --to-y: 1; --columns: 4">
+  <ul aria-hidden="true"><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li></ul>
+  <output class="dcss-format-fixed" style="--value: calc(var(--dcss-sum) / 64 * 0.5 * 0.5); --precision: 2"></output> <!-- 2.28 -->
+</figure>
+```
+
+That draws a 4 by 4 heat map of a hill and prints 2.28, the space under it from 16 values (2.23 exactly; more items come closer). The ×64 is the 64ths again: a formula from 0 to 1 would band into 64 steps. Each item gets `--dcss-ready` and `--dcss-err` of its own. Items that aren't a whole number of rows, a `--columns` that isn't a whole number, or a missing `--from-y` where the formula reads `--dcss-input-y` give `--dcss-err` 1. A cell is (to − from) / columns wide and (to-y − from-y) / rows high, each taken positive.
 
 One rule can feed every call at once: `.demo :is(i, li) { --dcss-formula: … }` on a wrapper holding a `.dcss-solve-rows`, a `.dcss-solve` and a `.dcss-sample`, and dots on the curve, where it reaches a value and the area under it all follow the one formula (probes/dcss/sample/curve.html, with no script: radio buttons change it).
 
@@ -413,7 +466,7 @@ A browser without `@function` drops the declaration, so write a plain value befo
 
 <!-- browsers -->
 
-Headless Chrome 155 and WebKit 26.4, Safari's engine, pass all 199 requirements of [SPEC.md](SPEC.md), and the calls match d3 on 3,206 of the 7,049 calls in d3's tests. Firefox 158 computes `calc()` in 32-bit floats, so exact sums, dates and most formatting go wrong there: it passes 70. [QUIRKS.md](QUIRKS.md) has the engine bugs.
+Headless Chrome 155 and WebKit 26.4, Safari's engine, pass all 202 requirements of [SPEC.md](SPEC.md), and the calls match d3 on 3,206 of the 7,049 calls in d3's tests. Firefox 158 computes `calc()` in 32-bit floats, so exact sums, dates and most formatting go wrong there: it passes 70. [QUIRKS.md](QUIRKS.md) has the engine bugs.
 
 <!-- /browsers -->
 

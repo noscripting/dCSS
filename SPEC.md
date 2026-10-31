@@ -5,7 +5,7 @@ dcss.css computes with CSS layout: indexed reads, sums, ranks, sorts, keyed maps
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in BCP 14 [RFC2119] [RFC8174] when, and only when, they appear in all capitals, as shown here.
 
 Measured 2026-10-29, headless: Chrome 155.0.8059.86, WebKit 26.4, Firefox 158.0.
-Conformance: Chrome 199/199, WebKit 199/199, Firefox 70/199.
+Conformance: Chrome 202/202, WebKit 202/202, Firefox 70/202.
 Additional paired cases measured 2026-10-26 in Chrome/WebKit; the Firefox report is unchanged.
 The checks, probes and scripts this document names are in the noscript.ing repository ([github.com/noscripting/noscript.ing](https://github.com/noscripting/noscript.ing)), under `libraries/dcss/`; this package carries the sheets and their documents.
 
@@ -493,6 +493,23 @@ for selection or computation. Packaging does not expand any function's bounds.
   a rule on it, never as inherited from an element around it, and so refuse as when unset (`--dcss-err` 1) where only an
   outer element sets them; `.dcss-solve-rows` MUST give `--dcss-err` 1 when one of its four is not set on it or not a
   number.
+- **A229** `.dcss-evaluate` MUST give every element inside it `--dcss-evaluate`, the page's `--dcss-formula` at
+  `--dcss-input` equal to its `--at` (set on the call itself, as A228), and `--dcss-slope` where the page has one;
+  `mathml.mjs` MUST wrap what the call holds in one `<i>` and write the slope (as A225); the call MUST give
+  `--dcss-ready` 0 and `--dcss-err` 1 when the value or `--at` is not a number, `--at` is set only on an outer element,
+  or the `<i>` was never built.
+- **A230** `mathml.mjs` MUST cut a `.dcss-solve-every`'s range into `data-dcss-pieces` pieces, or the least whole number
+  of pieces no wider than `data-dcss-apart`, each a `.dcss-solve` with the call's other classes, its tries
+  (`data-dcss-steps` or `data-dcss-within` per piece, as A226) and a copy of what the call holds, and refuse, with the
+  line, a Newton solve, a count outside 2 to 200, and copied content with an `id`, `for` or ARIA reference; each piece
+  MUST answer as `.dcss-solve` on its part, adjacent pieces sharing their end bit for bit, an exact answer on a shared
+  end found by the right piece only; a piece with no answer MUST give `--dcss-ready` 0 and hide its copy with
+  `visibility: hidden`.
+- **A231** `.dcss-sample` with `--columns` c MUST lay its n items in rows of c: item k's `--dcss-input` the middle of
+  column (k − 1) mod c between `--from` and `--to`, its `--dcss-input-y` the middle of row ⌊(k − 1) / c⌋ of n / c
+  between `--from-y` and `--to-y`, each set on the call itself; each item MUST give `--dcss-ready` 0 and
+  `--dcss-err` 1 when c is not a positive whole number dividing n, or its value is not a number; without `--columns`
+  the items MUST be one row, as A224.
 
 ### On the board
 
@@ -706,6 +723,9 @@ for selection or computation. Packaging does not expand any function's bounds.
 | A226 | probes/dcss/root/within-check.mjs: 39 solves of x − r over 8 ranges and 5 closenesses, built and run; the fewest tries; a range read from a class's rule; the built page builds to itself; 6 refusals | PASS: 11 of 11, worst 0.77 of what was asked (2026-10-31) | PASS: 11 of 11, worst 0.77 of what was asked (2026-10-31) | NOTRUN |
 | A227 | probes/dcss/root/extreme-check.mjs: 6 formulas with a known peak or dip, built with `data-dcss-within="1e-6"`; the page never built; beside `.dcss-solve-newton` | PASS: 15 of 15, within 9.5e-7 (2026-10-31) | PASS: 15 of 15, within 9.5e-7 (2026-10-31) | NOTRUN |
 | A228 | probes/dcss/root/inherit-check.mjs: a solve, a sample under `.dcss-sum` and a solve-rows inside an element setting `--from`, `--to`, `--top: 12px`, `--bottom`: with none of their own, with their own by style and by a rule on a class, a solve-rows with `--top` a length and with no pairs | PASS: 9 of 9 (2026-10-31) | PASS: 9 of 9 (2026-10-31) | NOTRUN |
+| A229 | probes/dcss/evaluate/check.mjs: 5 formulas at an input, the value and the written slope against doubles; `--at` only on an outer element, a NaN value, no formula, no `<i>`, a constant formula with no `--at`, `--at` a length; the build writes the `<i>` | PASS: 11 of 11; the build wrote the `<i>` and 5 slopes (2026-10-31) | PASS: 11 of 11, the build's <i> and its idempotence (2026-10-31) | NOTRUN |
+| A230 | probes/dcss/every/check.mjs: sin on [0.5, 10] in 16 pieces, x³ − 3x with 0 on a shared end, x − 0.5 in 2 pieces, x² reaching 4, x² + 1 (none), the turning points of x³ − 3x, x − 0.6 on [−1, 1] in 5 pieces, `data-dcss-apart` with an `@scope` rule, each answer within 1e-4 of the true one; the copies hidden where a piece finds none, ends only on an outer element, a target changed after load, the page never built | PASS: 12 of 12, within 1e-4 (2026-10-31) | PASS: 12 of 12, within 1e-4 (2026-10-31) | NOTRUN |
+| A231 | probes/dcss/sample/grid-check.mjs: a 3 × 2 grid of x + 10y, each item's value and its list laid out in 3 columns; its sum and mean; a 16 × 16 hill summed exactly against doubles; 7 items in rows of 3, `--columns` 2.5, no `--from-y`, `--from-y` only on an outer element | PASS: 8 of 8, the hill exact (2026-10-31) | PASS: 8 of 8, the hill exact (2026-10-31) | NOTRUN |
 | A51 | coverage/board.mjs: bd-power-12-loop-classes, bd-power-12-loop-table | PASS: 13 of 13 each, against NumPy | PASS: 13 of 13 each, against NumPy | PRECONDITION_FAILED: no view timelines, which store.css's store needs |
 | A52 | sheets/check.mjs: loan | PASS: 50 of 50 cells as written and after 2 changes | PASS: 50 of 50 cells as written and after 2 changes | PRECONDITION_FAILED: no view timelines, which store.css's store needs |
 

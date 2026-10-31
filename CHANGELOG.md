@@ -5,6 +5,9 @@ All notable changes to dcss are written here. The format follows [Keep a Changel
 ## [Unreleased]
 
 ### Added
+- `.dcss-evaluate`: your formula's value at one number, `--at`, as `--dcss-evaluate` inside the call, with its slope `--dcss-slope` beside it: a label on a curve, a point to draw a tangent from.
+- `.dcss-solve-every`: every place the formula reaches `--target` between `--from` and `--to`, not just one. The build cuts the range into pieces (`data-dcss-pieces`, or `data-dcss-apart`, the closest two answers may be) and copies what the call holds into each, so each answer gets its own dot or label; a piece with none hides its copy. With `.dcss-solve-turning-point`, every peak and dip.
+- `.dcss-sample` with `--columns`: a formula of two inputs on a grid, `--dcss-input` across from `--from` to `--to` and `--dcss-input-y` down from `--from-y` to `--to-y`, for a heat map, or with `.dcss-sum` the volume under it.
 - A math call's ends (`--from`, `--to`, a solve's `--target` and `--guess`, a solve-rows' `--top` and `--bottom`) are read only as set on the call itself; a value from an element around it, such as a chart mark's `--from`, gives `--dcss-err` 1 instead of an answer on the wrong range.
 
 - `.dcss-solve-turning-point` with `.dcss-solve`: where the page's own formula is highest or lowest between `--from` and `--to`, from the slope the build writes.

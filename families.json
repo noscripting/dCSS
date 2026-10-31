@@ -379,18 +379,20 @@
       "file": "families/math.css",
       "dependencies": [],
       "classes": [
+        "dcss-evaluate",
         "dcss-geo-equal-earth-raw-invert",
         "dcss-geo-natural-earth1-raw-invert",
         "dcss-motion",
         "dcss-sample",
         "dcss-solve",
+        "dcss-solve-every",
         "dcss-solve-newton",
         "dcss-solve-rows",
         "dcss-solve-turning-point"
       ],
-      "raw": 183703,
-      "gzip9": 6607,
-      "sha256": "9bc214028042b87a9fcc942eed4ec70a929841aefd399c9ba41f39a56ef2d841"
+      "raw": 187345,
+      "gzip9": 7180,
+      "sha256": "2ffd26cdf37b7976814d1a5d2925be5b0b621e46e79abf260c47b6777d1c4658"
     }
   },
   "owners": {
@@ -653,11 +655,13 @@
     "dcss-stack-offset-expand": "shape",
     "dcss-stack-offset-silhouette": "shape",
     "dcss-stack-order-reverse": "shape",
+    "dcss-evaluate": "math",
     "dcss-geo-equal-earth-raw-invert": "math",
     "dcss-geo-natural-earth1-raw-invert": "math",
     "dcss-motion": "math",
     "dcss-sample": "math",
     "dcss-solve": "math",
+    "dcss-solve-every": "math",
     "dcss-solve-newton": "math",
     "dcss-solve-rows": "math",
     "dcss-solve-turning-point": "math"
@@ -6475,6 +6479,10 @@
         "family": "shape",
         "role": "style-only"
       },
+      "dcss-evaluate": {
+        "family": "math",
+        "role": "style-only"
+      },
       "dcss-geo-equal-earth-raw-invert": {
         "family": "math",
         "role": "style-only"
@@ -6492,6 +6500,10 @@
         "role": "style-only"
       },
       "dcss-solve": {
+        "family": "math",
+        "role": "style-only"
+      },
+      "dcss-solve-every": {
         "family": "math",
         "role": "style-only"
       },
