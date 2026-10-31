@@ -253,6 +253,7 @@ Each call gives its answer as `--dcss-` and its name to the elements directly in
 ### Root: families/root.css
 
 - `.dcss-root`: a root of the page's own equation: `--dcss-root-from`, `--dcss-root-to` on it, nested `<i>`s, the page's rule setting `--dcss-root-f` from `--dcss-root-x` on each; inside the deepest, `--dcss-root` and `--dcss-root-interval`.
+- `.dcss-root-newton`: with `.dcss-root`, Newton's steps kept in the bracket: `--dcss-root-df`, f's derivative, beside f; `--dcss-root-guess` optional.
 - [`.dcss-geo-natural-earth1-raw-invert`](https://d3js.org/d3-geo/cylindrical#geoNaturalEarth1), [`.dcss-geo-equal-earth-raw-invert`](https://d3js.org/d3-geo/cylindrical#geoEqualEarth): the same nested `<i>`s with `--x`, `--y` on it; inside the deepest, `--dcss-geo-x`, `--dcss-geo-y` in radians.
 
 <!-- /calls -->
@@ -262,21 +263,52 @@ Each call gives its answer as `--dcss-` and its name to the elements directly in
 Write the equation as an ordinary rule, and `.dcss-root` (families/root.css) finds where it is 0 between two numbers you give, by halving. Here it solves Kepler's equation for an orbit's eccentric anomaly, E − e sin E = M:
 
 ```html
-<div class="dcss-root orbit" style="--dcss-root-from: 0; --dcss-root-to: 6.283185307179586; --e: 0.7; --m: 1.2">
-  <i><i><i> ... 54 in all ... <i><span class="planet"></span></i> ... </i></i></i>
+<div class="dcss-root orbit" style="--e: 0.6">
+  <i><i><i> ... 13 in all ... <i><span class="planet"></span></i> ... </i></i></i>
 </div>
 ```
 
 ```css
-.orbit i { --dcss-root-f: calc(var(--dcss-root-x) - var(--e) * sin(var(--dcss-root-x) * 1rad) - var(--m)); }
-.planet { translate: calc(cos(var(--dcss-root) * 1rad) * 100px) calc(sin(var(--dcss-root) * 1rad) * 100px); }
+.orbit { --dcss-root-from: 0; --dcss-root-to: 6.283185307179586; }
+@scope (.orbit) to (.dcss-root) {
+  i { --dcss-root-f: calc(var(--dcss-root-x) - var(--e) * sin(var(--dcss-root-x) * 1rad) - var(--m)); }
+}
+.planet {
+  translate: calc(cos(var(--dcss-root) * 1rad) * 100px) calc(sin(var(--dcss-root) * 1rad) * 100px);
+  opacity: var(--dcss-ready);
+}
 ```
 
-The first `<i>` works the rule out at `--dcss-root-from`, the second at `--dcss-root-to`, and each one after halves what is left, so 54 give the root to a double's last digit and 26 to about 1/10⁸ of the range. Inside the deepest, every element that isn't an `<i>` gets `--dcss-root` and `--dcss-root-interval`, the width left. `--dcss-ready` is 0 and `--dcss-root` is NaN when the rule has the same sign at both ends or isn't a number at some `<i>`. Write the rule for every `<i>` of the solve, and don't register `--dcss-root-f` with `@property`: Safari hands a registered number on with 6 decimals, which stops the root short. The inverts of naturalEarth1 and equalEarth above are solves like this one, with d3's equations as the rule.
+Your rule runs once on every `<i>`, and each `<i>` is one guess: the first at `--dcss-root-from`, the second at `--dcss-root-to`, and each one after halves what is left. So 13 `<i>`s are 2 ends and 11 halvings, and the root is within |to − from| / 2¹² (0.0015 here); 26 give |to − from| / 2²⁵, 54 a double's last digit. Animate `--m` and the planet moves, every frame; each `<i>` costs about as much as any other element restyled, so an animated page keeps its solves to tens and its `<i>`s to the precision it draws.
+
+- Every element inside the deepest `<i>` that isn't an `<i>` gets `--dcss-root` and `--dcss-root-interval`, the width left. An `<i>` there would be one more guess. The `<i>`s draw no boxes (`display: contents`), so the planet lays out as the solve's own child.
+- `--dcss-ready` is 0, `--dcss-err` 1 and `--dcss-root` NaN when the rule has the same sign at both ends, isn't a number at some `<i>`, or the solve has no f or no bracket of its own. A NaN `translate` falls back to none, so `opacity: var(--dcss-ready)` hides a refused answer instead of drawing it in the wrong place.
+- The equation must be continuous between the two numbers: a sign change around a pole, like 1/(x − 0.3) on 0 to 1, halves down to the pole.
+- Register nothing the equation computes: in Safari a registered `<number>` loses digits on the way down, which stops the root short. Do register what a solve takes from its place. An unregistered `--k: sibling-index()` is worked out again on every `<i>`, where it is 1; with `@property --k { syntax: '<integer>'; inherits: true; initial-value: 0 }` each of 40 solves keeps its own index, and 40 dots spaced evenly along a spiral each solve their share of its length.
+- A solve inside another's answer reads the outer `--dcss-root` on itself (`.inner { --E: var(--dcss-root) }`) and needs its own bracket. Write each equation in `@scope (.X) to (.dcss-root)` and the rules can come in any order; unscoped, the inner's must come after the outer's.
+
+Give the derivative too and the same solve takes Newton's steps, so far fewer `<i>`s reach the last digit:
+
+```html
+<div class="dcss-root dcss-root-newton orbit" style="--e: 0.6; --dcss-root-guess: 1.6">
+  <i><i><i><i><i><i><i><i><span class="planet"></span></i></i></i></i></i></i></i></i>
+</div>
+```
+
+```css
+@scope (.orbit) to (.dcss-root) {
+  i { --dcss-root-f:  calc(var(--dcss-root-x) - var(--e) * sin(var(--dcss-root-x) * 1rad) - var(--m));
+      --dcss-root-df: calc(1 - var(--e) * cos(var(--dcss-root-x) * 1rad)); }
+}
+```
+
+After the two ends, each `<i>` is one step from x to x − f/f′, from `--dcss-root-guess` (the middle without one). A step that would leave what is left of the bracket, or move x more than half its width, halves the bracket instead, so it can't cycle or run off the way plain Newton can. Kepler's E to a double's last digit takes 8 `<i>`s from a guess and 10 from the middle, where halving takes 54, and an animated frame costs about half. Up to 14 `<i>`s; `--dcss-ready` is 0 also when f′ is missing or not a number.
+
+The inverts of naturalEarth1 and equalEarth above are solves like this one, with d3's equations as the rule.
 
 ### As CSS functions
 
-Where the browser has `@function` (Chrome; Safari Technology Preview), these calls are also functions, with no element and no list. They are a sheet of their own, `families/functions.css` (7.5 KB gzipped), or one call's in `parts/functions/<class>.css` (`parts/functions/dcss-geo-mercator.css`); the class sheets don't carry them. Their arguments are the class's inputs in order, and a value the class refuses gives NaN:
+Where the browser has `@function` (Chrome; Safari Technology Preview), these calls are also functions, with no element and no list. They are a sheet of their own, `families/functions.css`, or one call's in `parts/functions/<class>.css` (`parts/functions/dcss-geo-mercator.css`); the class sheets don't carry them. Their arguments are the class's inputs in order, and a value the class refuses gives NaN:
 
 - `--dcss-ease-<name>(t)`, with the exponent, overshoot, amplitude or period after `t`: `--dcss-ease-cubic-in-out(0.25)` is 0.0625.
 - `--dcss-scale-linear(x, d0, d1, r0, r1, clamp, round)`, and `-pow` (the exponent after `r1`), `-sqrt` and `-log`.
@@ -307,7 +339,7 @@ A browser without `@function` drops the declaration, so write a plain value befo
 
 <!-- browsers -->
 
-Headless Chrome 155 and WebKit 26.4, Safari's engine, pass all 190 requirements of [SPEC.md](SPEC.md), and the calls match d3 on 3,206 of the 7,049 calls in d3's tests. Firefox 158 computes `calc()` in 32-bit floats, so exact sums, dates and most formatting go wrong there: it passes 70. [QUIRKS.md](QUIRKS.md) has the engine bugs.
+Headless Chrome 155 and WebKit 26.4, Safari's engine, pass all 191 requirements of [SPEC.md](SPEC.md), and the calls match d3 on 3,206 of the 7,049 calls in d3's tests. Firefox 158 computes `calc()` in 32-bit floats, so exact sums, dates and most formatting go wrong there: it passes 70. [QUIRKS.md](QUIRKS.md) has the engine bugs.
 
 <!-- /browsers -->
 

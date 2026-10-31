@@ -4262,7 +4262,7 @@
       },
       "A215": {
         "__compat": {
-          "description": "`.dcss-root` with `--dcss-root-from` and `--dcss-root-to`, n nested `<i>` elements in it (3 to 54) and the page's rule setting `--dcss-root-f` from `--dcss-root-x` on every one, MUST give every element inside the deepest `<i>` that is not an `<i>` a `--dcss-root` within |to − from| / 2^(n − 1) and 4 ulps of a root of f between from and to, and `--dcss-root-interval` |to − from| / 2^(n − 2), with `--dcss-ready` 1 and `--dcss-err` 0.",
+          "description": "`.dcss-root` with `--dcss-root-from` and `--dcss-root-to`, n nested `<i>` elements in it (3 to 54) and the page's rule setting `--dcss-root-f` from `--dcss-root-x` on every one, f continuous between from and to, MUST give every element inside the deepest `<i>` that is not an `<i>` a `--dcss-root` within |to − from| / 2^(n − 1) and 4 ulps of a root of f between from and to, and `--dcss-root-interval` |to − from| / 2^(n − 2), with `--dcss-ready` 1 and `--dcss-err` 0. The `<i>`s MUST generate no boxes and leave the font as they found it.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -4285,7 +4285,7 @@
       },
       "A216": {
         "__compat": {
-          "description": "`.dcss-root` MUST give `--dcss-ready` 0, `--dcss-err` 1 and `--dcss-root` NaN when f has the same sign, not 0, at both ends, when f is not a number or is not set at an `<i>`, or when `--dcss-root-from` or `--dcss-root-to` is not set; a 0 of f at an end is a root, and from above to is a bracket.",
+          "description": "`.dcss-root` MUST give `--dcss-ready` 0, `--dcss-err` 1 and `--dcss-root` NaN when f has the same sign, not 0, at both ends, when f is not a number or is not set at an `<i>`, or when `--dcss-root-from` or `--dcss-root-to` is not set on the solve itself (a solve inside another's answer refuses without its own); a 0 of f at an end is a root, and from above to is a bracket.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -4308,7 +4308,7 @@
       },
       "A217": {
         "__compat": {
-          "description": "A `.dcss-root` inside another's answer, its page rule after the outer one's, MUST give its own root of an equation that reads the outer `--dcss-root`, as A215.",
+          "description": "A `.dcss-root` inside another's answer MUST give its own root of an equation that reads the outer `--dcss-root`, as A215: the outer answer read on the inner solve itself or on an element between them, the page's rules in `@scope (.X) to (.dcss-root)` in either order, or unscoped with the inner's after the outer's.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -4355,6 +4355,29 @@
       "A219": {
         "__compat": {
           "description": "`.dcss-geo-natural-earth1-raw-invert` and `.dcss-geo-equal-earth-raw-invert`, with `--x` and `--y` and 54 nested `<i>` elements, MUST give everything inside the deepest that is not an `<i>` `--dcss-geo-x` and `--dcss-geo-y` within 1e-11 of d3-geo 3.1.1's raw invert, or nearer the longitude and latitude the point was projected from than d3's invert is (d3 stops Newton's method at a step under 1e-6 or 1e-12), for latitudes within 0.999 × π/2.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
+            },
+            "firefox": {
+              "version_added": null
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A220": {
+        "__compat": {
+          "description": "`.dcss-root.dcss-root-newton`, with the page's rule setting f's derivative `--dcss-root-df` beside `--dcss-root-f` on every `<i>`, `--dcss-root-guess` optional, and n nested `<i>` elements (3 to 14), MUST give inside the deepest the result of n − 2 of Newton's steps from the guess (the bracket's middle without one), each step taken when it lands in what is left of the bracket and moves x under half its width, the middle of what is left otherwise; `--dcss-root-interval` the width left; and refuse as A216, and when f′ is not set or not a number at an `<i>`.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {

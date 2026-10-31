@@ -6,6 +6,7 @@ All notable changes to dcss are written here. The format follows [Keep a Changel
 
 ### Added
 
+- `.dcss-root-newton`, with `.dcss-root`: give f's derivative `--dcss-root-df` beside f, and `--dcss-root-guess` if you have one, and each `<i>` after the two ends is one of Newton's steps, kept inside the bracket. Kepler's equation to a double's last digit in 8 to 10 `<i>`s where halving takes 54, at about half the cost a frame.
 - A root of the page's own equation, in a new family, `families/root.css`: `.dcss-root` halves a range over nested `<i>`s, the page's rule setting `--dcss-root-f` from `--dcss-root-x` on each, to `--dcss-root` and `--dcss-root-interval`; d3-geo's naturalEarth1Raw and equalEarthRaw, forward in `families/geo.css` and inverted on it.
 - `.dcss-scale-band` and `.dcss-scale-point` as single calls, d3's band and point scales: `--index` of `--domains`, or `--value`'s place in `--domain-0` to `--domain-15`, to `--dcss-scale-band`, its `-bandwidth` and `-step`, with d3's paddings, align and round; and `.dcss-scale-ordinal`, `--value`'s place in the domain picking `--range-0` to `--range-15`, cycled, with `--unknown` or d3's implicit place. Equal to d3's own tests in Chrome and Safari: 102 of 102 band, 12 of 12 point and 57 of 62 ordinal calls that compute (5 pass objects).
 - The CSS functions are a sheet of their own, `families/functions.css`, and one file per call in `parts/functions/`; the family sheets and parts hold the classes only, as before the functions (the Mercator part 17.7 KB again, not 29.2).
@@ -131,6 +132,7 @@ All notable changes to dcss are written here. The format follows [Keep a Changel
 
 ### Fixed
 
+- A `.dcss-root` nested in another's answer refused nothing: with no f or no bracket of its own it gave `--dcss-ready` 1, its flags carried in from the outer solve (a registered flag that can't be computed inherits). Its bracket and flags now start empty on it; its answer is cleared on its first `<i>`, so it can read the outer answer on itself; its `<i>`s draw no boxes and leave the font alone (they were italic, 2,484 boxes on the check's page).
 - `parts/dcss-axis-*.css` alone print a fractional axis's labels with their leading zeros: 0.01 to 0.09, where they printed 0.1 to 0.9. The parts now carry the six counter styles the labels name through a property (`--dcss-tick-frac`), which were only in `dcss.css`.
 - `mathml.mjs` names on stderr each `<math>` it leaves as written (no Content MathML, such as LaTeX alone), and points to `latexmlmath --cmml=-`; it exited 0 with no word. `--help` prints its usage.
 - arccot of a name past 2^996 (up to 2^1000) had its answer from 1/x rounded once: splitting x to multiply it exactly passed the largest double, and 1/x lost its correction. arccot there now has no answer, and arctan takes 2^996's, π/2.
