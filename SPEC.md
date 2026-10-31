@@ -5,7 +5,7 @@ dcss.css computes with CSS layout: indexed reads, sums, ranks, sorts, keyed maps
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in BCP 14 [RFC2119] [RFC8174] when, and only when, they appear in all capitals, as shown here.
 
 Measured 2026-10-29, headless: Chrome 155.0.8059.86, WebKit 26.4, Firefox 158.0.
-Conformance: Chrome 126/126, WebKit 126/126, Firefox 67/126.
+Conformance: Chrome 127/127, WebKit 127/127, Firefox 67/127.
 Additional paired cases measured 2026-10-26 in Chrome/WebKit; the Firefox report is unchanged.
 The checks, probes and scripts this document names are in the noscript.ing repository ([github.com/noscripting/noscript.ing](https://github.com/noscripting/noscript.ing)), under `libraries/dcss/`; this package carries the sheets and their documents.
 
@@ -497,6 +497,10 @@ for selection or computation. Packaging does not expand any function's bounds.
   matched as `:lang()`) is one of d3-format 3.1.2's locales but `en-IN` MUST print as that locale's
   `formatLocale(locale).format(spec)`: its decimal and thousands marks, its currency before and after with `--symbol: 1`,
   its percent sign and its digits; in an element whose nearest `lang` names no such locale, as d3's default `format`.
+- **A234** `.dcss-sum`, `.dcss-count`, `.dcss-length`, `.dcss-mean`, `.dcss-min`, `.dcss-max` and `.dcss-extent` with
+  `--find` set on the figure MUST answer as the same call on a list of only the items whose `--key` equals `--find`
+  (d3's `rollup(items, reduce, (d) => d.key).get(find)`), error included; an item with no `--key` MUST NOT be taken.
+  A call inside another's answer MUST NOT take that one's `--find`.
 
 ### On the board
 
@@ -637,6 +641,7 @@ for selection or computation. Packaging does not expand any function's bounds.
 | A231 | probes/dcss/sample/grid-check.mjs: a 3 × 2 grid of x + 10y, each item's value and its list laid out in 3 columns; its sum and mean; a 16 × 16 hill summed exactly against doubles; 7 items in rows of 3, `--columns` 2.5, no `--from-y`, `--from-y` only on an outer element | PASS: 8 of 8, the hill exact (2026-10-31) | PASS: 8 of 8, the hill exact (2026-10-31) | NOTRUN |
 | A232 | probes/dcss/lookup/check.mjs: 400 seeded tables of 1 to 200 rows against d3.index's get (a missing key, a key in two rows); 12 by hand: the first and last of 1,000 rows, a value missing, off the grid, past ±131,072, the least and greatest taken, no `--find`, a row with no key, fractional and negative keys, a repeat of another key; `--find` set by a radio button, changed and reset | PASS: 400 of 400, 12 of 12 (2026-10-31) | PASS: 400 of 400, 12 of 12 (2026-10-31) | NOTRUN |
 | A233 | probes/dcss/locales/check.mjs: 12 seeded calls in each of 58 locales (types f, % and s; sign, $, comma, ~) against `formatLocale(locale).format`, each in an element with that `lang`; 3 by hand: `lang="en"` inside a German element, `es-AR`, a locale from `<html>`; the printed text in Chrome, the row against d3's text in WebKit | PASS: 696 of 696, 3 of 3 (2026-10-31) | PASS: 696 of 696, 3 of 3 (2026-10-31) | NOTRUN |
+| A234 | probes/dcss/find/check.mjs: 300 seeded lists of 1 to 120 items, keys from 1 to 6 (some none, some values none), whole numbers and 64ths, each call against the same call on the items found written alone and against d3 where that answers; 12 by hand (a key in no item, no `--find`); a sum inside a lookup's answer; `--find` set by a radio button, changed and reset | PASS: 300 of 300 (283 as d3, 29 error 1 both ways), 12 of 12 (2026-10-31) | PASS: the same (2026-10-31) | NOTRUN |
 | A51 | coverage/board.mjs: bd-power-12-loop-classes, bd-power-12-loop-table | PASS: 13 of 13 each, against NumPy | PASS: 13 of 13 each, against NumPy | PRECONDITION_FAILED: no view timelines, which store.css's store needs |
 | A52 | sheets/check.mjs: loan | PASS: 50 of 50 cells as written and after 2 changes | PASS: 50 of 50 cells as written and after 2 changes | PRECONDITION_FAILED: no view timelines, which store.css's store needs |
 

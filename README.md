@@ -4,7 +4,7 @@ dcss.css computes with no script, in HTML: a list's statistics, ticks and nice r
 
 ## Installation
 
-No build, no script: link a call's part, or `dcss.css` and its family. Each call is a class, and a file in `parts/`. One class per figure; `.dcss-summarize` gives nine at once. A sum is a `<figure>` around a list: the browser lays the list out, and its size is the answer. This page links two parts that come to 9 KB gzipped:
+No build, no script: link a call's part, or `dcss.css` and its family. Each call is a class, and a file in `parts/`. One class per figure; `.dcss-summarize` gives nine at once. A sum is a `<figure>` around a list: the browser lays the list out, and its size is the answer. This page links two parts that come to 10 KB gzipped:
 
 ```html
 <!doctype html>
@@ -149,6 +149,23 @@ A spreadsheet's exact lookup: `.dcss-lookup` gives the `--value` of the row whos
 
 A key in no row prints nothing, error 2; a key in two rows, error 1. A list has no limit on rows. For brackets (a tax band, a shipping tier: the row whose range holds the number), use `.dcss-scale-threshold`.
 
+## Totals for one key
+
+`--find` on a sum, count, mean, min, max, extent or length takes only the rows whose `--key` equals it: a spreadsheet's SUMIF, COUNTIF, AVERAGEIF, MINIFS and MAXIFS, as d3.rollup gives one group's. Spending in March, month 3:
+
+```html
+<figure class="dcss-sum" style="--find: 3">
+  <ul aria-hidden="true">
+    <li style="--key: 3; --value: 120"></li>
+    <li style="--key: 4; --value: 95"></li>
+    <li style="--key: 3; --value: 30"></li>
+  </ul>
+  <output></output>   <!-- 150 -->
+</figure>
+```
+
+Length counts the rows found. Set `--find` on the figure itself: a call inside another's answer doesn't take it.
+
 ## Numbers in your language
 
 A format prints as the page's language does, from `lang`, with d3's own locales: German marks thousands with a dot and puts the euro after.
@@ -169,7 +186,7 @@ Each call gives its answer as `--dcss-` and its name to the elements directly in
 
 ### Array: families/array.css
 
-- [`.dcss-sum`](https://d3js.org/d3-array/summarize#sum), [`.dcss-mean`](https://d3js.org/d3-array/summarize#mean), [`.dcss-count`](https://d3js.org/d3-array/summarize#count), `.dcss-length`, [`.dcss-min`](https://d3js.org/d3-array/summarize#min), [`.dcss-max`](https://d3js.org/d3-array/summarize#max), [`.dcss-extent`](https://d3js.org/d3-array/summarize#extent): of the list; length counts its items.
+- [`.dcss-sum`](https://d3js.org/d3-array/summarize#sum), [`.dcss-mean`](https://d3js.org/d3-array/summarize#mean), [`.dcss-count`](https://d3js.org/d3-array/summarize#count), `.dcss-length`, [`.dcss-min`](https://d3js.org/d3-array/summarize#min), [`.dcss-max`](https://d3js.org/d3-array/summarize#max), [`.dcss-extent`](https://d3js.org/d3-array/summarize#extent): of the list; length counts its items; with `--find`, of the rows whose `--key` equals it.
 - `.dcss-summarize`: sum, count, length, mean, min, max, median, variance and deviation of one list, to each element after it and everything inside.
 - [`.dcss-min-index`](https://d3js.org/d3-array/summarize#minIndex), [`.dcss-max-index`](https://d3js.org/d3-array/summarize#maxIndex), [`.dcss-least-index`](https://d3js.org/d3-array/summarize#leastIndex), [`.dcss-greatest-index`](https://d3js.org/d3-array/summarize#greatestIndex), [`.dcss-least`](https://d3js.org/d3-array/summarize#least), [`.dcss-greatest`](https://d3js.org/d3-array/summarize#greatest): where the least or greatest is, or its value.
 - [`.dcss-lookup`](https://d3js.org/d3-array/group#index): the `--value` of the row whose `--key` is the figure's `--find`, as a spreadsheet's exact lookup.
@@ -423,7 +440,7 @@ A browser without `@function` drops the declaration, so write a plain value befo
 
 <!-- browsers -->
 
-Headless Chrome 155 and WebKit 26.4, Safari's engine, pass all 126 requirements of [SPEC.md](SPEC.md), and the calls match d3 on 2,120 of the 5,783 calls in d3's tests. Firefox 158 computes `calc()` in 32-bit floats, so exact sums, dates and most formatting go wrong there: it passes 67. [QUIRKS.md](QUIRKS.md) has the engine bugs.
+Headless Chrome 155 and WebKit 26.4, Safari's engine, pass all 127 requirements of [SPEC.md](SPEC.md), and the calls match d3 on 2,120 of the 5,783 calls in d3's tests. Firefox 158 computes `calc()` in 32-bit floats, so exact sums, dates and most formatting go wrong there: it passes 67. [QUIRKS.md](QUIRKS.md) has the engine bugs.
 
 <!-- /browsers -->
 

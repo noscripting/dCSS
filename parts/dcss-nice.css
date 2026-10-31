@@ -222,6 +222,9 @@
   --dcss-nice-start: var(--dcss-nice-start-raw); --dcss-nice-stop: var(--dcss-nice-stop-raw); }
 
 /* DCSS reductions: d3.sum, count, mean, min, max, extent and the list's length, in a figure (reduce.mjs). */
+/* --find: only the rows whose --key equals it count (a spreadsheet's SUMIF, COUNTIF, AVERAGEIF, MINIFS, MAXIFS); the
+   others take no room, so length counts the rows found, as d3.rollup's group does, and every answer is the one the
+   rows found would give written alone. Set on the figure itself, never handed down */
 /* the list at the figure's padding corner, out of flow and hidden, so what follows it is laid out as written; the figure's ::before on that corner, the list's ::after on its far one */
 /* each element after the list a block of its own (a page's own display wins), the answers handed down to it and what it holds */
 

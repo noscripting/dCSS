@@ -5,6 +5,7 @@ All notable changes to dcss are written here. The format follows [Keep a Changel
 ## [Unreleased]
 
 ### Added
+- `--find` on `.dcss-sum`, `.dcss-count`, `.dcss-length`, `.dcss-mean`, `.dcss-min`, `.dcss-max` and `.dcss-extent`: only the rows whose `--key` equals it, a spreadsheet's SUMIF, COUNTIF, AVERAGEIF, MINIFS and MAXIFS.
 - Numbers in the page's language: a format in an element with `lang="de-DE"` (or any of d3-format's 58 locales but `en-IN`) prints as d3's `formatLocale` does, `1.234,50 €`; its currency with `--symbol: 1`. A language d3 has no file for prints as before.
 - `.dcss-lookup`: a spreadsheet's exact lookup. The `--value` of the row whose `--key` is the figure's `--find`, as `--dcss-lookup`, as d3.index's get gives it; a missing key is error 2, a key in two rows error 1; no limit on rows.
 - `.dcss-evaluate`: your formula's value at one number, `--at`, as `--dcss-evaluate` inside the call, with its slope `--dcss-slope` beside it: a label on a curve, a point to draw a tangent from.
