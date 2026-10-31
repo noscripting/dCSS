@@ -5,7 +5,7 @@ dcss.css computes with CSS layout: indexed reads, sums, ranks, sorts, keyed maps
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in BCP 14 [RFC2119] [RFC8174] when, and only when, they appear in all capitals, as shown here.
 
 Measured 2026-10-29, headless: Chrome 155.0.8059.86, WebKit 26.4, Firefox 158.0.
-Conformance: Chrome 194/194, WebKit 194/194, Firefox 70/194.
+Conformance: Chrome 195/195, WebKit 195/195, Firefox 70/195.
 Additional paired cases measured 2026-10-26 in Chrome/WebKit; the Firefox report is unchanged.
 The checks, probes and scripts this document names are in the noscript.ing repository ([github.com/noscripting/noscript.ing](https://github.com/noscripting/noscript.ing)), under `libraries/dcss/`; this package carries the sheets and their documents.
 
@@ -469,6 +469,10 @@ for selection or computation. Packaging does not expand any function's bounds.
   holds that many already as it is; and refuse, with the line, the attribute on any other element, a count out of
   range, or one beside a different number of `<i>`s. A `.dcss-solve` or `.dcss-invert` with no `<i>`s MUST give
   `--dcss-err` 1.
+- **A224** `.dcss-sample` on a list call's figure, with `--from` and `--to` on it and the page's rule setting `--dcss-fn`
+  from `--dcss-at` on its items, MUST give item k of n the `--value` `--dcss-fn` at from + (k − 1/2)(to − from) / n,
+  rounded to 64ths, so the call answers as for those values; and `--dcss-err` 1 when the items have no `--dcss-fn` or
+  the figure no `--from` and `--to`. `--from` and `--to` MUST NOT reach inside it.
 
 ### On the board
 
@@ -676,7 +680,8 @@ for selection or computation. Packaging does not expand any function's bounds.
 | A220 | probes/dcss/root/check.mjs: Kepler's equation, 40 orbits at 10 `<i>`s from the middle and 8 from a guess, within 1e-14; the cubic-bezier(.42, 0, .58, 1) inverse at 41 progresses, 6 `<i>`s; x³ − 2x + 2 and atan(x − 0.3), where plain Newton cycles and diverges, 10 `<i>`s; a 0 at either end; same sign at both ends and no f′ | PASS: 127 of 127, worst 1.8e-15 (2026-10-31) | PASS: 127 of 127, worst 1.8e-15 (2026-10-31) | NOTRUN |
 | A221 | probes/dcss/invert/check.mjs: Kepler's equation at e 0.6 on 32 and 64 pairs and after e changes to 0.3, x³ on [−1, 1], a falling 1 − x² with top above bottom, 30 pairs in a 999 px box; 1 px rows, each line's start against the inverse in doubles over its band | PASS: 3,900 of 3,900 rows, worst 0.47 px (2026-10-31) | PASS: 3,900 of 3,900 rows, worst 0.47 px (2026-10-31) | NOTRUN |
 | A222 | probes/dcss/ode/check.mjs: a 100 px spring, a pendulum from 1.2 rad, a spring's x read inside a second cell nested in it, the spring with the page scrolled 300 px, a cell run past its range and one started past it, a cell with no acceleration; sampled every 100 ms for 8 s against the same step in doubles | PASS: 7 of 7, worst 0.016 px outside what the step keeps, 59.2 steps a second (2026-10-31) | PASS: 7 of 7, worst 0.016 px, 59.2 steps a second (2026-10-31) | NOTRUN |
-| A223 | probes/dcss/root/steps-check.mjs: the Kepler page's 3 solves written with `data-dcss-steps="5"` against the hand-written page, a built page rebuilt, a solve in another's answer, an invert of 32, a geo invert of 14, five refusals; the built page's planets in the engines, and the page never built | PASS: 14 of 14, the page byte for byte (2026-10-31) | PASS: 14 of 14, the page byte for byte (2026-10-31) | NOTRUN |
+| A223 | probes/dcss/root/steps-check.mjs: the Kepler page's 3 solves written with `data-dcss-steps="5"` against the hand-written page, a built page rebuilt, a solve in another's answer, an invert of 32, a geo invert of 14, five refusals; the built page's planets in the engines, and the page never built | PASS: 15 of 15, the page byte for byte (2026-10-31) | PASS: 15 of 15, the page byte for byte (2026-10-31) | NOTRUN |
+| A224 | probes/dcss/sample/check.mjs: 64 sin on [0, π] summed at 64 and 300 items, 64 x² on [−1, 2] at 30 items its max and mean, exactly against the same samples in doubles; one rule feeding a sample and a solve; no formula, no from and to | PASS: 8 of 8, exact (2026-10-31) | PASS: 8 of 8, exact (2026-10-31) | NOTRUN |
 | A51 | coverage/board.mjs: bd-power-12-loop-classes, bd-power-12-loop-table | PASS: 13 of 13 each, against NumPy | PASS: 13 of 13 each, against NumPy | PRECONDITION_FAILED: no view timelines, which store.css's store needs |
 | A52 | sheets/check.mjs: loan | PASS: 50 of 50 cells as written and after 2 changes | PASS: 50 of 50 cells as written and after 2 changes | PRECONDITION_FAILED: no view timelines, which store.css's store needs |
 

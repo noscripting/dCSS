@@ -383,12 +383,13 @@
         "dcss-geo-natural-earth1-raw-invert",
         "dcss-invert",
         "dcss-ode",
+        "dcss-sample",
         "dcss-solve",
         "dcss-solve-newton"
       ],
-      "raw": 181977,
-      "gzip9": 6331,
-      "sha256": "d05ec413e1fb59e41eb0f813ee770721fb90a21a760d910edbcc4f8958c7e9d9"
+      "raw": 182752,
+      "gzip9": 6475,
+      "sha256": "25ed07fbd30408b5d8a59fa4477092f9cef26b8db01a05d435e003e0a018e5e1"
     }
   },
   "owners": {
@@ -655,6 +656,7 @@
     "dcss-geo-natural-earth1-raw-invert": "math",
     "dcss-invert": "math",
     "dcss-ode": "math",
+    "dcss-sample": "math",
     "dcss-solve": "math",
     "dcss-solve-newton": "math"
   },
@@ -6484,6 +6486,10 @@
         "role": "style-only"
       },
       "dcss-ode": {
+        "family": "math",
+        "role": "style-only"
+      },
+      "dcss-sample": {
         "family": "math",
         "role": "style-only"
       },

@@ -6,6 +6,7 @@ All notable changes to dcss are written here. The format follows [Keep a Changel
 
 ### Added
 
+- `.dcss-sample`, beside a list call: each item's value is the page's own formula (`--dcss-fn` from `--dcss-at`, as for `.dcss-solve` and `.dcss-invert`) at the item's middle between `--from` and `--to`, so `.dcss-sum` gives the area under a curve, `.dcss-max` its highest value, `.dcss-mean` its average. One rule can feed a solve, an invert and a sample at once.
 - `data-dcss-steps="13"` on a `.dcss-solve` or a `.dcss-invert`: the build (`node mathml.mjs page.html built.html`) writes its nested `<i>`s or its pairs, so a page never counts them; the built page has no script and is what a hand-written one would be.
 - `.dcss-ode`, in families/math.css, on store.css's frame cell: the page writes an acceleration once (`--dcss-ode-a` from `--dcss-ode-x` and `--dcss-ode-v`) and the element takes a leapfrog step a frame, so a pendulum, a spring or a pull toward the pointer moves by its own equation, keeping its swing for minutes.
 - `.dcss-invert`, in families/math.css: the inverse of the page's own formula on every row of a box at once, in one layout. The page writes its formula once (`--dcss-fn` from `--dcss-at`) on pairs of `<i>`s, `--from` and `--to` across the box and `--top` and `--bottom` down it, and each line starts where the formula reaches its value, so what starts the line sits on the answer: 24 moons on one orbit, the ticks of an eased axis. Within half a pixel on a 1,000 px box at 32 to 64 pairs.

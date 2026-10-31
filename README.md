@@ -255,6 +255,7 @@ Each call gives its answer as `--dcss-` and its name to the elements directly in
 - `.dcss-solve`: where the page's own function reaches `--target` (0 without it): `--from`, `--to` on it, nested `<i>`s (or `data-dcss-steps` and the build writes them), the page's rule setting `--dcss-fn` from `--dcss-at` on each; inside the deepest, `--dcss-solve` and `--dcss-solve-interval`.
 - `.dcss-solve-newton`: with `.dcss-solve`, Newton's steps kept in the bracket: `--dcss-slope`, f's slope (its derivative), beside f; `--guess` optional.
 - `.dcss-invert`: the inverse of the page's own function on every row of the box at once: `--from`, `--to` across it, `--top`, `--bottom` down it, its first child's pairs of `<i>`s (or `data-dcss-steps`), the page's rule setting `--dcss-fn` from `--dcss-at` on each; each line starts where f reaches its value.
+- `.dcss-sample`: with a list call (`.dcss-sum`, `.dcss-max`, `.dcss-mean`…), the page's own function as the list: `--from`, `--to` on it, each item's `--value` the page's `--dcss-fn` at `--dcss-at`, the item's middle, rounded to 64ths.
 - `.dcss-ode`: on store.css's frame cell (`data-store`), the page's own equation of motion, a leapfrog step a frame: `--dcss-ode-a` from `--dcss-ode-x` and `--dcss-ode-v`, `--dcss-ode-x0`, `-v0`, `-range`, `-v-range`, `-h`; on it and inside it, `--dcss-ode-x` and `--dcss-ode-v`.
 - [`.dcss-geo-natural-earth1-raw-invert`](https://d3js.org/d3-geo/cylindrical#geoNaturalEarth1), [`.dcss-geo-equal-earth-raw-invert`](https://d3js.org/d3-geo/cylindrical#geoEqualEarth): 12 nested `<i>`s, Newton's steps from `--y` with d3's derivative, `--x`, `--y` on it; inside the deepest, `--dcss-geo-x`, `--dcss-geo-y` in radians.
 
@@ -328,21 +329,24 @@ When many things need one formula's answer (24 moons on one orbit, the ticks of 
 
 Inputs run across the box, from `--from` at its left edge to `--to` at its right; values run down it, from `--top` at the top to `--bottom` at the bottom. A line whose bottom edge is at value v starts at the input where the formula reaches v, so whatever starts the line sits on the answer: the answer is a position, not a number. Give the thing at a line's start no width (draw it with a pseudo-element): content wider than the room left beside the curve drops to a line below. The formula must rise down the box: for a falling one, put the larger value in `--top`. Where it turns back, a line starts at the last column it has passed its value. The answer follows straight pieces between the n + 1 values: on a 1,000 px box, 32 pairs keep Kepler's inverse at e = 0.6 within 0.42 px and 64 within 0.25 (probes/dcss/invert/check.mjs). Fewer rows cost less: 100 rows with the formula moving take a few ms a frame, 1,000 rows about 15 (Performance).
 
-### The area under a curve, and its highest point
+### The formula as a list: its area, its highest point
 
-These need no call of their own: sample the formula on a list's items and ask the list. Each item's input is its middle, from a registered `--at` (registered, so each item keeps its own index), and its value is rounded to 64ths, the list's unit: one value off 64ths and the list refuses. The area of sin on 0 to π is the sum times the step:
+Put `.dcss-sample` beside a list call and each item's value is your formula at that item's middle, so every list call reads the curve: `.dcss-sum` its area (times the step), `.dcss-max` its highest value, `.dcss-mean` its average.
 
 ```html
-<figure class="dcss-sum wave"><ul aria-hidden="true"><li></li> … 64 … </ul><output></output></figure>
+<figure class="dcss-sum dcss-sample wave" style="--from: 0; --to: 3.14159">
+  <ul aria-hidden="true"><li></li> … 64 … </ul>
+  <output class="dcss-format-fixed" style="--value: calc(var(--dcss-sum) * 3.14159 / 64); --precision: 2"></output>
+</figure>
 ```
 
 ```css
-@property --at { syntax: '<number>'; inherits: true; initial-value: 0; }
-.wave li { --at: calc((sibling-index() - 0.5) * 3.14159 / sibling-count());
-           --value: round(calc(64 * sin(var(--at) * 1rad)), 0.015625); }   /* 64 times f, kept to 64ths */
+.wave li { --dcss-fn: calc(sin(var(--dcss-at) * 1rad)); }   /* the same --dcss-fn from --dcss-at as a solve's */
 ```
 
-`--dcss-sum` × π / 64 / 64 is 2.0002 (exactly 2); with `.dcss-max` in place of `.dcss-sum`, the highest value. While the formula moves, each such list costs a frame what any list of its length does, so a page keeps to a few (Performance; probes/dcss/sample/probe.mjs).
+That prints 2.00, the area under one hump of a sine. Each value is rounded to the list's 64ths, so write the formula in units where 1/64 is close enough (pixels are); `--dcss-err` is 1 when the items have no formula, or the figure no `--from` and `--to`. While the formula moves, a sampled list costs a frame what any list of its length does, so a page keeps to a few (Performance).
+
+One rule can feed every call at once: `.demo :is(i, li) { --dcss-fn: … }` on a wrapper holding a `.dcss-invert`, a `.dcss-solve` and a `.dcss-sample`, and dots on the curve, where it reaches a value and the area under it all follow the one formula (probes/dcss/sample/curve.html, with no script: radio buttons change it).
 
 ### Motion by your own equation
 
@@ -393,7 +397,7 @@ A browser without `@function` drops the declaration, so write a plain value befo
 
 <!-- browsers -->
 
-Headless Chrome 155 and WebKit 26.4, Safari's engine, pass all 194 requirements of [SPEC.md](SPEC.md), and the calls match d3 on 3,206 of the 7,049 calls in d3's tests. Firefox 158 computes `calc()` in 32-bit floats, so exact sums, dates and most formatting go wrong there: it passes 70. [QUIRKS.md](QUIRKS.md) has the engine bugs.
+Headless Chrome 155 and WebKit 26.4, Safari's engine, pass all 195 requirements of [SPEC.md](SPEC.md), and the calls match d3 on 3,206 of the 7,049 calls in d3's tests. Firefox 158 computes `calc()` in 32-bit floats, so exact sums, dates and most formatting go wrong there: it passes 70. [QUIRKS.md](QUIRKS.md) has the engine bugs.
 
 <!-- /browsers -->
 
@@ -405,7 +409,7 @@ Layout does the work, in the frame a number changes. A family is at most 30 KB g
 
 <!-- /performance -->
 
-`.dcss-invert` with f animated, 32 pairs (2026-10-31): 100 rows 2.3 ms a frame in Chrome, 2.9 in WebKit; 1,000 rows 14.7 and 14.3. Twenty `.dcss-ode` pendulums swinging: 4.7 and 5.2. The area under a curve, 64 samples on a `.dcss-sum` with the formula moving: 5.8 ms a frame in Chrome, 5.5 in WebKit; twenty, 110 and 79. All three calls on one page (20 Newton solves, a 100-row invert, 20 pendulums): 14.3 ms a frame in Chrome, 31.6 in WebKit, about half of it from store.css, linked for the pendulums (probes/dcss/model/together.mjs).
+`.dcss-invert` with f animated, 32 pairs (2026-10-31): 100 rows 2.3 ms a frame in Chrome, 2.9 in WebKit; 1,000 rows 14.7 and 14.3. Twenty `.dcss-ode` pendulums swinging: 4.7 and 5.2. A `.dcss-sum` of 64 samples with the formula moving: 5.8 ms a frame in Chrome, 5.5 in WebKit; twenty, 110 and 79. All three calls on one page (20 Newton solves, a 100-row invert, 20 pendulums): 14.3 ms a frame in Chrome, 31.6 in WebKit, about half of it from store.css, linked for the pendulums (probes/dcss/model/together.mjs). One formula feeding a 32-pair invert, two 20-`<i>` solves and a 100-item `.dcss-sample`, the formula changing every frame: 13.8 ms a frame in Chrome, 14.1 in WebKit (probes/dcss/sample/curve-check.mjs).
 
 ## License
 
