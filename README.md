@@ -215,15 +215,16 @@ Each call gives its answer as `--dcss-` and its name to the elements directly in
 ### Dates: families/dates.css
 
 - [`.dcss-utc-<interval>-<op>`](https://d3js.org/d3-time#utcDay): epoch milliseconds to a UTC `day`, `hour`, `minute`, `second`, `sunday` to `saturday`, `month` or `year` by `floor`, `ceil`, `round`, `offset` or `count`.
-- [`.dcss-date-format-N`](https://d3js.org/d3-time-format#utcFormat): epoch milliseconds printed with specifier N:
+- [`.dcss-date-format-<specifier>`](https://d3js.org/d3-time-format#utcFormat): epoch milliseconds printed by one of d3's specifiers, `.dcss-date-format-Y` as `%Y` (a page with `<!doctype html>`: the letters differ by case); `.dcss-date-format-N` takes the specifier numbered N:
 
 ```
- 0 %c       1 %a       2 %A       3 %b       4 %B       5 %d       6 %e       7 %g
- 8 %G       9 %H      10 %I      11 %j      12 %m      13 %M      14 %p      15 %q
-16 %Q      17 %s      18 %s.%L   19 %s.%f   20 %S      21 %0S     22 %_S     23 %-S
-24 %L      25 %u      26 %f      27 %U      28 %W      29 %V      30 %x      31 %X
-32 %y      33 %Y      34 %Z      35 %%      36 .%L     37 :%S     38 %I:%M   39 %I %p
-40 %a %d
+ 0 %c     c     1 %a     a     2 %A     A     3 %b     b     4 %B     B     5 %d     d
+ 6 %e     e     7 %g     g     8 %G     G     9 %H     H    10 %I     I    11 %j     j
+12 %m     m    13 %M     M    14 %p     p    15 %q     q    16 %Q     Q    17 %s     s
+18 %s.%L       19 %s.%f       20 %S     S    21 %0S    0S   22 %_S    _S   23 %-S    -S
+24 %L     L    25 %u     u    26 %f     f    27 %U     U    28 %W     W    29 %V     V
+30 %x     x    31 %X     X    32 %y     y    33 %Y     Y    34 %Z     Z    35 %%
+36 .%L         37 :%S         38 %I:%M       39 %I %p       40 %a %d
 ```
 
 ### Math: families/math.css
@@ -440,7 +441,7 @@ A browser without `@function` drops the declaration, so write a plain value befo
 
 <!-- browsers -->
 
-Headless Chrome 155 and WebKit 26.4, Safari's engine, pass all 127 requirements of [SPEC.md](SPEC.md), and the calls match d3 on 2,120 of the 5,783 calls in d3's tests. Firefox 158 computes `calc()` in 32-bit floats, so exact sums, dates and most formatting go wrong there: it passes 67. [QUIRKS.md](QUIRKS.md) has the engine bugs.
+Headless Chrome 155 and WebKit 26.4, Safari's engine, pass all 128 requirements of [SPEC.md](SPEC.md), and the calls match d3 on 2,120 of the 5,783 calls in d3's tests. Firefox 158 computes `calc()` in 32-bit floats, so exact sums, dates and most formatting go wrong there: it passes 67. [QUIRKS.md](QUIRKS.md) has the engine bugs.
 
 <!-- /browsers -->
 

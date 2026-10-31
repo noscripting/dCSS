@@ -124,6 +124,16 @@ Measured 2026-10-22, headless: Chrome 155.0.8059.86, WebKit 26.4, Firefox 158.0.
 - Workaround: f goes through a length, `(f * 1px) / 1px`, which rounds as d3 in all 200 and in 3,000 more (src/static.mjs, the quantile scale's thresholds).
 - Affects: A123
 
+### Q13 WebKit: every scroll-driven animation restyles its element in every frame, nothing moving
+
+- Feature: `animation-timeline`
+- Spec: [Scroll-driven Animations 1 §5.1](https://drafts.csswg.org/scroll-animations-1/#event-loop)
+- Engines: Chrome PASS · WebKit FAIL: 2,000 boxes on `scroll(self x)` cost 3.6 ms of style a frame at rest, 0.0 paused · Firefox PASS
+- Repro: `facts/scroll/self-scroll-idle.mjs`, at the repository's root
+- Bug: [webkit.org/b/327680](https://bugs.webkit.org/show_bug.cgi?id=327680), fixed in WebKit's trunk 2026-10-22 (de90a27a2d), after 26.4
+- Workaround: none in the sheet: every call reads its list by its own scroll range. Each figure on the page is restyled every frame with its items: 128 sum figures of 1,000 items cost 44 ms of style a frame at rest, 17.7 ms with 10 items each; one changed item 258 ms, 2.7 ms when only its figure animates (one run each, 2026-10-31). reduce-check's 826 figures: 89 s to load, 149 s for 60 moving frames.
+- Affects: every reduction and every call read by scroll timelines, in pages of many calls
+
 ## Shared
 
 - `calc()` computes in doubles in Chrome and WebKit, in 32-bit floats in Firefox

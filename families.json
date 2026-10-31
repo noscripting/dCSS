@@ -68,9 +68,9 @@
         "dcss-ticks",
         "dcss-variance"
       ],
-      "raw": 484875,
-      "gzip9": 36193,
-      "sha256": "7b678ec4dec0f16e00db67ea38cb94c479e472cd0df41a2ce75c7aed2238995a"
+      "raw": 471343,
+      "gzip9": 36476,
+      "sha256": "9b12c99b5734f6ace71b2ad4716bd67c4b9487de96cc7ef4ff2a39f81e63544c"
     },
     "scale": {
       "file": "families/scale.css",
@@ -106,7 +106,9 @@
       "file": "families/dates.css",
       "dependencies": [],
       "classes": [
+        "dcss-date-format--S",
         "dcss-date-format-0",
+        "dcss-date-format-0S",
         "dcss-date-format-1",
         "dcss-date-format-10",
         "dcss-date-format-11",
@@ -147,6 +149,37 @@
         "dcss-date-format-7",
         "dcss-date-format-8",
         "dcss-date-format-9",
+        "dcss-date-format-A",
+        "dcss-date-format-B",
+        "dcss-date-format-G",
+        "dcss-date-format-H",
+        "dcss-date-format-I",
+        "dcss-date-format-L",
+        "dcss-date-format-M",
+        "dcss-date-format-Q",
+        "dcss-date-format-S",
+        "dcss-date-format-U",
+        "dcss-date-format-V",
+        "dcss-date-format-W",
+        "dcss-date-format-X",
+        "dcss-date-format-Y",
+        "dcss-date-format-Z",
+        "dcss-date-format-_S",
+        "dcss-date-format-a",
+        "dcss-date-format-b",
+        "dcss-date-format-c",
+        "dcss-date-format-d",
+        "dcss-date-format-e",
+        "dcss-date-format-f",
+        "dcss-date-format-g",
+        "dcss-date-format-j",
+        "dcss-date-format-m",
+        "dcss-date-format-p",
+        "dcss-date-format-q",
+        "dcss-date-format-s",
+        "dcss-date-format-u",
+        "dcss-date-format-x",
+        "dcss-date-format-y",
         "dcss-utc-day-ceil",
         "dcss-utc-day-count",
         "dcss-utc-day-floor",
@@ -213,9 +246,9 @@
         "dcss-utc-year-offset",
         "dcss-utc-year-round"
       ],
-      "raw": 351273,
-      "gzip9": 18467,
-      "sha256": "2247301e113d032b9293f822677906cd251a25b951f50b5068faefca69f8ab18"
+      "raw": 354130,
+      "gzip9": 18662,
+      "sha256": "13128f2e06e5353c849af9feb87ccf978fac9d71905d4abd919b23ccb309601f"
     },
     "math": {
       "file": "families/math.css",
@@ -299,7 +332,9 @@
     "dcss-format-percent": "format",
     "dcss-format-si": "format",
     "dcss-locale-arabic": "format",
+    "dcss-date-format--S": "dates",
     "dcss-date-format-0": "dates",
+    "dcss-date-format-0S": "dates",
     "dcss-date-format-1": "dates",
     "dcss-date-format-10": "dates",
     "dcss-date-format-11": "dates",
@@ -340,6 +375,37 @@
     "dcss-date-format-7": "dates",
     "dcss-date-format-8": "dates",
     "dcss-date-format-9": "dates",
+    "dcss-date-format-A": "dates",
+    "dcss-date-format-B": "dates",
+    "dcss-date-format-G": "dates",
+    "dcss-date-format-H": "dates",
+    "dcss-date-format-I": "dates",
+    "dcss-date-format-L": "dates",
+    "dcss-date-format-M": "dates",
+    "dcss-date-format-Q": "dates",
+    "dcss-date-format-S": "dates",
+    "dcss-date-format-U": "dates",
+    "dcss-date-format-V": "dates",
+    "dcss-date-format-W": "dates",
+    "dcss-date-format-X": "dates",
+    "dcss-date-format-Y": "dates",
+    "dcss-date-format-Z": "dates",
+    "dcss-date-format-_S": "dates",
+    "dcss-date-format-a": "dates",
+    "dcss-date-format-b": "dates",
+    "dcss-date-format-c": "dates",
+    "dcss-date-format-d": "dates",
+    "dcss-date-format-e": "dates",
+    "dcss-date-format-f": "dates",
+    "dcss-date-format-g": "dates",
+    "dcss-date-format-j": "dates",
+    "dcss-date-format-m": "dates",
+    "dcss-date-format-p": "dates",
+    "dcss-date-format-q": "dates",
+    "dcss-date-format-s": "dates",
+    "dcss-date-format-u": "dates",
+    "dcss-date-format-x": "dates",
+    "dcss-date-format-y": "dates",
     "dcss-utc-day-ceil": "dates",
     "dcss-utc-day-count": "dates",
     "dcss-utc-day-floor": "dates",
@@ -3832,7 +3898,73 @@
           "status": "prepared"
         }
       },
+      "dcss-date-format-c": {
+        "id": "dateFormatUTC",
+        "family": "dates",
+        "compilerDefault": "calc",
+        "runtimeBackend": "calc",
+        "timing": {
+          "mode": "same-update",
+          "latencyFrames": 0
+        },
+        "representations": {
+          "input": "scalar-custom-property",
+          "intermediate": "scalar-custom-property",
+          "result": "prepared"
+        },
+        "contracts": {
+          "input": "prepared",
+          "result": "prepared",
+          "precision": "prepared",
+          "readiness": "prepared"
+        },
+        "candidates": {
+          "calc": {
+            "status": "available"
+          },
+          "layout": {
+            "status": "unimplemented",
+            "reason": "no qualified layout implementation"
+          }
+        },
+        "eligibility": {
+          "status": "prepared"
+        }
+      },
       "dcss-date-format-1": {
+        "id": "dateFormatUTC",
+        "family": "dates",
+        "compilerDefault": "calc",
+        "runtimeBackend": "calc",
+        "timing": {
+          "mode": "same-update",
+          "latencyFrames": 0
+        },
+        "representations": {
+          "input": "scalar-custom-property",
+          "intermediate": "scalar-custom-property",
+          "result": "prepared"
+        },
+        "contracts": {
+          "input": "prepared",
+          "result": "prepared",
+          "precision": "prepared",
+          "readiness": "prepared"
+        },
+        "candidates": {
+          "calc": {
+            "status": "available"
+          },
+          "layout": {
+            "status": "unimplemented",
+            "reason": "no qualified layout implementation"
+          }
+        },
+        "eligibility": {
+          "status": "prepared"
+        }
+      },
+      "dcss-date-format-a": {
         "id": "dateFormatUTC",
         "family": "dates",
         "compilerDefault": "calc",
@@ -3898,7 +4030,73 @@
           "status": "prepared"
         }
       },
+      "dcss-date-format-A": {
+        "id": "dateFormatUTC",
+        "family": "dates",
+        "compilerDefault": "calc",
+        "runtimeBackend": "calc",
+        "timing": {
+          "mode": "same-update",
+          "latencyFrames": 0
+        },
+        "representations": {
+          "input": "scalar-custom-property",
+          "intermediate": "scalar-custom-property",
+          "result": "prepared"
+        },
+        "contracts": {
+          "input": "prepared",
+          "result": "prepared",
+          "precision": "prepared",
+          "readiness": "prepared"
+        },
+        "candidates": {
+          "calc": {
+            "status": "available"
+          },
+          "layout": {
+            "status": "unimplemented",
+            "reason": "no qualified layout implementation"
+          }
+        },
+        "eligibility": {
+          "status": "prepared"
+        }
+      },
       "dcss-date-format-3": {
+        "id": "dateFormatUTC",
+        "family": "dates",
+        "compilerDefault": "calc",
+        "runtimeBackend": "calc",
+        "timing": {
+          "mode": "same-update",
+          "latencyFrames": 0
+        },
+        "representations": {
+          "input": "scalar-custom-property",
+          "intermediate": "scalar-custom-property",
+          "result": "prepared"
+        },
+        "contracts": {
+          "input": "prepared",
+          "result": "prepared",
+          "precision": "prepared",
+          "readiness": "prepared"
+        },
+        "candidates": {
+          "calc": {
+            "status": "available"
+          },
+          "layout": {
+            "status": "unimplemented",
+            "reason": "no qualified layout implementation"
+          }
+        },
+        "eligibility": {
+          "status": "prepared"
+        }
+      },
+      "dcss-date-format-b": {
         "id": "dateFormatUTC",
         "family": "dates",
         "compilerDefault": "calc",
@@ -3964,7 +4162,73 @@
           "status": "prepared"
         }
       },
+      "dcss-date-format-B": {
+        "id": "dateFormatUTC",
+        "family": "dates",
+        "compilerDefault": "calc",
+        "runtimeBackend": "calc",
+        "timing": {
+          "mode": "same-update",
+          "latencyFrames": 0
+        },
+        "representations": {
+          "input": "scalar-custom-property",
+          "intermediate": "scalar-custom-property",
+          "result": "prepared"
+        },
+        "contracts": {
+          "input": "prepared",
+          "result": "prepared",
+          "precision": "prepared",
+          "readiness": "prepared"
+        },
+        "candidates": {
+          "calc": {
+            "status": "available"
+          },
+          "layout": {
+            "status": "unimplemented",
+            "reason": "no qualified layout implementation"
+          }
+        },
+        "eligibility": {
+          "status": "prepared"
+        }
+      },
       "dcss-date-format-5": {
+        "id": "dateFormatUTC",
+        "family": "dates",
+        "compilerDefault": "calc",
+        "runtimeBackend": "calc",
+        "timing": {
+          "mode": "same-update",
+          "latencyFrames": 0
+        },
+        "representations": {
+          "input": "scalar-custom-property",
+          "intermediate": "scalar-custom-property",
+          "result": "prepared"
+        },
+        "contracts": {
+          "input": "prepared",
+          "result": "prepared",
+          "precision": "prepared",
+          "readiness": "prepared"
+        },
+        "candidates": {
+          "calc": {
+            "status": "available"
+          },
+          "layout": {
+            "status": "unimplemented",
+            "reason": "no qualified layout implementation"
+          }
+        },
+        "eligibility": {
+          "status": "prepared"
+        }
+      },
+      "dcss-date-format-d": {
         "id": "dateFormatUTC",
         "family": "dates",
         "compilerDefault": "calc",
@@ -4030,7 +4294,73 @@
           "status": "prepared"
         }
       },
+      "dcss-date-format-e": {
+        "id": "dateFormatUTC",
+        "family": "dates",
+        "compilerDefault": "calc",
+        "runtimeBackend": "calc",
+        "timing": {
+          "mode": "same-update",
+          "latencyFrames": 0
+        },
+        "representations": {
+          "input": "scalar-custom-property",
+          "intermediate": "scalar-custom-property",
+          "result": "prepared"
+        },
+        "contracts": {
+          "input": "prepared",
+          "result": "prepared",
+          "precision": "prepared",
+          "readiness": "prepared"
+        },
+        "candidates": {
+          "calc": {
+            "status": "available"
+          },
+          "layout": {
+            "status": "unimplemented",
+            "reason": "no qualified layout implementation"
+          }
+        },
+        "eligibility": {
+          "status": "prepared"
+        }
+      },
       "dcss-date-format-7": {
+        "id": "dateFormatUTC",
+        "family": "dates",
+        "compilerDefault": "calc",
+        "runtimeBackend": "calc",
+        "timing": {
+          "mode": "same-update",
+          "latencyFrames": 0
+        },
+        "representations": {
+          "input": "scalar-custom-property",
+          "intermediate": "scalar-custom-property",
+          "result": "prepared"
+        },
+        "contracts": {
+          "input": "prepared",
+          "result": "prepared",
+          "precision": "prepared",
+          "readiness": "prepared"
+        },
+        "candidates": {
+          "calc": {
+            "status": "available"
+          },
+          "layout": {
+            "status": "unimplemented",
+            "reason": "no qualified layout implementation"
+          }
+        },
+        "eligibility": {
+          "status": "prepared"
+        }
+      },
+      "dcss-date-format-g": {
         "id": "dateFormatUTC",
         "family": "dates",
         "compilerDefault": "calc",
@@ -4096,7 +4426,73 @@
           "status": "prepared"
         }
       },
+      "dcss-date-format-G": {
+        "id": "dateFormatUTC",
+        "family": "dates",
+        "compilerDefault": "calc",
+        "runtimeBackend": "calc",
+        "timing": {
+          "mode": "same-update",
+          "latencyFrames": 0
+        },
+        "representations": {
+          "input": "scalar-custom-property",
+          "intermediate": "scalar-custom-property",
+          "result": "prepared"
+        },
+        "contracts": {
+          "input": "prepared",
+          "result": "prepared",
+          "precision": "prepared",
+          "readiness": "prepared"
+        },
+        "candidates": {
+          "calc": {
+            "status": "available"
+          },
+          "layout": {
+            "status": "unimplemented",
+            "reason": "no qualified layout implementation"
+          }
+        },
+        "eligibility": {
+          "status": "prepared"
+        }
+      },
       "dcss-date-format-9": {
+        "id": "dateFormatUTC",
+        "family": "dates",
+        "compilerDefault": "calc",
+        "runtimeBackend": "calc",
+        "timing": {
+          "mode": "same-update",
+          "latencyFrames": 0
+        },
+        "representations": {
+          "input": "scalar-custom-property",
+          "intermediate": "scalar-custom-property",
+          "result": "prepared"
+        },
+        "contracts": {
+          "input": "prepared",
+          "result": "prepared",
+          "precision": "prepared",
+          "readiness": "prepared"
+        },
+        "candidates": {
+          "calc": {
+            "status": "available"
+          },
+          "layout": {
+            "status": "unimplemented",
+            "reason": "no qualified layout implementation"
+          }
+        },
+        "eligibility": {
+          "status": "prepared"
+        }
+      },
+      "dcss-date-format-H": {
         "id": "dateFormatUTC",
         "family": "dates",
         "compilerDefault": "calc",
@@ -4162,7 +4558,73 @@
           "status": "prepared"
         }
       },
+      "dcss-date-format-I": {
+        "id": "dateFormatUTC",
+        "family": "dates",
+        "compilerDefault": "calc",
+        "runtimeBackend": "calc",
+        "timing": {
+          "mode": "same-update",
+          "latencyFrames": 0
+        },
+        "representations": {
+          "input": "scalar-custom-property",
+          "intermediate": "scalar-custom-property",
+          "result": "prepared"
+        },
+        "contracts": {
+          "input": "prepared",
+          "result": "prepared",
+          "precision": "prepared",
+          "readiness": "prepared"
+        },
+        "candidates": {
+          "calc": {
+            "status": "available"
+          },
+          "layout": {
+            "status": "unimplemented",
+            "reason": "no qualified layout implementation"
+          }
+        },
+        "eligibility": {
+          "status": "prepared"
+        }
+      },
       "dcss-date-format-11": {
+        "id": "dateFormatUTC",
+        "family": "dates",
+        "compilerDefault": "calc",
+        "runtimeBackend": "calc",
+        "timing": {
+          "mode": "same-update",
+          "latencyFrames": 0
+        },
+        "representations": {
+          "input": "scalar-custom-property",
+          "intermediate": "scalar-custom-property",
+          "result": "prepared"
+        },
+        "contracts": {
+          "input": "prepared",
+          "result": "prepared",
+          "precision": "prepared",
+          "readiness": "prepared"
+        },
+        "candidates": {
+          "calc": {
+            "status": "available"
+          },
+          "layout": {
+            "status": "unimplemented",
+            "reason": "no qualified layout implementation"
+          }
+        },
+        "eligibility": {
+          "status": "prepared"
+        }
+      },
+      "dcss-date-format-j": {
         "id": "dateFormatUTC",
         "family": "dates",
         "compilerDefault": "calc",
@@ -4228,7 +4690,73 @@
           "status": "prepared"
         }
       },
+      "dcss-date-format-m": {
+        "id": "dateFormatUTC",
+        "family": "dates",
+        "compilerDefault": "calc",
+        "runtimeBackend": "calc",
+        "timing": {
+          "mode": "same-update",
+          "latencyFrames": 0
+        },
+        "representations": {
+          "input": "scalar-custom-property",
+          "intermediate": "scalar-custom-property",
+          "result": "prepared"
+        },
+        "contracts": {
+          "input": "prepared",
+          "result": "prepared",
+          "precision": "prepared",
+          "readiness": "prepared"
+        },
+        "candidates": {
+          "calc": {
+            "status": "available"
+          },
+          "layout": {
+            "status": "unimplemented",
+            "reason": "no qualified layout implementation"
+          }
+        },
+        "eligibility": {
+          "status": "prepared"
+        }
+      },
       "dcss-date-format-13": {
+        "id": "dateFormatUTC",
+        "family": "dates",
+        "compilerDefault": "calc",
+        "runtimeBackend": "calc",
+        "timing": {
+          "mode": "same-update",
+          "latencyFrames": 0
+        },
+        "representations": {
+          "input": "scalar-custom-property",
+          "intermediate": "scalar-custom-property",
+          "result": "prepared"
+        },
+        "contracts": {
+          "input": "prepared",
+          "result": "prepared",
+          "precision": "prepared",
+          "readiness": "prepared"
+        },
+        "candidates": {
+          "calc": {
+            "status": "available"
+          },
+          "layout": {
+            "status": "unimplemented",
+            "reason": "no qualified layout implementation"
+          }
+        },
+        "eligibility": {
+          "status": "prepared"
+        }
+      },
+      "dcss-date-format-M": {
         "id": "dateFormatUTC",
         "family": "dates",
         "compilerDefault": "calc",
@@ -4294,7 +4822,73 @@
           "status": "prepared"
         }
       },
+      "dcss-date-format-p": {
+        "id": "dateFormatUTC",
+        "family": "dates",
+        "compilerDefault": "calc",
+        "runtimeBackend": "calc",
+        "timing": {
+          "mode": "same-update",
+          "latencyFrames": 0
+        },
+        "representations": {
+          "input": "scalar-custom-property",
+          "intermediate": "scalar-custom-property",
+          "result": "prepared"
+        },
+        "contracts": {
+          "input": "prepared",
+          "result": "prepared",
+          "precision": "prepared",
+          "readiness": "prepared"
+        },
+        "candidates": {
+          "calc": {
+            "status": "available"
+          },
+          "layout": {
+            "status": "unimplemented",
+            "reason": "no qualified layout implementation"
+          }
+        },
+        "eligibility": {
+          "status": "prepared"
+        }
+      },
       "dcss-date-format-15": {
+        "id": "dateFormatUTC",
+        "family": "dates",
+        "compilerDefault": "calc",
+        "runtimeBackend": "calc",
+        "timing": {
+          "mode": "same-update",
+          "latencyFrames": 0
+        },
+        "representations": {
+          "input": "scalar-custom-property",
+          "intermediate": "scalar-custom-property",
+          "result": "prepared"
+        },
+        "contracts": {
+          "input": "prepared",
+          "result": "prepared",
+          "precision": "prepared",
+          "readiness": "prepared"
+        },
+        "candidates": {
+          "calc": {
+            "status": "available"
+          },
+          "layout": {
+            "status": "unimplemented",
+            "reason": "no qualified layout implementation"
+          }
+        },
+        "eligibility": {
+          "status": "prepared"
+        }
+      },
+      "dcss-date-format-q": {
         "id": "dateFormatUTC",
         "family": "dates",
         "compilerDefault": "calc",
@@ -4360,7 +4954,73 @@
           "status": "prepared"
         }
       },
+      "dcss-date-format-Q": {
+        "id": "dateFormatUTC",
+        "family": "dates",
+        "compilerDefault": "calc",
+        "runtimeBackend": "calc",
+        "timing": {
+          "mode": "same-update",
+          "latencyFrames": 0
+        },
+        "representations": {
+          "input": "scalar-custom-property",
+          "intermediate": "scalar-custom-property",
+          "result": "prepared"
+        },
+        "contracts": {
+          "input": "prepared",
+          "result": "prepared",
+          "precision": "prepared",
+          "readiness": "prepared"
+        },
+        "candidates": {
+          "calc": {
+            "status": "available"
+          },
+          "layout": {
+            "status": "unimplemented",
+            "reason": "no qualified layout implementation"
+          }
+        },
+        "eligibility": {
+          "status": "prepared"
+        }
+      },
       "dcss-date-format-17": {
+        "id": "dateFormatUTC",
+        "family": "dates",
+        "compilerDefault": "calc",
+        "runtimeBackend": "calc",
+        "timing": {
+          "mode": "same-update",
+          "latencyFrames": 0
+        },
+        "representations": {
+          "input": "scalar-custom-property",
+          "intermediate": "scalar-custom-property",
+          "result": "prepared"
+        },
+        "contracts": {
+          "input": "prepared",
+          "result": "prepared",
+          "precision": "prepared",
+          "readiness": "prepared"
+        },
+        "candidates": {
+          "calc": {
+            "status": "available"
+          },
+          "layout": {
+            "status": "unimplemented",
+            "reason": "no qualified layout implementation"
+          }
+        },
+        "eligibility": {
+          "status": "prepared"
+        }
+      },
+      "dcss-date-format-s": {
         "id": "dateFormatUTC",
         "family": "dates",
         "compilerDefault": "calc",
@@ -4492,7 +5152,73 @@
           "status": "prepared"
         }
       },
+      "dcss-date-format-S": {
+        "id": "dateFormatUTC",
+        "family": "dates",
+        "compilerDefault": "calc",
+        "runtimeBackend": "calc",
+        "timing": {
+          "mode": "same-update",
+          "latencyFrames": 0
+        },
+        "representations": {
+          "input": "scalar-custom-property",
+          "intermediate": "scalar-custom-property",
+          "result": "prepared"
+        },
+        "contracts": {
+          "input": "prepared",
+          "result": "prepared",
+          "precision": "prepared",
+          "readiness": "prepared"
+        },
+        "candidates": {
+          "calc": {
+            "status": "available"
+          },
+          "layout": {
+            "status": "unimplemented",
+            "reason": "no qualified layout implementation"
+          }
+        },
+        "eligibility": {
+          "status": "prepared"
+        }
+      },
       "dcss-date-format-21": {
+        "id": "dateFormatUTC",
+        "family": "dates",
+        "compilerDefault": "calc",
+        "runtimeBackend": "calc",
+        "timing": {
+          "mode": "same-update",
+          "latencyFrames": 0
+        },
+        "representations": {
+          "input": "scalar-custom-property",
+          "intermediate": "scalar-custom-property",
+          "result": "prepared"
+        },
+        "contracts": {
+          "input": "prepared",
+          "result": "prepared",
+          "precision": "prepared",
+          "readiness": "prepared"
+        },
+        "candidates": {
+          "calc": {
+            "status": "available"
+          },
+          "layout": {
+            "status": "unimplemented",
+            "reason": "no qualified layout implementation"
+          }
+        },
+        "eligibility": {
+          "status": "prepared"
+        }
+      },
+      "dcss-date-format-0S": {
         "id": "dateFormatUTC",
         "family": "dates",
         "compilerDefault": "calc",
@@ -4558,7 +5284,73 @@
           "status": "prepared"
         }
       },
+      "dcss-date-format-_S": {
+        "id": "dateFormatUTC",
+        "family": "dates",
+        "compilerDefault": "calc",
+        "runtimeBackend": "calc",
+        "timing": {
+          "mode": "same-update",
+          "latencyFrames": 0
+        },
+        "representations": {
+          "input": "scalar-custom-property",
+          "intermediate": "scalar-custom-property",
+          "result": "prepared"
+        },
+        "contracts": {
+          "input": "prepared",
+          "result": "prepared",
+          "precision": "prepared",
+          "readiness": "prepared"
+        },
+        "candidates": {
+          "calc": {
+            "status": "available"
+          },
+          "layout": {
+            "status": "unimplemented",
+            "reason": "no qualified layout implementation"
+          }
+        },
+        "eligibility": {
+          "status": "prepared"
+        }
+      },
       "dcss-date-format-23": {
+        "id": "dateFormatUTC",
+        "family": "dates",
+        "compilerDefault": "calc",
+        "runtimeBackend": "calc",
+        "timing": {
+          "mode": "same-update",
+          "latencyFrames": 0
+        },
+        "representations": {
+          "input": "scalar-custom-property",
+          "intermediate": "scalar-custom-property",
+          "result": "prepared"
+        },
+        "contracts": {
+          "input": "prepared",
+          "result": "prepared",
+          "precision": "prepared",
+          "readiness": "prepared"
+        },
+        "candidates": {
+          "calc": {
+            "status": "available"
+          },
+          "layout": {
+            "status": "unimplemented",
+            "reason": "no qualified layout implementation"
+          }
+        },
+        "eligibility": {
+          "status": "prepared"
+        }
+      },
+      "dcss-date-format--S": {
         "id": "dateFormatUTC",
         "family": "dates",
         "compilerDefault": "calc",
@@ -4624,7 +5416,73 @@
           "status": "prepared"
         }
       },
+      "dcss-date-format-L": {
+        "id": "dateFormatUTC",
+        "family": "dates",
+        "compilerDefault": "calc",
+        "runtimeBackend": "calc",
+        "timing": {
+          "mode": "same-update",
+          "latencyFrames": 0
+        },
+        "representations": {
+          "input": "scalar-custom-property",
+          "intermediate": "scalar-custom-property",
+          "result": "prepared"
+        },
+        "contracts": {
+          "input": "prepared",
+          "result": "prepared",
+          "precision": "prepared",
+          "readiness": "prepared"
+        },
+        "candidates": {
+          "calc": {
+            "status": "available"
+          },
+          "layout": {
+            "status": "unimplemented",
+            "reason": "no qualified layout implementation"
+          }
+        },
+        "eligibility": {
+          "status": "prepared"
+        }
+      },
       "dcss-date-format-25": {
+        "id": "dateFormatUTC",
+        "family": "dates",
+        "compilerDefault": "calc",
+        "runtimeBackend": "calc",
+        "timing": {
+          "mode": "same-update",
+          "latencyFrames": 0
+        },
+        "representations": {
+          "input": "scalar-custom-property",
+          "intermediate": "scalar-custom-property",
+          "result": "prepared"
+        },
+        "contracts": {
+          "input": "prepared",
+          "result": "prepared",
+          "precision": "prepared",
+          "readiness": "prepared"
+        },
+        "candidates": {
+          "calc": {
+            "status": "available"
+          },
+          "layout": {
+            "status": "unimplemented",
+            "reason": "no qualified layout implementation"
+          }
+        },
+        "eligibility": {
+          "status": "prepared"
+        }
+      },
+      "dcss-date-format-u": {
         "id": "dateFormatUTC",
         "family": "dates",
         "compilerDefault": "calc",
@@ -4690,7 +5548,73 @@
           "status": "prepared"
         }
       },
+      "dcss-date-format-f": {
+        "id": "dateFormatUTC",
+        "family": "dates",
+        "compilerDefault": "calc",
+        "runtimeBackend": "calc",
+        "timing": {
+          "mode": "same-update",
+          "latencyFrames": 0
+        },
+        "representations": {
+          "input": "scalar-custom-property",
+          "intermediate": "scalar-custom-property",
+          "result": "prepared"
+        },
+        "contracts": {
+          "input": "prepared",
+          "result": "prepared",
+          "precision": "prepared",
+          "readiness": "prepared"
+        },
+        "candidates": {
+          "calc": {
+            "status": "available"
+          },
+          "layout": {
+            "status": "unimplemented",
+            "reason": "no qualified layout implementation"
+          }
+        },
+        "eligibility": {
+          "status": "prepared"
+        }
+      },
       "dcss-date-format-27": {
+        "id": "dateFormatUTC",
+        "family": "dates",
+        "compilerDefault": "calc",
+        "runtimeBackend": "calc",
+        "timing": {
+          "mode": "same-update",
+          "latencyFrames": 0
+        },
+        "representations": {
+          "input": "scalar-custom-property",
+          "intermediate": "scalar-custom-property",
+          "result": "prepared"
+        },
+        "contracts": {
+          "input": "prepared",
+          "result": "prepared",
+          "precision": "prepared",
+          "readiness": "prepared"
+        },
+        "candidates": {
+          "calc": {
+            "status": "available"
+          },
+          "layout": {
+            "status": "unimplemented",
+            "reason": "no qualified layout implementation"
+          }
+        },
+        "eligibility": {
+          "status": "prepared"
+        }
+      },
+      "dcss-date-format-U": {
         "id": "dateFormatUTC",
         "family": "dates",
         "compilerDefault": "calc",
@@ -4756,7 +5680,73 @@
           "status": "prepared"
         }
       },
+      "dcss-date-format-W": {
+        "id": "dateFormatUTC",
+        "family": "dates",
+        "compilerDefault": "calc",
+        "runtimeBackend": "calc",
+        "timing": {
+          "mode": "same-update",
+          "latencyFrames": 0
+        },
+        "representations": {
+          "input": "scalar-custom-property",
+          "intermediate": "scalar-custom-property",
+          "result": "prepared"
+        },
+        "contracts": {
+          "input": "prepared",
+          "result": "prepared",
+          "precision": "prepared",
+          "readiness": "prepared"
+        },
+        "candidates": {
+          "calc": {
+            "status": "available"
+          },
+          "layout": {
+            "status": "unimplemented",
+            "reason": "no qualified layout implementation"
+          }
+        },
+        "eligibility": {
+          "status": "prepared"
+        }
+      },
       "dcss-date-format-29": {
+        "id": "dateFormatUTC",
+        "family": "dates",
+        "compilerDefault": "calc",
+        "runtimeBackend": "calc",
+        "timing": {
+          "mode": "same-update",
+          "latencyFrames": 0
+        },
+        "representations": {
+          "input": "scalar-custom-property",
+          "intermediate": "scalar-custom-property",
+          "result": "prepared"
+        },
+        "contracts": {
+          "input": "prepared",
+          "result": "prepared",
+          "precision": "prepared",
+          "readiness": "prepared"
+        },
+        "candidates": {
+          "calc": {
+            "status": "available"
+          },
+          "layout": {
+            "status": "unimplemented",
+            "reason": "no qualified layout implementation"
+          }
+        },
+        "eligibility": {
+          "status": "prepared"
+        }
+      },
+      "dcss-date-format-V": {
         "id": "dateFormatUTC",
         "family": "dates",
         "compilerDefault": "calc",
@@ -4822,7 +5812,73 @@
           "status": "prepared"
         }
       },
+      "dcss-date-format-x": {
+        "id": "dateFormatUTC",
+        "family": "dates",
+        "compilerDefault": "calc",
+        "runtimeBackend": "calc",
+        "timing": {
+          "mode": "same-update",
+          "latencyFrames": 0
+        },
+        "representations": {
+          "input": "scalar-custom-property",
+          "intermediate": "scalar-custom-property",
+          "result": "prepared"
+        },
+        "contracts": {
+          "input": "prepared",
+          "result": "prepared",
+          "precision": "prepared",
+          "readiness": "prepared"
+        },
+        "candidates": {
+          "calc": {
+            "status": "available"
+          },
+          "layout": {
+            "status": "unimplemented",
+            "reason": "no qualified layout implementation"
+          }
+        },
+        "eligibility": {
+          "status": "prepared"
+        }
+      },
       "dcss-date-format-31": {
+        "id": "dateFormatUTC",
+        "family": "dates",
+        "compilerDefault": "calc",
+        "runtimeBackend": "calc",
+        "timing": {
+          "mode": "same-update",
+          "latencyFrames": 0
+        },
+        "representations": {
+          "input": "scalar-custom-property",
+          "intermediate": "scalar-custom-property",
+          "result": "prepared"
+        },
+        "contracts": {
+          "input": "prepared",
+          "result": "prepared",
+          "precision": "prepared",
+          "readiness": "prepared"
+        },
+        "candidates": {
+          "calc": {
+            "status": "available"
+          },
+          "layout": {
+            "status": "unimplemented",
+            "reason": "no qualified layout implementation"
+          }
+        },
+        "eligibility": {
+          "status": "prepared"
+        }
+      },
+      "dcss-date-format-X": {
         "id": "dateFormatUTC",
         "family": "dates",
         "compilerDefault": "calc",
@@ -4888,6 +5944,39 @@
           "status": "prepared"
         }
       },
+      "dcss-date-format-y": {
+        "id": "dateFormatUTC",
+        "family": "dates",
+        "compilerDefault": "calc",
+        "runtimeBackend": "calc",
+        "timing": {
+          "mode": "same-update",
+          "latencyFrames": 0
+        },
+        "representations": {
+          "input": "scalar-custom-property",
+          "intermediate": "scalar-custom-property",
+          "result": "prepared"
+        },
+        "contracts": {
+          "input": "prepared",
+          "result": "prepared",
+          "precision": "prepared",
+          "readiness": "prepared"
+        },
+        "candidates": {
+          "calc": {
+            "status": "available"
+          },
+          "layout": {
+            "status": "unimplemented",
+            "reason": "no qualified layout implementation"
+          }
+        },
+        "eligibility": {
+          "status": "prepared"
+        }
+      },
       "dcss-date-format-33": {
         "id": "dateFormatUTC",
         "family": "dates",
@@ -4921,7 +6010,73 @@
           "status": "prepared"
         }
       },
+      "dcss-date-format-Y": {
+        "id": "dateFormatUTC",
+        "family": "dates",
+        "compilerDefault": "calc",
+        "runtimeBackend": "calc",
+        "timing": {
+          "mode": "same-update",
+          "latencyFrames": 0
+        },
+        "representations": {
+          "input": "scalar-custom-property",
+          "intermediate": "scalar-custom-property",
+          "result": "prepared"
+        },
+        "contracts": {
+          "input": "prepared",
+          "result": "prepared",
+          "precision": "prepared",
+          "readiness": "prepared"
+        },
+        "candidates": {
+          "calc": {
+            "status": "available"
+          },
+          "layout": {
+            "status": "unimplemented",
+            "reason": "no qualified layout implementation"
+          }
+        },
+        "eligibility": {
+          "status": "prepared"
+        }
+      },
       "dcss-date-format-34": {
+        "id": "dateFormatUTC",
+        "family": "dates",
+        "compilerDefault": "calc",
+        "runtimeBackend": "calc",
+        "timing": {
+          "mode": "same-update",
+          "latencyFrames": 0
+        },
+        "representations": {
+          "input": "scalar-custom-property",
+          "intermediate": "scalar-custom-property",
+          "result": "prepared"
+        },
+        "contracts": {
+          "input": "prepared",
+          "result": "prepared",
+          "precision": "prepared",
+          "readiness": "prepared"
+        },
+        "candidates": {
+          "calc": {
+            "status": "available"
+          },
+          "layout": {
+            "status": "unimplemented",
+            "reason": "no qualified layout implementation"
+          }
+        },
+        "eligibility": {
+          "status": "prepared"
+        }
+      },
+      "dcss-date-format-Z": {
         "id": "dateFormatUTC",
         "family": "dates",
         "compilerDefault": "calc",

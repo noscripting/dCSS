@@ -10,8 +10,19 @@
 /* --find: only the rows whose --key equals it count (a spreadsheet's SUMIF, COUNTIF, AVERAGEIF, MINIFS, MAXIFS); the
    others take no room, so length counts the rows found, as d3.rollup's group does, and every answer is the one the
    rows found would give written alone. Set on the figure itself, never handed down */
-/* the list at the figure's padding corner, out of flow and hidden, so what follows it is laid out as written; the figure's ::before on that corner, the list's ::after on its far one */
+/* the list at the figure's padding box's far corner, out of flow and hidden, so what follows it is laid out as written and
+   the figure's scroll ranges are the list's size: it starts 1 px before the corner, with 1 px of padding there, so it
+   always has room (a box of no width or height adds nothing to a scroll range, its other side's included) */
+/* the answers the figure works out, set on it and inherited, held off the list: else each new answer restyled every
+   item and its two boxes (WebKit, one item of 1,000 changed: 15 ms of style, 1.0 with this) */
 /* each element after the list a block of its own (a page's own display wins), the answers handed down to it and what it holds */
+/* a stair with no item's index: each item two boxes, its ::after in the first row (the widths add up along it) and its
+   ::before in the first column (the heights add up down it), the item itself display: contents. Its widths and heights
+   are set on it and taken by inherit: width and height what adds up, min-width and min-height a flag (2^24 px, an
+   answer the list can't hold) on the first column and row, where the largest wins. The list's ::before, K x K, takes
+   the first cell, so the boxes start past it both ways. Placed by sibling-index(), every change to one item restyled
+   the whole list in WebKit (one item of 1,000: 42 ms of style; 3.0 ms without it). What an item holds takes no room:
+   its elements none, its text a box of the list's line height (the grid's anonymous item), 0; the list is hidden */
 
 /* DCSS bisect, on dcss.css's sort and collection-reader kernel (bisect.mjs, search.mjs). */
 
@@ -48,4 +59,5 @@ figure.dcss-share > :is(ol, ul) > li > .dcss-share-read > .dcss-share-result { d
 /* DCSS index extrema: numeric d3.minIndex/maxIndex and natural numeric least/greatestIndex (index-extrema.mjs). */
 
 /* DCSS lookup: a spreadsheet's exact lookup, d3.index(rows, key).get(find) (lookup.mjs). */
+/* --find set on the figure itself, never handed down: a lookup inside another's answer doesn't take that one's */
 @property --dcss-range-ready{syntax:'<integer>';inherits:true;initial-value:0}

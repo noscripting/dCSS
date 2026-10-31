@@ -5,6 +5,7 @@ All notable changes to dcss are written here. The format follows [Keep a Changel
 ## [Unreleased]
 
 ### Added
+- Date formats by d3's letter: `.dcss-date-format-Y` prints `%Y`, `.dcss-date-format-B` `%B`, `.dcss-date-format-_S` `%_S`, beside the numbered classes, which stay.
 - `--find` on `.dcss-sum`, `.dcss-count`, `.dcss-length`, `.dcss-mean`, `.dcss-min`, `.dcss-max` and `.dcss-extent`: only the rows whose `--key` equals it, a spreadsheet's SUMIF, COUNTIF, AVERAGEIF, MINIFS and MAXIFS.
 - Numbers in the page's language: a format in an element with `lang="de-DE"` (or any of d3-format's 58 locales but `en-IN`) prints as d3's `formatLocale` does, `1.234,50 €`; its currency with `--symbol: 1`. A language d3 has no file for prints as before.
 - `.dcss-lookup`: a spreadsheet's exact lookup. The `--value` of the row whose `--key` is the figure's `--find`, as `--dcss-lookup`, as d3.index's get gives it; a missing key is error 2, a key in two rows error 1; no limit on rows.
@@ -38,6 +39,9 @@ All notable changes to dcss are written here. The format follows [Keep a Changel
 
 ### Changed
 
+- A page of many sums, counts, means, mins, maxes or extents loads in time linear in its calls in WebKit: 1,024 calls of 10 items in 1.3 s, 13.6 s before. The reductions read their list by the figure's own scroll range, `scroll(self)`, and name no timeline.
+- A sum, count, length or mean restyles one item when one item changes, not its whole list: one item of 1,000 changed costs 1.2 ms of style in WebKit (was 38.4) and 0.5 in Chrome (was 3.4). The items no longer use `sibling-index()`; what an item holds (text, elements) still takes no room.
+- Pages with many list calls style about 5 times faster in Chrome and 1.6 times in WebKit: the elements after a list are matched by their parent, not by a walk over the list's siblings (70 figures of 67,543 items: 19.4 s to 3.9 s in Chrome, 19.5 s to 12.0 s in WebKit).
 - README.md and TUTORIAL.md start with no build: a list in a figure, its sum and mean printed; the tutorial builds a sales summary, a bar and a switch between years from the classes alone (`tutorial-check.mjs`).
 - Six families where there were twelve: d3-array's ticks and nice (`.dcss-ticks`, `.dcss-nice`) are in `families/array.css`, where `families/ticks.css` held them; UTC time and date formats are one family, `families/dates.css` (was `time.css` and `date-format.css`); `.dcss-motion` has its own, `families/motion.css`.
 - `.dcss-cumsum` takes up to 1,024 items (was 64): each running total is d3's, or has no answer (error 1) once its running width passes 262,143 px.

@@ -2486,7 +2486,7 @@
       },
       "A120": {
         "__compat": {
-          "description": "A call MUST copy its `--value` into each of its answers at most once, and each answer MUST stay under 65,535 tokens with plain inputs, so that another call's answer given as `--value` reads in WebKit, which drops what one `var()` brings past 65,535 tokens (`facts/var-token-limit.mjs`).",
+          "description": "A call MUST copy its `--value` into each of its answers at most once, and each answer MUST stay under 65,535 tokens with plain inputs, so that another call's answer given as `--value` reads in WebKit, which drops what one `var()` brings past 65,535 tokens (`facts/var/var-token-limit.mjs`).",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -2902,6 +2902,29 @@
       "A234": {
         "__compat": {
           "description": "`.dcss-sum`, `.dcss-count`, `.dcss-length`, `.dcss-mean`, `.dcss-min`, `.dcss-max` and `.dcss-extent` with `--find` set on the figure MUST answer as the same call on a list of only the items whose `--key` equals `--find` (d3's `rollup(items, reduce, (d) => d.key).get(find)`), error included; an item with no `--key` MUST NOT be taken. A call inside another's answer MUST NOT take that one's `--find`.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
+            },
+            "firefox": {
+              "version_added": null
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A235": {
+        "__compat": {
+          "description": "A date-format specifier of one letter, with its pad flag, MUST also be a class of its own that prints as its numbered class does (A107), `.dcss-date-format-Y` as `%Y`, in a document in no-quirks mode.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
