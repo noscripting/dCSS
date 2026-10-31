@@ -2876,6 +2876,29 @@
           }
         }
       },
+      "A233": {
+        "__compat": {
+          "description": "A format (`.dcss-format-fixed`, `-percent`, `-si`, `-general`) in an element whose language (HTML's `lang`, matched as `:lang()`) is one of d3-format 3.1.2's locales but `en-IN` MUST print as that locale's `formatLocale(locale).format(spec)`: its decimal and thousands marks, its currency before and after with `--symbol: 1`, its percent sign and its digits; in an element whose nearest `lang` names no such locale, as d3's default `format`.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
+            },
+            "firefox": {
+              "version_added": null
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
       "A51": {
         "__compat": {
           "description": "A loop (`.loop`, `.loop-flow`, `.loop-in`, `.loop-cell`, `.loop-core`) MUST have store.css and dcss-extras.css on the page; its cells, read through `[data-store-read]` and `[data-store-read-3]` naming them by `--store-of`, MUST settle on the iteration's fixed point: a 12-cell power iteration's vector and eigenvalue equal NumPy's, as a flow and as a table row.",

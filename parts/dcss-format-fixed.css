@@ -73,14 +73,7 @@
 @property --dcss-fmt-f6 { syntax: '<integer>'; inherits: true; initial-value: 0; }
 @property --dcss-fmt-q6 { syntax: '<integer>'; inherits: true; initial-value: 0; }
 @counter-style dcss-fmt-none { system: fixed -1; symbols: "";  }
-@counter-style dcss-fmt-lead { system: extends decimal; range: 0 infinite; fallback: dcss-fmt-none; }
-@counter-style dcss-fmt-pad1 { system: extends decimal; pad: 1 "0"; range: 0 infinite; fallback: dcss-fmt-none; }
-@counter-style dcss-fmt-pad2 { system: extends decimal; pad: 2 "0"; range: 0 infinite; fallback: dcss-fmt-none; }
-@counter-style dcss-fmt-pad3 { system: extends decimal; pad: 3 "0"; range: 0 infinite; fallback: dcss-fmt-none; }
 @counter-style dcss-fmt-sign { system: fixed -1; symbols: "" "" "\2212" "+"; fallback: dcss-fmt-none; }
-@counter-style dcss-fmt-symbol { system: fixed -1; symbols: "" "" "$"; fallback: dcss-fmt-none; }
-@counter-style dcss-fmt-comma { system: fixed 0; symbols: "" ","; }
-@counter-style dcss-fmt-dot { system: fixed 0; symbols: "" "."; }
 /* white-space: WebKit wraps a shrink-to-fit output after the point otherwise (0.005 as "0." and "005") */
 @property --dcss-fmt-error { syntax: '<integer>'; inherits: false; initial-value: 0; }
 @property --dcss-fmt-on { syntax: '<integer>'; inherits: true; initial-value: 1; }
@@ -152,5 +145,118 @@
    decade, where toPrecision has one place fewer: n then is 10^s, gcarry 1, and one zero goes. 3.5 times faster in
    WebKit than the SI path it took before (20 outputs a frame: 70 ms to 20; 2026-10-29). Only the non-exponential
    toPrecision range is admitted, 1 to 15 digits; unsupported results print nothing. */
-:is(:is(.dcss-format-fixed:not(:has(output)), .dcss-format-fixed output:not([class*="dcss-format-"])))::after { content: counter(dcss-fmt-s, dcss-fmt-sign) counter(dcss-fmt-y, dcss-fmt-symbol) counter(dcss-fmt-l6, dcss-fmt-lead) counter(dcss-fmt-p6, dcss-fmt-pad3) counter(dcss-fmt-c6, dcss-fmt-comma) counter(dcss-fmt-l5, dcss-fmt-lead) counter(dcss-fmt-p5, dcss-fmt-pad3) counter(dcss-fmt-c5, dcss-fmt-comma) counter(dcss-fmt-l4, dcss-fmt-lead) counter(dcss-fmt-p4, dcss-fmt-pad3) counter(dcss-fmt-c4, dcss-fmt-comma) counter(dcss-fmt-l3, dcss-fmt-lead) counter(dcss-fmt-p3, dcss-fmt-pad3) counter(dcss-fmt-c3, dcss-fmt-comma) counter(dcss-fmt-l2, dcss-fmt-lead) counter(dcss-fmt-p2, dcss-fmt-pad3) counter(dcss-fmt-c2, dcss-fmt-comma) counter(dcss-fmt-l1, dcss-fmt-lead) counter(dcss-fmt-p1, dcss-fmt-pad3) counter(dcss-fmt-c1, dcss-fmt-comma) counter(dcss-fmt-l0, dcss-fmt-lead) counter(dcss-fmt-p0, dcss-fmt-pad3) counter(dcss-fmt-d, dcss-fmt-dot) counter(dcss-fmt-fl1, dcss-fmt-pad1) counter(dcss-fmt-fl2, dcss-fmt-pad2) counter(dcss-fmt-fl3, dcss-fmt-pad3) counter(dcss-fmt-fp5, dcss-fmt-pad3) counter(dcss-fmt-fp4, dcss-fmt-pad3) counter(dcss-fmt-fp3, dcss-fmt-pad3) counter(dcss-fmt-fp2, dcss-fmt-pad3) counter(dcss-fmt-fp1, dcss-fmt-pad3) counter(dcss-fmt-fp0, dcss-fmt-pad3); }
+:is(:is(.dcss-format-fixed:not(:has(output)), .dcss-format-fixed output:not([class*="dcss-format-"])))::after { content: counter(dcss-fmt-s, dcss-fmt-sign) counter(dcss-fmt-y, var(--dcss-loc-currency, dcss-fmt-symbol)) counter(dcss-fmt-l6, var(--dcss-loc-lead, dcss-fmt-lead)) counter(dcss-fmt-p6, var(--dcss-loc-pad3, dcss-fmt-pad3)) counter(dcss-fmt-c6, var(--dcss-loc-comma, dcss-fmt-comma)) counter(dcss-fmt-l5, var(--dcss-loc-lead, dcss-fmt-lead)) counter(dcss-fmt-p5, var(--dcss-loc-pad3, dcss-fmt-pad3)) counter(dcss-fmt-c5, var(--dcss-loc-comma, dcss-fmt-comma)) counter(dcss-fmt-l4, var(--dcss-loc-lead, dcss-fmt-lead)) counter(dcss-fmt-p4, var(--dcss-loc-pad3, dcss-fmt-pad3)) counter(dcss-fmt-c4, var(--dcss-loc-comma, dcss-fmt-comma)) counter(dcss-fmt-l3, var(--dcss-loc-lead, dcss-fmt-lead)) counter(dcss-fmt-p3, var(--dcss-loc-pad3, dcss-fmt-pad3)) counter(dcss-fmt-c3, var(--dcss-loc-comma, dcss-fmt-comma)) counter(dcss-fmt-l2, var(--dcss-loc-lead, dcss-fmt-lead)) counter(dcss-fmt-p2, var(--dcss-loc-pad3, dcss-fmt-pad3)) counter(dcss-fmt-c2, var(--dcss-loc-comma, dcss-fmt-comma)) counter(dcss-fmt-l1, var(--dcss-loc-lead, dcss-fmt-lead)) counter(dcss-fmt-p1, var(--dcss-loc-pad3, dcss-fmt-pad3)) counter(dcss-fmt-c1, var(--dcss-loc-comma, dcss-fmt-comma)) counter(dcss-fmt-l0, var(--dcss-loc-lead, dcss-fmt-lead)) counter(dcss-fmt-p0, var(--dcss-loc-pad3, dcss-fmt-pad3)) counter(dcss-fmt-d, var(--dcss-loc-dot, dcss-fmt-dot)) counter(dcss-fmt-fl1, var(--dcss-loc-pad1, dcss-fmt-pad1)) counter(dcss-fmt-fl2, var(--dcss-loc-pad2, dcss-fmt-pad2)) counter(dcss-fmt-fl3, var(--dcss-loc-pad3, dcss-fmt-pad3)) counter(dcss-fmt-fp5, var(--dcss-loc-pad3, dcss-fmt-pad3)) counter(dcss-fmt-fp4, var(--dcss-loc-pad3, dcss-fmt-pad3)) counter(dcss-fmt-fp3, var(--dcss-loc-pad3, dcss-fmt-pad3)) counter(dcss-fmt-fp2, var(--dcss-loc-pad3, dcss-fmt-pad3)) counter(dcss-fmt-fp1, var(--dcss-loc-pad3, dcss-fmt-pad3)) counter(dcss-fmt-fp0, var(--dcss-loc-pad3, dcss-fmt-pad3)) counter(dcss-fmt-y, var(--dcss-loc-currency-suffix, dcss-fmt-blank)); }
 /* d3: with "$" the suffix is the currency's (none), not "%" */
+/* DCSS d3-format's locales by the page's lang (locales.mjs). */
+@counter-style dcss-loc-dot-1 { system: fixed 0; symbols: "" "٫"; }
+@counter-style dcss-loc-comma-1 { system: fixed 0; symbols: "" "٬"; }
+@counter-style dcss-loc-currency-1 { system: fixed -1; symbols: "" "" ""; fallback: dcss-fmt-none; }
+@counter-style dcss-loc-ar-lead { system: numeric; symbols: "٠" "١" "٢" "٣" "٤" "٥" "٦" "٧" "٨" "٩"; range: 0 infinite; fallback: dcss-fmt-none; }
+@counter-style dcss-loc-ar-pad1 { system: numeric; symbols: "٠" "١" "٢" "٣" "٤" "٥" "٦" "٧" "٨" "٩"; pad: 1 "٠"; range: 0 infinite; fallback: dcss-fmt-none; }
+@counter-style dcss-loc-ar-pad2 { system: numeric; symbols: "٠" "١" "٢" "٣" "٤" "٥" "٦" "٧" "٨" "٩"; pad: 2 "٠"; range: 0 infinite; fallback: dcss-fmt-none; }
+@counter-style dcss-loc-ar-pad3 { system: numeric; symbols: "٠" "١" "٢" "٣" "٤" "٥" "٦" "٧" "٨" "٩"; pad: 3 "٠"; range: 0 infinite; fallback: dcss-fmt-none; }
+@counter-style dcss-loc-currency-2 { system: fixed -1; symbols: "" "" " د.إ."; fallback: dcss-fmt-none; }
+@counter-style dcss-loc-currency-3 { system: fixed -1; symbols: "" "" " د.ب."; fallback: dcss-fmt-none; }
+@counter-style dcss-loc-currency-4 { system: fixed -1; symbols: "" "" "‏Fdj "; fallback: dcss-fmt-none; }
+@counter-style dcss-loc-dot-2 { system: fixed 0; symbols: "" ","; }
+@counter-style dcss-loc-comma-2 { system: fixed 0; symbols: "" "."; }
+@counter-style dcss-loc-currency-5 { system: fixed -1; symbols: "" "" "د.ج. "; fallback: dcss-fmt-none; }
+@counter-style dcss-loc-currency-6 { system: fixed -1; symbols: "" "" " ج.م."; fallback: dcss-fmt-none; }
+@counter-style dcss-loc-currency-7 { system: fixed -1; symbols: "" "" "د.م. "; fallback: dcss-fmt-none; }
+@counter-style dcss-loc-currency-8 { system: fixed -1; symbols: "" "" "Nfk "; fallback: dcss-fmt-none; }
+@counter-style dcss-loc-currency-9 { system: fixed -1; symbols: "" "" "₪ "; fallback: dcss-fmt-none; }
+@counter-style dcss-loc-currency-10 { system: fixed -1; symbols: "" "" " د.ع."; fallback: dcss-fmt-none; }
+@counter-style dcss-loc-currency-11 { system: fixed -1; symbols: "" "" " د.أ."; fallback: dcss-fmt-none; }
+@counter-style dcss-loc-currency-12 { system: fixed -1; symbols: "" "" " ف.ج.ق."; fallback: dcss-fmt-none; }
+@counter-style dcss-loc-currency-13 { system: fixed -1; symbols: "" "" " د.ك."; fallback: dcss-fmt-none; }
+@counter-style dcss-loc-currency-14 { system: fixed -1; symbols: "" "" " ل.ل."; fallback: dcss-fmt-none; }
+@counter-style dcss-loc-currency-15 { system: fixed -1; symbols: "" "" "د.ل. "; fallback: dcss-fmt-none; }
+@counter-style dcss-loc-currency-16 { system: fixed -1; symbols: "" "" " أ.م."; fallback: dcss-fmt-none; }
+@counter-style dcss-loc-currency-17 { system: fixed -1; symbols: "" "" " ر.ع."; fallback: dcss-fmt-none; }
+@counter-style dcss-loc-currency-18 { system: fixed -1; symbols: "" "" " ر.ق."; fallback: dcss-fmt-none; }
+@counter-style dcss-loc-currency-19 { system: fixed -1; symbols: "" "" " ر.س."; fallback: dcss-fmt-none; }
+@counter-style dcss-loc-currency-20 { system: fixed -1; symbols: "" "" " ج.س."; fallback: dcss-fmt-none; }
+@counter-style dcss-loc-currency-21 { system: fixed -1; symbols: "" "" "‏S "; fallback: dcss-fmt-none; }
+@counter-style dcss-loc-currency-22 { system: fixed -1; symbols: "" "" "£ "; fallback: dcss-fmt-none; }
+@counter-style dcss-loc-currency-23 { system: fixed -1; symbols: "" "" " ل.س."; fallback: dcss-fmt-none; }
+@counter-style dcss-loc-currency-24 { system: fixed -1; symbols: "" "" "‏FCFA "; fallback: dcss-fmt-none; }
+@counter-style dcss-loc-currency-25 { system: fixed -1; symbols: "" "" "د.ت. "; fallback: dcss-fmt-none; }
+@counter-style dcss-loc-currency-26 { system: fixed -1; symbols: "" "" " ر.ى."; fallback: dcss-fmt-none; }
+@counter-style dcss-loc-currency-27 { system: fixed -1; symbols: "" "" " €"; fallback: dcss-fmt-none; }
+@counter-style dcss-loc-comma-3 { system: fixed 0; symbols: "" " "; }
+@counter-style dcss-loc-currency-28 { system: fixed -1; symbols: "" "" " Kč"; fallback: dcss-fmt-none; }
+@counter-style dcss-loc-currency-29 { system: fixed -1; symbols: "" "" " kr"; fallback: dcss-fmt-none; }
+@counter-style dcss-loc-comma-4 { system: fixed 0; symbols: "" "'"; }
+@counter-style dcss-loc-currency-30 { system: fixed -1; symbols: "" "" " CHF"; fallback: dcss-fmt-none; }
+@counter-style dcss-loc-currency-31 { system: fixed -1; symbols: "" "" "£"; fallback: dcss-fmt-none; }
+@counter-style dcss-loc-currency-32 { system: fixed -1; symbols: "" "" "€"; fallback: dcss-fmt-none; }
+@counter-style dcss-loc-currency-33 { system: fixed -1; symbols: "" "" "Bs "; fallback: dcss-fmt-none; }
+@counter-style dcss-loc-percent-1 { system: fixed -1; symbols: "" " %" ""; }
+@counter-style dcss-loc-currency-34 { system: fixed -1; symbols: "" "" "$"; fallback: dcss-fmt-none; }
+@counter-style dcss-loc-currency-35 { system: fixed -1; symbols: "" "" "₪"; fallback: dcss-fmt-none; }
+@counter-style dcss-loc-currency-36 { system: fixed -1; symbols: "" "" " Ft"; fallback: dcss-fmt-none; }
+@counter-style dcss-loc-currency-37 { system: fixed -1; symbols: "" "" "円"; fallback: dcss-fmt-none; }
+@counter-style dcss-loc-currency-38 { system: fixed -1; symbols: "" "" "₩"; fallback: dcss-fmt-none; }
+@counter-style dcss-loc-currency-39 { system: fixed -1; symbols: "" "" " ден."; fallback: dcss-fmt-none; }
+@counter-style dcss-loc-currency-40 { system: fixed -1; symbols: "" "" "€ "; fallback: dcss-fmt-none; }
+@counter-style dcss-loc-currency-41 { system: fixed -1; symbols: "" "" "zł"; fallback: dcss-fmt-none; }
+@counter-style dcss-loc-currency-42 { system: fixed -1; symbols: "" "" "R$"; fallback: dcss-fmt-none; }
+@counter-style dcss-loc-currency-43 { system: fixed -1; symbols: "" "" " ₽"; fallback: dcss-fmt-none; }
+@counter-style dcss-loc-currency-44 { system: fixed -1; symbols: "" "" " ₴."; fallback: dcss-fmt-none; }
+@counter-style dcss-loc-currency-45 { system: fixed -1; symbols: "" "" "¥"; fallback: dcss-fmt-none; }
+[lang] { --dcss-loc-dot: initial; --dcss-loc-comma: initial; --dcss-loc-currency: initial; --dcss-loc-currency-suffix: initial; --dcss-loc-percent: initial; --dcss-loc-lead: initial; --dcss-loc-pad1: initial; --dcss-loc-pad2: initial; --dcss-loc-pad3: initial; }
+[lang]:lang(ar-001) { --dcss-loc-dot: dcss-loc-dot-1; --dcss-loc-comma: dcss-loc-comma-1; --dcss-loc-currency: dcss-loc-currency-1; --dcss-loc-lead: dcss-loc-ar-lead; --dcss-loc-pad1: dcss-loc-ar-pad1; --dcss-loc-pad2: dcss-loc-ar-pad2; --dcss-loc-pad3: dcss-loc-ar-pad3; }
+[lang]:lang(ar-AE) { --dcss-loc-dot: dcss-loc-dot-1; --dcss-loc-comma: dcss-loc-comma-1; --dcss-loc-currency: dcss-loc-currency-1; --dcss-loc-currency-suffix: dcss-loc-currency-2; --dcss-loc-lead: dcss-loc-ar-lead; --dcss-loc-pad1: dcss-loc-ar-pad1; --dcss-loc-pad2: dcss-loc-ar-pad2; --dcss-loc-pad3: dcss-loc-ar-pad3; }
+[lang]:lang(ar-BH) { --dcss-loc-dot: dcss-loc-dot-1; --dcss-loc-comma: dcss-loc-comma-1; --dcss-loc-currency: dcss-loc-currency-1; --dcss-loc-currency-suffix: dcss-loc-currency-3; --dcss-loc-lead: dcss-loc-ar-lead; --dcss-loc-pad1: dcss-loc-ar-pad1; --dcss-loc-pad2: dcss-loc-ar-pad2; --dcss-loc-pad3: dcss-loc-ar-pad3; }
+[lang]:lang(ar-DJ) { --dcss-loc-dot: dcss-loc-dot-1; --dcss-loc-comma: dcss-loc-comma-1; --dcss-loc-currency: dcss-loc-currency-4; --dcss-loc-lead: dcss-loc-ar-lead; --dcss-loc-pad1: dcss-loc-ar-pad1; --dcss-loc-pad2: dcss-loc-ar-pad2; --dcss-loc-pad3: dcss-loc-ar-pad3; }
+[lang]:lang(ar-DZ) { --dcss-loc-dot: dcss-loc-dot-2; --dcss-loc-comma: dcss-loc-comma-2; --dcss-loc-currency: dcss-loc-currency-5; }
+[lang]:lang(ar-EG) { --dcss-loc-dot: dcss-loc-dot-1; --dcss-loc-comma: dcss-loc-comma-1; --dcss-loc-currency: dcss-loc-currency-1; --dcss-loc-currency-suffix: dcss-loc-currency-6; --dcss-loc-lead: dcss-loc-ar-lead; --dcss-loc-pad1: dcss-loc-ar-pad1; --dcss-loc-pad2: dcss-loc-ar-pad2; --dcss-loc-pad3: dcss-loc-ar-pad3; }
+[lang]:lang(ar-EH) { --dcss-loc-currency: dcss-loc-currency-7; }
+[lang]:lang(ar-ER) { --dcss-loc-dot: dcss-loc-dot-1; --dcss-loc-comma: dcss-loc-comma-1; --dcss-loc-currency: dcss-loc-currency-8; --dcss-loc-lead: dcss-loc-ar-lead; --dcss-loc-pad1: dcss-loc-ar-pad1; --dcss-loc-pad2: dcss-loc-ar-pad2; --dcss-loc-pad3: dcss-loc-ar-pad3; }
+[lang]:lang(ar-IL) { --dcss-loc-dot: dcss-loc-dot-1; --dcss-loc-comma: dcss-loc-comma-1; --dcss-loc-currency: dcss-loc-currency-9; --dcss-loc-lead: dcss-loc-ar-lead; --dcss-loc-pad1: dcss-loc-ar-pad1; --dcss-loc-pad2: dcss-loc-ar-pad2; --dcss-loc-pad3: dcss-loc-ar-pad3; }
+[lang]:lang(ar-IQ) { --dcss-loc-dot: dcss-loc-dot-1; --dcss-loc-comma: dcss-loc-comma-1; --dcss-loc-currency: dcss-loc-currency-1; --dcss-loc-currency-suffix: dcss-loc-currency-10; --dcss-loc-lead: dcss-loc-ar-lead; --dcss-loc-pad1: dcss-loc-ar-pad1; --dcss-loc-pad2: dcss-loc-ar-pad2; --dcss-loc-pad3: dcss-loc-ar-pad3; }
+[lang]:lang(ar-JO) { --dcss-loc-dot: dcss-loc-dot-1; --dcss-loc-comma: dcss-loc-comma-1; --dcss-loc-currency: dcss-loc-currency-1; --dcss-loc-currency-suffix: dcss-loc-currency-11; --dcss-loc-lead: dcss-loc-ar-lead; --dcss-loc-pad1: dcss-loc-ar-pad1; --dcss-loc-pad2: dcss-loc-ar-pad2; --dcss-loc-pad3: dcss-loc-ar-pad3; }
+[lang]:lang(ar-KM) { --dcss-loc-dot: dcss-loc-dot-1; --dcss-loc-comma: dcss-loc-comma-1; --dcss-loc-currency: dcss-loc-currency-1; --dcss-loc-currency-suffix: dcss-loc-currency-12; --dcss-loc-lead: dcss-loc-ar-lead; --dcss-loc-pad1: dcss-loc-ar-pad1; --dcss-loc-pad2: dcss-loc-ar-pad2; --dcss-loc-pad3: dcss-loc-ar-pad3; }
+[lang]:lang(ar-KW) { --dcss-loc-dot: dcss-loc-dot-1; --dcss-loc-comma: dcss-loc-comma-1; --dcss-loc-currency: dcss-loc-currency-1; --dcss-loc-currency-suffix: dcss-loc-currency-13; --dcss-loc-lead: dcss-loc-ar-lead; --dcss-loc-pad1: dcss-loc-ar-pad1; --dcss-loc-pad2: dcss-loc-ar-pad2; --dcss-loc-pad3: dcss-loc-ar-pad3; }
+[lang]:lang(ar-LB) { --dcss-loc-dot: dcss-loc-dot-1; --dcss-loc-comma: dcss-loc-comma-1; --dcss-loc-currency: dcss-loc-currency-1; --dcss-loc-currency-suffix: dcss-loc-currency-14; --dcss-loc-lead: dcss-loc-ar-lead; --dcss-loc-pad1: dcss-loc-ar-pad1; --dcss-loc-pad2: dcss-loc-ar-pad2; --dcss-loc-pad3: dcss-loc-ar-pad3; }
+[lang]:lang(ar-LY) { --dcss-loc-dot: dcss-loc-dot-2; --dcss-loc-comma: dcss-loc-comma-2; --dcss-loc-currency: dcss-loc-currency-15; }
+[lang]:lang(ar-MA) { --dcss-loc-dot: dcss-loc-dot-2; --dcss-loc-comma: dcss-loc-comma-2; --dcss-loc-currency: dcss-loc-currency-7; }
+[lang]:lang(ar-MR) { --dcss-loc-dot: dcss-loc-dot-1; --dcss-loc-comma: dcss-loc-comma-1; --dcss-loc-currency: dcss-loc-currency-1; --dcss-loc-currency-suffix: dcss-loc-currency-16; --dcss-loc-lead: dcss-loc-ar-lead; --dcss-loc-pad1: dcss-loc-ar-pad1; --dcss-loc-pad2: dcss-loc-ar-pad2; --dcss-loc-pad3: dcss-loc-ar-pad3; }
+[lang]:lang(ar-OM) { --dcss-loc-dot: dcss-loc-dot-1; --dcss-loc-comma: dcss-loc-comma-1; --dcss-loc-currency: dcss-loc-currency-1; --dcss-loc-currency-suffix: dcss-loc-currency-17; --dcss-loc-lead: dcss-loc-ar-lead; --dcss-loc-pad1: dcss-loc-ar-pad1; --dcss-loc-pad2: dcss-loc-ar-pad2; --dcss-loc-pad3: dcss-loc-ar-pad3; }
+[lang]:lang(ar-PS) { --dcss-loc-dot: dcss-loc-dot-1; --dcss-loc-comma: dcss-loc-comma-1; --dcss-loc-currency: dcss-loc-currency-9; --dcss-loc-lead: dcss-loc-ar-lead; --dcss-loc-pad1: dcss-loc-ar-pad1; --dcss-loc-pad2: dcss-loc-ar-pad2; --dcss-loc-pad3: dcss-loc-ar-pad3; }
+[lang]:lang(ar-QA) { --dcss-loc-dot: dcss-loc-dot-1; --dcss-loc-comma: dcss-loc-comma-1; --dcss-loc-currency: dcss-loc-currency-1; --dcss-loc-currency-suffix: dcss-loc-currency-18; --dcss-loc-lead: dcss-loc-ar-lead; --dcss-loc-pad1: dcss-loc-ar-pad1; --dcss-loc-pad2: dcss-loc-ar-pad2; --dcss-loc-pad3: dcss-loc-ar-pad3; }
+[lang]:lang(ar-SA) { --dcss-loc-dot: dcss-loc-dot-1; --dcss-loc-comma: dcss-loc-comma-1; --dcss-loc-currency: dcss-loc-currency-1; --dcss-loc-currency-suffix: dcss-loc-currency-19; --dcss-loc-lead: dcss-loc-ar-lead; --dcss-loc-pad1: dcss-loc-ar-pad1; --dcss-loc-pad2: dcss-loc-ar-pad2; --dcss-loc-pad3: dcss-loc-ar-pad3; }
+[lang]:lang(ar-SD) { --dcss-loc-dot: dcss-loc-dot-1; --dcss-loc-comma: dcss-loc-comma-1; --dcss-loc-currency: dcss-loc-currency-1; --dcss-loc-currency-suffix: dcss-loc-currency-20; --dcss-loc-lead: dcss-loc-ar-lead; --dcss-loc-pad1: dcss-loc-ar-pad1; --dcss-loc-pad2: dcss-loc-ar-pad2; --dcss-loc-pad3: dcss-loc-ar-pad3; }
+[lang]:lang(ar-SO) { --dcss-loc-dot: dcss-loc-dot-1; --dcss-loc-comma: dcss-loc-comma-1; --dcss-loc-currency: dcss-loc-currency-21; --dcss-loc-lead: dcss-loc-ar-lead; --dcss-loc-pad1: dcss-loc-ar-pad1; --dcss-loc-pad2: dcss-loc-ar-pad2; --dcss-loc-pad3: dcss-loc-ar-pad3; }
+[lang]:lang(ar-SS) { --dcss-loc-dot: dcss-loc-dot-1; --dcss-loc-comma: dcss-loc-comma-1; --dcss-loc-currency: dcss-loc-currency-22; --dcss-loc-lead: dcss-loc-ar-lead; --dcss-loc-pad1: dcss-loc-ar-pad1; --dcss-loc-pad2: dcss-loc-ar-pad2; --dcss-loc-pad3: dcss-loc-ar-pad3; }
+[lang]:lang(ar-SY) { --dcss-loc-dot: dcss-loc-dot-1; --dcss-loc-comma: dcss-loc-comma-1; --dcss-loc-currency: dcss-loc-currency-1; --dcss-loc-currency-suffix: dcss-loc-currency-23; --dcss-loc-lead: dcss-loc-ar-lead; --dcss-loc-pad1: dcss-loc-ar-pad1; --dcss-loc-pad2: dcss-loc-ar-pad2; --dcss-loc-pad3: dcss-loc-ar-pad3; }
+[lang]:lang(ar-TD) { --dcss-loc-dot: dcss-loc-dot-1; --dcss-loc-comma: dcss-loc-comma-1; --dcss-loc-currency: dcss-loc-currency-24; --dcss-loc-lead: dcss-loc-ar-lead; --dcss-loc-pad1: dcss-loc-ar-pad1; --dcss-loc-pad2: dcss-loc-ar-pad2; --dcss-loc-pad3: dcss-loc-ar-pad3; }
+[lang]:lang(ar-TN) { --dcss-loc-dot: dcss-loc-dot-2; --dcss-loc-comma: dcss-loc-comma-2; --dcss-loc-currency: dcss-loc-currency-25; }
+[lang]:lang(ar-YE) { --dcss-loc-dot: dcss-loc-dot-1; --dcss-loc-comma: dcss-loc-comma-1; --dcss-loc-currency: dcss-loc-currency-1; --dcss-loc-currency-suffix: dcss-loc-currency-26; --dcss-loc-lead: dcss-loc-ar-lead; --dcss-loc-pad1: dcss-loc-ar-pad1; --dcss-loc-pad2: dcss-loc-ar-pad2; --dcss-loc-pad3: dcss-loc-ar-pad3; }
+[lang]:lang(ca-ES) { --dcss-loc-dot: dcss-loc-dot-2; --dcss-loc-comma: dcss-loc-comma-2; --dcss-loc-currency: dcss-loc-currency-1; --dcss-loc-currency-suffix: dcss-loc-currency-27; }
+[lang]:lang(cs-CZ) { --dcss-loc-dot: dcss-loc-dot-2; --dcss-loc-comma: dcss-loc-comma-3; --dcss-loc-currency: dcss-loc-currency-1; --dcss-loc-currency-suffix: dcss-loc-currency-28; }
+[lang]:lang(da-DK) { --dcss-loc-dot: dcss-loc-dot-2; --dcss-loc-comma: dcss-loc-comma-2; --dcss-loc-currency: dcss-loc-currency-1; --dcss-loc-currency-suffix: dcss-loc-currency-29; }
+[lang]:lang(de-CH) { --dcss-loc-dot: dcss-loc-dot-2; --dcss-loc-comma: dcss-loc-comma-4; --dcss-loc-currency: dcss-loc-currency-1; --dcss-loc-currency-suffix: dcss-loc-currency-30; }
+[lang]:lang(de-DE) { --dcss-loc-dot: dcss-loc-dot-2; --dcss-loc-comma: dcss-loc-comma-2; --dcss-loc-currency: dcss-loc-currency-1; --dcss-loc-currency-suffix: dcss-loc-currency-27; }
+[lang]:lang(en-GB) { --dcss-loc-currency: dcss-loc-currency-31; }
+[lang]:lang(en-IE) { --dcss-loc-currency: dcss-loc-currency-32; }
+[lang]:lang(es-BO) { --dcss-loc-dot: dcss-loc-dot-2; --dcss-loc-comma: dcss-loc-comma-2; --dcss-loc-currency: dcss-loc-currency-33; --dcss-loc-percent: dcss-loc-percent-1; }
+[lang]:lang(es-ES) { --dcss-loc-dot: dcss-loc-dot-2; --dcss-loc-comma: dcss-loc-comma-2; --dcss-loc-currency: dcss-loc-currency-1; --dcss-loc-currency-suffix: dcss-loc-currency-27; }
+[lang]:lang(fi-FI) { --dcss-loc-dot: dcss-loc-dot-2; --dcss-loc-comma: dcss-loc-comma-3; --dcss-loc-currency: dcss-loc-currency-1; --dcss-loc-currency-suffix: dcss-loc-currency-27; }
+[lang]:lang(fr-CA) { --dcss-loc-dot: dcss-loc-dot-2; --dcss-loc-comma: dcss-loc-comma-3; --dcss-loc-currency: dcss-loc-currency-1; --dcss-loc-currency-suffix: dcss-loc-currency-34; }
+[lang]:lang(fr-FR) { --dcss-loc-dot: dcss-loc-dot-2; --dcss-loc-comma: dcss-loc-comma-3; --dcss-loc-currency: dcss-loc-currency-1; --dcss-loc-currency-suffix: dcss-loc-currency-27; --dcss-loc-percent: dcss-loc-percent-1; }
+[lang]:lang(he-IL) { --dcss-loc-currency: dcss-loc-currency-35; }
+[lang]:lang(hu-HU) { --dcss-loc-dot: dcss-loc-dot-2; --dcss-loc-comma: dcss-loc-comma-3; --dcss-loc-currency: dcss-loc-currency-1; --dcss-loc-currency-suffix: dcss-loc-currency-36; }
+[lang]:lang(it-IT) { --dcss-loc-dot: dcss-loc-dot-2; --dcss-loc-comma: dcss-loc-comma-2; --dcss-loc-currency: dcss-loc-currency-32; }
+[lang]:lang(ja-JP) { --dcss-loc-currency: dcss-loc-currency-1; --dcss-loc-currency-suffix: dcss-loc-currency-37; }
+[lang]:lang(ko-KR) { --dcss-loc-currency: dcss-loc-currency-38; }
+[lang]:lang(mk-MK) { --dcss-loc-dot: dcss-loc-dot-2; --dcss-loc-comma: dcss-loc-comma-2; --dcss-loc-currency: dcss-loc-currency-1; --dcss-loc-currency-suffix: dcss-loc-currency-39; }
+[lang]:lang(nl-NL) { --dcss-loc-dot: dcss-loc-dot-2; --dcss-loc-comma: dcss-loc-comma-2; --dcss-loc-currency: dcss-loc-currency-40; }
+[lang]:lang(pl-PL) { --dcss-loc-dot: dcss-loc-dot-2; --dcss-loc-comma: dcss-loc-comma-2; --dcss-loc-currency: dcss-loc-currency-1; --dcss-loc-currency-suffix: dcss-loc-currency-41; }
+[lang]:lang(pt-BR) { --dcss-loc-dot: dcss-loc-dot-2; --dcss-loc-comma: dcss-loc-comma-2; --dcss-loc-currency: dcss-loc-currency-42; }
+[lang]:lang(pt-PT) { --dcss-loc-dot: dcss-loc-dot-2; --dcss-loc-comma: dcss-loc-comma-3; --dcss-loc-currency: dcss-loc-currency-1; --dcss-loc-currency-suffix: dcss-loc-currency-27; }
+[lang]:lang(ru-RU) { --dcss-loc-dot: dcss-loc-dot-2; --dcss-loc-comma: dcss-loc-comma-3; --dcss-loc-currency: dcss-loc-currency-1; --dcss-loc-currency-suffix: dcss-loc-currency-43; }
+[lang]:lang(sl-SI) { --dcss-loc-dot: dcss-loc-dot-2; --dcss-loc-comma: dcss-loc-comma-2; --dcss-loc-currency: dcss-loc-currency-1; --dcss-loc-currency-suffix: dcss-loc-currency-27; }
+[lang]:lang(sv-SE) { --dcss-loc-dot: dcss-loc-dot-2; --dcss-loc-comma: dcss-loc-comma-3; --dcss-loc-currency: dcss-loc-currency-1; --dcss-loc-currency-suffix: dcss-loc-currency-29; }
+[lang]:lang(uk-UA) { --dcss-loc-dot: dcss-loc-dot-2; --dcss-loc-comma: dcss-loc-comma-3; --dcss-loc-currency: dcss-loc-currency-1; --dcss-loc-currency-suffix: dcss-loc-currency-44; }
+[lang]:lang(zh-CN) { --dcss-loc-currency: dcss-loc-currency-45; }

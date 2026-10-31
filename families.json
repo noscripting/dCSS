@@ -98,9 +98,9 @@
         "dcss-format-si",
         "dcss-locale-arabic"
       ],
-      "raw": 95415,
-      "gzip9": 6562,
-      "sha256": "a4acaa0d80368bd7f124b7bbf80d5535ccd3ce80c89c832447fc6c1737806548"
+      "raw": 115907,
+      "gzip9": 7832,
+      "sha256": "3e64c2108c402d7ebac51d829927a19e0aa5df43264b332f6da97c7ed2b1d0e8"
     },
     "dates": {
       "file": "families/dates.css",

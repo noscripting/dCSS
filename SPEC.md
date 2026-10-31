@@ -5,7 +5,7 @@ dcss.css computes with CSS layout: indexed reads, sums, ranks, sorts, keyed maps
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in BCP 14 [RFC2119] [RFC8174] when, and only when, they appear in all capitals, as shown here.
 
 Measured 2026-10-29, headless: Chrome 155.0.8059.86, WebKit 26.4, Firefox 158.0.
-Conformance: Chrome 125/125, WebKit 125/125, Firefox 67/125.
+Conformance: Chrome 126/126, WebKit 126/126, Firefox 67/126.
 Additional paired cases measured 2026-10-26 in Chrome/WebKit; the Firefox report is unchanged.
 The checks, probes and scripts this document names are in the noscript.ing repository ([github.com/noscripting/noscript.ing](https://github.com/noscripting/noscript.ing)), under `libraries/dcss/`; this package carries the sheets and their documents.
 
@@ -493,6 +493,10 @@ for selection or computation. Packaging does not expand any function's bounds.
   `--dcss-err` 2; with two or more, or with that item's value missing, off the 1/64 grid or not within ±131,072, no
   answer and `--dcss-err` 1. A repeat of a key other than `--find` MUST NOT change the answer. The number of items MUST
   NOT be limited.
+- **A233** A format (`.dcss-format-fixed`, `-percent`, `-si`, `-general`) in an element whose language (HTML's `lang`,
+  matched as `:lang()`) is one of d3-format 3.1.2's locales but `en-IN` MUST print as that locale's
+  `formatLocale(locale).format(spec)`: its decimal and thousands marks, its currency before and after with `--symbol: 1`,
+  its percent sign and its digits; in an element whose nearest `lang` names no such locale, as d3's default `format`.
 
 ### On the board
 
@@ -632,6 +636,7 @@ for selection or computation. Packaging does not expand any function's bounds.
 | A230 | probes/dcss/every/check.mjs: sin on [0.5, 10] in 16 pieces, x³ − 3x with 0 on a shared end, x − 0.5 in 2 pieces, x² reaching 4, x² + 1 (none), the turning points of x³ − 3x, x − 0.6 on [−1, 1] in 5 pieces, `data-dcss-apart` with an `@scope` rule, each answer within 1e-4 of the true one; the copies hidden where a piece finds none, ends only on an outer element, a target changed after load, the page never built | PASS: 12 of 12, within 1e-4 (2026-10-31) | PASS: 12 of 12, within 1e-4 (2026-10-31) | NOTRUN |
 | A231 | probes/dcss/sample/grid-check.mjs: a 3 × 2 grid of x + 10y, each item's value and its list laid out in 3 columns; its sum and mean; a 16 × 16 hill summed exactly against doubles; 7 items in rows of 3, `--columns` 2.5, no `--from-y`, `--from-y` only on an outer element | PASS: 8 of 8, the hill exact (2026-10-31) | PASS: 8 of 8, the hill exact (2026-10-31) | NOTRUN |
 | A232 | probes/dcss/lookup/check.mjs: 400 seeded tables of 1 to 200 rows against d3.index's get (a missing key, a key in two rows); 12 by hand: the first and last of 1,000 rows, a value missing, off the grid, past ±131,072, the least and greatest taken, no `--find`, a row with no key, fractional and negative keys, a repeat of another key; `--find` set by a radio button, changed and reset | PASS: 400 of 400, 12 of 12 (2026-10-31) | PASS: 400 of 400, 12 of 12 (2026-10-31) | NOTRUN |
+| A233 | probes/dcss/locales/check.mjs: 12 seeded calls in each of 58 locales (types f, % and s; sign, $, comma, ~) against `formatLocale(locale).format`, each in an element with that `lang`; 3 by hand: `lang="en"` inside a German element, `es-AR`, a locale from `<html>`; the printed text in Chrome, the row against d3's text in WebKit | PASS: 696 of 696, 3 of 3 (2026-10-31) | PASS: 696 of 696, 3 of 3 (2026-10-31) | NOTRUN |
 | A51 | coverage/board.mjs: bd-power-12-loop-classes, bd-power-12-loop-table | PASS: 13 of 13 each, against NumPy | PASS: 13 of 13 each, against NumPy | PRECONDITION_FAILED: no view timelines, which store.css's store needs |
 | A52 | sheets/check.mjs: loan | PASS: 50 of 50 cells as written and after 2 changes | PASS: 50 of 50 cells as written and after 2 changes | PRECONDITION_FAILED: no view timelines, which store.css's store needs |
 

@@ -4,7 +4,7 @@ dcss.css computes with no script, in HTML: a list's statistics, ticks and nice r
 
 ## Installation
 
-No build, no script: link a call's part, or `dcss.css` and its family. Each call is a class, and a file in `parts/`. One class per figure; `.dcss-summarize` gives nine at once. A sum is a `<figure>` around a list: the browser lays the list out, and its size is the answer. This page links two parts that come to 8 KB gzipped:
+No build, no script: link a call's part, or `dcss.css` and its family. Each call is a class, and a file in `parts/`. One class per figure; `.dcss-summarize` gives nine at once. A sum is a `<figure>` around a list: the browser lays the list out, and its size is the answer. This page links two parts that come to 9 KB gzipped:
 
 ```html
 <!doctype html>
@@ -148,6 +148,18 @@ A spreadsheet's exact lookup: `.dcss-lookup` gives the `--value` of the row whos
 ```
 
 A key in no row prints nothing, error 2; a key in two rows, error 1. A list has no limit on rows. For brackets (a tax band, a shipping tier: the row whose range holds the number), use `.dcss-scale-threshold`.
+
+## Numbers in your language
+
+A format prints as the page's language does, from `lang`, with d3's own locales: German marks thousands with a dot and puts the euro after.
+
+```html
+<p lang="de-DE">
+  <output class="dcss-format-fixed" style="--value: 1234.5; --precision: 2; --comma: 1; --symbol: 1"></output>  <!-- 1.234,50 € -->
+</p>
+```
+
+`--symbol: 1` is the currency. Every language d3-format has a file for works, 58 of them (`fr-FR`, `es-MX`, `pt-BR`, `ja-JP`, the Arabic ones with their own digits): put `lang` on `<html>` once. A language d3 has no file for (`es-AR`) prints as d3's default, `en-US`; `en-IN` too, since it groups digits by two.
 
 ## Reference
 
@@ -411,7 +423,7 @@ A browser without `@function` drops the declaration, so write a plain value befo
 
 <!-- browsers -->
 
-Headless Chrome 155 and WebKit 26.4, Safari's engine, pass all 125 requirements of [SPEC.md](SPEC.md), and the calls match d3 on 2,120 of the 5,783 calls in d3's tests. Firefox 158 computes `calc()` in 32-bit floats, so exact sums, dates and most formatting go wrong there: it passes 67. [QUIRKS.md](QUIRKS.md) has the engine bugs.
+Headless Chrome 155 and WebKit 26.4, Safari's engine, pass all 126 requirements of [SPEC.md](SPEC.md), and the calls match d3 on 2,120 of the 5,783 calls in d3's tests. Firefox 158 computes `calc()` in 32-bit floats, so exact sums, dates and most formatting go wrong there: it passes 67. [QUIRKS.md](QUIRKS.md) has the engine bugs.
 
 <!-- /browsers -->
 
