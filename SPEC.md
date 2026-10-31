@@ -476,9 +476,10 @@ for selection or computation. Packaging does not expand any function's bounds.
 - **A225** On a page with an element of class `dcss-solve-newton`, `mathml.mjs` MUST write beside each `--dcss-fn`
   declaration in its `<style>` elements whose rule has no `--dcss-slope` a `--dcss-slope` declaration, on the same
   line: the derivative of the formula in `--dcss-at`, as calc() computes it, other `var()`s constant; write it again
-  where the rule's `--dcss-slope` is one it wrote and the formula changed; leave one the page wrote; and refuse, with the
-  line, a formula with a percentage, a function it has no derivative for, mixed types, or a `var()` of a property the
-  page's styles work out from `--dcss-at`.
+  where the rule's `--dcss-slope` is one it wrote and the formula changed; leave one the page wrote; and write none for a
+  formula with a percentage, a function it has no derivative for, mixed types, or a `var()` of a property the page's
+  styles work out from `--dcss-at` directly or through another, naming each with its line while the rest of the page
+  builds.
 
 ### On the board
 
@@ -679,7 +680,7 @@ for selection or computation. Packaging does not expand any function's bounds.
 | A196 | probes/dcss/stack/check.mjs: d3-shape's 6 stackOrderReverse calls, the reverse stack(…) call and 60 seeded tables | PASS: 7 of 7 calls, every index and key exact (2026-10-31) | PASS: the same (2026-10-31) | NOTRUN |
 | A195 | probes/dcss/stack/check.mjs: d3-shape's stack(…) calls with data (3 of 6; 3 take a keys or value function), 14 stackOrderNone and 2 of 3 stackOffsetNone calls (one starts a series at y0 1), 120 seeded tables (30 an offset, half reversed) of 1 to 16 keys and 1 to 6 points with missing and NaN values; 4,179 keys in all | PASS: every taken call; 4,179 of 4,179 keys (2026-10-31) | PASS: the same (2026-10-31) | NOTRUN |
 | A215 | probes/dcss/root/check.mjs: Kepler's equation, 40 orbits, 54 and 26 nested `<i>`s, against Newton's method | PASS: 40 and 40 of 40, worst 8.9e-16 (2026-10-31) | PASS: 40 and 40 of 40, worst 8.9e-16 (2026-10-31) | NOTRUN |
-| A216 | probes/dcss/root/check.mjs: the same sign at both ends, f NaN, no f, no bracket; a 0 at either end; from above to; no f, no bracket on a nested solve | PASS: 9 of 9 (2026-10-31) | PASS: 9 of 9 (2026-10-31) | NOTRUN |
+| A216 | probes/dcss/root/check.mjs: the same sign at both ends, f NaN, no f, no bracket; a 0 at either end; from above to; no f, no bracket on a nested solve; probes/dcss/root/nan-check.mjs: f NaN only at a middle try, halving and Newton | PASS: 9 of 9, 6 of 6 (2026-10-31) | PASS: 9 of 9, 6 of 6 (2026-10-31) | NOTRUN |
 | A217 | probes/dcss/root/check.mjs: x³ equal to Kepler's E, solved inside the outer solve's answer; again in `@scope`, the inner's rule first, E read on the inner solve | PASS: off 0 and 0 (2026-10-31) | PASS: off 0 and 0 (2026-10-31) | NOTRUN |
 | A218 | probes/dcss/root/check.mjs: 500 seeded points through each raw projection against d3-geo 3.1.1 | PASS: 1,000 of 1,000, worst 8.9e-16 (2026-10-31) | PASS: 1,000 of 1,000, worst 8.9e-16 (2026-10-31) | NOTRUN |
 | A219 | probes/dcss/root/check.mjs: the same points inverted at 12 `<i>`s, against d3's invert and the point projected | PASS: 1,000 of 1,000; 9.8e-15 from the point, d3's own 4.2e-11 (2026-10-31) | PASS: 1,000 of 1,000; 3.1e-14 from the point (2026-10-31) | NOTRUN |
@@ -688,7 +689,7 @@ for selection or computation. Packaging does not expand any function's bounds.
 | A222 | probes/dcss/ode/check.mjs: a 100 px spring, a pendulum from 1.2 rad, a spring's x read inside a second cell nested in it, the spring with the page scrolled 300 px, a cell run past its range and one started past it, a cell with no acceleration; sampled every 100 ms for 8 s against the same step in doubles | PASS: 7 of 7, worst 0.016 px outside what the step keeps, 59.2 steps a second (2026-10-31) | PASS: 7 of 7, worst 0.016 px, 59.2 steps a second (2026-10-31) | NOTRUN |
 | A223 | probes/dcss/root/steps-check.mjs: the Kepler page's 3 solves written with `data-dcss-steps="5"` against the hand-written page, a built page rebuilt, a solve in another's answer, an invert of 32, a geo invert of 14, five refusals; the built page's planets in the engines, and the page never built | PASS: 15 of 15, the page byte for byte (2026-10-31) | PASS: 15 of 15, the page byte for byte (2026-10-31) | NOTRUN |
 | A224 | probes/dcss/sample/check.mjs: 64 sin on [0, π] summed at 64 and 300 items, 64 x² on [−1, 2] at 30 items its max and mean, exactly against the same samples in doubles; one rule feeding a sample and a solve; no formula, no from and to | PASS: 8 of 8, exact (2026-10-31) | PASS: 8 of 8, exact (2026-10-31) | NOTRUN |
-| A225 | probes/dcss/slope/check.mjs: 26 formulas at 4 points, the written slope against the formula's central difference in doubles; the same text in the engine against doubles; the Kepler page with its slope left out, built: the hand-written slope, no line added, built to itself, its planets where the hand-written page puts them; a slope the page wrote left; the build's own following a changed formula; 4 refusals | PASS: 15 of 15, within 3.7e-10 (2026-10-31) | PASS: 15 of 15, within 3.7e-10 (2026-10-31) | NOTRUN |
+| A225 | probes/dcss/slope/check.mjs: 26 formulas at 4 points, the written slope against the formula's central difference in doubles; the same text in the engine against doubles; the Kepler page with its slope left out, built: the hand-written slope, no line added, built to itself, its planets where the hand-written page puts them; a slope the page wrote left; the build's own following a changed formula; 5 formulas left without a slope, named with their line, one beside a formula it takes | PASS: 17 of 17, within 3.7e-10 (2026-10-31) | PASS: 17 of 17, within 3.7e-10 (2026-10-31) | NOTRUN |
 | A51 | coverage/board.mjs: bd-power-12-loop-classes, bd-power-12-loop-table | PASS: 13 of 13 each, against NumPy | PASS: 13 of 13 each, against NumPy | PRECONDITION_FAILED: no view timelines, which store.css's store needs |
 | A52 | sheets/check.mjs: loan | PASS: 50 of 50 cells as written and after 2 changes | PASS: 50 of 50 cells as written and after 2 changes | PRECONDITION_FAILED: no view timelines, which store.css's store needs |
 

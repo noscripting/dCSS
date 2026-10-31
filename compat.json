@@ -4492,7 +4492,7 @@
       },
       "A225": {
         "__compat": {
-          "description": "On a page with an element of class `dcss-solve-newton`, `mathml.mjs` MUST write beside each `--dcss-fn` declaration in its `<style>` elements whose rule has no `--dcss-slope` a `--dcss-slope` declaration, on the same line: the derivative of the formula in `--dcss-at`, as calc() computes it, other `var()`s constant; write it again where the rule's `--dcss-slope` is one it wrote and the formula changed; leave one the page wrote; and refuse, with the line, a formula with a percentage, a function it has no derivative for, mixed types, or a `var()` of a property the page's styles work out from `--dcss-at`.",
+          "description": "On a page with an element of class `dcss-solve-newton`, `mathml.mjs` MUST write beside each `--dcss-fn` declaration in its `<style>` elements whose rule has no `--dcss-slope` a `--dcss-slope` declaration, on the same line: the derivative of the formula in `--dcss-at`, as calc() computes it, other `var()`s constant; write it again where the rule's `--dcss-slope` is one it wrote and the formula changed; leave one the page wrote; and write none for a formula with a percentage, a function it has no derivative for, mixed types, or a `var()` of a property the page's styles work out from `--dcss-at` directly or through another, naming each with its line while the rest of the page builds.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {

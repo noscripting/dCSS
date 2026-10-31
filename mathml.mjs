@@ -8,7 +8,8 @@
 // jan]) to the bit, jan read from --jan on an ancestor (unset: no answer, --dcss-err 1). Only a <math> whose one element
 // child is an <apply> of an operator it takes, or a <piecewise>, is compiled; the rest of the page is copied byte for byte, so the build
 // run on its own output changes nothing. It also writes the <i>s of a .dcss-solve or .dcss-invert with data-dcss-steps,
-// and on a page with a .dcss-solve-newton, --dcss-slope beside each --dcss-fn that has none.
+// and on a page with a .dcss-solve-newton, --dcss-slope beside each --dcss-fn that has none (one it can't take is said
+// on stderr with its line, and the rest of the page builds).
 import { createHash } from 'node:crypto';
 import { readFileSync, realpathSync, watchFile, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
@@ -1805,7 +1806,7 @@ function columnsAt(src, lt, t, end, file) {
 }
 export function toDcss(src, { file = 'page.html' } = {}) {
   const was = CX; CX = { defs: new Map(), later: new Map(), elsewhere: new Map(), index: new Map(), series: new Map(), seriesElsewhere: new Map(), scope: 0, welford: new Set(), welfordNow: new Set() };
-  try { return build(stepsPass(slopePass(src, file), file), file); } finally { CX = was; }
+  try { const sl = slopePass(src, file); return { ...build(stepsPass(sl.src, file), file), noSlope: sl.skipped }; } finally { CX = was; }
 }
 // data-dcss-steps="n" on a solve or an invert: the build writes its <i>s, so the page never counts them. A solve's
 // content goes inside n nested <i>s; an invert gets a first child of n pairs, <span><i><i></i></i>…</span>. Nothing
@@ -1968,12 +1969,15 @@ function emit(n, outer = 0, right = false) {
 function slopeOf(text) { const t = parseCalc(text.replace(/\/\*[\s\S]*?\*\//g, '').trim()); typeOf(t); const d = D(t); return d.k === 'num' ? d.t : `calc(${emit(d)})`; }
 const SOLVE_NEWTON = /\bclass\s*=\s*(?:"[^"]*\bdcss-solve-newton\b[^"]*"|'[^']*\bdcss-solve-newton\b[^']*'|dcss-solve-newton\b)/i;
 function slopePass(src, file) {
-  if (!SOLVE_NEWTON.test(src)) return src;
-  const edits = [], styles = [], reStyle = /<style\b[^>]*>/gi;
+  if (!SOLVE_NEWTON.test(src)) return { src, skipped: [] };
+  const skipped = [], edits = [], styles = [], reStyle = /<style\b[^>]*>/gi;
   for (let m; (m = reStyle.exec(src));) { const from = m.index + m[0].length, to = closeAt(src, 'style', from); if (to < 0) break; styles.push([from, to]); reStyle.lastIndex = to; }
   const css = styles.map(([f, t]) => src.slice(f, t)).join('\n').replace(/\/\*[\s\S]*?\*\//g, '');
-  // the page's own names worked out from --dcss-at: a formula reading one has a slope the text doesn't show
-  const fromAt = new Set([...css.matchAll(/(--[\w-]+)\s*:([^;{}]*)/g)].filter(([, k, v]) => k !== '--dcss-fn' && k !== '--dcss-slope' && /--dcss-at\b/.test(v)).map(([, k]) => k));
+  // the page's own names worked out from --dcss-at, directly or through another such name: a formula reading one has
+  // a slope the text doesn't show
+  const decls = [...css.matchAll(/(--[\w-]+)\s*:([^;{}]*)/g)].filter(([, k]) => k !== '--dcss-fn' && k !== '--dcss-slope'), fromAt = new Set(['--dcss-at']);
+  for (let grew = true; grew;) { grew = false; for (const [, k, v] of decls) if (!fromAt.has(k) && [...v.matchAll(/var\(\s*(--[\w-]+)/g)].some((r) => fromAt.has(r[1]))) { fromAt.add(k); grew = true; } }
+  fromAt.delete('--dcss-at');
   const valueEnd = (s, i) => { let d = 0; for (; i < s.length; i++) { const c = s[i]; if (c === '(') d++; else if (c === ')') d--; else if (d <= 0 && (c === ';' || c === '}')) return i; else if (c === '/' && s[i + 1] === '*') { const e = s.indexOf('*/', i + 2); i = e < 0 ? s.length : e + 1; } } return s.length; };
   for (const [from, to] of styles) {
     const body = src.slice(from, to), re = /(?<![\w-])--dcss-fn\s*:/g;
@@ -1986,15 +1990,17 @@ function slopePass(src, file) {
       const value = body.slice(vStart, vEnd).trim(), reads = [...value.matchAll(/var\(\s*(--[\w-]+)/g)].map((r) => r[1]).find((k) => fromAt.has(k));
       let slope;
       try { if (reads) throw new NoSlope(`it reads ${reads}, which the page works out from --dcss-at`); slope = slopeOf(value); }
-      catch (e) { if (e instanceof NoSlope) throw new Error(`${file}:${line}: the slope of --dcss-fn: ${e.message}; write --dcss-slope beside it yourself`); throw e; }
+      // one formula the build can't take leaves that formula's rule without a slope (a .dcss-solve-newton it feeds says
+      // --dcss-err 1); the rest of the page builds, so a sample's or an invert's formula never stops a solve's
+      catch (e) { if (e instanceof NoSlope) { skipped.push(`${file}:${line}: no slope written for this --dcss-fn: ${e.message}; write --dcss-slope beside it if a .dcss-solve-newton reads it`); continue; } throw e; }
       const decl = `--dcss-slope: ${slope} ${SLOPE_MARK}`;
       if (old) { const [s, e] = old; if (body.slice(s, e) !== decl) edits.push([from + s, from + e, decl]); }
-      else edits.push(body[vEnd] === ';' ? [from + vEnd + 1, from + vEnd + 1, ` ${decl};`] : [from + vEnd, from + vEnd, `; ${decl}`]);
+      else { const e = vStart + body.slice(vStart, vEnd).trimEnd().length; edits.push(body[vEnd] === ';' ? [from + vEnd + 1, from + vEnd + 1, ` ${decl};`] : [from + e, from + e, `; ${decl}`]); }
     }
   }
   let out = src;
   for (const [s, e, text] of edits.sort((x, y) => y[0] - x[0])) out = out.slice(0, s) + text + out.slice(e);
-  return out;
+  return { src: out, skipped };
 }
 return { slopeOf, slopePass };
 })();
@@ -2269,6 +2275,7 @@ if (process.argv[1] && realpathSync(process.argv[1]) === realpathSync(fileURLToP
     // a <math> with no Content MathML is copied as it is, said once on stderr (a clean-room trial, 2026-10-30: LaTeX in an
     // annotation built to an unchanged page with no word)
     if (r.left.length) console.error(`${file}:${r.left.join(', ')}: ${r.left.length} <math> left as written: only Content MathML computes (an <apply> or a <piecewise>); from LaTeX, latexmlmath --cmml=- writes it`);
+    for (const line of r.noSlope ?? []) console.error(line);
     if (rep) writeFileSync(rep, JSON.stringify(r.report, null, 2) + '\n');
     return r; };
   if (!watch) { try { once(); } catch (e) { console.error(e.message); process.exit(1); } }
