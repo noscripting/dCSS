@@ -86,8 +86,8 @@
         "dcss-variance"
       ],
       "raw": 399622,
-      "gzip9": 28914,
-      "sha256": "d8dcddff86220b08064f2439645103d9993d64fa251f9046d7dfef135cd8090b"
+      "gzip9": 28918,
+      "sha256": "193bd93c21eb387065fd50457afdb88830f56269bf9100948420c40c3fc3a902"
     },
     "hierarchy": {
       "file": "families/hierarchy.css",
