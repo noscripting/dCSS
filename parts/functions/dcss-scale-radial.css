@@ -1,7 +1,0 @@
-@function --dcss-scale-radial(--value, --domain-0, --domain-1, --range-0, --range-1, --clamp: 0, --round: 0) {
-  --x: calc(var(--clamp) * clamp(min(var(--domain-0), var(--domain-1)), var(--value), max(var(--domain-0), var(--domain-1))) + (1 - var(--clamp)) * var(--value));
-  --w: calc(var(--domain-1) - var(--domain-0)); --z: calc(1 - abs(sign(var(--w))));
-  --t: calc(var(--z) * 0.5 + (1 - var(--z)) * (var(--x) - var(--domain-0)) / (var(--w) + var(--z)));
-  --q0: calc((sign(var(--range-0)) * var(--range-0) * var(--range-0))); --q1: calc((sign(var(--range-1)) * var(--range-1) * var(--range-1)));
-  --y: calc(var(--q0) * (1 - var(--t)) + var(--q1) * var(--t)); --u: calc(sign(var(--y)) * sqrt(abs(var(--y))));
-  result: calc(var(--round) * round(var(--u)) + (1 - var(--round)) * var(--u)); }

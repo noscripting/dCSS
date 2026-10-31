@@ -1,4 +1,4 @@
-/* DCSS array: parts/dcss-solve-newton.css, the dcss-solve-newton call alone (parts.mjs)
+/* dcss.css: parts/dcss-solve-newton.css, the dcss-solve-newton call alone (parts.mjs)
    SPDX-License-Identifier: MIT
    SPDX-FileCopyrightText: 2026 noscript.ing contributors */
 @property --dcss-ready { syntax: '<integer>'; inherits: true; initial-value: 0; }
@@ -30,5 +30,3 @@
 /* The inverse of the page's own function on every row, by layout (invert.mjs). */
 
 /* The page's own function sampled as a list (sample.mjs). */
-
-/* The page's own equation of motion, stepped a frame on store.css's frame cell (ode.mjs). */

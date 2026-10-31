@@ -1,1 +1,0 @@
-@function --dcss-ease-exp-out(--value) { result: calc((1 - ((pow(2, -10 * var(--value)) - 0.0009765625) * 1.0009775171065494))); }

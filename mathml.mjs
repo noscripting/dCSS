@@ -1812,7 +1812,7 @@ export function toDcss(src, { file = 'page.html' } = {}) {
 // content goes inside n nested <i>s; an invert gets a first child of n pairs, <span><i><i></i></i>…</span>. Nothing
 // adds a line, so every line number stays the page's; an element that holds its <i>s already is left as it is (the
 // build run on its own output changes nothing), and one holding a different count is refused.
-const NESTED = /(?:^|\s)dcss-(?:solve|geo-natural-earth1-raw-invert|geo-equal-earth-raw-invert)(?=\s|$)/, NEWTONS = /(?:^|\s)dcss-(?:solve-newton|geo-natural-earth1-raw-invert|geo-equal-earth-raw-invert)(?=\s|$)/;
+const NESTED = /(?:^|\s)dcss-solve(?=\s|$)/, NEWTONS = /(?:^|\s)dcss-solve-newton(?=\s|$)/;
 // data-dcss-within="t" on a halving .dcss-solve: how close the answer must be, in the formula's own input, and the build
 // counts the tries. n <i>s leave the answer within |to - from| / 2^(n - 1) (2 ends, n - 2 halvings, the middle of what
 // is left), so n is the least that reaches t, 3 at least. The build reads --from and --to as numbers from the element's

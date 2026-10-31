@@ -1,1 +1,0 @@
-@function --dcss-ease-circle-in(--value) { result: calc((1 - sqrt(max(0, 1 - var(--value) * var(--value))))); }

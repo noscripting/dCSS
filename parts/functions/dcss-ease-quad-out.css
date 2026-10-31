@@ -1,1 +1,0 @@
-@function --dcss-ease-quad-out(--value) { result: calc((var(--value) * (2 - var(--value)))); }

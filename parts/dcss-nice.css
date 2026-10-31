@@ -1,8 +1,8 @@
-/* DCSS array: parts/dcss-nice.css, the dcss-nice call alone (parts.mjs)
+/* dcss.css: parts/dcss-nice.css, the dcss-nice call alone (parts.mjs)
    SPDX-License-Identifier: MIT
    SPDX-FileCopyrightText: 2026 noscript.ing contributors */
 :where([class*="dcss-"]) { writing-mode: horizontal-tb; }
-/* DCSS ticks and axes: d3-array's ticks, tickIncrement, tickStep and nice in calc(), d3-axis's drawing (ticks.mjs). */
+/* DCSS ticks: d3-array's ticks, tickIncrement, tickStep and nice in calc() (ticks.mjs). */
 @property --dcss-n00-p0 { syntax: '<integer>'; inherits: false; initial-value: 0; }
 @property --dcss-n00-p { syntax: '<integer>'; inherits: false; initial-value: 0; }
 @property --dcss-n00-f { syntax: '<integer>'; inherits: false; initial-value: 0; }
@@ -220,3 +220,17 @@
   --dcss-nice-start-raw: calc((1 - (max(0, sign(var(--count, 10) - (0))) * abs(sign(var(--stop) - var(--start))))) * var(--start) + (max(0, sign(var(--count, 10) - (0))) * abs(sign(var(--stop) - var(--start)))) * ((1 - abs(sign(var(--dcss-n1-inc) - var(--dcss-n0-inc)))) * var(--dcss-n0-a2) + (1 - (1 - abs(sign(var(--dcss-n1-inc) - var(--dcss-n0-inc))))) * ((1 - abs(sign(var(--dcss-n2-inc) - var(--dcss-n1-inc)))) * var(--dcss-n1-a2) + (1 - (1 - abs(sign(var(--dcss-n2-inc) - var(--dcss-n1-inc))))) * ((1 - abs(sign(var(--dcss-n3-inc) - var(--dcss-n2-inc)))) * var(--dcss-n2-a2) + (1 - (1 - abs(sign(var(--dcss-n3-inc) - var(--dcss-n2-inc))))) * var(--dcss-n3-a2)))));
   --dcss-nice-stop-raw: calc((1 - (max(0, sign(var(--count, 10) - (0))) * abs(sign(var(--stop) - var(--start))))) * var(--stop) + (max(0, sign(var(--count, 10) - (0))) * abs(sign(var(--stop) - var(--start)))) * ((1 - abs(sign(var(--dcss-n1-inc) - var(--dcss-n0-inc)))) * var(--dcss-n0-b2) + (1 - (1 - abs(sign(var(--dcss-n1-inc) - var(--dcss-n0-inc))))) * ((1 - abs(sign(var(--dcss-n2-inc) - var(--dcss-n1-inc)))) * var(--dcss-n1-b2) + (1 - (1 - abs(sign(var(--dcss-n2-inc) - var(--dcss-n1-inc))))) * ((1 - abs(sign(var(--dcss-n3-inc) - var(--dcss-n2-inc)))) * var(--dcss-n2-b2) + (1 - (1 - abs(sign(var(--dcss-n3-inc) - var(--dcss-n2-inc))))) * var(--dcss-n3-b2)))));
   --dcss-nice-start: var(--dcss-nice-start-raw); --dcss-nice-stop: var(--dcss-nice-stop-raw); }
+
+/* DCSS reductions: d3.sum, count, mean, min, max, extent and the list's length, in a figure (reduce.mjs). */
+/* the list at the figure's padding corner, out of flow and hidden, so what follows it is laid out as written; the figure's ::before on that corner, the list's ::after on its far one */
+/* each element after the list a block of its own (a page's own display wins), the answers handed down to it and what it holds */
+
+/* DCSS bisect, on dcss.css's sort and collection-reader kernel (bisect.mjs, search.mjs). */
+
+/* Bounded drop-in calls: a list read through plain elements after it, or none (static.mjs). */@property --dcss-sum{syntax:'*';inherits:false}@property --dcss-count{syntax:'*';inherits:false}@property --dcss-length{syntax:'*';inherits:false}@property --dcss-mean{syntax:'*';inherits:false}@property --dcss-min{syntax:'*';inherits:false}@property --dcss-max{syntax:'*';inherits:false}@property --dcss-variance{syntax:'*';inherits:false}@property --dcss-deviation{syntax:'*';inherits:false}
+/* DCSS shares: one list, a hidden sum lane, and one descendant result per item (share.mjs). */
+
+/* DCSS bisect, on dcss.css's sort and collection-reader kernel (bisect.mjs, search.mjs). */
+
+/* DCSS index extrema: numeric d3.minIndex/maxIndex and natural numeric least/greatestIndex (index-extrema.mjs). */
+@property --dcss-range-ready{syntax:'<integer>';inherits:true;initial-value:0}

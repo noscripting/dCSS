@@ -1,4 +1,4 @@
-/* DCSS array: parts/dcss-locale-arabic.css, the dcss-locale-arabic call alone (parts.mjs)
+/* dcss.css: parts/dcss-locale-arabic.css, the dcss-locale-arabic call alone (parts.mjs)
    SPDX-License-Identifier: MIT
    SPDX-FileCopyrightText: 2026 noscript.ing contributors */
 :where([class*="dcss-"]) { writing-mode: horizontal-tb; }
@@ -16,6 +16,3 @@
    WebKit than the SI path it took before (20 outputs a frame: 70 ms to 20; 2026-10-29). Only the non-exponential
    toPrecision range is admitted, 1 to 15 digits; unsupported results print nothing. */
 /* d3: with "$" the suffix is the currency's (none), not "%" */
-
-/* DCSS d3.scaleLog's ticks, nice and tickFormat's labels (ticks.mjs). */
-/* fixed and percent compute on their ::after (format.mjs), so their precision is set there */

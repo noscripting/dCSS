@@ -1,9 +1,0 @@
-/* DCSS array: parts/dcss-geo-natural-earth1-raw.css, the dcss-geo-natural-earth1-raw call alone (parts.mjs)
-   SPDX-License-Identifier: MIT
-   SPDX-FileCopyrightText: 2026 noscript.ing contributors */
-@property --dcss-ready { syntax: '<integer>'; inherits: true; initial-value: 0; }
-@property --dcss-err { syntax: '<integer>'; inherits: true; initial-value: 0; }
-:where([class*="dcss-"]) { writing-mode: horizontal-tb; }
-/* d3-geo: naturalEarth1Raw and equalEarthRaw (root.mjs). */
-:where(.dcss-geo-natural-earth1-raw){--x:initial;--y:initial}
-.dcss-geo-natural-earth1-raw{--dcss-geo-x:calc(((var(--x, calc(NaN))) * 0 + 1) * ((var(--y, calc(NaN))) * 0 + 1) / (((var(--x, calc(NaN))) * 0 + 1) * ((var(--y, calc(NaN))) * 0 + 1)) * (var(--x, calc(NaN)) * (0.8707 + (var(--y, calc(NaN)) * var(--y, calc(NaN))) * (-0.131979 + (var(--y, calc(NaN)) * var(--y, calc(NaN))) * (-0.013791 + (var(--y, calc(NaN)) * var(--y, calc(NaN))) * (var(--y, calc(NaN)) * var(--y, calc(NaN))) * (var(--y, calc(NaN)) * var(--y, calc(NaN))) * (0.003971 - 0.001529 * (var(--y, calc(NaN)) * var(--y, calc(NaN)))))))));--dcss-geo-y:calc(((var(--x, calc(NaN))) * 0 + 1) * ((var(--y, calc(NaN))) * 0 + 1) / (((var(--x, calc(NaN))) * 0 + 1) * ((var(--y, calc(NaN))) * 0 + 1)) * (var(--y, calc(NaN)) * (1.007226 + (var(--y, calc(NaN)) * var(--y, calc(NaN))) * (0.015085 + ((var(--y, calc(NaN)) * var(--y, calc(NaN))) * (var(--y, calc(NaN)) * var(--y, calc(NaN)))) * (-0.044475 + 0.028874 * (var(--y, calc(NaN)) * var(--y, calc(NaN))) - 0.005916 * ((var(--y, calc(NaN)) * var(--y, calc(NaN))) * (var(--y, calc(NaN)) * var(--y, calc(NaN)))))))));--dcss-ready:calc(((var(--x, calc(NaN))) * 0 + 1) * ((var(--y, calc(NaN))) * 0 + 1));--dcss-err:calc(1 - ((var(--x, calc(NaN))) * 0 + 1) * ((var(--y, calc(NaN))) * 0 + 1))}

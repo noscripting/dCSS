@@ -1,7 +1,357 @@
-/* DCSS array: families/array.css
+/* dcss.css: families/array.css
    SPDX-License-Identifier: MIT
    SPDX-FileCopyrightText: 2026 noscript.ing contributors */
 :where([class*="dcss-"]) { writing-mode: horizontal-tb; }
+/* DCSS ticks: d3-array's ticks, tickIncrement, tickStep and nice in calc() (ticks.mjs). */
+@property --dcss-t0-p0 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-t0-p { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-t0-f { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-t0-m { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-t0-r1 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-t0-i1 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-t0-r2 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-t0-i2 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-t1-p0 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-t1-p { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-t1-f { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-t1-m { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-t1-r1 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-t1-i1 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-t1-r2 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-t1-i2 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-t2-p0 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-t2-p { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-t2-f { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-t2-m { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-t2-r1 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-t2-i1 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-t2-r2 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-t2-i2 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-t-l { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-t-p { syntax: '<integer>'; inherits: true; initial-value: 0; }
+@property --dcss-t-f { syntax: '<integer>'; inherits: true; initial-value: 0; }
+@property --dcss-t-m { syntax: '<integer>'; inherits: true; initial-value: 0; }
+@property --dcss-t-i1 { syntax: '<integer>'; inherits: true; initial-value: 0; }
+@property --dcss-t-i2 { syntax: '<integer>'; inherits: true; initial-value: 0; }
+@property --dcss-n00-p0 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n00-p { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n00-f { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n00-m { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n00-r1 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n00-i1 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n00-r2 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n00-i2 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n01-p0 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n01-p { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n01-f { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n01-m { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n01-r1 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n01-i1 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n01-r2 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n01-i2 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n02-p0 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n02-p { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n02-f { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n02-m { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n02-r1 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n02-i1 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n02-r2 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n02-i2 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n0-l { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n0-p { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n0-f { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n0-m { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n0-i1 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n0-i2 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n10-p0 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n10-p { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n10-f { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n10-m { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n10-r1 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n10-i1 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n10-r2 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n10-i2 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n11-p0 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n11-p { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n11-f { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n11-m { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n11-r1 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n11-i1 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n11-r2 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n11-i2 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n12-p0 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n12-p { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n12-f { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n12-m { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n12-r1 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n12-i1 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n12-r2 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n12-i2 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n1-l { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n1-p { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n1-f { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n1-m { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n1-i1 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n1-i2 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n20-p0 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n20-p { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n20-f { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n20-m { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n20-r1 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n20-i1 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n20-r2 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n20-i2 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n21-p0 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n21-p { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n21-f { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n21-m { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n21-r1 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n21-i1 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n21-r2 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n21-i2 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n22-p0 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n22-p { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n22-f { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n22-m { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n22-r1 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n22-i1 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n22-r2 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n22-i2 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n2-l { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n2-p { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n2-f { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n2-m { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n2-i1 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n2-i2 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n30-p0 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n30-p { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n30-f { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n30-m { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n30-r1 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n30-i1 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n30-r2 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n30-i2 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n31-p0 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n31-p { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n31-f { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n31-m { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n31-r1 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n31-i1 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n31-r2 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n31-i2 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n32-p0 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n32-p { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n32-f { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n32-m { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n32-r1 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n32-i1 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n32-r2 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n32-i2 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n3-l { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n3-p { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n3-f { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n3-m { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n3-i1 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-n3-i2 { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-tick-increment-raw { syntax: '<number>'; inherits: false; initial-value: 0; }
+@property --dcss-tick-step-raw { syntax: '<number>'; inherits: false; initial-value: 0; }
+@property --dcss-tick-n { syntax: '<integer>'; inherits: true; initial-value: 0; }
+@property --dcss-tick-value { syntax: '<number>'; inherits: false; initial-value: 0; }
+@property --dcss-tick-d { syntax: '<integer>'; inherits: true; initial-value: 0; }
+@property --dcss-ix { syntax: '<integer>'; inherits: false; initial-value: 0; }
+@property --dcss-nice-start-raw { syntax: '<number>'; inherits: false; initial-value: 0; }
+@property --dcss-nice-stop-raw { syntax: '<number>'; inherits: false; initial-value: 0; }
+
+.dcss-ticks { --dcss-t0-a: min(var(--start), var(--stop)); --dcss-t0-b: max(var(--start), var(--stop)); --dcss-t0-s: calc((var(--dcss-t0-b) - var(--dcss-t0-a)) / max(0, (var(--count, 10) * 1))); --dcss-t0-p0: round(log(var(--dcss-t0-s), 10));
+  --dcss-t0-p: calc(var(--dcss-t0-p0) - max(0, sign(pow(10, var(--dcss-t0-p0)) - (var(--dcss-t0-s))))); --dcss-t0-e: calc(var(--dcss-t0-s) / pow(10, var(--dcss-t0-p)));
+  --dcss-t0-f: calc(1 + (1 - max(0, sign(sqrt(2) - (var(--dcss-t0-e))))) + 3 * (1 - max(0, sign(sqrt(10) - (var(--dcss-t0-e))))) + 5 * (1 - max(0, sign(sqrt(50) - (var(--dcss-t0-e)))))); --dcss-t0-m: max(0, sign(0 - (var(--dcss-t0-p))));
+  --dcss-t0-kn: calc(pow(10, -1 * var(--dcss-t0-p)) / var(--dcss-t0-f)); --dcss-t0-kp: calc(pow(10, var(--dcss-t0-p)) * var(--dcss-t0-f));
+  --dcss-t0-r1: round((var(--dcss-t0-m) * var(--dcss-t0-a) * var(--dcss-t0-kn) + (1 - var(--dcss-t0-m)) * var(--dcss-t0-a) / var(--dcss-t0-kp))); --dcss-t0-i1: calc(var(--dcss-t0-r1) + max(0, sign(var(--dcss-t0-a) - ((var(--dcss-t0-m) * var(--dcss-t0-r1) / var(--dcss-t0-kn) + (1 - var(--dcss-t0-m)) * var(--dcss-t0-r1) * var(--dcss-t0-kp))) - (abs((var(--dcss-t0-m) * var(--dcss-t0-r1) / var(--dcss-t0-kn) + (1 - var(--dcss-t0-m)) * var(--dcss-t0-r1) * var(--dcss-t0-kp))) * 8.9e-16))));
+  --dcss-t0-r2: round((var(--dcss-t0-m) * var(--dcss-t0-b) * var(--dcss-t0-kn) + (1 - var(--dcss-t0-m)) * var(--dcss-t0-b) / var(--dcss-t0-kp))); --dcss-t0-i2: calc(var(--dcss-t0-r2) - max(0, sign((var(--dcss-t0-m) * var(--dcss-t0-r2) / var(--dcss-t0-kn) + (1 - var(--dcss-t0-m)) * var(--dcss-t0-r2) * var(--dcss-t0-kp)) - (var(--dcss-t0-b)) - (abs(var(--dcss-t0-b)) * 8.9e-16))));
+  --dcss-t1-a: min(var(--start), var(--stop)); --dcss-t1-b: max(var(--start), var(--stop)); --dcss-t1-s: calc((var(--dcss-t1-b) - var(--dcss-t1-a)) / max(0, (var(--count, 10) * 2))); --dcss-t1-p0: round(log(var(--dcss-t1-s), 10));
+  --dcss-t1-p: calc(var(--dcss-t1-p0) - max(0, sign(pow(10, var(--dcss-t1-p0)) - (var(--dcss-t1-s))))); --dcss-t1-e: calc(var(--dcss-t1-s) / pow(10, var(--dcss-t1-p)));
+  --dcss-t1-f: calc(1 + (1 - max(0, sign(sqrt(2) - (var(--dcss-t1-e))))) + 3 * (1 - max(0, sign(sqrt(10) - (var(--dcss-t1-e))))) + 5 * (1 - max(0, sign(sqrt(50) - (var(--dcss-t1-e)))))); --dcss-t1-m: max(0, sign(0 - (var(--dcss-t1-p))));
+  --dcss-t1-kn: calc(pow(10, -1 * var(--dcss-t1-p)) / var(--dcss-t1-f)); --dcss-t1-kp: calc(pow(10, var(--dcss-t1-p)) * var(--dcss-t1-f));
+  --dcss-t1-r1: round((var(--dcss-t1-m) * var(--dcss-t1-a) * var(--dcss-t1-kn) + (1 - var(--dcss-t1-m)) * var(--dcss-t1-a) / var(--dcss-t1-kp))); --dcss-t1-i1: calc(var(--dcss-t1-r1) + max(0, sign(var(--dcss-t1-a) - ((var(--dcss-t1-m) * var(--dcss-t1-r1) / var(--dcss-t1-kn) + (1 - var(--dcss-t1-m)) * var(--dcss-t1-r1) * var(--dcss-t1-kp))) - (abs((var(--dcss-t1-m) * var(--dcss-t1-r1) / var(--dcss-t1-kn) + (1 - var(--dcss-t1-m)) * var(--dcss-t1-r1) * var(--dcss-t1-kp))) * 8.9e-16))));
+  --dcss-t1-r2: round((var(--dcss-t1-m) * var(--dcss-t1-b) * var(--dcss-t1-kn) + (1 - var(--dcss-t1-m)) * var(--dcss-t1-b) / var(--dcss-t1-kp))); --dcss-t1-i2: calc(var(--dcss-t1-r2) - max(0, sign((var(--dcss-t1-m) * var(--dcss-t1-r2) / var(--dcss-t1-kn) + (1 - var(--dcss-t1-m)) * var(--dcss-t1-r2) * var(--dcss-t1-kp)) - (var(--dcss-t1-b)) - (abs(var(--dcss-t1-b)) * 8.9e-16))));
+  --dcss-t2-a: min(var(--start), var(--stop)); --dcss-t2-b: max(var(--start), var(--stop)); --dcss-t2-s: calc((var(--dcss-t2-b) - var(--dcss-t2-a)) / max(0, (var(--count, 10) * 4))); --dcss-t2-p0: round(log(var(--dcss-t2-s), 10));
+  --dcss-t2-p: calc(var(--dcss-t2-p0) - max(0, sign(pow(10, var(--dcss-t2-p0)) - (var(--dcss-t2-s))))); --dcss-t2-e: calc(var(--dcss-t2-s) / pow(10, var(--dcss-t2-p)));
+  --dcss-t2-f: calc(1 + (1 - max(0, sign(sqrt(2) - (var(--dcss-t2-e))))) + 3 * (1 - max(0, sign(sqrt(10) - (var(--dcss-t2-e))))) + 5 * (1 - max(0, sign(sqrt(50) - (var(--dcss-t2-e)))))); --dcss-t2-m: max(0, sign(0 - (var(--dcss-t2-p))));
+  --dcss-t2-kn: calc(pow(10, -1 * var(--dcss-t2-p)) / var(--dcss-t2-f)); --dcss-t2-kp: calc(pow(10, var(--dcss-t2-p)) * var(--dcss-t2-f));
+  --dcss-t2-r1: round((var(--dcss-t2-m) * var(--dcss-t2-a) * var(--dcss-t2-kn) + (1 - var(--dcss-t2-m)) * var(--dcss-t2-a) / var(--dcss-t2-kp))); --dcss-t2-i1: calc(var(--dcss-t2-r1) + max(0, sign(var(--dcss-t2-a) - ((var(--dcss-t2-m) * var(--dcss-t2-r1) / var(--dcss-t2-kn) + (1 - var(--dcss-t2-m)) * var(--dcss-t2-r1) * var(--dcss-t2-kp))) - (abs((var(--dcss-t2-m) * var(--dcss-t2-r1) / var(--dcss-t2-kn) + (1 - var(--dcss-t2-m)) * var(--dcss-t2-r1) * var(--dcss-t2-kp))) * 8.9e-16))));
+  --dcss-t2-r2: round((var(--dcss-t2-m) * var(--dcss-t2-b) * var(--dcss-t2-kn) + (1 - var(--dcss-t2-m)) * var(--dcss-t2-b) / var(--dcss-t2-kp))); --dcss-t2-i2: calc(var(--dcss-t2-r2) - max(0, sign((var(--dcss-t2-m) * var(--dcss-t2-r2) / var(--dcss-t2-kn) + (1 - var(--dcss-t2-m)) * var(--dcss-t2-r2) * var(--dcss-t2-kp)) - (var(--dcss-t2-b)) - (abs(var(--dcss-t2-b)) * 8.9e-16))));
+  --dcss-t-l: calc(max(0, sign(var(--dcss-t0-i1) - (var(--dcss-t0-i2)))) * (1 - max(0, sign(0.5 - (var(--count, 10) * 1)))) * max(0, sign(2 - (var(--count, 10) * 1))) * (1 + max(0, sign(var(--dcss-t1-i1) - (var(--dcss-t1-i2)))) * (1 - max(0, sign(0.5 - (var(--count, 10) * 2)))) * max(0, sign(2 - (var(--count, 10) * 2))))); --dcss-t-p: calc((1 - min(1, abs(var(--dcss-t-l) - 0))) * var(--dcss-t0-p) + (1 - min(1, abs(var(--dcss-t-l) - 1))) * var(--dcss-t1-p) + (1 - min(1, abs(var(--dcss-t-l) - 2))) * var(--dcss-t2-p)); --dcss-t-f: calc((1 - min(1, abs(var(--dcss-t-l) - 0))) * var(--dcss-t0-f) + (1 - min(1, abs(var(--dcss-t-l) - 1))) * var(--dcss-t1-f) + (1 - min(1, abs(var(--dcss-t-l) - 2))) * var(--dcss-t2-f)); --dcss-t-m: calc((1 - min(1, abs(var(--dcss-t-l) - 0))) * var(--dcss-t0-m) + (1 - min(1, abs(var(--dcss-t-l) - 1))) * var(--dcss-t1-m) + (1 - min(1, abs(var(--dcss-t-l) - 2))) * var(--dcss-t2-m)); --dcss-t-i1: calc((1 - min(1, abs(var(--dcss-t-l) - 0))) * var(--dcss-t0-i1) + (1 - min(1, abs(var(--dcss-t-l) - 1))) * var(--dcss-t1-i1) + (1 - min(1, abs(var(--dcss-t-l) - 2))) * var(--dcss-t2-i1)); --dcss-t-i2: calc((1 - min(1, abs(var(--dcss-t-l) - 0))) * var(--dcss-t0-i2) + (1 - min(1, abs(var(--dcss-t-l) - 1))) * var(--dcss-t1-i2) + (1 - min(1, abs(var(--dcss-t-l) - 2))) * var(--dcss-t2-i2));
+  --dcss-t-kn: calc(pow(10, -1 * var(--dcss-t-p)) / var(--dcss-t-f)); --dcss-t-kp: calc(pow(10, var(--dcss-t-p)) * var(--dcss-t-f));
+  --dcss-t-inc: calc(var(--dcss-t-m) * -1 * var(--dcss-t-kn) + (1 - var(--dcss-t-m)) * var(--dcss-t-kp));
+  --dcss-tick-increment-raw: var(--dcss-t-inc); --dcss-tick-step-raw: calc((1 - 2 * max(0, sign(var(--start) - (var(--stop))))) * (var(--dcss-t-m) / var(--dcss-t-kn) + (1 - var(--dcss-t-m)) * var(--dcss-t-kp)));
+  --dcss-tick-n: calc(max(0, sign(var(--count, 10) - (0))) * ((1 - abs(sign(var(--stop) - var(--start)))) + (1 - (1 - abs(sign(var(--stop) - var(--start))))) * max(0, var(--dcss-t-i2) - var(--dcss-t-i1) + 1)));
+  --dcss-tick-d: calc(var(--dcss-t-m) * (-1 * var(--dcss-t-p) - (1 - min(1, abs(var(--dcss-t-f) - 10)))));
+  --dcss-tick-increment: var(--dcss-tick-increment-raw); --dcss-tick-step: var(--dcss-tick-step-raw); --dcss-tick-count: var(--dcss-tick-n);
+  --dcss-tick-precision: var(--dcss-tick-d); }
+.dcss-ticks > li { --dcss-k: calc(sibling-index() - 1); --dcss-ix: calc(((1 - max(0, sign(var(--start) - (var(--stop))))) * (var(--dcss-t-i1) + var(--dcss-k)) + max(0, sign(var(--start) - (var(--stop)))) * (var(--dcss-t-i2) - var(--dcss-k))));
+  --dcss-tick-value: calc((1 - abs(sign(var(--stop) - var(--start)))) * var(--start) + (1 - (1 - abs(sign(var(--stop) - var(--start))))) * (var(--dcss-t-m) * var(--dcss-ix) / var(--dcss-t-kn) + (1 - var(--dcss-t-m)) * var(--dcss-ix) * var(--dcss-t-kp)));
+  --dcss-tick: var(--dcss-tick-value); --dcss-tick-at: calc((1 - abs(sign(var(--stop) - var(--start)))) * 0.5 + (1 - (1 - abs(sign(var(--stop) - var(--start))))) * ((var(--dcss-t-m) * var(--dcss-ix) / var(--dcss-t-kn) + (1 - var(--dcss-t-m)) * var(--dcss-ix) * var(--dcss-t-kp)) - var(--start)) / (var(--stop) - var(--start) + (1 - abs(sign(var(--stop) - var(--start)))))); }
+@container style(--dcss-tick-n: 0) { .dcss-ticks > li:nth-child(n + 1) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--dcss-tick-n: 1) { .dcss-ticks > li:nth-child(n + 2) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--dcss-tick-n: 2) { .dcss-ticks > li:nth-child(n + 3) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--dcss-tick-n: 3) { .dcss-ticks > li:nth-child(n + 4) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--dcss-tick-n: 4) { .dcss-ticks > li:nth-child(n + 5) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--dcss-tick-n: 5) { .dcss-ticks > li:nth-child(n + 6) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--dcss-tick-n: 6) { .dcss-ticks > li:nth-child(n + 7) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--dcss-tick-n: 7) { .dcss-ticks > li:nth-child(n + 8) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--dcss-tick-n: 8) { .dcss-ticks > li:nth-child(n + 9) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--dcss-tick-n: 9) { .dcss-ticks > li:nth-child(n + 10) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--dcss-tick-n: 10) { .dcss-ticks > li:nth-child(n + 11) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--dcss-tick-n: 11) { .dcss-ticks > li:nth-child(n + 12) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--dcss-tick-n: 12) { .dcss-ticks > li:nth-child(n + 13) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--dcss-tick-n: 13) { .dcss-ticks > li:nth-child(n + 14) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--dcss-tick-n: 14) { .dcss-ticks > li:nth-child(n + 15) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--dcss-tick-n: 15) { .dcss-ticks > li:nth-child(n + 16) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--dcss-tick-n: 16) { .dcss-ticks > li:nth-child(n + 17) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--dcss-tick-n: 17) { .dcss-ticks > li:nth-child(n + 18) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--dcss-tick-n: 18) { .dcss-ticks > li:nth-child(n + 19) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--dcss-tick-n: 19) { .dcss-ticks > li:nth-child(n + 20) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--dcss-tick-n: 20) { .dcss-ticks > li:nth-child(n + 21) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--dcss-tick-n: 21) { .dcss-ticks > li:nth-child(n + 22) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--dcss-tick-n: 22) { .dcss-ticks > li:nth-child(n + 23) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--dcss-tick-n: 23) { .dcss-ticks > li:nth-child(n + 24) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--dcss-tick-n: 24) { .dcss-ticks > li:nth-child(n + 25) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--dcss-tick-n: 25) { .dcss-ticks > li:nth-child(n + 26) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--dcss-tick-n: 26) { .dcss-ticks > li:nth-child(n + 27) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--dcss-tick-n: 27) { .dcss-ticks > li:nth-child(n + 28) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--dcss-tick-n: 28) { .dcss-ticks > li:nth-child(n + 29) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--dcss-tick-n: 29) { .dcss-ticks > li:nth-child(n + 30) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--dcss-tick-n: 30) { .dcss-ticks > li:nth-child(n + 31) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--dcss-tick-n: 31) { .dcss-ticks > li:nth-child(n + 32) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--dcss-tick-n: 32) { .dcss-ticks > li:nth-child(n + 33) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--dcss-tick-n: 33) { .dcss-ticks > li:nth-child(n + 34) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--dcss-tick-n: 34) { .dcss-ticks > li:nth-child(n + 35) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--dcss-tick-n: 35) { .dcss-ticks > li:nth-child(n + 36) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--dcss-tick-n: 36) { .dcss-ticks > li:nth-child(n + 37) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--dcss-tick-n: 37) { .dcss-ticks > li:nth-child(n + 38) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--dcss-tick-n: 38) { .dcss-ticks > li:nth-child(n + 39) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--dcss-tick-n: 39) { .dcss-ticks > li:nth-child(n + 40) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--dcss-tick-n: 40) { .dcss-ticks > li:nth-child(n + 41) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--dcss-tick-n: 41) { .dcss-ticks > li:nth-child(n + 42) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--dcss-tick-n: 42) { .dcss-ticks > li:nth-child(n + 43) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--dcss-tick-n: 43) { .dcss-ticks > li:nth-child(n + 44) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--dcss-tick-n: 44) { .dcss-ticks > li:nth-child(n + 45) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--dcss-tick-n: 45) { .dcss-ticks > li:nth-child(n + 46) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--dcss-tick-n: 46) { .dcss-ticks > li:nth-child(n + 47) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--dcss-tick-n: 47) { .dcss-ticks > li:nth-child(n + 48) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--dcss-tick-n: 48) { .dcss-ticks > li:nth-child(n + 49) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--dcss-tick-n: 49) { .dcss-ticks > li:nth-child(n + 50) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--dcss-tick-n: 50) { .dcss-ticks > li:nth-child(n + 51) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--dcss-tick-n: 51) { .dcss-ticks > li:nth-child(n + 52) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--dcss-tick-n: 52) { .dcss-ticks > li:nth-child(n + 53) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--dcss-tick-n: 53) { .dcss-ticks > li:nth-child(n + 54) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--dcss-tick-n: 54) { .dcss-ticks > li:nth-child(n + 55) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--dcss-tick-n: 55) { .dcss-ticks > li:nth-child(n + 56) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--dcss-tick-n: 56) { .dcss-ticks > li:nth-child(n + 57) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--dcss-tick-n: 57) { .dcss-ticks > li:nth-child(n + 58) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--dcss-tick-n: 58) { .dcss-ticks > li:nth-child(n + 59) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--dcss-tick-n: 59) { .dcss-ticks > li:nth-child(n + 60) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--dcss-tick-n: 60) { .dcss-ticks > li:nth-child(n + 61) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--dcss-tick-n: 61) { .dcss-ticks > li:nth-child(n + 62) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--dcss-tick-n: 62) { .dcss-ticks > li:nth-child(n + 63) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--dcss-tick-n: 63) { .dcss-ticks > li:nth-child(n + 64) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+@container style(--dcss-tick-n: 64) { .dcss-ticks > li:nth-child(n + 65) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
+.dcss-nice { --dcss-n00-a: ((max(0, sign(var(--count, 10) - (0))) * abs(sign(var(--stop) - var(--start)))) * var(--start)); --dcss-n00-b: ((max(0, sign(var(--count, 10) - (0))) * abs(sign(var(--stop) - var(--start)))) * var(--stop) + 1 - (max(0, sign(var(--count, 10) - (0))) * abs(sign(var(--stop) - var(--start))))); --dcss-n00-s: calc((var(--dcss-n00-b) - var(--dcss-n00-a)) / max(0, (((max(0, sign(var(--count, 10) - (0))) * abs(sign(var(--stop) - var(--start)))) * var(--count, 10) + 1 - (max(0, sign(var(--count, 10) - (0))) * abs(sign(var(--stop) - var(--start))))) * 1))); --dcss-n00-p0: round(log(var(--dcss-n00-s), 10));
+  --dcss-n00-p: calc(var(--dcss-n00-p0) - max(0, sign(pow(10, var(--dcss-n00-p0)) - (var(--dcss-n00-s))))); --dcss-n00-e: calc(var(--dcss-n00-s) / pow(10, var(--dcss-n00-p)));
+  --dcss-n00-f: calc(1 + (1 - max(0, sign(sqrt(2) - (var(--dcss-n00-e))))) + 3 * (1 - max(0, sign(sqrt(10) - (var(--dcss-n00-e))))) + 5 * (1 - max(0, sign(sqrt(50) - (var(--dcss-n00-e)))))); --dcss-n00-m: max(0, sign(0 - (var(--dcss-n00-p))));
+  --dcss-n00-kn: calc(pow(10, -1 * var(--dcss-n00-p)) / var(--dcss-n00-f)); --dcss-n00-kp: calc(pow(10, var(--dcss-n00-p)) * var(--dcss-n00-f));
+  --dcss-n00-r1: round((var(--dcss-n00-m) * var(--dcss-n00-a) * var(--dcss-n00-kn) + (1 - var(--dcss-n00-m)) * var(--dcss-n00-a) / var(--dcss-n00-kp))); --dcss-n00-i1: calc(var(--dcss-n00-r1) + max(0, sign(var(--dcss-n00-a) - ((var(--dcss-n00-m) * var(--dcss-n00-r1) / var(--dcss-n00-kn) + (1 - var(--dcss-n00-m)) * var(--dcss-n00-r1) * var(--dcss-n00-kp))) - (abs((var(--dcss-n00-m) * var(--dcss-n00-r1) / var(--dcss-n00-kn) + (1 - var(--dcss-n00-m)) * var(--dcss-n00-r1) * var(--dcss-n00-kp))) * 8.9e-16))));
+  --dcss-n00-r2: round((var(--dcss-n00-m) * var(--dcss-n00-b) * var(--dcss-n00-kn) + (1 - var(--dcss-n00-m)) * var(--dcss-n00-b) / var(--dcss-n00-kp))); --dcss-n00-i2: calc(var(--dcss-n00-r2) - max(0, sign((var(--dcss-n00-m) * var(--dcss-n00-r2) / var(--dcss-n00-kn) + (1 - var(--dcss-n00-m)) * var(--dcss-n00-r2) * var(--dcss-n00-kp)) - (var(--dcss-n00-b)) - (abs(var(--dcss-n00-b)) * 8.9e-16))));
+  --dcss-n01-a: ((max(0, sign(var(--count, 10) - (0))) * abs(sign(var(--stop) - var(--start)))) * var(--start)); --dcss-n01-b: ((max(0, sign(var(--count, 10) - (0))) * abs(sign(var(--stop) - var(--start)))) * var(--stop) + 1 - (max(0, sign(var(--count, 10) - (0))) * abs(sign(var(--stop) - var(--start))))); --dcss-n01-s: calc((var(--dcss-n01-b) - var(--dcss-n01-a)) / max(0, (((max(0, sign(var(--count, 10) - (0))) * abs(sign(var(--stop) - var(--start)))) * var(--count, 10) + 1 - (max(0, sign(var(--count, 10) - (0))) * abs(sign(var(--stop) - var(--start))))) * 2))); --dcss-n01-p0: round(log(var(--dcss-n01-s), 10));
+  --dcss-n01-p: calc(var(--dcss-n01-p0) - max(0, sign(pow(10, var(--dcss-n01-p0)) - (var(--dcss-n01-s))))); --dcss-n01-e: calc(var(--dcss-n01-s) / pow(10, var(--dcss-n01-p)));
+  --dcss-n01-f: calc(1 + (1 - max(0, sign(sqrt(2) - (var(--dcss-n01-e))))) + 3 * (1 - max(0, sign(sqrt(10) - (var(--dcss-n01-e))))) + 5 * (1 - max(0, sign(sqrt(50) - (var(--dcss-n01-e)))))); --dcss-n01-m: max(0, sign(0 - (var(--dcss-n01-p))));
+  --dcss-n01-kn: calc(pow(10, -1 * var(--dcss-n01-p)) / var(--dcss-n01-f)); --dcss-n01-kp: calc(pow(10, var(--dcss-n01-p)) * var(--dcss-n01-f));
+  --dcss-n01-r1: round((var(--dcss-n01-m) * var(--dcss-n01-a) * var(--dcss-n01-kn) + (1 - var(--dcss-n01-m)) * var(--dcss-n01-a) / var(--dcss-n01-kp))); --dcss-n01-i1: calc(var(--dcss-n01-r1) + max(0, sign(var(--dcss-n01-a) - ((var(--dcss-n01-m) * var(--dcss-n01-r1) / var(--dcss-n01-kn) + (1 - var(--dcss-n01-m)) * var(--dcss-n01-r1) * var(--dcss-n01-kp))) - (abs((var(--dcss-n01-m) * var(--dcss-n01-r1) / var(--dcss-n01-kn) + (1 - var(--dcss-n01-m)) * var(--dcss-n01-r1) * var(--dcss-n01-kp))) * 8.9e-16))));
+  --dcss-n01-r2: round((var(--dcss-n01-m) * var(--dcss-n01-b) * var(--dcss-n01-kn) + (1 - var(--dcss-n01-m)) * var(--dcss-n01-b) / var(--dcss-n01-kp))); --dcss-n01-i2: calc(var(--dcss-n01-r2) - max(0, sign((var(--dcss-n01-m) * var(--dcss-n01-r2) / var(--dcss-n01-kn) + (1 - var(--dcss-n01-m)) * var(--dcss-n01-r2) * var(--dcss-n01-kp)) - (var(--dcss-n01-b)) - (abs(var(--dcss-n01-b)) * 8.9e-16))));
+  --dcss-n02-a: ((max(0, sign(var(--count, 10) - (0))) * abs(sign(var(--stop) - var(--start)))) * var(--start)); --dcss-n02-b: ((max(0, sign(var(--count, 10) - (0))) * abs(sign(var(--stop) - var(--start)))) * var(--stop) + 1 - (max(0, sign(var(--count, 10) - (0))) * abs(sign(var(--stop) - var(--start))))); --dcss-n02-s: calc((var(--dcss-n02-b) - var(--dcss-n02-a)) / max(0, (((max(0, sign(var(--count, 10) - (0))) * abs(sign(var(--stop) - var(--start)))) * var(--count, 10) + 1 - (max(0, sign(var(--count, 10) - (0))) * abs(sign(var(--stop) - var(--start))))) * 4))); --dcss-n02-p0: round(log(var(--dcss-n02-s), 10));
+  --dcss-n02-p: calc(var(--dcss-n02-p0) - max(0, sign(pow(10, var(--dcss-n02-p0)) - (var(--dcss-n02-s))))); --dcss-n02-e: calc(var(--dcss-n02-s) / pow(10, var(--dcss-n02-p)));
+  --dcss-n02-f: calc(1 + (1 - max(0, sign(sqrt(2) - (var(--dcss-n02-e))))) + 3 * (1 - max(0, sign(sqrt(10) - (var(--dcss-n02-e))))) + 5 * (1 - max(0, sign(sqrt(50) - (var(--dcss-n02-e)))))); --dcss-n02-m: max(0, sign(0 - (var(--dcss-n02-p))));
+  --dcss-n02-kn: calc(pow(10, -1 * var(--dcss-n02-p)) / var(--dcss-n02-f)); --dcss-n02-kp: calc(pow(10, var(--dcss-n02-p)) * var(--dcss-n02-f));
+  --dcss-n02-r1: round((var(--dcss-n02-m) * var(--dcss-n02-a) * var(--dcss-n02-kn) + (1 - var(--dcss-n02-m)) * var(--dcss-n02-a) / var(--dcss-n02-kp))); --dcss-n02-i1: calc(var(--dcss-n02-r1) + max(0, sign(var(--dcss-n02-a) - ((var(--dcss-n02-m) * var(--dcss-n02-r1) / var(--dcss-n02-kn) + (1 - var(--dcss-n02-m)) * var(--dcss-n02-r1) * var(--dcss-n02-kp))) - (abs((var(--dcss-n02-m) * var(--dcss-n02-r1) / var(--dcss-n02-kn) + (1 - var(--dcss-n02-m)) * var(--dcss-n02-r1) * var(--dcss-n02-kp))) * 8.9e-16))));
+  --dcss-n02-r2: round((var(--dcss-n02-m) * var(--dcss-n02-b) * var(--dcss-n02-kn) + (1 - var(--dcss-n02-m)) * var(--dcss-n02-b) / var(--dcss-n02-kp))); --dcss-n02-i2: calc(var(--dcss-n02-r2) - max(0, sign((var(--dcss-n02-m) * var(--dcss-n02-r2) / var(--dcss-n02-kn) + (1 - var(--dcss-n02-m)) * var(--dcss-n02-r2) * var(--dcss-n02-kp)) - (var(--dcss-n02-b)) - (abs(var(--dcss-n02-b)) * 8.9e-16))));
+  --dcss-n0-l: calc(max(0, sign(var(--dcss-n00-i1) - (var(--dcss-n00-i2)))) * (1 - max(0, sign(0.5 - (((max(0, sign(var(--count, 10) - (0))) * abs(sign(var(--stop) - var(--start)))) * var(--count, 10) + 1 - (max(0, sign(var(--count, 10) - (0))) * abs(sign(var(--stop) - var(--start))))) * 1)))) * max(0, sign(2 - (((max(0, sign(var(--count, 10) - (0))) * abs(sign(var(--stop) - var(--start)))) * var(--count, 10) + 1 - (max(0, sign(var(--count, 10) - (0))) * abs(sign(var(--stop) - var(--start))))) * 1))) * (1 + max(0, sign(var(--dcss-n01-i1) - (var(--dcss-n01-i2)))) * (1 - max(0, sign(0.5 - (((max(0, sign(var(--count, 10) - (0))) * abs(sign(var(--stop) - var(--start)))) * var(--count, 10) + 1 - (max(0, sign(var(--count, 10) - (0))) * abs(sign(var(--stop) - var(--start))))) * 2)))) * max(0, sign(2 - (((max(0, sign(var(--count, 10) - (0))) * abs(sign(var(--stop) - var(--start)))) * var(--count, 10) + 1 - (max(0, sign(var(--count, 10) - (0))) * abs(sign(var(--stop) - var(--start))))) * 2))))); --dcss-n0-p: calc((1 - min(1, abs(var(--dcss-n0-l) - 0))) * var(--dcss-n00-p) + (1 - min(1, abs(var(--dcss-n0-l) - 1))) * var(--dcss-n01-p) + (1 - min(1, abs(var(--dcss-n0-l) - 2))) * var(--dcss-n02-p)); --dcss-n0-f: calc((1 - min(1, abs(var(--dcss-n0-l) - 0))) * var(--dcss-n00-f) + (1 - min(1, abs(var(--dcss-n0-l) - 1))) * var(--dcss-n01-f) + (1 - min(1, abs(var(--dcss-n0-l) - 2))) * var(--dcss-n02-f)); --dcss-n0-m: calc((1 - min(1, abs(var(--dcss-n0-l) - 0))) * var(--dcss-n00-m) + (1 - min(1, abs(var(--dcss-n0-l) - 1))) * var(--dcss-n01-m) + (1 - min(1, abs(var(--dcss-n0-l) - 2))) * var(--dcss-n02-m)); --dcss-n0-i1: calc((1 - min(1, abs(var(--dcss-n0-l) - 0))) * var(--dcss-n00-i1) + (1 - min(1, abs(var(--dcss-n0-l) - 1))) * var(--dcss-n01-i1) + (1 - min(1, abs(var(--dcss-n0-l) - 2))) * var(--dcss-n02-i1)); --dcss-n0-i2: calc((1 - min(1, abs(var(--dcss-n0-l) - 0))) * var(--dcss-n00-i2) + (1 - min(1, abs(var(--dcss-n0-l) - 1))) * var(--dcss-n01-i2) + (1 - min(1, abs(var(--dcss-n0-l) - 2))) * var(--dcss-n02-i2));
+  --dcss-n0-kn: calc(pow(10, -1 * var(--dcss-n0-p)) / var(--dcss-n0-f)); --dcss-n0-kp: calc(pow(10, var(--dcss-n0-p)) * var(--dcss-n0-f));
+  --dcss-n0-inc: calc(var(--dcss-n0-m) * -1 * var(--dcss-n0-kn) + (1 - var(--dcss-n0-m)) * var(--dcss-n0-kp));
+  --dcss-n0-a2: calc(var(--dcss-n0-m) * round(up, ((max(0, sign(var(--count, 10) - (0))) * abs(sign(var(--stop) - var(--start)))) * var(--start)) * -1 * var(--dcss-n0-kn), 1) / (-1 * var(--dcss-n0-kn)) + (1 - var(--dcss-n0-m)) * round(down, ((max(0, sign(var(--count, 10) - (0))) * abs(sign(var(--stop) - var(--start)))) * var(--start)) / var(--dcss-n0-kp), 1) * var(--dcss-n0-kp));
+  --dcss-n0-b2: calc(var(--dcss-n0-m) * round(down, ((max(0, sign(var(--count, 10) - (0))) * abs(sign(var(--stop) - var(--start)))) * var(--stop) + 1 - (max(0, sign(var(--count, 10) - (0))) * abs(sign(var(--stop) - var(--start))))) * -1 * var(--dcss-n0-kn), 1) / (-1 * var(--dcss-n0-kn)) + (1 - var(--dcss-n0-m)) * round(up, ((max(0, sign(var(--count, 10) - (0))) * abs(sign(var(--stop) - var(--start)))) * var(--stop) + 1 - (max(0, sign(var(--count, 10) - (0))) * abs(sign(var(--stop) - var(--start))))) / var(--dcss-n0-kp), 1) * var(--dcss-n0-kp));
+  --dcss-n10-a: var(--dcss-n0-a2); --dcss-n10-b: var(--dcss-n0-b2); --dcss-n10-s: calc((var(--dcss-n10-b) - var(--dcss-n10-a)) / max(0, (((max(0, sign(var(--count, 10) - (0))) * abs(sign(var(--stop) - var(--start)))) * var(--count, 10) + 1 - (max(0, sign(var(--count, 10) - (0))) * abs(sign(var(--stop) - var(--start))))) * 1))); --dcss-n10-p0: round(log(var(--dcss-n10-s), 10));
+  --dcss-n10-p: calc(var(--dcss-n10-p0) - max(0, sign(pow(10, var(--dcss-n10-p0)) - (var(--dcss-n10-s))))); --dcss-n10-e: calc(var(--dcss-n10-s) / pow(10, var(--dcss-n10-p)));
+  --dcss-n10-f: calc(1 + (1 - max(0, sign(sqrt(2) - (var(--dcss-n10-e))))) + 3 * (1 - max(0, sign(sqrt(10) - (var(--dcss-n10-e))))) + 5 * (1 - max(0, sign(sqrt(50) - (var(--dcss-n10-e)))))); --dcss-n10-m: max(0, sign(0 - (var(--dcss-n10-p))));
+  --dcss-n10-kn: calc(pow(10, -1 * var(--dcss-n10-p)) / var(--dcss-n10-f)); --dcss-n10-kp: calc(pow(10, var(--dcss-n10-p)) * var(--dcss-n10-f));
+  --dcss-n10-r1: round((var(--dcss-n10-m) * var(--dcss-n10-a) * var(--dcss-n10-kn) + (1 - var(--dcss-n10-m)) * var(--dcss-n10-a) / var(--dcss-n10-kp))); --dcss-n10-i1: calc(var(--dcss-n10-r1) + max(0, sign(var(--dcss-n10-a) - ((var(--dcss-n10-m) * var(--dcss-n10-r1) / var(--dcss-n10-kn) + (1 - var(--dcss-n10-m)) * var(--dcss-n10-r1) * var(--dcss-n10-kp))) - (abs((var(--dcss-n10-m) * var(--dcss-n10-r1) / var(--dcss-n10-kn) + (1 - var(--dcss-n10-m)) * var(--dcss-n10-r1) * var(--dcss-n10-kp))) * 8.9e-16))));
+  --dcss-n10-r2: round((var(--dcss-n10-m) * var(--dcss-n10-b) * var(--dcss-n10-kn) + (1 - var(--dcss-n10-m)) * var(--dcss-n10-b) / var(--dcss-n10-kp))); --dcss-n10-i2: calc(var(--dcss-n10-r2) - max(0, sign((var(--dcss-n10-m) * var(--dcss-n10-r2) / var(--dcss-n10-kn) + (1 - var(--dcss-n10-m)) * var(--dcss-n10-r2) * var(--dcss-n10-kp)) - (var(--dcss-n10-b)) - (abs(var(--dcss-n10-b)) * 8.9e-16))));
+  --dcss-n11-a: var(--dcss-n0-a2); --dcss-n11-b: var(--dcss-n0-b2); --dcss-n11-s: calc((var(--dcss-n11-b) - var(--dcss-n11-a)) / max(0, (((max(0, sign(var(--count, 10) - (0))) * abs(sign(var(--stop) - var(--start)))) * var(--count, 10) + 1 - (max(0, sign(var(--count, 10) - (0))) * abs(sign(var(--stop) - var(--start))))) * 2))); --dcss-n11-p0: round(log(var(--dcss-n11-s), 10));
+  --dcss-n11-p: calc(var(--dcss-n11-p0) - max(0, sign(pow(10, var(--dcss-n11-p0)) - (var(--dcss-n11-s))))); --dcss-n11-e: calc(var(--dcss-n11-s) / pow(10, var(--dcss-n11-p)));
+  --dcss-n11-f: calc(1 + (1 - max(0, sign(sqrt(2) - (var(--dcss-n11-e))))) + 3 * (1 - max(0, sign(sqrt(10) - (var(--dcss-n11-e))))) + 5 * (1 - max(0, sign(sqrt(50) - (var(--dcss-n11-e)))))); --dcss-n11-m: max(0, sign(0 - (var(--dcss-n11-p))));
+  --dcss-n11-kn: calc(pow(10, -1 * var(--dcss-n11-p)) / var(--dcss-n11-f)); --dcss-n11-kp: calc(pow(10, var(--dcss-n11-p)) * var(--dcss-n11-f));
+  --dcss-n11-r1: round((var(--dcss-n11-m) * var(--dcss-n11-a) * var(--dcss-n11-kn) + (1 - var(--dcss-n11-m)) * var(--dcss-n11-a) / var(--dcss-n11-kp))); --dcss-n11-i1: calc(var(--dcss-n11-r1) + max(0, sign(var(--dcss-n11-a) - ((var(--dcss-n11-m) * var(--dcss-n11-r1) / var(--dcss-n11-kn) + (1 - var(--dcss-n11-m)) * var(--dcss-n11-r1) * var(--dcss-n11-kp))) - (abs((var(--dcss-n11-m) * var(--dcss-n11-r1) / var(--dcss-n11-kn) + (1 - var(--dcss-n11-m)) * var(--dcss-n11-r1) * var(--dcss-n11-kp))) * 8.9e-16))));
+  --dcss-n11-r2: round((var(--dcss-n11-m) * var(--dcss-n11-b) * var(--dcss-n11-kn) + (1 - var(--dcss-n11-m)) * var(--dcss-n11-b) / var(--dcss-n11-kp))); --dcss-n11-i2: calc(var(--dcss-n11-r2) - max(0, sign((var(--dcss-n11-m) * var(--dcss-n11-r2) / var(--dcss-n11-kn) + (1 - var(--dcss-n11-m)) * var(--dcss-n11-r2) * var(--dcss-n11-kp)) - (var(--dcss-n11-b)) - (abs(var(--dcss-n11-b)) * 8.9e-16))));
+  --dcss-n12-a: var(--dcss-n0-a2); --dcss-n12-b: var(--dcss-n0-b2); --dcss-n12-s: calc((var(--dcss-n12-b) - var(--dcss-n12-a)) / max(0, (((max(0, sign(var(--count, 10) - (0))) * abs(sign(var(--stop) - var(--start)))) * var(--count, 10) + 1 - (max(0, sign(var(--count, 10) - (0))) * abs(sign(var(--stop) - var(--start))))) * 4))); --dcss-n12-p0: round(log(var(--dcss-n12-s), 10));
+  --dcss-n12-p: calc(var(--dcss-n12-p0) - max(0, sign(pow(10, var(--dcss-n12-p0)) - (var(--dcss-n12-s))))); --dcss-n12-e: calc(var(--dcss-n12-s) / pow(10, var(--dcss-n12-p)));
+  --dcss-n12-f: calc(1 + (1 - max(0, sign(sqrt(2) - (var(--dcss-n12-e))))) + 3 * (1 - max(0, sign(sqrt(10) - (var(--dcss-n12-e))))) + 5 * (1 - max(0, sign(sqrt(50) - (var(--dcss-n12-e)))))); --dcss-n12-m: max(0, sign(0 - (var(--dcss-n12-p))));
+  --dcss-n12-kn: calc(pow(10, -1 * var(--dcss-n12-p)) / var(--dcss-n12-f)); --dcss-n12-kp: calc(pow(10, var(--dcss-n12-p)) * var(--dcss-n12-f));
+  --dcss-n12-r1: round((var(--dcss-n12-m) * var(--dcss-n12-a) * var(--dcss-n12-kn) + (1 - var(--dcss-n12-m)) * var(--dcss-n12-a) / var(--dcss-n12-kp))); --dcss-n12-i1: calc(var(--dcss-n12-r1) + max(0, sign(var(--dcss-n12-a) - ((var(--dcss-n12-m) * var(--dcss-n12-r1) / var(--dcss-n12-kn) + (1 - var(--dcss-n12-m)) * var(--dcss-n12-r1) * var(--dcss-n12-kp))) - (abs((var(--dcss-n12-m) * var(--dcss-n12-r1) / var(--dcss-n12-kn) + (1 - var(--dcss-n12-m)) * var(--dcss-n12-r1) * var(--dcss-n12-kp))) * 8.9e-16))));
+  --dcss-n12-r2: round((var(--dcss-n12-m) * var(--dcss-n12-b) * var(--dcss-n12-kn) + (1 - var(--dcss-n12-m)) * var(--dcss-n12-b) / var(--dcss-n12-kp))); --dcss-n12-i2: calc(var(--dcss-n12-r2) - max(0, sign((var(--dcss-n12-m) * var(--dcss-n12-r2) / var(--dcss-n12-kn) + (1 - var(--dcss-n12-m)) * var(--dcss-n12-r2) * var(--dcss-n12-kp)) - (var(--dcss-n12-b)) - (abs(var(--dcss-n12-b)) * 8.9e-16))));
+  --dcss-n1-l: calc(max(0, sign(var(--dcss-n10-i1) - (var(--dcss-n10-i2)))) * (1 - max(0, sign(0.5 - (((max(0, sign(var(--count, 10) - (0))) * abs(sign(var(--stop) - var(--start)))) * var(--count, 10) + 1 - (max(0, sign(var(--count, 10) - (0))) * abs(sign(var(--stop) - var(--start))))) * 1)))) * max(0, sign(2 - (((max(0, sign(var(--count, 10) - (0))) * abs(sign(var(--stop) - var(--start)))) * var(--count, 10) + 1 - (max(0, sign(var(--count, 10) - (0))) * abs(sign(var(--stop) - var(--start))))) * 1))) * (1 + max(0, sign(var(--dcss-n11-i1) - (var(--dcss-n11-i2)))) * (1 - max(0, sign(0.5 - (((max(0, sign(var(--count, 10) - (0))) * abs(sign(var(--stop) - var(--start)))) * var(--count, 10) + 1 - (max(0, sign(var(--count, 10) - (0))) * abs(sign(var(--stop) - var(--start))))) * 2)))) * max(0, sign(2 - (((max(0, sign(var(--count, 10) - (0))) * abs(sign(var(--stop) - var(--start)))) * var(--count, 10) + 1 - (max(0, sign(var(--count, 10) - (0))) * abs(sign(var(--stop) - var(--start))))) * 2))))); --dcss-n1-p: calc((1 - min(1, abs(var(--dcss-n1-l) - 0))) * var(--dcss-n10-p) + (1 - min(1, abs(var(--dcss-n1-l) - 1))) * var(--dcss-n11-p) + (1 - min(1, abs(var(--dcss-n1-l) - 2))) * var(--dcss-n12-p)); --dcss-n1-f: calc((1 - min(1, abs(var(--dcss-n1-l) - 0))) * var(--dcss-n10-f) + (1 - min(1, abs(var(--dcss-n1-l) - 1))) * var(--dcss-n11-f) + (1 - min(1, abs(var(--dcss-n1-l) - 2))) * var(--dcss-n12-f)); --dcss-n1-m: calc((1 - min(1, abs(var(--dcss-n1-l) - 0))) * var(--dcss-n10-m) + (1 - min(1, abs(var(--dcss-n1-l) - 1))) * var(--dcss-n11-m) + (1 - min(1, abs(var(--dcss-n1-l) - 2))) * var(--dcss-n12-m)); --dcss-n1-i1: calc((1 - min(1, abs(var(--dcss-n1-l) - 0))) * var(--dcss-n10-i1) + (1 - min(1, abs(var(--dcss-n1-l) - 1))) * var(--dcss-n11-i1) + (1 - min(1, abs(var(--dcss-n1-l) - 2))) * var(--dcss-n12-i1)); --dcss-n1-i2: calc((1 - min(1, abs(var(--dcss-n1-l) - 0))) * var(--dcss-n10-i2) + (1 - min(1, abs(var(--dcss-n1-l) - 1))) * var(--dcss-n11-i2) + (1 - min(1, abs(var(--dcss-n1-l) - 2))) * var(--dcss-n12-i2));
+  --dcss-n1-kn: calc(pow(10, -1 * var(--dcss-n1-p)) / var(--dcss-n1-f)); --dcss-n1-kp: calc(pow(10, var(--dcss-n1-p)) * var(--dcss-n1-f));
+  --dcss-n1-inc: calc(var(--dcss-n1-m) * -1 * var(--dcss-n1-kn) + (1 - var(--dcss-n1-m)) * var(--dcss-n1-kp));
+  --dcss-n1-a2: calc(var(--dcss-n1-m) * round(up, var(--dcss-n0-a2) * -1 * var(--dcss-n1-kn), 1) / (-1 * var(--dcss-n1-kn)) + (1 - var(--dcss-n1-m)) * round(down, var(--dcss-n0-a2) / var(--dcss-n1-kp), 1) * var(--dcss-n1-kp));
+  --dcss-n1-b2: calc(var(--dcss-n1-m) * round(down, var(--dcss-n0-b2) * -1 * var(--dcss-n1-kn), 1) / (-1 * var(--dcss-n1-kn)) + (1 - var(--dcss-n1-m)) * round(up, var(--dcss-n0-b2) / var(--dcss-n1-kp), 1) * var(--dcss-n1-kp));
+  --dcss-n20-a: var(--dcss-n1-a2); --dcss-n20-b: var(--dcss-n1-b2); --dcss-n20-s: calc((var(--dcss-n20-b) - var(--dcss-n20-a)) / max(0, (((max(0, sign(var(--count, 10) - (0))) * abs(sign(var(--stop) - var(--start)))) * var(--count, 10) + 1 - (max(0, sign(var(--count, 10) - (0))) * abs(sign(var(--stop) - var(--start))))) * 1))); --dcss-n20-p0: round(log(var(--dcss-n20-s), 10));
+  --dcss-n20-p: calc(var(--dcss-n20-p0) - max(0, sign(pow(10, var(--dcss-n20-p0)) - (var(--dcss-n20-s))))); --dcss-n20-e: calc(var(--dcss-n20-s) / pow(10, var(--dcss-n20-p)));
+  --dcss-n20-f: calc(1 + (1 - max(0, sign(sqrt(2) - (var(--dcss-n20-e))))) + 3 * (1 - max(0, sign(sqrt(10) - (var(--dcss-n20-e))))) + 5 * (1 - max(0, sign(sqrt(50) - (var(--dcss-n20-e)))))); --dcss-n20-m: max(0, sign(0 - (var(--dcss-n20-p))));
+  --dcss-n20-kn: calc(pow(10, -1 * var(--dcss-n20-p)) / var(--dcss-n20-f)); --dcss-n20-kp: calc(pow(10, var(--dcss-n20-p)) * var(--dcss-n20-f));
+  --dcss-n20-r1: round((var(--dcss-n20-m) * var(--dcss-n20-a) * var(--dcss-n20-kn) + (1 - var(--dcss-n20-m)) * var(--dcss-n20-a) / var(--dcss-n20-kp))); --dcss-n20-i1: calc(var(--dcss-n20-r1) + max(0, sign(var(--dcss-n20-a) - ((var(--dcss-n20-m) * var(--dcss-n20-r1) / var(--dcss-n20-kn) + (1 - var(--dcss-n20-m)) * var(--dcss-n20-r1) * var(--dcss-n20-kp))) - (abs((var(--dcss-n20-m) * var(--dcss-n20-r1) / var(--dcss-n20-kn) + (1 - var(--dcss-n20-m)) * var(--dcss-n20-r1) * var(--dcss-n20-kp))) * 8.9e-16))));
+  --dcss-n20-r2: round((var(--dcss-n20-m) * var(--dcss-n20-b) * var(--dcss-n20-kn) + (1 - var(--dcss-n20-m)) * var(--dcss-n20-b) / var(--dcss-n20-kp))); --dcss-n20-i2: calc(var(--dcss-n20-r2) - max(0, sign((var(--dcss-n20-m) * var(--dcss-n20-r2) / var(--dcss-n20-kn) + (1 - var(--dcss-n20-m)) * var(--dcss-n20-r2) * var(--dcss-n20-kp)) - (var(--dcss-n20-b)) - (abs(var(--dcss-n20-b)) * 8.9e-16))));
+  --dcss-n21-a: var(--dcss-n1-a2); --dcss-n21-b: var(--dcss-n1-b2); --dcss-n21-s: calc((var(--dcss-n21-b) - var(--dcss-n21-a)) / max(0, (((max(0, sign(var(--count, 10) - (0))) * abs(sign(var(--stop) - var(--start)))) * var(--count, 10) + 1 - (max(0, sign(var(--count, 10) - (0))) * abs(sign(var(--stop) - var(--start))))) * 2))); --dcss-n21-p0: round(log(var(--dcss-n21-s), 10));
+  --dcss-n21-p: calc(var(--dcss-n21-p0) - max(0, sign(pow(10, var(--dcss-n21-p0)) - (var(--dcss-n21-s))))); --dcss-n21-e: calc(var(--dcss-n21-s) / pow(10, var(--dcss-n21-p)));
+  --dcss-n21-f: calc(1 + (1 - max(0, sign(sqrt(2) - (var(--dcss-n21-e))))) + 3 * (1 - max(0, sign(sqrt(10) - (var(--dcss-n21-e))))) + 5 * (1 - max(0, sign(sqrt(50) - (var(--dcss-n21-e)))))); --dcss-n21-m: max(0, sign(0 - (var(--dcss-n21-p))));
+  --dcss-n21-kn: calc(pow(10, -1 * var(--dcss-n21-p)) / var(--dcss-n21-f)); --dcss-n21-kp: calc(pow(10, var(--dcss-n21-p)) * var(--dcss-n21-f));
+  --dcss-n21-r1: round((var(--dcss-n21-m) * var(--dcss-n21-a) * var(--dcss-n21-kn) + (1 - var(--dcss-n21-m)) * var(--dcss-n21-a) / var(--dcss-n21-kp))); --dcss-n21-i1: calc(var(--dcss-n21-r1) + max(0, sign(var(--dcss-n21-a) - ((var(--dcss-n21-m) * var(--dcss-n21-r1) / var(--dcss-n21-kn) + (1 - var(--dcss-n21-m)) * var(--dcss-n21-r1) * var(--dcss-n21-kp))) - (abs((var(--dcss-n21-m) * var(--dcss-n21-r1) / var(--dcss-n21-kn) + (1 - var(--dcss-n21-m)) * var(--dcss-n21-r1) * var(--dcss-n21-kp))) * 8.9e-16))));
+  --dcss-n21-r2: round((var(--dcss-n21-m) * var(--dcss-n21-b) * var(--dcss-n21-kn) + (1 - var(--dcss-n21-m)) * var(--dcss-n21-b) / var(--dcss-n21-kp))); --dcss-n21-i2: calc(var(--dcss-n21-r2) - max(0, sign((var(--dcss-n21-m) * var(--dcss-n21-r2) / var(--dcss-n21-kn) + (1 - var(--dcss-n21-m)) * var(--dcss-n21-r2) * var(--dcss-n21-kp)) - (var(--dcss-n21-b)) - (abs(var(--dcss-n21-b)) * 8.9e-16))));
+  --dcss-n22-a: var(--dcss-n1-a2); --dcss-n22-b: var(--dcss-n1-b2); --dcss-n22-s: calc((var(--dcss-n22-b) - var(--dcss-n22-a)) / max(0, (((max(0, sign(var(--count, 10) - (0))) * abs(sign(var(--stop) - var(--start)))) * var(--count, 10) + 1 - (max(0, sign(var(--count, 10) - (0))) * abs(sign(var(--stop) - var(--start))))) * 4))); --dcss-n22-p0: round(log(var(--dcss-n22-s), 10));
+  --dcss-n22-p: calc(var(--dcss-n22-p0) - max(0, sign(pow(10, var(--dcss-n22-p0)) - (var(--dcss-n22-s))))); --dcss-n22-e: calc(var(--dcss-n22-s) / pow(10, var(--dcss-n22-p)));
+  --dcss-n22-f: calc(1 + (1 - max(0, sign(sqrt(2) - (var(--dcss-n22-e))))) + 3 * (1 - max(0, sign(sqrt(10) - (var(--dcss-n22-e))))) + 5 * (1 - max(0, sign(sqrt(50) - (var(--dcss-n22-e)))))); --dcss-n22-m: max(0, sign(0 - (var(--dcss-n22-p))));
+  --dcss-n22-kn: calc(pow(10, -1 * var(--dcss-n22-p)) / var(--dcss-n22-f)); --dcss-n22-kp: calc(pow(10, var(--dcss-n22-p)) * var(--dcss-n22-f));
+  --dcss-n22-r1: round((var(--dcss-n22-m) * var(--dcss-n22-a) * var(--dcss-n22-kn) + (1 - var(--dcss-n22-m)) * var(--dcss-n22-a) / var(--dcss-n22-kp))); --dcss-n22-i1: calc(var(--dcss-n22-r1) + max(0, sign(var(--dcss-n22-a) - ((var(--dcss-n22-m) * var(--dcss-n22-r1) / var(--dcss-n22-kn) + (1 - var(--dcss-n22-m)) * var(--dcss-n22-r1) * var(--dcss-n22-kp))) - (abs((var(--dcss-n22-m) * var(--dcss-n22-r1) / var(--dcss-n22-kn) + (1 - var(--dcss-n22-m)) * var(--dcss-n22-r1) * var(--dcss-n22-kp))) * 8.9e-16))));
+  --dcss-n22-r2: round((var(--dcss-n22-m) * var(--dcss-n22-b) * var(--dcss-n22-kn) + (1 - var(--dcss-n22-m)) * var(--dcss-n22-b) / var(--dcss-n22-kp))); --dcss-n22-i2: calc(var(--dcss-n22-r2) - max(0, sign((var(--dcss-n22-m) * var(--dcss-n22-r2) / var(--dcss-n22-kn) + (1 - var(--dcss-n22-m)) * var(--dcss-n22-r2) * var(--dcss-n22-kp)) - (var(--dcss-n22-b)) - (abs(var(--dcss-n22-b)) * 8.9e-16))));
+  --dcss-n2-l: calc(max(0, sign(var(--dcss-n20-i1) - (var(--dcss-n20-i2)))) * (1 - max(0, sign(0.5 - (((max(0, sign(var(--count, 10) - (0))) * abs(sign(var(--stop) - var(--start)))) * var(--count, 10) + 1 - (max(0, sign(var(--count, 10) - (0))) * abs(sign(var(--stop) - var(--start))))) * 1)))) * max(0, sign(2 - (((max(0, sign(var(--count, 10) - (0))) * abs(sign(var(--stop) - var(--start)))) * var(--count, 10) + 1 - (max(0, sign(var(--count, 10) - (0))) * abs(sign(var(--stop) - var(--start))))) * 1))) * (1 + max(0, sign(var(--dcss-n21-i1) - (var(--dcss-n21-i2)))) * (1 - max(0, sign(0.5 - (((max(0, sign(var(--count, 10) - (0))) * abs(sign(var(--stop) - var(--start)))) * var(--count, 10) + 1 - (max(0, sign(var(--count, 10) - (0))) * abs(sign(var(--stop) - var(--start))))) * 2)))) * max(0, sign(2 - (((max(0, sign(var(--count, 10) - (0))) * abs(sign(var(--stop) - var(--start)))) * var(--count, 10) + 1 - (max(0, sign(var(--count, 10) - (0))) * abs(sign(var(--stop) - var(--start))))) * 2))))); --dcss-n2-p: calc((1 - min(1, abs(var(--dcss-n2-l) - 0))) * var(--dcss-n20-p) + (1 - min(1, abs(var(--dcss-n2-l) - 1))) * var(--dcss-n21-p) + (1 - min(1, abs(var(--dcss-n2-l) - 2))) * var(--dcss-n22-p)); --dcss-n2-f: calc((1 - min(1, abs(var(--dcss-n2-l) - 0))) * var(--dcss-n20-f) + (1 - min(1, abs(var(--dcss-n2-l) - 1))) * var(--dcss-n21-f) + (1 - min(1, abs(var(--dcss-n2-l) - 2))) * var(--dcss-n22-f)); --dcss-n2-m: calc((1 - min(1, abs(var(--dcss-n2-l) - 0))) * var(--dcss-n20-m) + (1 - min(1, abs(var(--dcss-n2-l) - 1))) * var(--dcss-n21-m) + (1 - min(1, abs(var(--dcss-n2-l) - 2))) * var(--dcss-n22-m)); --dcss-n2-i1: calc((1 - min(1, abs(var(--dcss-n2-l) - 0))) * var(--dcss-n20-i1) + (1 - min(1, abs(var(--dcss-n2-l) - 1))) * var(--dcss-n21-i1) + (1 - min(1, abs(var(--dcss-n2-l) - 2))) * var(--dcss-n22-i1)); --dcss-n2-i2: calc((1 - min(1, abs(var(--dcss-n2-l) - 0))) * var(--dcss-n20-i2) + (1 - min(1, abs(var(--dcss-n2-l) - 1))) * var(--dcss-n21-i2) + (1 - min(1, abs(var(--dcss-n2-l) - 2))) * var(--dcss-n22-i2));
+  --dcss-n2-kn: calc(pow(10, -1 * var(--dcss-n2-p)) / var(--dcss-n2-f)); --dcss-n2-kp: calc(pow(10, var(--dcss-n2-p)) * var(--dcss-n2-f));
+  --dcss-n2-inc: calc(var(--dcss-n2-m) * -1 * var(--dcss-n2-kn) + (1 - var(--dcss-n2-m)) * var(--dcss-n2-kp));
+  --dcss-n2-a2: calc(var(--dcss-n2-m) * round(up, var(--dcss-n1-a2) * -1 * var(--dcss-n2-kn), 1) / (-1 * var(--dcss-n2-kn)) + (1 - var(--dcss-n2-m)) * round(down, var(--dcss-n1-a2) / var(--dcss-n2-kp), 1) * var(--dcss-n2-kp));
+  --dcss-n2-b2: calc(var(--dcss-n2-m) * round(down, var(--dcss-n1-b2) * -1 * var(--dcss-n2-kn), 1) / (-1 * var(--dcss-n2-kn)) + (1 - var(--dcss-n2-m)) * round(up, var(--dcss-n1-b2) / var(--dcss-n2-kp), 1) * var(--dcss-n2-kp));
+  --dcss-n30-a: var(--dcss-n2-a2); --dcss-n30-b: var(--dcss-n2-b2); --dcss-n30-s: calc((var(--dcss-n30-b) - var(--dcss-n30-a)) / max(0, (((max(0, sign(var(--count, 10) - (0))) * abs(sign(var(--stop) - var(--start)))) * var(--count, 10) + 1 - (max(0, sign(var(--count, 10) - (0))) * abs(sign(var(--stop) - var(--start))))) * 1))); --dcss-n30-p0: round(log(var(--dcss-n30-s), 10));
+  --dcss-n30-p: calc(var(--dcss-n30-p0) - max(0, sign(pow(10, var(--dcss-n30-p0)) - (var(--dcss-n30-s))))); --dcss-n30-e: calc(var(--dcss-n30-s) / pow(10, var(--dcss-n30-p)));
+  --dcss-n30-f: calc(1 + (1 - max(0, sign(sqrt(2) - (var(--dcss-n30-e))))) + 3 * (1 - max(0, sign(sqrt(10) - (var(--dcss-n30-e))))) + 5 * (1 - max(0, sign(sqrt(50) - (var(--dcss-n30-e)))))); --dcss-n30-m: max(0, sign(0 - (var(--dcss-n30-p))));
+  --dcss-n30-kn: calc(pow(10, -1 * var(--dcss-n30-p)) / var(--dcss-n30-f)); --dcss-n30-kp: calc(pow(10, var(--dcss-n30-p)) * var(--dcss-n30-f));
+  --dcss-n30-r1: round((var(--dcss-n30-m) * var(--dcss-n30-a) * var(--dcss-n30-kn) + (1 - var(--dcss-n30-m)) * var(--dcss-n30-a) / var(--dcss-n30-kp))); --dcss-n30-i1: calc(var(--dcss-n30-r1) + max(0, sign(var(--dcss-n30-a) - ((var(--dcss-n30-m) * var(--dcss-n30-r1) / var(--dcss-n30-kn) + (1 - var(--dcss-n30-m)) * var(--dcss-n30-r1) * var(--dcss-n30-kp))) - (abs((var(--dcss-n30-m) * var(--dcss-n30-r1) / var(--dcss-n30-kn) + (1 - var(--dcss-n30-m)) * var(--dcss-n30-r1) * var(--dcss-n30-kp))) * 8.9e-16))));
+  --dcss-n30-r2: round((var(--dcss-n30-m) * var(--dcss-n30-b) * var(--dcss-n30-kn) + (1 - var(--dcss-n30-m)) * var(--dcss-n30-b) / var(--dcss-n30-kp))); --dcss-n30-i2: calc(var(--dcss-n30-r2) - max(0, sign((var(--dcss-n30-m) * var(--dcss-n30-r2) / var(--dcss-n30-kn) + (1 - var(--dcss-n30-m)) * var(--dcss-n30-r2) * var(--dcss-n30-kp)) - (var(--dcss-n30-b)) - (abs(var(--dcss-n30-b)) * 8.9e-16))));
+  --dcss-n31-a: var(--dcss-n2-a2); --dcss-n31-b: var(--dcss-n2-b2); --dcss-n31-s: calc((var(--dcss-n31-b) - var(--dcss-n31-a)) / max(0, (((max(0, sign(var(--count, 10) - (0))) * abs(sign(var(--stop) - var(--start)))) * var(--count, 10) + 1 - (max(0, sign(var(--count, 10) - (0))) * abs(sign(var(--stop) - var(--start))))) * 2))); --dcss-n31-p0: round(log(var(--dcss-n31-s), 10));
+  --dcss-n31-p: calc(var(--dcss-n31-p0) - max(0, sign(pow(10, var(--dcss-n31-p0)) - (var(--dcss-n31-s))))); --dcss-n31-e: calc(var(--dcss-n31-s) / pow(10, var(--dcss-n31-p)));
+  --dcss-n31-f: calc(1 + (1 - max(0, sign(sqrt(2) - (var(--dcss-n31-e))))) + 3 * (1 - max(0, sign(sqrt(10) - (var(--dcss-n31-e))))) + 5 * (1 - max(0, sign(sqrt(50) - (var(--dcss-n31-e)))))); --dcss-n31-m: max(0, sign(0 - (var(--dcss-n31-p))));
+  --dcss-n31-kn: calc(pow(10, -1 * var(--dcss-n31-p)) / var(--dcss-n31-f)); --dcss-n31-kp: calc(pow(10, var(--dcss-n31-p)) * var(--dcss-n31-f));
+  --dcss-n31-r1: round((var(--dcss-n31-m) * var(--dcss-n31-a) * var(--dcss-n31-kn) + (1 - var(--dcss-n31-m)) * var(--dcss-n31-a) / var(--dcss-n31-kp))); --dcss-n31-i1: calc(var(--dcss-n31-r1) + max(0, sign(var(--dcss-n31-a) - ((var(--dcss-n31-m) * var(--dcss-n31-r1) / var(--dcss-n31-kn) + (1 - var(--dcss-n31-m)) * var(--dcss-n31-r1) * var(--dcss-n31-kp))) - (abs((var(--dcss-n31-m) * var(--dcss-n31-r1) / var(--dcss-n31-kn) + (1 - var(--dcss-n31-m)) * var(--dcss-n31-r1) * var(--dcss-n31-kp))) * 8.9e-16))));
+  --dcss-n31-r2: round((var(--dcss-n31-m) * var(--dcss-n31-b) * var(--dcss-n31-kn) + (1 - var(--dcss-n31-m)) * var(--dcss-n31-b) / var(--dcss-n31-kp))); --dcss-n31-i2: calc(var(--dcss-n31-r2) - max(0, sign((var(--dcss-n31-m) * var(--dcss-n31-r2) / var(--dcss-n31-kn) + (1 - var(--dcss-n31-m)) * var(--dcss-n31-r2) * var(--dcss-n31-kp)) - (var(--dcss-n31-b)) - (abs(var(--dcss-n31-b)) * 8.9e-16))));
+  --dcss-n32-a: var(--dcss-n2-a2); --dcss-n32-b: var(--dcss-n2-b2); --dcss-n32-s: calc((var(--dcss-n32-b) - var(--dcss-n32-a)) / max(0, (((max(0, sign(var(--count, 10) - (0))) * abs(sign(var(--stop) - var(--start)))) * var(--count, 10) + 1 - (max(0, sign(var(--count, 10) - (0))) * abs(sign(var(--stop) - var(--start))))) * 4))); --dcss-n32-p0: round(log(var(--dcss-n32-s), 10));
+  --dcss-n32-p: calc(var(--dcss-n32-p0) - max(0, sign(pow(10, var(--dcss-n32-p0)) - (var(--dcss-n32-s))))); --dcss-n32-e: calc(var(--dcss-n32-s) / pow(10, var(--dcss-n32-p)));
+  --dcss-n32-f: calc(1 + (1 - max(0, sign(sqrt(2) - (var(--dcss-n32-e))))) + 3 * (1 - max(0, sign(sqrt(10) - (var(--dcss-n32-e))))) + 5 * (1 - max(0, sign(sqrt(50) - (var(--dcss-n32-e)))))); --dcss-n32-m: max(0, sign(0 - (var(--dcss-n32-p))));
+  --dcss-n32-kn: calc(pow(10, -1 * var(--dcss-n32-p)) / var(--dcss-n32-f)); --dcss-n32-kp: calc(pow(10, var(--dcss-n32-p)) * var(--dcss-n32-f));
+  --dcss-n32-r1: round((var(--dcss-n32-m) * var(--dcss-n32-a) * var(--dcss-n32-kn) + (1 - var(--dcss-n32-m)) * var(--dcss-n32-a) / var(--dcss-n32-kp))); --dcss-n32-i1: calc(var(--dcss-n32-r1) + max(0, sign(var(--dcss-n32-a) - ((var(--dcss-n32-m) * var(--dcss-n32-r1) / var(--dcss-n32-kn) + (1 - var(--dcss-n32-m)) * var(--dcss-n32-r1) * var(--dcss-n32-kp))) - (abs((var(--dcss-n32-m) * var(--dcss-n32-r1) / var(--dcss-n32-kn) + (1 - var(--dcss-n32-m)) * var(--dcss-n32-r1) * var(--dcss-n32-kp))) * 8.9e-16))));
+  --dcss-n32-r2: round((var(--dcss-n32-m) * var(--dcss-n32-b) * var(--dcss-n32-kn) + (1 - var(--dcss-n32-m)) * var(--dcss-n32-b) / var(--dcss-n32-kp))); --dcss-n32-i2: calc(var(--dcss-n32-r2) - max(0, sign((var(--dcss-n32-m) * var(--dcss-n32-r2) / var(--dcss-n32-kn) + (1 - var(--dcss-n32-m)) * var(--dcss-n32-r2) * var(--dcss-n32-kp)) - (var(--dcss-n32-b)) - (abs(var(--dcss-n32-b)) * 8.9e-16))));
+  --dcss-n3-l: calc(max(0, sign(var(--dcss-n30-i1) - (var(--dcss-n30-i2)))) * (1 - max(0, sign(0.5 - (((max(0, sign(var(--count, 10) - (0))) * abs(sign(var(--stop) - var(--start)))) * var(--count, 10) + 1 - (max(0, sign(var(--count, 10) - (0))) * abs(sign(var(--stop) - var(--start))))) * 1)))) * max(0, sign(2 - (((max(0, sign(var(--count, 10) - (0))) * abs(sign(var(--stop) - var(--start)))) * var(--count, 10) + 1 - (max(0, sign(var(--count, 10) - (0))) * abs(sign(var(--stop) - var(--start))))) * 1))) * (1 + max(0, sign(var(--dcss-n31-i1) - (var(--dcss-n31-i2)))) * (1 - max(0, sign(0.5 - (((max(0, sign(var(--count, 10) - (0))) * abs(sign(var(--stop) - var(--start)))) * var(--count, 10) + 1 - (max(0, sign(var(--count, 10) - (0))) * abs(sign(var(--stop) - var(--start))))) * 2)))) * max(0, sign(2 - (((max(0, sign(var(--count, 10) - (0))) * abs(sign(var(--stop) - var(--start)))) * var(--count, 10) + 1 - (max(0, sign(var(--count, 10) - (0))) * abs(sign(var(--stop) - var(--start))))) * 2))))); --dcss-n3-p: calc((1 - min(1, abs(var(--dcss-n3-l) - 0))) * var(--dcss-n30-p) + (1 - min(1, abs(var(--dcss-n3-l) - 1))) * var(--dcss-n31-p) + (1 - min(1, abs(var(--dcss-n3-l) - 2))) * var(--dcss-n32-p)); --dcss-n3-f: calc((1 - min(1, abs(var(--dcss-n3-l) - 0))) * var(--dcss-n30-f) + (1 - min(1, abs(var(--dcss-n3-l) - 1))) * var(--dcss-n31-f) + (1 - min(1, abs(var(--dcss-n3-l) - 2))) * var(--dcss-n32-f)); --dcss-n3-m: calc((1 - min(1, abs(var(--dcss-n3-l) - 0))) * var(--dcss-n30-m) + (1 - min(1, abs(var(--dcss-n3-l) - 1))) * var(--dcss-n31-m) + (1 - min(1, abs(var(--dcss-n3-l) - 2))) * var(--dcss-n32-m)); --dcss-n3-i1: calc((1 - min(1, abs(var(--dcss-n3-l) - 0))) * var(--dcss-n30-i1) + (1 - min(1, abs(var(--dcss-n3-l) - 1))) * var(--dcss-n31-i1) + (1 - min(1, abs(var(--dcss-n3-l) - 2))) * var(--dcss-n32-i1)); --dcss-n3-i2: calc((1 - min(1, abs(var(--dcss-n3-l) - 0))) * var(--dcss-n30-i2) + (1 - min(1, abs(var(--dcss-n3-l) - 1))) * var(--dcss-n31-i2) + (1 - min(1, abs(var(--dcss-n3-l) - 2))) * var(--dcss-n32-i2));
+  --dcss-n3-kn: calc(pow(10, -1 * var(--dcss-n3-p)) / var(--dcss-n3-f)); --dcss-n3-kp: calc(pow(10, var(--dcss-n3-p)) * var(--dcss-n3-f));
+  --dcss-n3-inc: calc(var(--dcss-n3-m) * -1 * var(--dcss-n3-kn) + (1 - var(--dcss-n3-m)) * var(--dcss-n3-kp));
+  --dcss-n3-a2: calc(var(--dcss-n3-m) * round(up, var(--dcss-n2-a2) * -1 * var(--dcss-n3-kn), 1) / (-1 * var(--dcss-n3-kn)) + (1 - var(--dcss-n3-m)) * round(down, var(--dcss-n2-a2) / var(--dcss-n3-kp), 1) * var(--dcss-n3-kp));
+  --dcss-n3-b2: calc(var(--dcss-n3-m) * round(down, var(--dcss-n2-b2) * -1 * var(--dcss-n3-kn), 1) / (-1 * var(--dcss-n3-kn)) + (1 - var(--dcss-n3-m)) * round(up, var(--dcss-n2-b2) / var(--dcss-n3-kp), 1) * var(--dcss-n3-kp));
+  --dcss-nice-start-raw: calc((1 - (max(0, sign(var(--count, 10) - (0))) * abs(sign(var(--stop) - var(--start))))) * var(--start) + (max(0, sign(var(--count, 10) - (0))) * abs(sign(var(--stop) - var(--start)))) * ((1 - abs(sign(var(--dcss-n1-inc) - var(--dcss-n0-inc)))) * var(--dcss-n0-a2) + (1 - (1 - abs(sign(var(--dcss-n1-inc) - var(--dcss-n0-inc))))) * ((1 - abs(sign(var(--dcss-n2-inc) - var(--dcss-n1-inc)))) * var(--dcss-n1-a2) + (1 - (1 - abs(sign(var(--dcss-n2-inc) - var(--dcss-n1-inc))))) * ((1 - abs(sign(var(--dcss-n3-inc) - var(--dcss-n2-inc)))) * var(--dcss-n2-a2) + (1 - (1 - abs(sign(var(--dcss-n3-inc) - var(--dcss-n2-inc))))) * var(--dcss-n3-a2)))));
+  --dcss-nice-stop-raw: calc((1 - (max(0, sign(var(--count, 10) - (0))) * abs(sign(var(--stop) - var(--start))))) * var(--stop) + (max(0, sign(var(--count, 10) - (0))) * abs(sign(var(--stop) - var(--start)))) * ((1 - abs(sign(var(--dcss-n1-inc) - var(--dcss-n0-inc)))) * var(--dcss-n0-b2) + (1 - (1 - abs(sign(var(--dcss-n1-inc) - var(--dcss-n0-inc))))) * ((1 - abs(sign(var(--dcss-n2-inc) - var(--dcss-n1-inc)))) * var(--dcss-n1-b2) + (1 - (1 - abs(sign(var(--dcss-n2-inc) - var(--dcss-n1-inc))))) * ((1 - abs(sign(var(--dcss-n3-inc) - var(--dcss-n2-inc)))) * var(--dcss-n2-b2) + (1 - (1 - abs(sign(var(--dcss-n3-inc) - var(--dcss-n2-inc))))) * var(--dcss-n3-b2)))));
+  --dcss-nice-start: var(--dcss-nice-start-raw); --dcss-nice-stop: var(--dcss-nice-stop-raw); }
+
 /* DCSS reductions: d3.sum, count, mean, min, max, extent and the list's length, in a figure (reduce.mjs). */
 @property --dcss-dcss-has { syntax: '<number>'; inherits: false; initial-value: 0; }
 @property --dcss-dcss-ok { syntax: '<number>'; inherits: false; initial-value: 0; }

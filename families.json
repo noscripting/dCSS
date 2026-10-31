@@ -2,47 +2,25 @@
   "version": 1,
   "core": {
     "file": "dcss.css",
-    "raw": 284247,
-    "gzip9": 72615,
-    "sha256": "b3f9a2ea0a2f628a230796269807d250adda0b168e2268a6303168535b4e93a9"
+    "raw": 284245,
+    "gzip9": 72609,
+    "sha256": "ee40a744a98095a87fe3deeaeacf0c5870e94d7d11bd8c09acaa6b41e3edef12"
   },
   "extras": {
     "file": "dcss-extras.css",
-    "raw": 15094,
-    "gzip9": 3748,
-    "sha256": "4874c493fde68be637b1c5fc1f115b9afa76c915fb879710186510f5b30d4541"
+    "raw": 15092,
+    "gzip9": 3741,
+    "sha256": "abd4779f9dc55bfa0fa34500db8df94167402acafa5f3a8ba94256c16ea34afd"
   },
   "order": [
-    "ticks",
     "array",
-    "hierarchy",
     "scale",
     "format",
-    "ease",
-    "time",
-    "date-format",
-    "geo",
-    "shape",
-    "math"
+    "dates",
+    "math",
+    "motion"
   ],
   "families": {
-    "ticks": {
-      "file": "families/ticks.css",
-      "dependencies": [],
-      "classes": [
-        "dcss-axis-bottom",
-        "dcss-axis-left",
-        "dcss-axis-right",
-        "dcss-axis-top",
-        "dcss-identity-tick-format",
-        "dcss-identity-ticks",
-        "dcss-nice",
-        "dcss-ticks"
-      ],
-      "raw": 128377,
-      "gzip9": 10345,
-      "sha256": "0a19e5dec078c4686bf8ad0c2e47939bb8cdb4720400c8eabfce1852ae3f9d1e"
-    },
     "array": {
       "file": "families/array.css",
       "dependencies": [],
@@ -72,6 +50,7 @@
         "dcss-median-index",
         "dcss-min",
         "dcss-min-index",
+        "dcss-nice",
         "dcss-precision-fixed",
         "dcss-precision-prefix",
         "dcss-precision-round",
@@ -85,53 +64,27 @@
         "dcss-share",
         "dcss-sum",
         "dcss-summarize",
+        "dcss-ticks",
         "dcss-variance"
       ],
-      "raw": 411494,
-      "gzip9": 30032,
-      "sha256": "c5a6e7f8853fe645d26cbcd0c9b72717564c59ff4767f2f3c57ba877b10db51f"
-    },
-    "hierarchy": {
-      "file": "families/hierarchy.css",
-      "dependencies": [],
-      "classes": [
-        "dcss-partition",
-        "dcss-treemap-dice",
-        "dcss-treemap-slice",
-        "dcss-treemap-slice-dice"
-      ],
-      "raw": 6595,
-      "gzip9": 902,
-      "sha256": "7d21a2f47a3f17b9fcb2fd851374483832908e424d18d91188af28d129029b48"
+      "raw": 480255,
+      "gzip9": 35469,
+      "sha256": "02cc2a001595fc0b371a82cacbb6ed4359b43819f957f462dae2b879159ee0c1"
     },
     "scale": {
       "file": "families/scale.css",
       "dependencies": [],
       "classes": [
-        "dcss-scale-band",
-        "dcss-scale-diverging",
-        "dcss-scale-diverging-log",
-        "dcss-scale-diverging-pow",
-        "dcss-scale-diverging-sqrt",
-        "dcss-scale-diverging-symlog",
         "dcss-scale-identity",
         "dcss-scale-linear",
         "dcss-scale-log",
         "dcss-scale-ordinal",
-        "dcss-scale-point",
         "dcss-scale-pow",
-        "dcss-scale-radial",
-        "dcss-scale-sequential",
-        "dcss-scale-sequential-log",
-        "dcss-scale-sequential-pow",
-        "dcss-scale-sequential-sqrt",
-        "dcss-scale-sequential-symlog",
-        "dcss-scale-sqrt",
-        "dcss-scale-symlog"
+        "dcss-scale-sqrt"
       ],
-      "raw": 255746,
-      "gzip9": 14670,
-      "sha256": "09d6ca25e31cd3ab0e492d97a6b0383554f1f939d1f41fd40e57a2f5c6b43a89"
+      "raw": 147602,
+      "gzip9": 6965,
+      "sha256": "c34af19b6ff615719bcf54c6b7247f481d80c43949501f0c3fc3e94b279ab5f8"
     },
     "format": {
       "file": "families/format.css",
@@ -142,65 +95,57 @@
         "dcss-format-locale",
         "dcss-format-percent",
         "dcss-format-si",
-        "dcss-locale-arabic",
-        "dcss-nice-log",
-        "dcss-ticks-log",
-        "dcss-ticks-log-format"
+        "dcss-locale-arabic"
       ],
-      "raw": 167407,
-      "gzip9": 12055,
-      "sha256": "cd9fedf1a2342f5f298cf43d13d5c4acb325a75e8520382d1a8839ffa0e5ca5a"
+      "raw": 95415,
+      "gzip9": 6562,
+      "sha256": "a4acaa0d80368bd7f124b7bbf80d5535ccd3ce80c89c832447fc6c1737806548"
     },
-    "ease": {
-      "file": "families/ease.css",
+    "dates": {
+      "file": "families/dates.css",
       "dependencies": [],
       "classes": [
-        "dcss-ease-back",
-        "dcss-ease-back-in",
-        "dcss-ease-back-in-out",
-        "dcss-ease-back-out",
-        "dcss-ease-bounce",
-        "dcss-ease-bounce-in",
-        "dcss-ease-bounce-in-out",
-        "dcss-ease-bounce-out",
-        "dcss-ease-circle",
-        "dcss-ease-circle-in",
-        "dcss-ease-circle-in-out",
-        "dcss-ease-circle-out",
-        "dcss-ease-cubic",
-        "dcss-ease-cubic-in",
-        "dcss-ease-cubic-in-out",
-        "dcss-ease-cubic-out",
-        "dcss-ease-elastic",
-        "dcss-ease-elastic-in",
-        "dcss-ease-elastic-in-out",
-        "dcss-ease-elastic-out",
-        "dcss-ease-exp",
-        "dcss-ease-exp-in",
-        "dcss-ease-exp-in-out",
-        "dcss-ease-exp-out",
-        "dcss-ease-linear",
-        "dcss-ease-poly",
-        "dcss-ease-poly-in",
-        "dcss-ease-poly-in-out",
-        "dcss-ease-poly-out",
-        "dcss-ease-quad",
-        "dcss-ease-quad-in",
-        "dcss-ease-quad-in-out",
-        "dcss-ease-quad-out",
-        "dcss-ease-sin",
-        "dcss-ease-sin-in",
-        "dcss-ease-sin-in-out",
-        "dcss-ease-sin-out"
-      ],
-      "raw": 23347,
-      "gzip9": 1917,
-      "sha256": "0cf9bfb72548e72a0f7f955c8898ec2feff46fc40f8b9fe9f2f02e5b3cfe4a05"
-    },
-    "time": {
-      "file": "families/time.css",
-      "dependencies": [],
-      "classes": [
+        "dcss-date-format-0",
+        "dcss-date-format-1",
+        "dcss-date-format-10",
+        "dcss-date-format-11",
+        "dcss-date-format-12",
+        "dcss-date-format-13",
+        "dcss-date-format-14",
+        "dcss-date-format-15",
+        "dcss-date-format-16",
+        "dcss-date-format-17",
+        "dcss-date-format-18",
+        "dcss-date-format-19",
+        "dcss-date-format-2",
+        "dcss-date-format-20",
+        "dcss-date-format-21",
+        "dcss-date-format-22",
+        "dcss-date-format-23",
+        "dcss-date-format-24",
+        "dcss-date-format-25",
+        "dcss-date-format-26",
+        "dcss-date-format-27",
+        "dcss-date-format-28",
+        "dcss-date-format-29",
+        "dcss-date-format-3",
+        "dcss-date-format-30",
+        "dcss-date-format-31",
+        "dcss-date-format-32",
+        "dcss-date-format-33",
+        "dcss-date-format-34",
+        "dcss-date-format-35",
+        "dcss-date-format-36",
+        "dcss-date-format-37",
+        "dcss-date-format-38",
+        "dcss-date-format-39",
+        "dcss-date-format-4",
+        "dcss-date-format-40",
+        "dcss-date-format-5",
+        "dcss-date-format-6",
+        "dcss-date-format-7",
+        "dcss-date-format-8",
+        "dcss-date-format-9",
         "dcss-utc-day-ceil",
         "dcss-utc-day-count",
         "dcss-utc-day-floor",
@@ -267,122 +212,15 @@
         "dcss-utc-year-offset",
         "dcss-utc-year-round"
       ],
-      "raw": 315457,
-      "gzip9": 14502,
-      "sha256": "99ef9e3453f98e4169b19ccd305fba692b15cdd0cd239ad0ca54d1b2d81e49a8"
-    },
-    "date-format": {
-      "file": "families/date-format.css",
-      "dependencies": [],
-      "classes": [
-        "dcss-date-format-0",
-        "dcss-date-format-1",
-        "dcss-date-format-10",
-        "dcss-date-format-11",
-        "dcss-date-format-12",
-        "dcss-date-format-13",
-        "dcss-date-format-14",
-        "dcss-date-format-15",
-        "dcss-date-format-16",
-        "dcss-date-format-17",
-        "dcss-date-format-18",
-        "dcss-date-format-19",
-        "dcss-date-format-2",
-        "dcss-date-format-20",
-        "dcss-date-format-21",
-        "dcss-date-format-22",
-        "dcss-date-format-23",
-        "dcss-date-format-24",
-        "dcss-date-format-25",
-        "dcss-date-format-26",
-        "dcss-date-format-27",
-        "dcss-date-format-28",
-        "dcss-date-format-29",
-        "dcss-date-format-3",
-        "dcss-date-format-30",
-        "dcss-date-format-31",
-        "dcss-date-format-32",
-        "dcss-date-format-33",
-        "dcss-date-format-34",
-        "dcss-date-format-35",
-        "dcss-date-format-36",
-        "dcss-date-format-37",
-        "dcss-date-format-38",
-        "dcss-date-format-39",
-        "dcss-date-format-4",
-        "dcss-date-format-40",
-        "dcss-date-format-5",
-        "dcss-date-format-6",
-        "dcss-date-format-7",
-        "dcss-date-format-8",
-        "dcss-date-format-9"
-      ],
-      "raw": 36008,
-      "gzip9": 4153,
-      "sha256": "ad85b72ec25a51fdc572c75779a56ab6dd3ee498db673e54c0d1f4148bd17b83"
-    },
-    "geo": {
-      "file": "families/geo.css",
-      "dependencies": [],
-      "classes": [
-        "dcss-geo-distance",
-        "dcss-geo-equal-earth-raw",
-        "dcss-geo-equirectangular",
-        "dcss-geo-equirectangular-config",
-        "dcss-geo-equirectangular-invert",
-        "dcss-geo-identity",
-        "dcss-geo-identity-config",
-        "dcss-geo-identity-invert",
-        "dcss-geo-mercator",
-        "dcss-geo-mercator-config",
-        "dcss-geo-mercator-extent",
-        "dcss-geo-mercator-invert",
-        "dcss-geo-natural-earth1-raw",
-        "dcss-geo-rotation",
-        "dcss-geo-rotation-invert",
-        "dcss-geo-stereographic",
-        "dcss-geo-stereographic-config",
-        "dcss-geo-stereographic-invert",
-        "dcss-geo-transverse-mercator",
-        "dcss-geo-transverse-mercator-config",
-        "dcss-geo-transverse-mercator-extent",
-        "dcss-geo-transverse-mercator-invert"
-      ],
-      "raw": 252037,
-      "gzip9": 16634,
-      "sha256": "a2e1d6869d8fc72660b912a5a58e3aa7e45dbdfc005791f78c51914d4a638e81"
-    },
-    "shape": {
-      "file": "families/shape.css",
-      "dependencies": [],
-      "classes": [
-        "dcss-arc",
-        "dcss-area",
-        "dcss-curve-bump-x",
-        "dcss-curve-bump-y",
-        "dcss-curve-step",
-        "dcss-curve-step-after",
-        "dcss-curve-step-before",
-        "dcss-line",
-        "dcss-pie",
-        "dcss-shape-stack",
-        "dcss-stack-offset-diverging",
-        "dcss-stack-offset-expand",
-        "dcss-stack-offset-silhouette",
-        "dcss-stack-order-reverse"
-      ],
-      "raw": 43120,
-      "gzip9": 3720,
-      "sha256": "f552de92ba4e61976f05332ccea8d560a6dd78d3a522afb4ea0dde5a29503204"
+      "raw": 351273,
+      "gzip9": 18467,
+      "sha256": "2247301e113d032b9293f822677906cd251a25b951f50b5068faefca69f8ab18"
     },
     "math": {
       "file": "families/math.css",
       "dependencies": [],
       "classes": [
         "dcss-evaluate",
-        "dcss-geo-equal-earth-raw-invert",
-        "dcss-geo-natural-earth1-raw-invert",
-        "dcss-motion",
         "dcss-sample",
         "dcss-solve",
         "dcss-solve-every",
@@ -390,20 +228,22 @@
         "dcss-solve-rows",
         "dcss-solve-turning-point"
       ],
-      "raw": 187345,
-      "gzip9": 7180,
-      "sha256": "2ffd26cdf37b7976814d1a5d2925be5b0b621e46e79abf260c47b6777d1c4658"
+      "raw": 181500,
+      "gzip9": 6378,
+      "sha256": "d6486488659b32e6aa9c2e35ca4f878628f498b47b0e321315f55a92189171bc"
+    },
+    "motion": {
+      "file": "families/motion.css",
+      "dependencies": [],
+      "classes": [
+        "dcss-motion"
+      ],
+      "raw": 2048,
+      "gzip9": 540,
+      "sha256": "d8b148d9a24aa54a1f840b6bb052c93e89e5ce4a95c994a62401a1d8b960188a"
     }
   },
   "owners": {
-    "dcss-axis-bottom": "ticks",
-    "dcss-axis-left": "ticks",
-    "dcss-axis-right": "ticks",
-    "dcss-axis-top": "ticks",
-    "dcss-identity-tick-format": "ticks",
-    "dcss-identity-ticks": "ticks",
-    "dcss-nice": "ticks",
-    "dcss-ticks": "ticks",
     "dcss-ascending": "array",
     "dcss-bin": "array",
     "dcss-bisect": "array",
@@ -429,6 +269,7 @@
     "dcss-median-index": "array",
     "dcss-min": "array",
     "dcss-min-index": "array",
+    "dcss-nice": "array",
     "dcss-precision-fixed": "array",
     "dcss-precision-prefix": "array",
     "dcss-precision-round": "array",
@@ -442,236 +283,141 @@
     "dcss-share": "array",
     "dcss-sum": "array",
     "dcss-summarize": "array",
+    "dcss-ticks": "array",
     "dcss-variance": "array",
-    "dcss-partition": "hierarchy",
-    "dcss-treemap-dice": "hierarchy",
-    "dcss-treemap-slice": "hierarchy",
-    "dcss-treemap-slice-dice": "hierarchy",
-    "dcss-scale-band": "scale",
-    "dcss-scale-diverging": "scale",
-    "dcss-scale-diverging-log": "scale",
-    "dcss-scale-diverging-pow": "scale",
-    "dcss-scale-diverging-sqrt": "scale",
-    "dcss-scale-diverging-symlog": "scale",
     "dcss-scale-identity": "scale",
     "dcss-scale-linear": "scale",
     "dcss-scale-log": "scale",
     "dcss-scale-ordinal": "scale",
-    "dcss-scale-point": "scale",
     "dcss-scale-pow": "scale",
-    "dcss-scale-radial": "scale",
-    "dcss-scale-sequential": "scale",
-    "dcss-scale-sequential-log": "scale",
-    "dcss-scale-sequential-pow": "scale",
-    "dcss-scale-sequential-sqrt": "scale",
-    "dcss-scale-sequential-symlog": "scale",
     "dcss-scale-sqrt": "scale",
-    "dcss-scale-symlog": "scale",
     "dcss-format-fixed": "format",
     "dcss-format-general": "format",
     "dcss-format-locale": "format",
     "dcss-format-percent": "format",
     "dcss-format-si": "format",
     "dcss-locale-arabic": "format",
-    "dcss-nice-log": "format",
-    "dcss-ticks-log": "format",
-    "dcss-ticks-log-format": "format",
-    "dcss-ease-back": "ease",
-    "dcss-ease-back-in": "ease",
-    "dcss-ease-back-in-out": "ease",
-    "dcss-ease-back-out": "ease",
-    "dcss-ease-bounce": "ease",
-    "dcss-ease-bounce-in": "ease",
-    "dcss-ease-bounce-in-out": "ease",
-    "dcss-ease-bounce-out": "ease",
-    "dcss-ease-circle": "ease",
-    "dcss-ease-circle-in": "ease",
-    "dcss-ease-circle-in-out": "ease",
-    "dcss-ease-circle-out": "ease",
-    "dcss-ease-cubic": "ease",
-    "dcss-ease-cubic-in": "ease",
-    "dcss-ease-cubic-in-out": "ease",
-    "dcss-ease-cubic-out": "ease",
-    "dcss-ease-elastic": "ease",
-    "dcss-ease-elastic-in": "ease",
-    "dcss-ease-elastic-in-out": "ease",
-    "dcss-ease-elastic-out": "ease",
-    "dcss-ease-exp": "ease",
-    "dcss-ease-exp-in": "ease",
-    "dcss-ease-exp-in-out": "ease",
-    "dcss-ease-exp-out": "ease",
-    "dcss-ease-linear": "ease",
-    "dcss-ease-poly": "ease",
-    "dcss-ease-poly-in": "ease",
-    "dcss-ease-poly-in-out": "ease",
-    "dcss-ease-poly-out": "ease",
-    "dcss-ease-quad": "ease",
-    "dcss-ease-quad-in": "ease",
-    "dcss-ease-quad-in-out": "ease",
-    "dcss-ease-quad-out": "ease",
-    "dcss-ease-sin": "ease",
-    "dcss-ease-sin-in": "ease",
-    "dcss-ease-sin-in-out": "ease",
-    "dcss-ease-sin-out": "ease",
-    "dcss-utc-day-ceil": "time",
-    "dcss-utc-day-count": "time",
-    "dcss-utc-day-floor": "time",
-    "dcss-utc-day-offset": "time",
-    "dcss-utc-day-round": "time",
-    "dcss-utc-friday-ceil": "time",
-    "dcss-utc-friday-count": "time",
-    "dcss-utc-friday-floor": "time",
-    "dcss-utc-friday-offset": "time",
-    "dcss-utc-friday-round": "time",
-    "dcss-utc-hour-ceil": "time",
-    "dcss-utc-hour-count": "time",
-    "dcss-utc-hour-floor": "time",
-    "dcss-utc-hour-offset": "time",
-    "dcss-utc-hour-round": "time",
-    "dcss-utc-minute-ceil": "time",
-    "dcss-utc-minute-count": "time",
-    "dcss-utc-minute-floor": "time",
-    "dcss-utc-minute-offset": "time",
-    "dcss-utc-minute-round": "time",
-    "dcss-utc-monday-ceil": "time",
-    "dcss-utc-monday-count": "time",
-    "dcss-utc-monday-floor": "time",
-    "dcss-utc-monday-offset": "time",
-    "dcss-utc-monday-round": "time",
-    "dcss-utc-month-ceil": "time",
-    "dcss-utc-month-count": "time",
-    "dcss-utc-month-floor": "time",
-    "dcss-utc-month-offset": "time",
-    "dcss-utc-month-round": "time",
-    "dcss-utc-saturday-ceil": "time",
-    "dcss-utc-saturday-count": "time",
-    "dcss-utc-saturday-floor": "time",
-    "dcss-utc-saturday-offset": "time",
-    "dcss-utc-saturday-round": "time",
-    "dcss-utc-second-ceil": "time",
-    "dcss-utc-second-count": "time",
-    "dcss-utc-second-floor": "time",
-    "dcss-utc-second-offset": "time",
-    "dcss-utc-second-round": "time",
-    "dcss-utc-sunday-ceil": "time",
-    "dcss-utc-sunday-count": "time",
-    "dcss-utc-sunday-floor": "time",
-    "dcss-utc-sunday-offset": "time",
-    "dcss-utc-sunday-round": "time",
-    "dcss-utc-thursday-ceil": "time",
-    "dcss-utc-thursday-count": "time",
-    "dcss-utc-thursday-floor": "time",
-    "dcss-utc-thursday-offset": "time",
-    "dcss-utc-thursday-round": "time",
-    "dcss-utc-tuesday-ceil": "time",
-    "dcss-utc-tuesday-count": "time",
-    "dcss-utc-tuesday-floor": "time",
-    "dcss-utc-tuesday-offset": "time",
-    "dcss-utc-tuesday-round": "time",
-    "dcss-utc-wednesday-ceil": "time",
-    "dcss-utc-wednesday-count": "time",
-    "dcss-utc-wednesday-floor": "time",
-    "dcss-utc-wednesday-offset": "time",
-    "dcss-utc-wednesday-round": "time",
-    "dcss-utc-year-ceil": "time",
-    "dcss-utc-year-count": "time",
-    "dcss-utc-year-floor": "time",
-    "dcss-utc-year-offset": "time",
-    "dcss-utc-year-round": "time",
-    "dcss-date-format-0": "date-format",
-    "dcss-date-format-1": "date-format",
-    "dcss-date-format-10": "date-format",
-    "dcss-date-format-11": "date-format",
-    "dcss-date-format-12": "date-format",
-    "dcss-date-format-13": "date-format",
-    "dcss-date-format-14": "date-format",
-    "dcss-date-format-15": "date-format",
-    "dcss-date-format-16": "date-format",
-    "dcss-date-format-17": "date-format",
-    "dcss-date-format-18": "date-format",
-    "dcss-date-format-19": "date-format",
-    "dcss-date-format-2": "date-format",
-    "dcss-date-format-20": "date-format",
-    "dcss-date-format-21": "date-format",
-    "dcss-date-format-22": "date-format",
-    "dcss-date-format-23": "date-format",
-    "dcss-date-format-24": "date-format",
-    "dcss-date-format-25": "date-format",
-    "dcss-date-format-26": "date-format",
-    "dcss-date-format-27": "date-format",
-    "dcss-date-format-28": "date-format",
-    "dcss-date-format-29": "date-format",
-    "dcss-date-format-3": "date-format",
-    "dcss-date-format-30": "date-format",
-    "dcss-date-format-31": "date-format",
-    "dcss-date-format-32": "date-format",
-    "dcss-date-format-33": "date-format",
-    "dcss-date-format-34": "date-format",
-    "dcss-date-format-35": "date-format",
-    "dcss-date-format-36": "date-format",
-    "dcss-date-format-37": "date-format",
-    "dcss-date-format-38": "date-format",
-    "dcss-date-format-39": "date-format",
-    "dcss-date-format-4": "date-format",
-    "dcss-date-format-40": "date-format",
-    "dcss-date-format-5": "date-format",
-    "dcss-date-format-6": "date-format",
-    "dcss-date-format-7": "date-format",
-    "dcss-date-format-8": "date-format",
-    "dcss-date-format-9": "date-format",
-    "dcss-geo-distance": "geo",
-    "dcss-geo-equal-earth-raw": "geo",
-    "dcss-geo-equirectangular": "geo",
-    "dcss-geo-equirectangular-config": "geo",
-    "dcss-geo-equirectangular-invert": "geo",
-    "dcss-geo-identity": "geo",
-    "dcss-geo-identity-config": "geo",
-    "dcss-geo-identity-invert": "geo",
-    "dcss-geo-mercator": "geo",
-    "dcss-geo-mercator-config": "geo",
-    "dcss-geo-mercator-extent": "geo",
-    "dcss-geo-mercator-invert": "geo",
-    "dcss-geo-natural-earth1-raw": "geo",
-    "dcss-geo-rotation": "geo",
-    "dcss-geo-rotation-invert": "geo",
-    "dcss-geo-stereographic": "geo",
-    "dcss-geo-stereographic-config": "geo",
-    "dcss-geo-stereographic-invert": "geo",
-    "dcss-geo-transverse-mercator": "geo",
-    "dcss-geo-transverse-mercator-config": "geo",
-    "dcss-geo-transverse-mercator-extent": "geo",
-    "dcss-geo-transverse-mercator-invert": "geo",
-    "dcss-arc": "shape",
-    "dcss-area": "shape",
-    "dcss-curve-bump-x": "shape",
-    "dcss-curve-bump-y": "shape",
-    "dcss-curve-step": "shape",
-    "dcss-curve-step-after": "shape",
-    "dcss-curve-step-before": "shape",
-    "dcss-line": "shape",
-    "dcss-pie": "shape",
-    "dcss-shape-stack": "shape",
-    "dcss-stack-offset-diverging": "shape",
-    "dcss-stack-offset-expand": "shape",
-    "dcss-stack-offset-silhouette": "shape",
-    "dcss-stack-order-reverse": "shape",
+    "dcss-date-format-0": "dates",
+    "dcss-date-format-1": "dates",
+    "dcss-date-format-10": "dates",
+    "dcss-date-format-11": "dates",
+    "dcss-date-format-12": "dates",
+    "dcss-date-format-13": "dates",
+    "dcss-date-format-14": "dates",
+    "dcss-date-format-15": "dates",
+    "dcss-date-format-16": "dates",
+    "dcss-date-format-17": "dates",
+    "dcss-date-format-18": "dates",
+    "dcss-date-format-19": "dates",
+    "dcss-date-format-2": "dates",
+    "dcss-date-format-20": "dates",
+    "dcss-date-format-21": "dates",
+    "dcss-date-format-22": "dates",
+    "dcss-date-format-23": "dates",
+    "dcss-date-format-24": "dates",
+    "dcss-date-format-25": "dates",
+    "dcss-date-format-26": "dates",
+    "dcss-date-format-27": "dates",
+    "dcss-date-format-28": "dates",
+    "dcss-date-format-29": "dates",
+    "dcss-date-format-3": "dates",
+    "dcss-date-format-30": "dates",
+    "dcss-date-format-31": "dates",
+    "dcss-date-format-32": "dates",
+    "dcss-date-format-33": "dates",
+    "dcss-date-format-34": "dates",
+    "dcss-date-format-35": "dates",
+    "dcss-date-format-36": "dates",
+    "dcss-date-format-37": "dates",
+    "dcss-date-format-38": "dates",
+    "dcss-date-format-39": "dates",
+    "dcss-date-format-4": "dates",
+    "dcss-date-format-40": "dates",
+    "dcss-date-format-5": "dates",
+    "dcss-date-format-6": "dates",
+    "dcss-date-format-7": "dates",
+    "dcss-date-format-8": "dates",
+    "dcss-date-format-9": "dates",
+    "dcss-utc-day-ceil": "dates",
+    "dcss-utc-day-count": "dates",
+    "dcss-utc-day-floor": "dates",
+    "dcss-utc-day-offset": "dates",
+    "dcss-utc-day-round": "dates",
+    "dcss-utc-friday-ceil": "dates",
+    "dcss-utc-friday-count": "dates",
+    "dcss-utc-friday-floor": "dates",
+    "dcss-utc-friday-offset": "dates",
+    "dcss-utc-friday-round": "dates",
+    "dcss-utc-hour-ceil": "dates",
+    "dcss-utc-hour-count": "dates",
+    "dcss-utc-hour-floor": "dates",
+    "dcss-utc-hour-offset": "dates",
+    "dcss-utc-hour-round": "dates",
+    "dcss-utc-minute-ceil": "dates",
+    "dcss-utc-minute-count": "dates",
+    "dcss-utc-minute-floor": "dates",
+    "dcss-utc-minute-offset": "dates",
+    "dcss-utc-minute-round": "dates",
+    "dcss-utc-monday-ceil": "dates",
+    "dcss-utc-monday-count": "dates",
+    "dcss-utc-monday-floor": "dates",
+    "dcss-utc-monday-offset": "dates",
+    "dcss-utc-monday-round": "dates",
+    "dcss-utc-month-ceil": "dates",
+    "dcss-utc-month-count": "dates",
+    "dcss-utc-month-floor": "dates",
+    "dcss-utc-month-offset": "dates",
+    "dcss-utc-month-round": "dates",
+    "dcss-utc-saturday-ceil": "dates",
+    "dcss-utc-saturday-count": "dates",
+    "dcss-utc-saturday-floor": "dates",
+    "dcss-utc-saturday-offset": "dates",
+    "dcss-utc-saturday-round": "dates",
+    "dcss-utc-second-ceil": "dates",
+    "dcss-utc-second-count": "dates",
+    "dcss-utc-second-floor": "dates",
+    "dcss-utc-second-offset": "dates",
+    "dcss-utc-second-round": "dates",
+    "dcss-utc-sunday-ceil": "dates",
+    "dcss-utc-sunday-count": "dates",
+    "dcss-utc-sunday-floor": "dates",
+    "dcss-utc-sunday-offset": "dates",
+    "dcss-utc-sunday-round": "dates",
+    "dcss-utc-thursday-ceil": "dates",
+    "dcss-utc-thursday-count": "dates",
+    "dcss-utc-thursday-floor": "dates",
+    "dcss-utc-thursday-offset": "dates",
+    "dcss-utc-thursday-round": "dates",
+    "dcss-utc-tuesday-ceil": "dates",
+    "dcss-utc-tuesday-count": "dates",
+    "dcss-utc-tuesday-floor": "dates",
+    "dcss-utc-tuesday-offset": "dates",
+    "dcss-utc-tuesday-round": "dates",
+    "dcss-utc-wednesday-ceil": "dates",
+    "dcss-utc-wednesday-count": "dates",
+    "dcss-utc-wednesday-floor": "dates",
+    "dcss-utc-wednesday-offset": "dates",
+    "dcss-utc-wednesday-round": "dates",
+    "dcss-utc-year-ceil": "dates",
+    "dcss-utc-year-count": "dates",
+    "dcss-utc-year-floor": "dates",
+    "dcss-utc-year-offset": "dates",
+    "dcss-utc-year-round": "dates",
     "dcss-evaluate": "math",
-    "dcss-geo-equal-earth-raw-invert": "math",
-    "dcss-geo-natural-earth1-raw-invert": "math",
-    "dcss-motion": "math",
     "dcss-sample": "math",
     "dcss-solve": "math",
     "dcss-solve-every": "math",
     "dcss-solve-newton": "math",
     "dcss-solve-rows": "math",
-    "dcss-solve-turning-point": "math"
+    "dcss-solve-turning-point": "math",
+    "dcss-motion": "motion"
   },
   "functions": {
     "file": "families/functions.css",
-    "count": 130,
-    "raw": 216538,
-    "gzip9": 8660,
-    "sha256": "9c150f8a8a01aacb0f7650288b2b1826d2897ffa0b40533b29c328f02a8ec936"
+    "count": 59,
+    "raw": 78150,
+    "gzip9": 2047,
+    "sha256": "1669ee181f0a789037ee5a2bf6ef830776c05d83c898b8110bb1e0f1eeed3643"
   },
   "operations": {
     "owned": {
@@ -1908,7 +1654,7 @@
       },
       "dcss-utc-day-floor": {
         "id": "utcDayFloor",
-        "family": "time",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -1941,7 +1687,7 @@
       },
       "dcss-utc-day-ceil": {
         "id": "utcDayCeil",
-        "family": "time",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -1974,7 +1720,7 @@
       },
       "dcss-utc-day-round": {
         "id": "utcDayRound",
-        "family": "time",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -2007,7 +1753,7 @@
       },
       "dcss-utc-day-offset": {
         "id": "utcDayOffset",
-        "family": "time",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -2040,7 +1786,7 @@
       },
       "dcss-utc-day-count": {
         "id": "utcDayCount",
-        "family": "time",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -2073,7 +1819,7 @@
       },
       "dcss-utc-hour-floor": {
         "id": "utcHourFloor",
-        "family": "time",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -2106,7 +1852,7 @@
       },
       "dcss-utc-hour-ceil": {
         "id": "utcHourCeil",
-        "family": "time",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -2139,7 +1885,7 @@
       },
       "dcss-utc-hour-round": {
         "id": "utcHourRound",
-        "family": "time",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -2172,7 +1918,7 @@
       },
       "dcss-utc-hour-offset": {
         "id": "utcHourOffset",
-        "family": "time",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -2205,7 +1951,7 @@
       },
       "dcss-utc-hour-count": {
         "id": "utcHourCount",
-        "family": "time",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -2238,7 +1984,7 @@
       },
       "dcss-utc-minute-floor": {
         "id": "utcMinuteFloor",
-        "family": "time",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -2271,7 +2017,7 @@
       },
       "dcss-utc-minute-ceil": {
         "id": "utcMinuteCeil",
-        "family": "time",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -2304,7 +2050,7 @@
       },
       "dcss-utc-minute-round": {
         "id": "utcMinuteRound",
-        "family": "time",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -2337,7 +2083,7 @@
       },
       "dcss-utc-minute-offset": {
         "id": "utcMinuteOffset",
-        "family": "time",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -2370,7 +2116,7 @@
       },
       "dcss-utc-minute-count": {
         "id": "utcMinuteCount",
-        "family": "time",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -2403,7 +2149,7 @@
       },
       "dcss-utc-second-floor": {
         "id": "utcSecondFloor",
-        "family": "time",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -2436,7 +2182,7 @@
       },
       "dcss-utc-second-ceil": {
         "id": "utcSecondCeil",
-        "family": "time",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -2469,7 +2215,7 @@
       },
       "dcss-utc-second-round": {
         "id": "utcSecondRound",
-        "family": "time",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -2502,7 +2248,7 @@
       },
       "dcss-utc-second-offset": {
         "id": "utcSecondOffset",
-        "family": "time",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -2535,7 +2281,7 @@
       },
       "dcss-utc-second-count": {
         "id": "utcSecondCount",
-        "family": "time",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -2568,7 +2314,7 @@
       },
       "dcss-utc-month-floor": {
         "id": "utcMonthFloor",
-        "family": "time",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -2601,7 +2347,7 @@
       },
       "dcss-utc-month-ceil": {
         "id": "utcMonthCeil",
-        "family": "time",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -2634,7 +2380,7 @@
       },
       "dcss-utc-month-round": {
         "id": "utcMonthRound",
-        "family": "time",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -2667,7 +2413,7 @@
       },
       "dcss-utc-month-offset": {
         "id": "utcMonthOffset",
-        "family": "time",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -2700,7 +2446,7 @@
       },
       "dcss-utc-month-count": {
         "id": "utcMonthCount",
-        "family": "time",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -2733,7 +2479,7 @@
       },
       "dcss-utc-year-floor": {
         "id": "utcYearFloor",
-        "family": "time",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -2766,7 +2512,7 @@
       },
       "dcss-utc-year-ceil": {
         "id": "utcYearCeil",
-        "family": "time",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -2799,7 +2545,7 @@
       },
       "dcss-utc-year-round": {
         "id": "utcYearRound",
-        "family": "time",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -2832,7 +2578,7 @@
       },
       "dcss-utc-year-offset": {
         "id": "utcYearOffset",
-        "family": "time",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -2865,7 +2611,7 @@
       },
       "dcss-utc-year-count": {
         "id": "utcYearCount",
-        "family": "time",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -2898,7 +2644,7 @@
       },
       "dcss-utc-sunday-floor": {
         "id": "utcSundayFloor",
-        "family": "time",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -2931,7 +2677,7 @@
       },
       "dcss-utc-sunday-ceil": {
         "id": "utcSundayCeil",
-        "family": "time",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -2964,7 +2710,7 @@
       },
       "dcss-utc-sunday-round": {
         "id": "utcSundayRound",
-        "family": "time",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -2997,7 +2743,7 @@
       },
       "dcss-utc-sunday-offset": {
         "id": "utcSundayOffset",
-        "family": "time",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -3030,7 +2776,7 @@
       },
       "dcss-utc-sunday-count": {
         "id": "utcSundayCount",
-        "family": "time",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -3063,7 +2809,7 @@
       },
       "dcss-utc-monday-floor": {
         "id": "utcMondayFloor",
-        "family": "time",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -3096,7 +2842,7 @@
       },
       "dcss-utc-monday-ceil": {
         "id": "utcMondayCeil",
-        "family": "time",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -3129,7 +2875,7 @@
       },
       "dcss-utc-monday-round": {
         "id": "utcMondayRound",
-        "family": "time",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -3162,7 +2908,7 @@
       },
       "dcss-utc-monday-offset": {
         "id": "utcMondayOffset",
-        "family": "time",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -3195,7 +2941,7 @@
       },
       "dcss-utc-monday-count": {
         "id": "utcMondayCount",
-        "family": "time",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -3228,7 +2974,7 @@
       },
       "dcss-utc-tuesday-floor": {
         "id": "utcTuesdayFloor",
-        "family": "time",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -3261,7 +3007,7 @@
       },
       "dcss-utc-tuesday-ceil": {
         "id": "utcTuesdayCeil",
-        "family": "time",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -3294,7 +3040,7 @@
       },
       "dcss-utc-tuesday-round": {
         "id": "utcTuesdayRound",
-        "family": "time",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -3327,7 +3073,7 @@
       },
       "dcss-utc-tuesday-offset": {
         "id": "utcTuesdayOffset",
-        "family": "time",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -3360,7 +3106,7 @@
       },
       "dcss-utc-tuesday-count": {
         "id": "utcTuesdayCount",
-        "family": "time",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -3393,7 +3139,7 @@
       },
       "dcss-utc-wednesday-floor": {
         "id": "utcWednesdayFloor",
-        "family": "time",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -3426,7 +3172,7 @@
       },
       "dcss-utc-wednesday-ceil": {
         "id": "utcWednesdayCeil",
-        "family": "time",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -3459,7 +3205,7 @@
       },
       "dcss-utc-wednesday-round": {
         "id": "utcWednesdayRound",
-        "family": "time",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -3492,7 +3238,7 @@
       },
       "dcss-utc-wednesday-offset": {
         "id": "utcWednesdayOffset",
-        "family": "time",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -3525,7 +3271,7 @@
       },
       "dcss-utc-wednesday-count": {
         "id": "utcWednesdayCount",
-        "family": "time",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -3558,7 +3304,7 @@
       },
       "dcss-utc-thursday-floor": {
         "id": "utcThursdayFloor",
-        "family": "time",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -3591,7 +3337,7 @@
       },
       "dcss-utc-thursday-ceil": {
         "id": "utcThursdayCeil",
-        "family": "time",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -3624,7 +3370,7 @@
       },
       "dcss-utc-thursday-round": {
         "id": "utcThursdayRound",
-        "family": "time",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -3657,7 +3403,7 @@
       },
       "dcss-utc-thursday-offset": {
         "id": "utcThursdayOffset",
-        "family": "time",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -3690,7 +3436,7 @@
       },
       "dcss-utc-thursday-count": {
         "id": "utcThursdayCount",
-        "family": "time",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -3723,7 +3469,7 @@
       },
       "dcss-utc-friday-floor": {
         "id": "utcFridayFloor",
-        "family": "time",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -3756,7 +3502,7 @@
       },
       "dcss-utc-friday-ceil": {
         "id": "utcFridayCeil",
-        "family": "time",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -3789,7 +3535,7 @@
       },
       "dcss-utc-friday-round": {
         "id": "utcFridayRound",
-        "family": "time",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -3822,7 +3568,7 @@
       },
       "dcss-utc-friday-offset": {
         "id": "utcFridayOffset",
-        "family": "time",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -3855,7 +3601,7 @@
       },
       "dcss-utc-friday-count": {
         "id": "utcFridayCount",
-        "family": "time",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -3888,7 +3634,7 @@
       },
       "dcss-utc-saturday-floor": {
         "id": "utcSaturdayFloor",
-        "family": "time",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -3921,7 +3667,7 @@
       },
       "dcss-utc-saturday-ceil": {
         "id": "utcSaturdayCeil",
-        "family": "time",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -3954,7 +3700,7 @@
       },
       "dcss-utc-saturday-round": {
         "id": "utcSaturdayRound",
-        "family": "time",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -3987,7 +3733,7 @@
       },
       "dcss-utc-saturday-offset": {
         "id": "utcSaturdayOffset",
-        "family": "time",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -4020,700 +3766,7 @@
       },
       "dcss-utc-saturday-count": {
         "id": "utcSaturdayCount",
-        "family": "time",
-        "compilerDefault": "calc",
-        "runtimeBackend": "calc",
-        "timing": {
-          "mode": "same-update",
-          "latencyFrames": 0
-        },
-        "representations": {
-          "input": "scalar-custom-property",
-          "intermediate": "scalar-custom-property",
-          "result": "prepared"
-        },
-        "contracts": {
-          "input": "prepared",
-          "result": "prepared",
-          "precision": "prepared",
-          "readiness": "prepared"
-        },
-        "candidates": {
-          "calc": {
-            "status": "available"
-          },
-          "layout": {
-            "status": "unimplemented",
-            "reason": "no qualified layout implementation"
-          }
-        },
-        "eligibility": {
-          "status": "prepared"
-        }
-      },
-      "dcss-identity-ticks": {
-        "id": "identityTicks",
-        "family": "ticks",
-        "compilerDefault": "calc",
-        "runtimeBackend": "calc",
-        "timing": {
-          "mode": "same-update",
-          "latencyFrames": 0
-        },
-        "representations": {
-          "input": "scalar-custom-property",
-          "intermediate": "scalar-custom-property",
-          "result": "prepared"
-        },
-        "contracts": {
-          "input": "prepared",
-          "result": "prepared",
-          "precision": "prepared",
-          "readiness": "prepared"
-        },
-        "candidates": {
-          "calc": {
-            "status": "available"
-          },
-          "layout": {
-            "status": "unimplemented",
-            "reason": "no qualified layout implementation"
-          }
-        },
-        "eligibility": {
-          "status": "prepared"
-        }
-      },
-      "dcss-geo-identity": {
-        "id": "geoPoint:identity:forward",
-        "family": "geo",
-        "compilerDefault": "calc",
-        "runtimeBackend": "calc",
-        "timing": {
-          "mode": "same-update",
-          "latencyFrames": 0
-        },
-        "representations": {
-          "input": "scalar-custom-property",
-          "intermediate": "scalar-custom-property",
-          "result": "prepared"
-        },
-        "contracts": {
-          "input": "prepared",
-          "result": "prepared",
-          "precision": "prepared",
-          "readiness": "prepared"
-        },
-        "candidates": {
-          "calc": {
-            "status": "available"
-          },
-          "layout": {
-            "status": "unimplemented",
-            "reason": "no qualified layout implementation"
-          }
-        },
-        "eligibility": {
-          "status": "prepared"
-        }
-      },
-      "dcss-geo-identity-invert": {
-        "id": "geoPoint:identity:invert",
-        "family": "geo",
-        "compilerDefault": "calc",
-        "runtimeBackend": "calc",
-        "timing": {
-          "mode": "same-update",
-          "latencyFrames": 0
-        },
-        "representations": {
-          "input": "scalar-custom-property",
-          "intermediate": "scalar-custom-property",
-          "result": "prepared"
-        },
-        "contracts": {
-          "input": "prepared",
-          "result": "prepared",
-          "precision": "prepared",
-          "readiness": "prepared"
-        },
-        "candidates": {
-          "calc": {
-            "status": "available"
-          },
-          "layout": {
-            "status": "unimplemented",
-            "reason": "no qualified layout implementation"
-          }
-        },
-        "eligibility": {
-          "status": "prepared"
-        }
-      },
-      "dcss-geo-equirectangular": {
-        "id": "geoPoint:equirectangular:forward",
-        "family": "geo",
-        "compilerDefault": "calc",
-        "runtimeBackend": "calc",
-        "timing": {
-          "mode": "same-update",
-          "latencyFrames": 0
-        },
-        "representations": {
-          "input": "scalar-custom-property",
-          "intermediate": "scalar-custom-property",
-          "result": "prepared"
-        },
-        "contracts": {
-          "input": "prepared",
-          "result": "prepared",
-          "precision": "prepared",
-          "readiness": "prepared"
-        },
-        "candidates": {
-          "calc": {
-            "status": "available"
-          },
-          "layout": {
-            "status": "unimplemented",
-            "reason": "no qualified layout implementation"
-          }
-        },
-        "eligibility": {
-          "status": "prepared"
-        }
-      },
-      "dcss-geo-equirectangular-invert": {
-        "id": "geoPoint:equirectangular:invert",
-        "family": "geo",
-        "compilerDefault": "calc",
-        "runtimeBackend": "calc",
-        "timing": {
-          "mode": "same-update",
-          "latencyFrames": 0
-        },
-        "representations": {
-          "input": "scalar-custom-property",
-          "intermediate": "scalar-custom-property",
-          "result": "prepared"
-        },
-        "contracts": {
-          "input": "prepared",
-          "result": "prepared",
-          "precision": "prepared",
-          "readiness": "prepared"
-        },
-        "candidates": {
-          "calc": {
-            "status": "available"
-          },
-          "layout": {
-            "status": "unimplemented",
-            "reason": "no qualified layout implementation"
-          }
-        },
-        "eligibility": {
-          "status": "prepared"
-        }
-      },
-      "dcss-geo-mercator": {
-        "id": "geoPoint:mercator:forward",
-        "family": "geo",
-        "compilerDefault": "calc",
-        "runtimeBackend": "calc",
-        "timing": {
-          "mode": "same-update",
-          "latencyFrames": 0
-        },
-        "representations": {
-          "input": "scalar-custom-property",
-          "intermediate": "scalar-custom-property",
-          "result": "prepared"
-        },
-        "contracts": {
-          "input": "prepared",
-          "result": "prepared",
-          "precision": "prepared",
-          "readiness": "prepared"
-        },
-        "candidates": {
-          "calc": {
-            "status": "available"
-          },
-          "layout": {
-            "status": "unimplemented",
-            "reason": "no qualified layout implementation"
-          }
-        },
-        "eligibility": {
-          "status": "prepared"
-        }
-      },
-      "dcss-geo-mercator-invert": {
-        "id": "geoPoint:mercator:invert",
-        "family": "geo",
-        "compilerDefault": "calc",
-        "runtimeBackend": "calc",
-        "timing": {
-          "mode": "same-update",
-          "latencyFrames": 0
-        },
-        "representations": {
-          "input": "scalar-custom-property",
-          "intermediate": "scalar-custom-property",
-          "result": "prepared"
-        },
-        "contracts": {
-          "input": "prepared",
-          "result": "prepared",
-          "precision": "prepared",
-          "readiness": "prepared"
-        },
-        "candidates": {
-          "calc": {
-            "status": "available"
-          },
-          "layout": {
-            "status": "unimplemented",
-            "reason": "no qualified layout implementation"
-          }
-        },
-        "eligibility": {
-          "status": "prepared"
-        }
-      },
-      "dcss-geo-stereographic": {
-        "id": "geoPoint:stereographic:forward",
-        "family": "geo",
-        "compilerDefault": "calc",
-        "runtimeBackend": "calc",
-        "timing": {
-          "mode": "same-update",
-          "latencyFrames": 0
-        },
-        "representations": {
-          "input": "scalar-custom-property",
-          "intermediate": "scalar-custom-property",
-          "result": "prepared"
-        },
-        "contracts": {
-          "input": "prepared",
-          "result": "prepared",
-          "precision": "prepared",
-          "readiness": "prepared"
-        },
-        "candidates": {
-          "calc": {
-            "status": "available"
-          },
-          "layout": {
-            "status": "unimplemented",
-            "reason": "no qualified layout implementation"
-          }
-        },
-        "eligibility": {
-          "status": "prepared"
-        }
-      },
-      "dcss-geo-stereographic-invert": {
-        "id": "geoPoint:stereographic:invert",
-        "family": "geo",
-        "compilerDefault": "calc",
-        "runtimeBackend": "calc",
-        "timing": {
-          "mode": "same-update",
-          "latencyFrames": 0
-        },
-        "representations": {
-          "input": "scalar-custom-property",
-          "intermediate": "scalar-custom-property",
-          "result": "prepared"
-        },
-        "contracts": {
-          "input": "prepared",
-          "result": "prepared",
-          "precision": "prepared",
-          "readiness": "prepared"
-        },
-        "candidates": {
-          "calc": {
-            "status": "available"
-          },
-          "layout": {
-            "status": "unimplemented",
-            "reason": "no qualified layout implementation"
-          }
-        },
-        "eligibility": {
-          "status": "prepared"
-        }
-      },
-      "dcss-geo-transverse-mercator": {
-        "id": "geoPoint:transverse-mercator:forward",
-        "family": "geo",
-        "compilerDefault": "calc",
-        "runtimeBackend": "calc",
-        "timing": {
-          "mode": "same-update",
-          "latencyFrames": 0
-        },
-        "representations": {
-          "input": "scalar-custom-property",
-          "intermediate": "scalar-custom-property",
-          "result": "prepared"
-        },
-        "contracts": {
-          "input": "prepared",
-          "result": "prepared",
-          "precision": "prepared",
-          "readiness": "prepared"
-        },
-        "candidates": {
-          "calc": {
-            "status": "available"
-          },
-          "layout": {
-            "status": "unimplemented",
-            "reason": "no qualified layout implementation"
-          }
-        },
-        "eligibility": {
-          "status": "prepared"
-        }
-      },
-      "dcss-geo-transverse-mercator-invert": {
-        "id": "geoPoint:transverse-mercator:invert",
-        "family": "geo",
-        "compilerDefault": "calc",
-        "runtimeBackend": "calc",
-        "timing": {
-          "mode": "same-update",
-          "latencyFrames": 0
-        },
-        "representations": {
-          "input": "scalar-custom-property",
-          "intermediate": "scalar-custom-property",
-          "result": "prepared"
-        },
-        "contracts": {
-          "input": "prepared",
-          "result": "prepared",
-          "precision": "prepared",
-          "readiness": "prepared"
-        },
-        "candidates": {
-          "calc": {
-            "status": "available"
-          },
-          "layout": {
-            "status": "unimplemented",
-            "reason": "no qualified layout implementation"
-          }
-        },
-        "eligibility": {
-          "status": "prepared"
-        }
-      },
-      "dcss-geo-rotation": {
-        "id": "geoPoint:rotation:forward",
-        "family": "geo",
-        "compilerDefault": "calc",
-        "runtimeBackend": "calc",
-        "timing": {
-          "mode": "same-update",
-          "latencyFrames": 0
-        },
-        "representations": {
-          "input": "scalar-custom-property",
-          "intermediate": "scalar-custom-property",
-          "result": "prepared"
-        },
-        "contracts": {
-          "input": "prepared",
-          "result": "prepared",
-          "precision": "prepared",
-          "readiness": "prepared"
-        },
-        "candidates": {
-          "calc": {
-            "status": "available"
-          },
-          "layout": {
-            "status": "unimplemented",
-            "reason": "no qualified layout implementation"
-          }
-        },
-        "eligibility": {
-          "status": "prepared"
-        }
-      },
-      "dcss-geo-rotation-invert": {
-        "id": "geoPoint:rotation:invert",
-        "family": "geo",
-        "compilerDefault": "calc",
-        "runtimeBackend": "calc",
-        "timing": {
-          "mode": "same-update",
-          "latencyFrames": 0
-        },
-        "representations": {
-          "input": "scalar-custom-property",
-          "intermediate": "scalar-custom-property",
-          "result": "prepared"
-        },
-        "contracts": {
-          "input": "prepared",
-          "result": "prepared",
-          "precision": "prepared",
-          "readiness": "prepared"
-        },
-        "candidates": {
-          "calc": {
-            "status": "available"
-          },
-          "layout": {
-            "status": "unimplemented",
-            "reason": "no qualified layout implementation"
-          }
-        },
-        "eligibility": {
-          "status": "prepared"
-        }
-      },
-      "dcss-geo-identity-config": {
-        "id": "geoPoint:identity:config",
-        "family": "geo",
-        "compilerDefault": "calc",
-        "runtimeBackend": "calc",
-        "timing": {
-          "mode": "same-update",
-          "latencyFrames": 0
-        },
-        "representations": {
-          "input": "scalar-custom-property",
-          "intermediate": "scalar-custom-property",
-          "result": "prepared"
-        },
-        "contracts": {
-          "input": "prepared",
-          "result": "prepared",
-          "precision": "prepared",
-          "readiness": "prepared"
-        },
-        "candidates": {
-          "calc": {
-            "status": "available"
-          },
-          "layout": {
-            "status": "unimplemented",
-            "reason": "no qualified layout implementation"
-          }
-        },
-        "eligibility": {
-          "status": "prepared"
-        }
-      },
-      "dcss-geo-equirectangular-config": {
-        "id": "geoPoint:equirectangular:config",
-        "family": "geo",
-        "compilerDefault": "calc",
-        "runtimeBackend": "calc",
-        "timing": {
-          "mode": "same-update",
-          "latencyFrames": 0
-        },
-        "representations": {
-          "input": "scalar-custom-property",
-          "intermediate": "scalar-custom-property",
-          "result": "prepared"
-        },
-        "contracts": {
-          "input": "prepared",
-          "result": "prepared",
-          "precision": "prepared",
-          "readiness": "prepared"
-        },
-        "candidates": {
-          "calc": {
-            "status": "available"
-          },
-          "layout": {
-            "status": "unimplemented",
-            "reason": "no qualified layout implementation"
-          }
-        },
-        "eligibility": {
-          "status": "prepared"
-        }
-      },
-      "dcss-geo-mercator-config": {
-        "id": "geoPoint:mercator:config",
-        "family": "geo",
-        "compilerDefault": "calc",
-        "runtimeBackend": "calc",
-        "timing": {
-          "mode": "same-update",
-          "latencyFrames": 0
-        },
-        "representations": {
-          "input": "scalar-custom-property",
-          "intermediate": "scalar-custom-property",
-          "result": "prepared"
-        },
-        "contracts": {
-          "input": "prepared",
-          "result": "prepared",
-          "precision": "prepared",
-          "readiness": "prepared"
-        },
-        "candidates": {
-          "calc": {
-            "status": "available"
-          },
-          "layout": {
-            "status": "unimplemented",
-            "reason": "no qualified layout implementation"
-          }
-        },
-        "eligibility": {
-          "status": "prepared"
-        }
-      },
-      "dcss-geo-stereographic-config": {
-        "id": "geoPoint:stereographic:config",
-        "family": "geo",
-        "compilerDefault": "calc",
-        "runtimeBackend": "calc",
-        "timing": {
-          "mode": "same-update",
-          "latencyFrames": 0
-        },
-        "representations": {
-          "input": "scalar-custom-property",
-          "intermediate": "scalar-custom-property",
-          "result": "prepared"
-        },
-        "contracts": {
-          "input": "prepared",
-          "result": "prepared",
-          "precision": "prepared",
-          "readiness": "prepared"
-        },
-        "candidates": {
-          "calc": {
-            "status": "available"
-          },
-          "layout": {
-            "status": "unimplemented",
-            "reason": "no qualified layout implementation"
-          }
-        },
-        "eligibility": {
-          "status": "prepared"
-        }
-      },
-      "dcss-geo-transverse-mercator-config": {
-        "id": "geoPoint:transverse-mercator:config",
-        "family": "geo",
-        "compilerDefault": "calc",
-        "runtimeBackend": "calc",
-        "timing": {
-          "mode": "same-update",
-          "latencyFrames": 0
-        },
-        "representations": {
-          "input": "scalar-custom-property",
-          "intermediate": "scalar-custom-property",
-          "result": "prepared"
-        },
-        "contracts": {
-          "input": "prepared",
-          "result": "prepared",
-          "precision": "prepared",
-          "readiness": "prepared"
-        },
-        "candidates": {
-          "calc": {
-            "status": "available"
-          },
-          "layout": {
-            "status": "unimplemented",
-            "reason": "no qualified layout implementation"
-          }
-        },
-        "eligibility": {
-          "status": "prepared"
-        }
-      },
-      "dcss-geo-distance": {
-        "id": "geoPoint:distance:forward",
-        "family": "geo",
-        "compilerDefault": "calc",
-        "runtimeBackend": "calc",
-        "timing": {
-          "mode": "same-update",
-          "latencyFrames": 0
-        },
-        "representations": {
-          "input": "scalar-custom-property",
-          "intermediate": "scalar-custom-property",
-          "result": "prepared"
-        },
-        "contracts": {
-          "input": "prepared",
-          "result": "prepared",
-          "precision": "prepared",
-          "readiness": "prepared"
-        },
-        "candidates": {
-          "calc": {
-            "status": "available"
-          },
-          "layout": {
-            "status": "unimplemented",
-            "reason": "no qualified layout implementation"
-          }
-        },
-        "eligibility": {
-          "status": "prepared"
-        }
-      },
-      "dcss-geo-mercator-extent": {
-        "id": "geoPoint:mercator:extent",
-        "family": "geo",
-        "compilerDefault": "calc",
-        "runtimeBackend": "calc",
-        "timing": {
-          "mode": "same-update",
-          "latencyFrames": 0
-        },
-        "representations": {
-          "input": "scalar-custom-property",
-          "intermediate": "scalar-custom-property",
-          "result": "prepared"
-        },
-        "contracts": {
-          "input": "prepared",
-          "result": "prepared",
-          "precision": "prepared",
-          "readiness": "prepared"
-        },
-        "candidates": {
-          "calc": {
-            "status": "available"
-          },
-          "layout": {
-            "status": "unimplemented",
-            "reason": "no qualified layout implementation"
-          }
-        },
-        "eligibility": {
-          "status": "prepared"
-        }
-      },
-      "dcss-geo-transverse-mercator-extent": {
-        "id": "geoPoint:transverse-mercator:extent",
-        "family": "geo",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -4746,7 +3799,7 @@
       },
       "dcss-date-format-0": {
         "id": "dateFormatUTC",
-        "family": "date-format",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -4779,7 +3832,7 @@
       },
       "dcss-date-format-1": {
         "id": "dateFormatUTC",
-        "family": "date-format",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -4812,7 +3865,7 @@
       },
       "dcss-date-format-2": {
         "id": "dateFormatUTC",
-        "family": "date-format",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -4845,7 +3898,7 @@
       },
       "dcss-date-format-3": {
         "id": "dateFormatUTC",
-        "family": "date-format",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -4878,7 +3931,7 @@
       },
       "dcss-date-format-4": {
         "id": "dateFormatUTC",
-        "family": "date-format",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -4911,7 +3964,7 @@
       },
       "dcss-date-format-5": {
         "id": "dateFormatUTC",
-        "family": "date-format",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -4944,7 +3997,7 @@
       },
       "dcss-date-format-6": {
         "id": "dateFormatUTC",
-        "family": "date-format",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -4977,7 +4030,7 @@
       },
       "dcss-date-format-7": {
         "id": "dateFormatUTC",
-        "family": "date-format",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -5010,7 +4063,7 @@
       },
       "dcss-date-format-8": {
         "id": "dateFormatUTC",
-        "family": "date-format",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -5043,7 +4096,7 @@
       },
       "dcss-date-format-9": {
         "id": "dateFormatUTC",
-        "family": "date-format",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -5076,7 +4129,7 @@
       },
       "dcss-date-format-10": {
         "id": "dateFormatUTC",
-        "family": "date-format",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -5109,7 +4162,7 @@
       },
       "dcss-date-format-11": {
         "id": "dateFormatUTC",
-        "family": "date-format",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -5142,7 +4195,7 @@
       },
       "dcss-date-format-12": {
         "id": "dateFormatUTC",
-        "family": "date-format",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -5175,7 +4228,7 @@
       },
       "dcss-date-format-13": {
         "id": "dateFormatUTC",
-        "family": "date-format",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -5208,7 +4261,7 @@
       },
       "dcss-date-format-14": {
         "id": "dateFormatUTC",
-        "family": "date-format",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -5241,7 +4294,7 @@
       },
       "dcss-date-format-15": {
         "id": "dateFormatUTC",
-        "family": "date-format",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -5274,7 +4327,7 @@
       },
       "dcss-date-format-16": {
         "id": "dateFormatUTC",
-        "family": "date-format",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -5307,7 +4360,7 @@
       },
       "dcss-date-format-17": {
         "id": "dateFormatUTC",
-        "family": "date-format",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -5340,7 +4393,7 @@
       },
       "dcss-date-format-18": {
         "id": "dateFormatUTC",
-        "family": "date-format",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -5373,7 +4426,7 @@
       },
       "dcss-date-format-19": {
         "id": "dateFormatUTC",
-        "family": "date-format",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -5406,7 +4459,7 @@
       },
       "dcss-date-format-20": {
         "id": "dateFormatUTC",
-        "family": "date-format",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -5439,7 +4492,7 @@
       },
       "dcss-date-format-21": {
         "id": "dateFormatUTC",
-        "family": "date-format",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -5472,7 +4525,7 @@
       },
       "dcss-date-format-22": {
         "id": "dateFormatUTC",
-        "family": "date-format",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -5505,7 +4558,7 @@
       },
       "dcss-date-format-23": {
         "id": "dateFormatUTC",
-        "family": "date-format",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -5538,7 +4591,7 @@
       },
       "dcss-date-format-24": {
         "id": "dateFormatUTC",
-        "family": "date-format",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -5571,7 +4624,7 @@
       },
       "dcss-date-format-25": {
         "id": "dateFormatUTC",
-        "family": "date-format",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -5604,7 +4657,7 @@
       },
       "dcss-date-format-26": {
         "id": "dateFormatUTC",
-        "family": "date-format",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -5637,7 +4690,7 @@
       },
       "dcss-date-format-27": {
         "id": "dateFormatUTC",
-        "family": "date-format",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -5670,7 +4723,7 @@
       },
       "dcss-date-format-28": {
         "id": "dateFormatUTC",
-        "family": "date-format",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -5703,7 +4756,7 @@
       },
       "dcss-date-format-29": {
         "id": "dateFormatUTC",
-        "family": "date-format",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -5736,7 +4789,7 @@
       },
       "dcss-date-format-30": {
         "id": "dateFormatUTC",
-        "family": "date-format",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -5769,7 +4822,7 @@
       },
       "dcss-date-format-31": {
         "id": "dateFormatUTC",
-        "family": "date-format",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -5802,7 +4855,7 @@
       },
       "dcss-date-format-32": {
         "id": "dateFormatUTC",
-        "family": "date-format",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -5835,7 +4888,7 @@
       },
       "dcss-date-format-33": {
         "id": "dateFormatUTC",
-        "family": "date-format",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -5868,7 +4921,7 @@
       },
       "dcss-date-format-34": {
         "id": "dateFormatUTC",
-        "family": "date-format",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -5901,7 +4954,7 @@
       },
       "dcss-date-format-35": {
         "id": "dateFormatUTC",
-        "family": "date-format",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -5934,7 +4987,7 @@
       },
       "dcss-date-format-36": {
         "id": "dateFormatUTC",
-        "family": "date-format",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -5967,7 +5020,7 @@
       },
       "dcss-date-format-37": {
         "id": "dateFormatUTC",
-        "family": "date-format",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -6000,7 +5053,7 @@
       },
       "dcss-date-format-38": {
         "id": "dateFormatUTC",
-        "family": "date-format",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -6033,7 +5086,7 @@
       },
       "dcss-date-format-39": {
         "id": "dateFormatUTC",
-        "family": "date-format",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -6066,7 +5119,7 @@
       },
       "dcss-date-format-40": {
         "id": "dateFormatUTC",
-        "family": "date-format",
+        "family": "dates",
         "compilerDefault": "calc",
         "runtimeBackend": "calc",
         "timing": {
@@ -6099,34 +5152,6 @@
       }
     },
     "styling": {
-      "dcss-axis-bottom": {
-        "family": "ticks",
-        "role": "style-only"
-      },
-      "dcss-axis-left": {
-        "family": "ticks",
-        "role": "style-only"
-      },
-      "dcss-axis-right": {
-        "family": "ticks",
-        "role": "style-only"
-      },
-      "dcss-axis-top": {
-        "family": "ticks",
-        "role": "style-only"
-      },
-      "dcss-identity-tick-format": {
-        "family": "ticks",
-        "role": "style-only"
-      },
-      "dcss-nice": {
-        "family": "ticks",
-        "role": "style-only"
-      },
-      "dcss-ticks": {
-        "family": "ticks",
-        "role": "style-only"
-      },
       "dcss-bisect": {
         "family": "array",
         "role": "style-only"
@@ -6159,48 +5184,16 @@
         "family": "array",
         "role": "style-only"
       },
+      "dcss-nice": {
+        "family": "array",
+        "role": "style-only"
+      },
       "dcss-summarize": {
         "family": "array",
         "role": "style-only"
       },
-      "dcss-partition": {
-        "family": "hierarchy",
-        "role": "style-only"
-      },
-      "dcss-treemap-dice": {
-        "family": "hierarchy",
-        "role": "style-only"
-      },
-      "dcss-treemap-slice": {
-        "family": "hierarchy",
-        "role": "style-only"
-      },
-      "dcss-treemap-slice-dice": {
-        "family": "hierarchy",
-        "role": "style-only"
-      },
-      "dcss-scale-band": {
-        "family": "scale",
-        "role": "style-only"
-      },
-      "dcss-scale-diverging": {
-        "family": "scale",
-        "role": "style-only"
-      },
-      "dcss-scale-diverging-log": {
-        "family": "scale",
-        "role": "style-only"
-      },
-      "dcss-scale-diverging-pow": {
-        "family": "scale",
-        "role": "style-only"
-      },
-      "dcss-scale-diverging-sqrt": {
-        "family": "scale",
-        "role": "style-only"
-      },
-      "dcss-scale-diverging-symlog": {
-        "family": "scale",
+      "dcss-ticks": {
+        "family": "array",
         "role": "style-only"
       },
       "dcss-scale-log": {
@@ -6211,35 +5204,7 @@
         "family": "scale",
         "role": "style-only"
       },
-      "dcss-scale-point": {
-        "family": "scale",
-        "role": "style-only"
-      },
       "dcss-scale-pow": {
-        "family": "scale",
-        "role": "style-only"
-      },
-      "dcss-scale-radial": {
-        "family": "scale",
-        "role": "style-only"
-      },
-      "dcss-scale-sequential": {
-        "family": "scale",
-        "role": "style-only"
-      },
-      "dcss-scale-sequential-log": {
-        "family": "scale",
-        "role": "style-only"
-      },
-      "dcss-scale-sequential-pow": {
-        "family": "scale",
-        "role": "style-only"
-      },
-      "dcss-scale-sequential-sqrt": {
-        "family": "scale",
-        "role": "style-only"
-      },
-      "dcss-scale-sequential-symlog": {
         "family": "scale",
         "role": "style-only"
       },
@@ -6247,251 +5212,11 @@
         "family": "scale",
         "role": "style-only"
       },
-      "dcss-scale-symlog": {
-        "family": "scale",
-        "role": "style-only"
-      },
       "dcss-locale-arabic": {
         "family": "format",
         "role": "style-only"
       },
-      "dcss-nice-log": {
-        "family": "format",
-        "role": "style-only"
-      },
-      "dcss-ticks-log": {
-        "family": "format",
-        "role": "style-only"
-      },
-      "dcss-ticks-log-format": {
-        "family": "format",
-        "role": "style-only"
-      },
-      "dcss-ease-back": {
-        "family": "ease",
-        "role": "style-only"
-      },
-      "dcss-ease-back-in": {
-        "family": "ease",
-        "role": "style-only"
-      },
-      "dcss-ease-back-in-out": {
-        "family": "ease",
-        "role": "style-only"
-      },
-      "dcss-ease-back-out": {
-        "family": "ease",
-        "role": "style-only"
-      },
-      "dcss-ease-bounce": {
-        "family": "ease",
-        "role": "style-only"
-      },
-      "dcss-ease-bounce-in": {
-        "family": "ease",
-        "role": "style-only"
-      },
-      "dcss-ease-bounce-in-out": {
-        "family": "ease",
-        "role": "style-only"
-      },
-      "dcss-ease-bounce-out": {
-        "family": "ease",
-        "role": "style-only"
-      },
-      "dcss-ease-circle": {
-        "family": "ease",
-        "role": "style-only"
-      },
-      "dcss-ease-circle-in": {
-        "family": "ease",
-        "role": "style-only"
-      },
-      "dcss-ease-circle-in-out": {
-        "family": "ease",
-        "role": "style-only"
-      },
-      "dcss-ease-circle-out": {
-        "family": "ease",
-        "role": "style-only"
-      },
-      "dcss-ease-cubic": {
-        "family": "ease",
-        "role": "style-only"
-      },
-      "dcss-ease-cubic-in": {
-        "family": "ease",
-        "role": "style-only"
-      },
-      "dcss-ease-cubic-in-out": {
-        "family": "ease",
-        "role": "style-only"
-      },
-      "dcss-ease-cubic-out": {
-        "family": "ease",
-        "role": "style-only"
-      },
-      "dcss-ease-elastic": {
-        "family": "ease",
-        "role": "style-only"
-      },
-      "dcss-ease-elastic-in": {
-        "family": "ease",
-        "role": "style-only"
-      },
-      "dcss-ease-elastic-in-out": {
-        "family": "ease",
-        "role": "style-only"
-      },
-      "dcss-ease-elastic-out": {
-        "family": "ease",
-        "role": "style-only"
-      },
-      "dcss-ease-exp": {
-        "family": "ease",
-        "role": "style-only"
-      },
-      "dcss-ease-exp-in": {
-        "family": "ease",
-        "role": "style-only"
-      },
-      "dcss-ease-exp-in-out": {
-        "family": "ease",
-        "role": "style-only"
-      },
-      "dcss-ease-exp-out": {
-        "family": "ease",
-        "role": "style-only"
-      },
-      "dcss-ease-linear": {
-        "family": "ease",
-        "role": "style-only"
-      },
-      "dcss-ease-poly": {
-        "family": "ease",
-        "role": "style-only"
-      },
-      "dcss-ease-poly-in": {
-        "family": "ease",
-        "role": "style-only"
-      },
-      "dcss-ease-poly-in-out": {
-        "family": "ease",
-        "role": "style-only"
-      },
-      "dcss-ease-poly-out": {
-        "family": "ease",
-        "role": "style-only"
-      },
-      "dcss-ease-quad": {
-        "family": "ease",
-        "role": "style-only"
-      },
-      "dcss-ease-quad-in": {
-        "family": "ease",
-        "role": "style-only"
-      },
-      "dcss-ease-quad-in-out": {
-        "family": "ease",
-        "role": "style-only"
-      },
-      "dcss-ease-quad-out": {
-        "family": "ease",
-        "role": "style-only"
-      },
-      "dcss-ease-sin": {
-        "family": "ease",
-        "role": "style-only"
-      },
-      "dcss-ease-sin-in": {
-        "family": "ease",
-        "role": "style-only"
-      },
-      "dcss-ease-sin-in-out": {
-        "family": "ease",
-        "role": "style-only"
-      },
-      "dcss-ease-sin-out": {
-        "family": "ease",
-        "role": "style-only"
-      },
-      "dcss-geo-equal-earth-raw": {
-        "family": "geo",
-        "role": "style-only"
-      },
-      "dcss-geo-natural-earth1-raw": {
-        "family": "geo",
-        "role": "style-only"
-      },
-      "dcss-arc": {
-        "family": "shape",
-        "role": "style-only"
-      },
-      "dcss-area": {
-        "family": "shape",
-        "role": "style-only"
-      },
-      "dcss-curve-bump-x": {
-        "family": "shape",
-        "role": "style-only"
-      },
-      "dcss-curve-bump-y": {
-        "family": "shape",
-        "role": "style-only"
-      },
-      "dcss-curve-step": {
-        "family": "shape",
-        "role": "style-only"
-      },
-      "dcss-curve-step-after": {
-        "family": "shape",
-        "role": "style-only"
-      },
-      "dcss-curve-step-before": {
-        "family": "shape",
-        "role": "style-only"
-      },
-      "dcss-line": {
-        "family": "shape",
-        "role": "style-only"
-      },
-      "dcss-pie": {
-        "family": "shape",
-        "role": "style-only"
-      },
-      "dcss-shape-stack": {
-        "family": "shape",
-        "role": "style-only"
-      },
-      "dcss-stack-offset-diverging": {
-        "family": "shape",
-        "role": "style-only"
-      },
-      "dcss-stack-offset-expand": {
-        "family": "shape",
-        "role": "style-only"
-      },
-      "dcss-stack-offset-silhouette": {
-        "family": "shape",
-        "role": "style-only"
-      },
-      "dcss-stack-order-reverse": {
-        "family": "shape",
-        "role": "style-only"
-      },
       "dcss-evaluate": {
-        "family": "math",
-        "role": "style-only"
-      },
-      "dcss-geo-equal-earth-raw-invert": {
-        "family": "math",
-        "role": "style-only"
-      },
-      "dcss-geo-natural-earth1-raw-invert": {
-        "family": "math",
-        "role": "style-only"
-      },
-      "dcss-motion": {
         "family": "math",
         "role": "style-only"
       },
@@ -6517,6 +5242,10 @@
       },
       "dcss-solve-turning-point": {
         "family": "math",
+        "role": "style-only"
+      },
+      "dcss-motion": {
+        "family": "motion",
         "role": "style-only"
       }
     },

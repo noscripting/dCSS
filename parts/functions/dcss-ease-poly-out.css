@@ -1,1 +1,0 @@
-@function --dcss-ease-poly-out(--value, --exponent: 3) { result: calc((1 - pow(1 - var(--value), var(--exponent, 3)))); }

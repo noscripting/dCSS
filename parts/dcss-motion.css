@@ -1,20 +1,9 @@
-/* DCSS array: parts/dcss-motion.css, the dcss-motion call alone (parts.mjs)
+/* dcss.css: parts/dcss-motion.css, the dcss-motion call alone (parts.mjs)
    SPDX-License-Identifier: MIT
    SPDX-FileCopyrightText: 2026 noscript.ing contributors */
 @property --dcss-ready { syntax: '<integer>'; inherits: true; initial-value: 0; }
 @property --dcss-err { syntax: '<integer>'; inherits: true; initial-value: 0; }
 :where([class*="dcss-"]) { writing-mode: horizontal-tb; }
-/* Where the page's own function reaches a target, by bisection (root.mjs). */
-/* A solve by Newton's method kept inside the bracket (root.mjs). */
-
-/* Every input where the page's own function reaches a target (every.mjs). */
-
-/* The page's own function at one input (evaluate.mjs). */
-
-/* The inverse of the page's own function on every row, by layout (invert.mjs). */
-
-/* The page's own function sampled as a list (sample.mjs). */
-
 /* The page's own equation of motion, stepped a frame on store.css's frame cell (ode.mjs). */
 :where(.dcss-motion *){--dcss-motion-start-position:initial;--dcss-motion-start-speed:initial;--dcss-motion-position-range:initial;--dcss-motion-speed-range:initial;--dcss-motion-time-step:initial;--dcss-motion-acceleration:initial}
 .dcss-motion{--dcss-motion-k:calc(500000 / var(--dcss-motion-position-range, 500));--dcss-motion-kv:calc(500000 / var(--dcss-motion-speed-range, 5000));--store-start:round((var(--dcss-motion-start-position, 0) + var(--dcss-motion-position-range, 500)) * var(--dcss-motion-k));--store-start-y:round((var(--dcss-motion-start-speed, 0) + var(--dcss-motion-speed-range, 5000)) * var(--dcss-motion-kv));--dcss-motion-position:calc(var(--store-value) / var(--dcss-motion-k) - var(--dcss-motion-position-range, 500));--dcss-motion-speed:calc(var(--store-y) / var(--dcss-motion-kv) - var(--dcss-motion-speed-range, 5000));--dcss-motion-next-speed:calc(var(--dcss-motion-speed) + var(--dcss-motion-time-step, 0.016666666666666666) * var(--dcss-motion-acceleration, 0));--dcss-motion-next-position:calc(var(--dcss-motion-position) + var(--dcss-motion-time-step, 0.016666666666666666) * var(--dcss-motion-next-speed));--store-next:calc((var(--dcss-motion-next-position) + var(--dcss-motion-position-range, 500)) * var(--dcss-motion-k));--store-next-y:calc((var(--dcss-motion-next-speed) + var(--dcss-motion-speed-range, 5000)) * var(--dcss-motion-kv));--dcss-ready:var(--store-ready, 0);--dcss-err:max(0, sign(abs(var(--dcss-motion-next-position)) - var(--dcss-motion-position-range, 500)), sign(abs(var(--dcss-motion-next-speed)) - var(--dcss-motion-speed-range, 5000)), sign(abs(var(--dcss-motion-start-position, 0)) - var(--dcss-motion-position-range, 500)), sign(abs(var(--dcss-motion-start-speed, 0)) - var(--dcss-motion-speed-range, 5000)))}

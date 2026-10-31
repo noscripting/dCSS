@@ -1,38 +1,7 @@
-/* DCSS array: parts/dcss-scale-linear.css, the dcss-scale-linear call alone (parts.mjs)
+/* dcss.css: parts/dcss-scale-linear.css, the dcss-scale-linear call alone (parts.mjs)
    SPDX-License-Identifier: MIT
    SPDX-FileCopyrightText: 2026 noscript.ing contributors */
 :where([class*="dcss-"]) { writing-mode: horizontal-tb; }
-/* DCSS bar chart: d3.scaleBand and d3.scaleLinear([0, max]) over a list (scale.mjs). */
-@property --dcss-max{syntax:'*';inherits:false}
-@property --dcss-plot-h { syntax: '<length>'; inherits: true; initial-value: 0px; }
-@property --dcss-plot-w { syntax: '<length>'; inherits: true; initial-value: 0px; }
-@property --dcss-step { syntax: '<length>'; inherits: true; initial-value: 0px; }
-@property --dcss-pi { syntax: '<number>'; inherits: true; initial-value: 0; }
-@property --dcss-band-raw { syntax: '<number>'; inherits: true; initial-value: 0; }
-@property --dcss-band-max { syntax: '<number>'; inherits: true; initial-value: 0; }
-.dcss-scale-band.dcss-scale-linear { display: grid; grid-template: auto / 100%; align-content: start; container-type: size; overflow: clip; }
-.dcss-scale-band.dcss-scale-linear > :is(ul, ol),.dcss-scale-band.dcss-scale-linear > :is(ul, ol) + * { grid-area: 1 / 1; margin: 0; padding: 0; border: 0; --dcss-plot-h: 100cqh; --dcss-plot-w: 100cqw; }
-.dcss-scale-band.dcss-scale-linear > :is(ul, ol) { display: flex; align-items: stretch; list-style: none; position: relative; --dcss-pi: var(--padding-inner, var(--padding, 0));
-  background: linear-gradient(currentColor 0 0) 0 var(--dcss-plot-h) / 100% 1px no-repeat,
-    linear-gradient(currentColor 0 0) 0 var(--dcss-plot-h) / 1px 6px no-repeat, linear-gradient(currentColor 0 0) 100% var(--dcss-plot-h) / 1px 6px no-repeat; }
-.dcss-scale-band.dcss-scale-linear > :is(ul, ol)::before,.dcss-scale-band.dcss-scale-linear > :is(ul, ol)::after { content: ''; flex: 1 1 0px; min-width: 0; }
-.dcss-scale-band.dcss-scale-linear > :is(ul, ol)::before { flex-grow: calc(2 * var(--padding-outer, var(--padding, 0)) * var(--align, 0.5) - var(--padding-inner, var(--padding, 0)) / 2); }
-.dcss-scale-band.dcss-scale-linear > :is(ul, ol)::after { flex-grow: calc(2 * var(--padding-outer, var(--padding, 0)) * (1 - var(--align, 0.5)) - var(--padding-inner, var(--padding, 0)) / 2); }
-.dcss-scale-band.dcss-scale-linear > :is(ul, ol) > li { flex: 1 1 0px; min-width: 0; margin: 0; border: 0; box-sizing: content-box; container-type: size; position: static;
-  --dcss-step: calc(var(--dcss-plot-w) / max(1, sibling-count() - var(--dcss-pi) + 2 * var(--padding-outer, var(--padding, 0))));
-  --dcss-band-x: calc((var(--dcss-plot-w) - var(--dcss-step) * (sibling-count() - var(--dcss-pi))) * var(--align, 0.5) + var(--dcss-step) * (sibling-index() - 1));
-  padding: calc(var(--dcss-plot-h) + 9px) 0 0; min-height: clamp(0px, (log(var(--value), 2) + 64) * 1024px, 131072px);
-  font: 10px sans-serif; line-height: 1; text-align: center; white-space: nowrap; }
-.dcss-scale-band.dcss-scale-linear > :is(ul, ol) > li::before { content: ''; position: absolute; left: var(--dcss-band-x); width: calc((1 - var(--dcss-pi)) * var(--dcss-step));
-  --dcss-band-raw: max(pow(2, round(100cqh / 1px, 0.0078125) / 1024 - 64), var(--value)); --dcss-band-max: calc(var(--dcss-band-raw) + sign(max(0, 0.00002 * var(--dcss-band-raw) - abs(round(var(--dcss-band-raw), pow(10, round(down, log(var(--dcss-band-raw), 10), 1) - 3)) - var(--dcss-band-raw)))) * (round(var(--dcss-band-raw), pow(10, round(down, log(var(--dcss-band-raw), 10), 1) - 3)) - var(--dcss-band-raw))); height: calc(var(--value) / var(--dcss-band-max) * var(--dcss-plot-h));
-  top: calc(var(--dcss-plot-h) - var(--value) / var(--dcss-band-max) * var(--dcss-plot-h)); }
-:where(.dcss-scale-band.dcss-scale-linear > :is(ul, ol) > li)::before { background: steelblue; }
-.dcss-scale-band.dcss-scale-linear > :is(ul, ol) > li::after { content: ''; position: absolute; left: calc(var(--dcss-band-x) + (1 - var(--dcss-pi)) * var(--dcss-step) / 2 - 0.5px); top: var(--dcss-plot-h); width: 1px; height: 6px; background: currentColor; }
-.dcss-scale-band.dcss-scale-linear > :is(ul, ol) + * { display: block; position: relative; container-type: size; min-width: 0; min-height: 0; }
-.dcss-scale-band.dcss-scale-linear > :is(ul, ol) + * > * { --dcss-band-raw: pow(2, (round(100cqh / 1px, 0.0078125) - var(--dcss-plot-h) / 1px - 9) / 1024 - 64); --dcss-band-max: calc(var(--dcss-band-raw) + sign(max(0, 0.00002 * var(--dcss-band-raw) - abs(round(var(--dcss-band-raw), pow(10, round(down, log(var(--dcss-band-raw), 10), 1) - 3)) - var(--dcss-band-raw)))) * (round(var(--dcss-band-raw), pow(10, round(down, log(var(--dcss-band-raw), 10), 1) - 3)) - var(--dcss-band-raw))); --dcss-max: var(--dcss-band-max); }
-.dcss-scale-band.dcss-scale-linear > :is(ul, ol) + * > :is { position: absolute; top: 0; height: var(--dcss-plot-h); }
-.dcss-scale-band.dcss-scale-linear > :is(ul, ol) + * > .dcss-axis-left { right: 100%; } .dcss-scale-band.dcss-scale-linear > :is(ul, ol) + * > .dcss-axis-right { left: 100%; }
-
 /* DCSS d3.scaleLinear: up to 8 stops, clamp, rangeRound (linear.mjs). */
 @property --dcss-scale-linear-m-desc { syntax: '<integer>'; inherits: false; initial-value: 0; }
 @property --dcss-scale-linear-m-i { syntax: '<integer>'; inherits: false; initial-value: 0; }
@@ -90,14 +59,4 @@
 
 /* DCSS d3.scaleLog: map and invert (linear.mjs). */
 
-/* DCSS d3.scaleBand and scalePoint as single calls, by index or by value (ordinal.mjs). */
-
 /* DCSS d3.scaleOrdinal: a value's place in the domain picks the range item (ordinal.mjs). */
-
-/* DCSS d3.scaleSymlog (continuous.mjs). */
-
-/* DCSS d3.scaleRadial (continuous.mjs). */
-
-/* DCSS d3.scaleSequential and its log, pow, sqrt and symlog (continuous.mjs). */
-
-/* DCSS d3.scaleDiverging and its log, pow, sqrt and symlog (continuous.mjs). */

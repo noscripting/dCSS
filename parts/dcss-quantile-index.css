@@ -1,9 +1,11 @@
-/* DCSS array: parts/dcss-quantile-index.css, the dcss-quantile-index call alone (parts.mjs)
+/* dcss.css: parts/dcss-quantile-index.css, the dcss-quantile-index call alone (parts.mjs)
    SPDX-License-Identifier: MIT
    SPDX-FileCopyrightText: 2026 noscript.ing contributors */
 @property --dcss-ready { syntax: '<integer>'; inherits: true; initial-value: 0; }
 @property --dcss-err { syntax: '<integer>'; inherits: true; initial-value: 0; }
 :where([class*="dcss-"]) { writing-mode: horizontal-tb; }
+/* DCSS ticks: d3-array's ticks, tickIncrement, tickStep and nice in calc() (ticks.mjs). */
+
 /* DCSS reductions: d3.sum, count, mean, min, max, extent and the list's length, in a figure (reduce.mjs). */
 /* the list at the figure's padding corner, out of flow and hidden, so what follows it is laid out as written; the figure's ::before on that corner, the list's ::after on its far one */
 /* each element after the list a block of its own (a page's own display wins), the answers handed down to it and what it holds */

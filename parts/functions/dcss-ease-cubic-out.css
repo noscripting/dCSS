@@ -1,1 +1,0 @@
-@function --dcss-ease-cubic-out(--value) { result: calc(((var(--value) - 1) * (var(--value) - 1) * (var(--value) - 1) + 1)); }

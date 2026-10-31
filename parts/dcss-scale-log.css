@@ -1,10 +1,7 @@
-/* DCSS array: parts/dcss-scale-log.css, the dcss-scale-log call alone (parts.mjs)
+/* dcss.css: parts/dcss-scale-log.css, the dcss-scale-log call alone (parts.mjs)
    SPDX-License-Identifier: MIT
    SPDX-FileCopyrightText: 2026 noscript.ing contributors */
 :where([class*="dcss-"]) { writing-mode: horizontal-tb; }
-/* DCSS bar chart: d3.scaleBand and d3.scaleLinear([0, max]) over a list (scale.mjs). */
-@property --dcss-max{syntax:'*';inherits:false}
-
 /* DCSS d3.scaleLinear: up to 8 stops, clamp, rangeRound (linear.mjs). */
 
 /* DCSS d3.scalePow and scaleSqrt (linear.mjs). */
@@ -62,14 +59,4 @@
 @supports (font: -apple-system-body) { .dcss-scale-log.dcss-piecewise { --dcss-scale-log-m-traw: calc(var(--dcss-scale-log-m-z) * 0.5 + (1 - var(--dcss-scale-log-m-z)) * ((var(--dcss-scale-log-m-x) - var(--dcss-scale-log-m-da)) * 1px) / ((var(--dcss-scale-log-m-w) + var(--dcss-scale-log-m-z)) * 1px)); --dcss-scale-log-m-t-e: round(down, log(max(abs(var(--dcss-scale-log-m-traw)), pow(2, -1006)), 2)); --dcss-scale-log-m-t-a: round(to-zero, var(--dcss-scale-log-m-traw) * pow(2, 17 - var(--dcss-scale-log-m-t-e))); --dcss-scale-log-m-t-b: round(to-zero, rem(var(--dcss-scale-log-m-traw) * pow(2, 17 - var(--dcss-scale-log-m-t-e)), 1) * 524288); --dcss-scale-log-m-t-c: calc(rem(var(--dcss-scale-log-m-traw) * pow(2, 17 - var(--dcss-scale-log-m-t-e)) * 524288, 1) * 524288); --dcss-scale-log-m-t: ((var(--dcss-scale-log-m-t-a) + var(--dcss-scale-log-m-t-b) / 524288 + var(--dcss-scale-log-m-t-c) / 274877906944) * pow(2, var(--dcss-scale-log-m-t-e) - 17)); --dcss-scale-log-v-t: calc(var(--dcss-scale-log-v-z) * 0.5 + (1 - var(--dcss-scale-log-v-z)) * ((var(--dcss-scale-log-v-x) - var(--dcss-scale-log-v-da)) * 1px) / ((var(--dcss-scale-log-v-w) + var(--dcss-scale-log-v-z)) * 1px)); } }
 :where(.dcss-scale-log) > * { --value: initial; }
 
-/* DCSS d3.scaleBand and scalePoint as single calls, by index or by value (ordinal.mjs). */
-
 /* DCSS d3.scaleOrdinal: a value's place in the domain picks the range item (ordinal.mjs). */
-
-/* DCSS d3.scaleSymlog (continuous.mjs). */
-
-/* DCSS d3.scaleRadial (continuous.mjs). */
-
-/* DCSS d3.scaleSequential and its log, pow, sqrt and symlog (continuous.mjs). */
-
-/* DCSS d3.scaleDiverging and its log, pow, sqrt and symlog (continuous.mjs). */

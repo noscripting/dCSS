@@ -1303,30 +1303,7 @@
       },
       "A58": {
         "__compat": {
-          "description": "`.dcss-ticks` (or `.dcss-axis-*`) with `--start`, `--stop` and `--count` MUST give `--dcss-tick-increment` and `--dcss-tick-step` equal to d3-array 3.2.4's tickIncrement and tickStep, as many `<li>`s shown as its ticks (the rest `visibility: hidden` and out of flow), and its k-th `<li>` `--dcss-tick` the k-th tick; `.dcss-nice` with the same three MUST give `--dcss-nice-start` and `--dcss-nice-stop` equal to nice's; for finite start, stop and count.",
-          "spec_url": "SPEC.md#2-requirements",
-          "support": {
-            "chrome": {
-              "version_added": "≤155"
-            },
-            "safari": {
-              "version_added": null,
-              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
-            },
-            "firefox": {
-              "version_added": "≤158"
-            }
-          },
-          "status": {
-            "experimental": true,
-            "standard_track": false,
-            "deprecated": false
-          }
-        }
-      },
-      "A59": {
-        "__compat": {
-          "description": "`.dcss-axis-bottom`, `-top`, `-left` and `-right` MUST place each tick where d3-axis 3 places it for scaleLinear([start, stop]) over the list's width (left and right: [height, 0]), and label it as that scale's tickFormat(count) does.",
+          "description": "`.dcss-ticks` with `--start`, `--stop` and `--count` MUST give `--dcss-tick-increment` and `--dcss-tick-step` equal to d3-array 3.2.4's tickIncrement and tickStep, as many `<li>`s shown as its ticks (the rest `visibility: hidden` and out of flow), and its k-th `<li>` `--dcss-tick` the k-th tick; `.dcss-nice` with the same three MUST give `--dcss-nice-start` and `--dcss-nice-stop` equal to nice's; for finite start, stop and count.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -1371,29 +1348,6 @@
           }
         }
       },
-      "A61": {
-        "__compat": {
-          "description": "`.dcss-treemap-slice`, `-dice` and `.dcss-partition` over nested `<li>`s, leaves with `--value` (totals 64 to 50,000), and `-slice-dice` with every node's MUST lay each `<li>` within 2/64 px a level of its node's rectangle in d3-hierarchy 3's treemap() with that tile, or partition(), over the figure's box.",
-          "spec_url": "SPEC.md#2-requirements",
-          "support": {
-            "chrome": {
-              "version_added": "≤155"
-            },
-            "safari": {
-              "version_added": null,
-              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
-            },
-            "firefox": {
-              "version_added": "≤158"
-            }
-          },
-          "status": {
-            "experimental": true,
-            "standard_track": false,
-            "deprecated": false
-          }
-        }
-      },
       "A62": {
         "__compat": {
           "description": "`.dcss-scale-linear`, `.dcss-scale-pow` (`--exponent`), `.dcss-scale-sqrt` and `.dcss-scale-log` with `--domain-k`, `--range-k` (k 0 and 1; with `.dcss-piecewise`, k 0 to 7, `--stops` of them), `--clamp`, `--round` and `--value` MUST give `--dcss-scale-<name>` and `--dcss-scale-<name>-invert` equal to d3-scale 4.0.2's scale(value) and invert(value) (a log scale within 256 × 2^-52 of it); for the linear, pow and sqrt scales `.dcss-ticks`, `.dcss-nice` and `.dcss-format-*` over the domain's ends MUST give its ticks(count), nice(count) and tickFormat(count, specifier)(x) for specifiers of type f or %; for finite numbers.",
@@ -1418,144 +1372,6 @@
           }
         }
       },
-      "A210": {
-        "__compat": {
-          "description": "`.dcss-scale-symlog` with `--constant` (1 if not set), and the inputs, stops and settings of A62, MUST give `--dcss-scale-symlog` and `--dcss-scale-symlog-invert` within 256 × 2^-52 of d3-scale 4.0.2's scaleSymlog(value) and invert(value), for finite numbers.",
-          "spec_url": "SPEC.md#2-requirements",
-          "support": {
-            "chrome": {
-              "version_added": "≤155"
-            },
-            "safari": {
-              "version_added": null,
-              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
-            },
-            "firefox": {
-              "version_added": null
-            }
-          },
-          "status": {
-            "experimental": true,
-            "standard_track": false,
-            "deprecated": false
-          }
-        }
-      },
-      "A211": {
-        "__compat": {
-          "description": "`.dcss-scale-radial` with the inputs, stops and settings of A62 MUST give `--dcss-scale-radial` and `--dcss-scale-radial-invert` equal to d3-scale 4.0.2's scaleRadial(value) and invert(value), `--round` as its round(true), for finite numbers.",
-          "spec_url": "SPEC.md#2-requirements",
-          "support": {
-            "chrome": {
-              "version_added": "≤155"
-            },
-            "safari": {
-              "version_added": null,
-              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
-            },
-            "firefox": {
-              "version_added": null
-            }
-          },
-          "status": {
-            "experimental": true,
-            "standard_track": false,
-            "deprecated": false
-          }
-        }
-      },
-      "A212": {
-        "__compat": {
-          "description": "`.dcss-scale-sequential`, `-log`, `-pow` (`--exponent`), `-sqrt` and `-symlog` (`--constant`) with `--domain-0`, `--domain-1`, `--range-0` and `--range-1` (0 and 1 if not set), `--clamp`, `--round` and `--value` MUST give `--dcss-scale-sequential[-<kind>]` equal to d3's scaleSequential[<Kind>]().domain(...).range(...) (rangeRound with `--round`, clamp with `--clamp`) at value; through log() and exp() (log, symlog) within 256 × 2^-52 of it; for finite numbers.",
-          "spec_url": "SPEC.md#2-requirements",
-          "support": {
-            "chrome": {
-              "version_added": "≤155"
-            },
-            "safari": {
-              "version_added": null,
-              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
-            },
-            "firefox": {
-              "version_added": null
-            }
-          },
-          "status": {
-            "experimental": true,
-            "standard_track": false,
-            "deprecated": false
-          }
-        }
-      },
-      "A213": {
-        "__compat": {
-          "description": "`.dcss-scale-diverging`, `-log`, `-pow`, `-sqrt` and `-symlog` with `--domain-0` to `--domain-2`, `--range-0` to `--range-2` and the settings of A212 MUST give `--dcss-scale-diverging[-<kind>]` as A212 gives d3's scaleDiverging[<Kind>]; with no `--range-0` on the element or above it, d3's identity interpolator's answer.",
-          "spec_url": "SPEC.md#2-requirements",
-          "support": {
-            "chrome": {
-              "version_added": "≤155"
-            },
-            "safari": {
-              "version_added": null,
-              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
-            },
-            "firefox": {
-              "version_added": null
-            }
-          },
-          "status": {
-            "experimental": true,
-            "standard_track": false,
-            "deprecated": false
-          }
-        }
-      },
-      "A214": {
-        "__compat": {
-          "description": "Where the browser parses `@function`, each scale of A210 to A213 MUST also be a function, `--dcss-scale-<kind>(value, domain..., range...[, exponent or constant], clamp, round)`, equal to its class within 1e-12 of the larger of 1, the stops and the answer; where it does not, a declaration calling one MUST keep the value before it.",
-          "spec_url": "SPEC.md#2-requirements",
-          "support": {
-            "chrome": {
-              "version_added": "≤155"
-            },
-            "safari": {
-              "version_added": null,
-              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
-            },
-            "firefox": {
-              "version_added": null
-            }
-          },
-          "status": {
-            "experimental": true,
-            "standard_track": false,
-            "deprecated": false
-          }
-        }
-      },
-      "A63": {
-        "__compat": {
-          "description": "`.dcss-ease-<name>`, for each of d3-ease 3.0.1's exports in kebab case, with `--value` t and d3's parameters (`--exponent`, `--overshoot`, `--amplitude`, `--period`) MUST give `--dcss-ease-<name>` within 1e-6 of d3's.",
-          "spec_url": "SPEC.md#2-requirements",
-          "support": {
-            "chrome": {
-              "version_added": "≤155"
-            },
-            "safari": {
-              "version_added": null,
-              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
-            },
-            "firefox": {
-              "version_added": "≤158"
-            }
-          },
-          "status": {
-            "experimental": true,
-            "standard_track": false,
-            "deprecated": false
-          }
-        }
-      },
       "A64": {
         "__compat": {
           "description": "`.dcss-format-fixed` and `.dcss-format-percent` with `--value`, `--precision`, `--comma`, `--sign`, `--symbol` and `--trim` MUST print in their `::after` the text d3-format 3.1.2's format prints for that specifier (type f or %, sign - or +, symbol none or $, `~` for `--trim: 1`), where |value| x 10^precision is under 2^53; past it `--dcss-err` MUST be 1.",
@@ -1571,30 +1387,6 @@
             "firefox": {
               "version_added": false,
               "notes": "FAIL: 2,122 of 2,948, 460 of 600: calc() in single precision (2026-10-29)"
-            }
-          },
-          "status": {
-            "experimental": true,
-            "standard_track": false,
-            "deprecated": false
-          }
-        }
-      },
-      "A65": {
-        "__compat": {
-          "description": "`.dcss-ticks-log` and `.dcss-nice-log` with `--start`, `--stop`, `--count` and `--base` MUST give the ticks and the nice domain of d3-scale 4.0.2's scaleLog over that domain, of one sign; a `.dcss-ticks-log-format` inside a `.dcss-ticks-log` MUST print what its tickFormat(count, specifier)(value) prints, for specifiers A64 or A67 prints.",
-          "spec_url": "SPEC.md#2-requirements",
-          "support": {
-            "chrome": {
-              "version_added": "≤155"
-            },
-            "safari": {
-              "version_added": null,
-              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
-            },
-            "firefox": {
-              "version_added": false,
-              "notes": "FAIL: ticks 34 of 38; nice 10 of 10; labels 453 of 453"
             }
           },
           "status": {
@@ -2029,285 +1821,9 @@
           }
         }
       },
-      "A209": {
-        "__compat": {
-          "description": "`.dcss-scale-band` with `.dcss-scale-linear` MUST stay the bar chart it was, and `--dcss-scale-band(i, n, r0, r1, padding-inner, padding-outer, align, round)` the function it was, with the single calls of A205 to A207 in the same sheet.",
-          "spec_url": "SPEC.md#2-requirements",
-          "support": {
-            "chrome": {
-              "version_added": "≤155"
-            },
-            "safari": {
-              "version_added": null,
-              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
-            },
-            "firefox": {
-              "version_added": null
-            }
-          },
-          "status": {
-            "experimental": true,
-            "standard_track": false,
-            "deprecated": false
-          }
-        }
-      },
       "A208": {
         "__compat": {
           "description": "`.dcss-scale-ordinal` with `--value`, up to 16 domain values in `--domain-0` to `--domain-15` (`--domains` of them) and up to 16 range items in `--range-0` to `--range-15` (`--ranges` of them) MUST give everything inside it `--dcss-scale-ordinal`: the range item at the value's place in the domain modulo `--ranges`, as d3's `ordinal(value)`, a place matched as CSS tokens (strings quoted, numbers as they print, a Date as its epoch milliseconds). A value in no slot MUST take `--unknown` where it is set; else, as d3's implicit unknown, the range item at `--domains` modulo `--ranges`; with `--implicit: 0`, or no range, no answer. A nested call MUST NOT match a slot of the call around it.",
-          "spec_url": "SPEC.md#2-requirements",
-          "support": {
-            "chrome": {
-              "version_added": "≤155"
-            },
-            "safari": {
-              "version_added": null,
-              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
-            },
-            "firefox": {
-              "version_added": null
-            }
-          },
-          "status": {
-            "experimental": true,
-            "standard_track": false,
-            "deprecated": false
-          }
-        }
-      },
-      "A207": {
-        "__compat": {
-          "description": "`.dcss-scale-point` MUST answer as A205 and A206 with padding-inner 1 and `--padding` its outer padding, as d3's `scalePoint`, in `--dcss-scale-point`, `--dcss-scale-point-bandwidth` and `--dcss-scale-point-step`.",
-          "spec_url": "SPEC.md#2-requirements",
-          "support": {
-            "chrome": {
-              "version_added": "≤155"
-            },
-            "safari": {
-              "version_added": null,
-              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
-            },
-            "firefox": {
-              "version_added": null
-            }
-          },
-          "status": {
-            "experimental": true,
-            "standard_track": false,
-            "deprecated": false
-          }
-        }
-      },
-      "A206": {
-        "__compat": {
-          "description": "`.dcss-scale-band` with `--value` and the domain in `--domain-0` to `--domain-15` MUST give everything inside it the band of the value's place in the domain, matched as CSS tokens, as A205's; a value in no slot below `--domains` MUST have no answer, as d3's undefined.",
-          "spec_url": "SPEC.md#2-requirements",
-          "support": {
-            "chrome": {
-              "version_added": "≤155"
-            },
-            "safari": {
-              "version_added": null,
-              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
-            },
-            "firefox": {
-              "version_added": null
-            }
-          },
-          "status": {
-            "experimental": true,
-            "standard_track": false,
-            "deprecated": false
-          }
-        }
-      },
-      "A205": {
-        "__compat": {
-          "description": "`.dcss-scale-band` without `.dcss-scale-linear`, with `--index` of `--domains`, `--range-0` and `--range-1` (0 and 1 if not set), `--padding-inner`, `--padding-outer` (`--padding` for both), `--align` and `--round`, MUST give itself and everything inside it `--dcss-scale-band`, `--dcss-scale-band-bandwidth` and `--dcss-scale-band-step`, the doubles d3-scale's `band(value)`, `bandwidth()` and `step()` give, in d3's order (the step floored when rounding, the start and bandwidth rounded, reversed when r1 < r0); an index not whole or outside [0, n) MUST have no number.",
-          "spec_url": "SPEC.md#2-requirements",
-          "support": {
-            "chrome": {
-              "version_added": "≤155"
-            },
-            "safari": {
-              "version_added": null,
-              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
-            },
-            "firefox": {
-              "version_added": null
-            }
-          },
-          "status": {
-            "experimental": true,
-            "standard_track": false,
-            "deprecated": false
-          }
-        }
-      },
-      "A192": {
-        "__compat": {
-          "description": "`.dcss-arc` MUST draw the arc as its `clip-path`, a `shape()` starting on one of its outer corners, from the smaller angle to the larger (a span of tau or more a ring).",
-          "spec_url": "SPEC.md#2-requirements",
-          "support": {
-            "chrome": {
-              "version_added": "≤155"
-            },
-            "safari": {
-              "version_added": null,
-              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
-            },
-            "firefox": {
-              "version_added": null
-            }
-          },
-          "status": {
-            "experimental": true,
-            "standard_track": false,
-            "deprecated": false
-          }
-        }
-      },
-      "A191": {
-        "__compat": {
-          "description": "`.dcss-arc` with `--inner-radius`, `--outer-radius`, `--start-angle` and `--end-angle` (numbers) MUST give `--dcss-arc-centroid-x` and `-y`, d3-shape's `arc.centroid` within 1e-12, and the numbers of d3's path with no corner radius or padding within 1e-12: `--dcss-arc-x01`, `-y01` (outer ring, start), `-x11`, `-y11` (outer, end), `-x10`, `-y10` (inner, end), `-x00`, `-y00` (inner, start), `--dcss-arc-r0`, `-r1`.",
-          "spec_url": "SPEC.md#2-requirements",
-          "support": {
-            "chrome": {
-              "version_added": "≤155"
-            },
-            "safari": {
-              "version_added": null,
-              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
-            },
-            "firefox": {
-              "version_added": null
-            }
-          },
-          "status": {
-            "experimental": true,
-            "standard_track": false,
-            "deprecated": false
-          }
-        }
-      },
-      "A190": {
-        "__compat": {
-          "description": "`.dcss-pie` with up to 1,024 items, each a value in 64ths from -4096 to 4095 or none, MUST give the children of each item's third nested element `--dcss-pie-start-angle`, `--dcss-pie-end-angle`, `--dcss-pie-pad-angle` and `--dcss-pie-index`: d3-shape's `pie` for the list with `--start-angle`, `--end-angle`, `--pad-angle` and `--sort-values` (-1 descending, the default; 1 ascending; 0 the list's order), the angles within 1e-12 (d3 adds them one arc at a time); a value outside the range or off the 64ths MUST leave no answer, error 1.",
-          "spec_url": "SPEC.md#2-requirements",
-          "support": {
-            "chrome": {
-              "version_added": "≤155"
-            },
-            "safari": {
-              "version_added": null,
-              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
-            },
-            "firefox": {
-              "version_added": null
-            }
-          },
-          "status": {
-            "experimental": true,
-            "standard_track": false,
-            "deprecated": false
-          }
-        }
-      },
-      "A204": {
-        "__compat": {
-          "description": "An item of `.dcss-line` or `.dcss-area` MUST read the point before it to 1/1024 of a unit (layout's 1/64 px at 16 px a unit; exact for values in 64ths) while both coordinates are between -8192 and 8192; its own point MUST be its `--x` and `--y` as written.",
-          "spec_url": "SPEC.md#2-requirements",
-          "support": {
-            "chrome": {
-              "version_added": "≤155"
-            },
-            "safari": {
-              "version_added": null,
-              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
-            },
-            "firefox": {
-              "version_added": null
-            }
-          },
-          "status": {
-            "experimental": true,
-            "standard_track": false,
-            "deprecated": false
-          }
-        }
-      },
-      "A203": {
-        "__compat": {
-          "description": "`.dcss-curve-step`, `-step-before`, `-step-after`, `-bump-x` and `-bump-y` on the figure MUST draw d3-shape's `curveStep`, `curveStepBefore`, `curveStepAfter`, `curveBumpX` and `curveBumpY`, on a line and an area's two sides.",
-          "spec_url": "SPEC.md#2-requirements",
-          "support": {
-            "chrome": {
-              "version_added": "≤155"
-            },
-            "safari": {
-              "version_added": null,
-              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
-            },
-            "firefox": {
-              "version_added": null
-            }
-          },
-          "status": {
-            "experimental": true,
-            "standard_track": false,
-            "deprecated": false
-          }
-        }
-      },
-      "A202": {
-        "__compat": {
-          "description": "`figure.dcss-area` MUST draw what d3-shape's `area().y0(y0)` draws for its points, `y0` the list's `--y0` (0 without one): each item the region between its segment, the point before it, and `--y0`.",
-          "spec_url": "SPEC.md#2-requirements",
-          "support": {
-            "chrome": {
-              "version_added": "≤155"
-            },
-            "safari": {
-              "version_added": null,
-              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
-            },
-            "firefox": {
-              "version_added": null
-            }
-          },
-          "status": {
-            "experimental": true,
-            "standard_track": false,
-            "deprecated": false
-          }
-        }
-      },
-      "A201": {
-        "__compat": {
-          "description": "An item of `.dcss-line` or `.dcss-area` with no `--x` or no `--y` MUST draw nothing, and the next item with both MUST start a new line or area, as d3's `defined()` false on that item.",
-          "spec_url": "SPEC.md#2-requirements",
-          "support": {
-            "chrome": {
-              "version_added": "≤155"
-            },
-            "safari": {
-              "version_added": null,
-              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
-            },
-            "firefox": {
-              "version_added": null
-            }
-          },
-          "status": {
-            "experimental": true,
-            "standard_track": false,
-            "deprecated": false
-          }
-        }
-      },
-      "A200": {
-        "__compat": {
-          "description": "`figure.dcss-line` with a list of `<li style=\"--x; --y\">` MUST draw what d3-shape's `line()` draws for those points: each item, from the second, its segment from the point before, as a `clip-path: shape()` on its `::before` whose numbers, as the browser computes them, are d3's path within its last printed digit (or the 6 significant digits the browser writes, where coarser); `--stroke-width` (1.5) its width.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -3600,7 +3116,7 @@
       },
       "A90": {
         "__compat": {
-          "description": "General formatting with 1–15 significant digits MUST print d3's text when the rounded decimal exponent lies from -6 through precision minus 1. Exponential results and missing/NaN inputs MUST suppress text with error 1. Log filtering, trimming, native reset, nesting and the retained fixed/percent/SI printer MUST preserve results.",
+          "description": "General formatting with 1–15 significant digits MUST print d3's text when the rounded decimal exponent lies from -6 through precision minus 1. Exponential results and missing/NaN inputs MUST suppress text with error 1. Trimming, native reset, nesting and the retained fixed/percent/SI printer MUST preserve results.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -3764,30 +3280,6 @@
           }
         }
       },
-      "A103": {
-        "__compat": {
-          "description": "Identity-scale ticks MUST expose the complete array length and every active item within the qualified bounds and authored capacity. Default labels MUST compute precision from live domain/count inputs and match rendered d3 text. Both branches MUST preserve item/status addresses, integer summary fields, changing input/reset and downstream reuse; malformed summary metadata MUST be refused.",
-          "spec_url": "SPEC.md#2-requirements",
-          "support": {
-            "chrome": {
-              "version_added": "≤155"
-            },
-            "safari": {
-              "version_added": null,
-              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
-            },
-            "firefox": {
-              "version_added": false,
-              "notes": "FAIL: a rendered label's text differs (2026-10-28)"
-            }
-          },
-          "status": {
-            "experimental": true,
-            "standard_track": false,
-            "deprecated": false
-          }
-        }
-      },
       "A107": {
         "__compat": {
           "description": "Qualified English date formatting MUST compute text from live integer epochs within years −9999 through 19999. Every frozen call MUST pass every source-owned configuration, including ISO weeks/years, epoch text, padding and names, in UTC. Numeric fields MUST remain independently addressed and reusable through compilation; invalid inputs MUST hide text and publish an error.",
@@ -3803,30 +3295,6 @@
             "firefox": {
               "version_added": false,
               "notes": "FAIL: a rendered date's text differs (2026-10-28)"
-            }
-          },
-          "status": {
-            "experimental": true,
-            "standard_track": false,
-            "deprecated": false
-          }
-        }
-      },
-      "A108": {
-        "__compat": {
-          "description": "Qualified geographic points, inverses, distance and scalar configuration getters MUST preserve every frozen source configuration through both branches. Numeric results MUST have independent presence/status checks and meet the documented bounds and tolerances. Null clipping extents MUST retain absent corners and rectangles MUST expose four corners; native reset, nested missing inputs and downstream reuse MUST preserve results.",
-          "spec_url": "SPEC.md#2-requirements",
-          "support": {
-            "chrome": {
-              "version_added": "≤155"
-            },
-            "safari": {
-              "version_added": null,
-              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
-            },
-            "firefox": {
-              "version_added": false,
-              "notes": "FAIL: geoIdentity 24 of 24; geoEquirectangular reads 0 px for -30 (2026-10-28)"
             }
           },
           "status": {
@@ -3886,7 +3354,7 @@
       },
       "A119": {
         "__compat": {
-          "description": "Where the browser parses `@function`, each easing, the two-stop linear scale, the band scale, the UTC day, hour, minute, second and weekday intervals, the identity, equirectangular, Mercator and transverse Mercator projections, the rotation and the distance MUST also be functions (`--dcss-ease-<name>(t, ...)`, `--dcss-scale-linear(x, d0, d1, r0, r1, clamp, round)`, `--dcss-scale-band(i, n, r0, r1, ...)`, `--dcss-utc-day-floor(t)`, `--dcss-utc-day-count(start, stop)`, `--dcss-geo-mercator-x(lon, lat, ...)` and `-y`, `--dcss-geo-distance(lon-a, lat-a, lon-b, lat-b)`) equal to their classes within 1e-12, the intervals to d3-time to the millisecond, the band to d3 within 1e-12 the projections to d3-geo within 1e-6 and the distance within 1e-12. Elsewhere a declaration calling one MUST fall back to its earlier plain value.",
+          "description": "Where the browser parses `@function`, the two-stop linear scale and the UTC day, hour, minute, second and weekday intervals MUST also be functions (`--dcss-scale-linear(x, d0, d1, r0, r1, clamp, round)`, `--dcss-utc-day-floor(t)`, `--dcss-utc-day-count(start, stop)`) equal to their classes within 1e-12, the intervals to d3-time to the millisecond, the band to d3 within 1e-12 the projections to d3-geo within 1e-6 and the distance within 1e-12. Elsewhere a declaration calling one MUST fall back to its earlier plain value.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -3898,7 +3366,7 @@
             },
             "firefox": {
               "version_added": false,
-              "notes": "FAIL: no @function; easings keep their fallback (1,029 class answers d3's), a log scale's class reads wrong (2026-10-29)"
+              "notes": "FAIL: no @function; a log scale's class reads wrong (2026-10-29)"
             }
           },
           "status": {
@@ -4145,121 +3613,6 @@
           }
         }
       },
-      "A199": {
-        "__compat": {
-          "description": "A value off the 64ths or past ±1024 in a `.dcss-shape-stack` point MUST leave that key, and every key after it in the order, no y0 and no y1, error 1; under `.dcss-stack-offset-expand` and `.dcss-stack-offset-silhouette`, which read the point's total, every key of the point. A point of more than 64 keys MUST leave every key error 1.",
-          "spec_url": "SPEC.md#2-requirements",
-          "support": {
-            "chrome": {
-              "version_added": "≤155"
-            },
-            "safari": {
-              "version_added": null,
-              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
-            },
-            "firefox": {
-              "version_added": null
-            }
-          },
-          "status": {
-            "experimental": true,
-            "standard_track": false,
-            "deprecated": false
-          }
-        }
-      },
-      "A198": {
-        "__compat": {
-          "description": "`.dcss-stack-offset-diverging` MUST give each key d3-shape's stackOffsetDiverging: a positive value on the positives before it in the order, a negative one under the negatives before it, [0, 0] for 0 and [0, NaN] for NaN (error 2), exactly.",
-          "spec_url": "SPEC.md#2-requirements",
-          "support": {
-            "chrome": {
-              "version_added": "≤155"
-            },
-            "safari": {
-              "version_added": null,
-              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
-            },
-            "firefox": {
-              "version_added": null
-            }
-          },
-          "status": {
-            "experimental": true,
-            "standard_track": false,
-            "deprecated": false
-          }
-        }
-      },
-      "A197": {
-        "__compat": {
-          "description": "`.dcss-stack-offset-expand` MUST give each key d3-shape's stackOffsetExpand of the point (each value over the point's total, NaN counted as 0, nothing divided where the total is 0) within 1e-12; `.dcss-stack-offset-silhouette` MUST give stackOffsetSilhouette's exactly (the point's stack moved down by half its total).",
-          "spec_url": "SPEC.md#2-requirements",
-          "support": {
-            "chrome": {
-              "version_added": "≤155"
-            },
-            "safari": {
-              "version_added": null,
-              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
-            },
-            "firefox": {
-              "version_added": null
-            }
-          },
-          "status": {
-            "experimental": true,
-            "standard_track": false,
-            "deprecated": false
-          }
-        }
-      },
-      "A196": {
-        "__compat": {
-          "description": "`.dcss-stack-order-reverse` MUST stack the keys in d3-shape's stackOrderReverse, the last key first, and give each its place in that order as `--dcss-stack-index`.",
-          "spec_url": "SPEC.md#2-requirements",
-          "support": {
-            "chrome": {
-              "version_added": "≤155"
-            },
-            "safari": {
-              "version_added": null,
-              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
-            },
-            "firefox": {
-              "version_added": null
-            }
-          },
-          "status": {
-            "experimental": true,
-            "standard_track": false,
-            "deprecated": false
-          }
-        }
-      },
-      "A195": {
-        "__compat": {
-          "description": "`.dcss-shape-stack`, a `<ul>` (or `<ol>`) a point of d3's data and in it a `<li>` with `--value` a key, up to 64 keys of values in 64ths within ±1024, MUST give everything inside each item's first element `--dcss-y0` and `--dcss-y1`, d3.stack's [y0, y1] for that key at that point under stackOrderNone and stackOffsetNone, exactly, and `--dcss-stack-index`, the key's place in the order (d3's series.index). A key with no `--value`, or one that isn't a number, MUST add nothing to the keys after it and get d3's y0 and no y1, error 2.",
-          "spec_url": "SPEC.md#2-requirements",
-          "support": {
-            "chrome": {
-              "version_added": "≤155"
-            },
-            "safari": {
-              "version_added": null,
-              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
-            },
-            "firefox": {
-              "version_added": null
-            }
-          },
-          "status": {
-            "experimental": true,
-            "standard_track": false,
-            "deprecated": false
-          }
-        }
-      },
       "A215": {
         "__compat": {
           "description": "`.dcss-solve` with `--from` and `--to`, n nested `<i>` elements in it (3 to 54) and the page's rule setting `--dcss-formula` from `--dcss-input` on every one, f (here and in A216 to A220 the page's `--dcss-formula` less `--target`, 0 without one) continuous between from and to, MUST give every element inside the deepest `<i>` that is not an `<i>` a `--dcss-solve` within |to − from| / 2^(n − 1) and 4 ulps of a root of f between from and to, and `--dcss-solve-width` |to − from| / 2^(n − 2), with `--dcss-ready` 1 and `--dcss-err` 0. The `<i>`s MUST generate no boxes and leave the font as they found it.",
@@ -4309,52 +3662,6 @@
       "A217": {
         "__compat": {
           "description": "A `.dcss-solve` inside another's answer MUST give its own root of an equation that reads the outer `--dcss-solve`, as A215: the outer answer read on the inner solve itself or on an element between them, the page's rules in `@scope (.X) to (.dcss-solve)` in either order, or unscoped with the inner's after the outer's.",
-          "spec_url": "SPEC.md#2-requirements",
-          "support": {
-            "chrome": {
-              "version_added": "≤155"
-            },
-            "safari": {
-              "version_added": null,
-              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
-            },
-            "firefox": {
-              "version_added": null
-            }
-          },
-          "status": {
-            "experimental": true,
-            "standard_track": false,
-            "deprecated": false
-          }
-        }
-      },
-      "A218": {
-        "__compat": {
-          "description": "`.dcss-geo-natural-earth1-raw` and `.dcss-geo-equal-earth-raw` with `--x` and `--y` (radians) MUST give `--dcss-geo-x` and `--dcss-geo-y` within 1e-12 of d3-geo 3.1.1's geoNaturalEarth1Raw and geoEqualEarthRaw.",
-          "spec_url": "SPEC.md#2-requirements",
-          "support": {
-            "chrome": {
-              "version_added": "≤155"
-            },
-            "safari": {
-              "version_added": null,
-              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
-            },
-            "firefox": {
-              "version_added": null
-            }
-          },
-          "status": {
-            "experimental": true,
-            "standard_track": false,
-            "deprecated": false
-          }
-        }
-      },
-      "A219": {
-        "__compat": {
-          "description": "`.dcss-geo-natural-earth1-raw-invert` and `.dcss-geo-equal-earth-raw-invert`, with `--x` and `--y` and 12 or more nested `<i>` elements, MUST give everything inside the deepest that is not an `<i>` `--dcss-geo-x` and `--dcss-geo-y` within 1e-11 of d3-geo 3.1.1's raw invert, or nearer the longitude and latitude the point was projected from than d3's invert is (d3 stops Newton's method at a step under 1e-6 or 1e-12), for latitudes within 0.999 × π/2.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -4446,7 +3753,7 @@
       },
       "A223": {
         "__compat": {
-          "description": "`mathml.mjs` MUST write, for `data-dcss-steps=\"n\"` on a `.dcss-solve` (n 3 to 54; 3 to 14 with `.dcss-solve-newton`) or a geo raw invert (3 to 14), n nested `<i>` elements around the element's content, and on a `.dcss-solve-rows` (n 1 to 1,000) a first child `<span>` of n pairs `<i><i></i></i>`, adding no line; leave an element that holds that many already as it is; and refuse, with the line, the attribute on any other element, a count out of range, or one beside a different number of `<i>`s. A `.dcss-solve` or `.dcss-solve-rows` with no `<i>`s MUST give `--dcss-err` 1.",
+          "description": "`mathml.mjs` MUST write, for `data-dcss-steps=\"n\"` on a `.dcss-solve` (n 3 to 54; 3 to 14 with `.dcss-solve-newton`), n nested `<i>` elements around the element's content, and on a `.dcss-solve-rows` (n 1 to 1,000) a first child `<span>` of n pairs `<i><i></i></i>`, adding no line; leave an element that holds that many already as it is; and refuse, with the line, the attribute on any other element, a count out of range, or one beside a different number of `<i>`s. A `.dcss-solve` or `.dcss-solve-rows` with no `<i>`s MUST give `--dcss-err` 1.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
