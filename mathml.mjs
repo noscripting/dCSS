@@ -7,8 +7,8 @@
 // becomes a figure with the formula as its caption and an <output> whose --value is d3.median([d3.mean([4, 1.5]),
 // jan]) to the bit, jan read from --jan on an ancestor (unset: no answer, --dcss-err 1). Only a <math> whose one element
 // child is an <apply> of an operator it takes, or a <piecewise>, is compiled; the rest of the page is copied byte for byte, so the build
-// run on its own output changes nothing. It also writes the <i>s of a .dcss-solve or .dcss-invert with data-dcss-steps,
-// and on a page with a .dcss-solve-newton or .dcss-solve-extreme, --dcss-slope beside each --dcss-fn that has none (one it can't take is said
+// run on its own output changes nothing. It also writes the <i>s of a .dcss-solve or .dcss-solve-rows with data-dcss-steps,
+// and on a page with a .dcss-solve-newton or .dcss-solve-turning-point, --dcss-slope beside each --dcss-formula that has none (one it can't take is said
 // on stderr with its line, and the rest of the page builds).
 import { createHash } from 'node:crypto';
 import { readFileSync, realpathSync, watchFile, writeFileSync } from 'node:fs';
@@ -1820,7 +1820,7 @@ const NESTED = /(?:^|\s)dcss-(?:solve|geo-natural-earth1-raw-invert|geo-equal-ea
 // buy no fixed width) is refused with its line.
 function withinSteps(src, a, cls, invert, where) {
   if ('data-dcss-steps' in a) throw new Error(`${where}: data-dcss-within beside data-dcss-steps: write one, how close or how many`);
-  if (invert || !/(?:^|\s)dcss-solve(?=\s|$)/.test(cls) || NEWTONS.test(cls)) throw new Error(`${where}: data-dcss-within on ${invert ? 'a .dcss-invert' : 'a solve that takes Newton\'s steps'}: how close its answer gets has no fixed count; write data-dcss-steps`);
+  if (invert || !/(?:^|\s)dcss-solve(?=\s|$)/.test(cls) || NEWTONS.test(cls)) throw new Error(`${where}: data-dcss-within on ${invert ? 'a .dcss-solve-rows' : 'a solve that takes Newton\'s steps'}: how close its answer gets has no fixed count; write data-dcss-steps`);
   const t = Number((a['data-dcss-within'] ?? '').trim());
   if (!(t > 0) || !Number.isFinite(t)) throw new Error(`${where}: data-dcss-within="${a['data-dcss-within']}": write how close the answer must be, a number above 0`);
   const num = '(-?(?:\\d+\\.?\\d*|\\.\\d+)(?:e[+-]?\\d+)?)\\s*(?:;|$|!)';
@@ -1846,9 +1846,9 @@ function stepsPass(src, file) {
     i = lt + t.length;
     if (t.close || !/(?:^|\s)data-dcss-(?:steps|within)(?=[\s=]|$)/i.test(t.rawAttrs)) continue;
     const a = readAttrs(t.rawAttrs, lt), cls = a.class ?? '', line = lineOf(src, lt);
-    const nested = NESTED.test(cls), invert = /(?:^|\s)dcss-invert(?=\s|$)/.test(cls);
-    if (/(?:^|\s)dcss-solve-extreme(?=\s|$)/.test(cls) && NEWTONS.test(cls)) throw new Error(`${file}:${line}: .dcss-solve-extreme beside .dcss-solve-newton: a highest or lowest point is found by halving; drop .dcss-solve-newton`);
-    if (!nested && !invert) throw new Error(`${file}:${line}: data-dcss-${'data-dcss-steps' in a ? 'steps' : 'within'} on an element that is neither a .dcss-solve nor a .dcss-invert`);
+    const nested = NESTED.test(cls), invert = /(?:^|\s)dcss-solve-rows(?=\s|$)/.test(cls);
+    if (/(?:^|\s)dcss-solve-turning-point(?=\s|$)/.test(cls) && NEWTONS.test(cls)) throw new Error(`${file}:${line}: .dcss-solve-turning-point beside .dcss-solve-newton: a highest or lowest point is found by halving; drop .dcss-solve-newton`);
+    if (!nested && !invert) throw new Error(`${file}:${line}: data-dcss-${'data-dcss-steps' in a ? 'steps' : 'within'} on an element that is neither a .dcss-solve nor a .dcss-solve-rows`);
     const n = 'data-dcss-within' in a ? withinSteps(src, a, cls, invert, `${file}:${line}`) : Number((a['data-dcss-steps'] ?? '').trim());
     const [lo, hi] = invert ? [1, 1000] : NEWTONS.test(cls) ? [3, 14] : [3, 54];
     if (!Number.isInteger(n) || n < lo || n > hi) throw new Error(`${file}:${line}: data-dcss-steps="${a['data-dcss-steps']}": ${invert ? 'an invert takes 1 to 1,000 pieces' : `this solve takes ${lo} to ${hi} steps`}`);
@@ -1865,12 +1865,12 @@ function stepsPass(src, file) {
   for (const [at, text] of edits.sort((x, y) => y[0] - x[0])) out = out.slice(0, at) + text + out.slice(at);
   return out;
 }
-// On a page with a .dcss-solve-newton, the build writes --dcss-slope beside each --dcss-fn in its <style>s that has
-// none: the formula's derivative in --dcss-at, worked out from its text. A slope the page wrote is left; one this build
+// On a page with a .dcss-solve-newton, the build writes --dcss-slope beside each --dcss-formula in its <style>s that has
+// none: the formula's derivative in --dcss-input, worked out from its text. A slope the page wrote is left; one this build
 // wrote (its comment says so) is written again, so a changed formula gets a new slope and the build stays its own fixed
 // point. Nothing adds a line. Units are kept: a derivative has its formula's type (sin's argument in deg or rad, an
-// angle from asin). A var() other than --dcss-at is a constant, a number unless written with a unit; one that the page
-// works out from --dcss-at is refused, since its own slope isn't in the text.
+// angle from asin). A var() other than --dcss-input is a constant, a number unless written with a unit; one that the page
+// works out from --dcss-input is refused, since its own slope isn't in the text.
 const { slopeOf: slopeOfText, slopePass } = (() => { // its own scope: its small names (add, mul, D) stay inside
 const SLOPE_MARK = '/* the slope, written by mathml.mjs */';
 const ANGLE = { deg: Math.PI / 180, rad: 1, grad: Math.PI / 200, turn: 2 * Math.PI };
@@ -1881,7 +1881,7 @@ function parseCalc(text) {
   for (let m; re.lastIndex < text.length;) {
     const at = re.lastIndex; if (!(m = re.exec(text))) throw new NoSlope(`it can't read "${text.slice(at, at + 12)}"`);
     if (m[1] !== undefined) toks.push({ k: 'num', t: m[1] + (m[2] ?? ''), v: Number(m[1]), u: (m[2] ?? '').toLowerCase() });
-    else if (m[3]) toks.push(m[4] === '--dcss-at' ? { k: 'x' } : { k: 'c', t: m[0].replace(/\s+/g, ' '), name: m[4] });
+    else if (m[3]) toks.push(m[4] === '--dcss-input' ? { k: 'x' } : { k: 'c', t: m[0].replace(/\s+/g, ' '), name: m[4] });
     else if (m[5]) toks.push(m[6] ? { k: 'f', f: m[5].toLowerCase() } : { k: 'id', t: m[5].toLowerCase() });
     else if (m[7]) toks.push({ k: m[7] });
   }
@@ -1983,7 +1983,7 @@ function emit(n, outer = 0, right = false) {
   let s, p = PREC[n.k] ?? 3;
   switch (n.k) {
     case 'num': s = n.t; break;
-    case 'x': s = 'var(--dcss-at)'; break;
+    case 'x': s = 'var(--dcss-input)'; break;
     case 'c': s = n.t; break;
     case 'neg': s = `-1 * ${emit(n.a, 2, true)}`; break;
     case '+': case '-': case '*': case '/': s = `${emit(n.a, p)} ${n.k} ${emit(n.b, p, true)}`; break;
@@ -1992,20 +1992,20 @@ function emit(n, outer = 0, right = false) {
   return p < outer || (right && p === outer && p < 3) ? `(${s})` : s;
 }
 function slopeOf(text) { const t = parseCalc(text.replace(/\/\*[\s\S]*?\*\//g, '').trim()); typeOf(t); const d = D(t); return d.k === 'num' ? d.t : `calc(${emit(d)})`; }
-const SOLVE_NEWTON = /\bclass\s*=\s*(?:"[^"]*\bdcss-solve-(?:newton|extreme)\b[^"]*"|'[^']*\bdcss-solve-(?:newton|extreme)\b[^']*'|dcss-solve-(?:newton|extreme)\b)/i; // the solves that read a slope
+const SOLVE_NEWTON = /\bclass\s*=\s*(?:"[^"]*\bdcss-solve-(?:newton|turning-point)\b[^"]*"|'[^']*\bdcss-solve-(?:newton|turning-point)\b[^']*'|dcss-solve-(?:newton|turning-point)\b)/i; // the solves that read a slope
 function slopePass(src, file) {
   if (!SOLVE_NEWTON.test(src)) return { src, skipped: [] };
   const skipped = [], edits = [], styles = [], reStyle = /<style\b[^>]*>/gi;
   for (let m; (m = reStyle.exec(src));) { const from = m.index + m[0].length, to = closeAt(src, 'style', from); if (to < 0) break; styles.push([from, to]); reStyle.lastIndex = to; }
   const css = styles.map(([f, t]) => src.slice(f, t)).join('\n').replace(/\/\*[\s\S]*?\*\//g, '');
-  // the page's own names worked out from --dcss-at, directly or through another such name: a formula reading one has
+  // the page's own names worked out from --dcss-input, directly or through another such name: a formula reading one has
   // a slope the text doesn't show
-  const decls = [...css.matchAll(/(--[\w-]+)\s*:([^;{}]*)/g)].filter(([, k]) => k !== '--dcss-fn' && k !== '--dcss-slope'), fromAt = new Set(['--dcss-at']);
+  const decls = [...css.matchAll(/(--[\w-]+)\s*:([^;{}]*)/g)].filter(([, k]) => k !== '--dcss-formula' && k !== '--dcss-slope'), fromAt = new Set(['--dcss-input']);
   for (let grew = true; grew;) { grew = false; for (const [, k, v] of decls) if (!fromAt.has(k) && [...v.matchAll(/var\(\s*(--[\w-]+)/g)].some((r) => fromAt.has(r[1]))) { fromAt.add(k); grew = true; } }
-  fromAt.delete('--dcss-at');
+  fromAt.delete('--dcss-input');
   const valueEnd = (s, i) => { let d = 0; for (; i < s.length; i++) { const c = s[i]; if (c === '(') d++; else if (c === ')') d--; else if (d <= 0 && (c === ';' || c === '}')) return i; else if (c === '/' && s[i + 1] === '*') { const e = s.indexOf('*/', i + 2); i = e < 0 ? s.length : e + 1; } } return s.length; };
   for (const [from, to] of styles) {
-    const body = src.slice(from, to), re = /(?<![\w-])--dcss-fn\s*:/g;
+    const body = src.slice(from, to), re = /(?<![\w-])--dcss-formula\s*:/g;
     for (let m; (m = re.exec(body));) {
       const vStart = m.index + m[0].length, vEnd = valueEnd(body, vStart), at = from + m.index, line = lineOf(src, at);
       let open = body.lastIndexOf('{', m.index), close = body.indexOf('}', vEnd); if (close < 0) close = body.length;
@@ -2014,10 +2014,10 @@ function slopePass(src, file) {
       if (own) { const s = open + 1 + own.index, e = valueEnd(body, s + own[0].length); if (!body.slice(s, e).includes(SLOPE_MARK)) continue; old = [s, e]; }
       const value = body.slice(vStart, vEnd).trim(), reads = [...value.matchAll(/var\(\s*(--[\w-]+)/g)].map((r) => r[1]).find((k) => fromAt.has(k));
       let slope;
-      try { if (reads) throw new NoSlope(`it reads ${reads}, which the page works out from --dcss-at`); slope = slopeOf(value); }
+      try { if (reads) throw new NoSlope(`it reads ${reads}, which the page works out from --dcss-input`); slope = slopeOf(value); }
       // one formula the build can't take leaves that formula's rule without a slope (a .dcss-solve-newton it feeds says
       // --dcss-err 1); the rest of the page builds, so a sample's or an invert's formula never stops a solve's
-      catch (e) { if (e instanceof NoSlope) { skipped.push(`${file}:${line}: no slope written for this --dcss-fn: ${e.message}; write --dcss-slope beside it if a .dcss-solve-newton reads it`); continue; } throw e; }
+      catch (e) { if (e instanceof NoSlope) { skipped.push(`${file}:${line}: no slope written for this --dcss-formula: ${e.message}; write --dcss-slope beside it if a .dcss-solve-newton reads it`); continue; } throw e; }
       const decl = `--dcss-slope: ${slope} ${SLOPE_MARK}`;
       if (old) { const [s, e] = old; if (body.slice(s, e) !== decl) edits.push([from + s, from + e, decl]); }
       else { const e = vStart + body.slice(vStart, vEnd).trimEnd().length; edits.push(body[vEnd] === ';' ? [from + vEnd + 1, from + vEnd + 1, ` ${decl};`] : [from + e, from + e, `; ${decl}`]); }

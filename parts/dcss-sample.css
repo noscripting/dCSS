@@ -9,6 +9,6 @@
 
 /* The page's own function sampled as a list (sample.mjs). */
 @property --dcss-sample-k{syntax:'<integer>';inherits:true;initial-value:0}@property --dcss-sample-n{syntax:'<integer>';inherits:true;initial-value:0}
-:where(.dcss-sample){--dcss-fn:initial;--dcss-at:initial;--dcss-sample-from:initial;--dcss-sample-to:initial}.dcss-sample{--dcss-sample-from:var(--from);--dcss-sample-to:var(--to)}:where(.dcss-sample *){--from:initial;--to:initial}:where(.dcss-sample>:is(ul,ol)>li){--dcss-sample-k:sibling-index();--dcss-sample-n:sibling-count();--dcss-at:calc(var(--dcss-sample-from) + (var(--dcss-sample-k) - 0.5) * (var(--dcss-sample-to) - var(--dcss-sample-from)) / var(--dcss-sample-n));--dcss-sample-v:round(var(--dcss-fn), 0.015625);--value:var(--dcss-sample-v, 0.001)}
+:where(.dcss-sample){--dcss-formula:initial;--dcss-input:initial;--dcss-sample-from:initial;--dcss-sample-to:initial}.dcss-sample{--dcss-sample-from:var(--from);--dcss-sample-to:var(--to)}:where(.dcss-sample *){--from:initial;--to:initial}:where(.dcss-sample>:is(ul,ol)>li){--dcss-sample-k:sibling-index();--dcss-sample-n:sibling-count();--dcss-input:calc(var(--dcss-sample-from) + (var(--dcss-sample-k) - 0.5) * (var(--dcss-sample-to) - var(--dcss-sample-from)) / var(--dcss-sample-n));--dcss-sample-v:round(var(--dcss-formula), 0.015625);--value:var(--dcss-sample-v, 0.001)}
 
 /* The page's own equation of motion, stepped a frame on store.css's frame cell (ode.mjs). */

@@ -425,10 +425,10 @@ for selection or computation. Packaging does not expand any function's bounds.
 ### Math
 
 - **A215** `.dcss-solve` with `--from` and `--to`, n nested `<i>` elements in it (3 to 54) and the
-  page's rule setting `--dcss-fn` from `--dcss-at` on every one, f (here and in A216 to A220 the page's `--dcss-fn`
+  page's rule setting `--dcss-formula` from `--dcss-input` on every one, f (here and in A216 to A220 the page's `--dcss-formula`
   less `--target`, 0 without one) continuous between from and to, MUST give every element inside the deepest `<i>`
   that is not an `<i>` a `--dcss-solve` within |to − from| / 2^(n − 1) and 4 ulps of a root of f between from and to,
-  and `--dcss-solve-interval` |to − from| / 2^(n − 2), with `--dcss-ready` 1 and `--dcss-err` 0. The `<i>`s MUST
+  and `--dcss-solve-width` |to − from| / 2^(n − 2), with `--dcss-ready` 1 and `--dcss-err` 0. The `<i>`s MUST
   generate no boxes and leave the font as they found it.
 - **A216** `.dcss-solve` MUST give `--dcss-ready` 0, `--dcss-err` 1 and `--dcss-solve` NaN when f has the same sign, not 0,
   at both ends, when f is not a number or is not set at an `<i>`, or when `--from` or `--to` is not
@@ -445,47 +445,47 @@ for selection or computation. Packaging does not expand any function's bounds.
   within 1e-11 of d3-geo 3.1.1's raw invert, or nearer the longitude and latitude the point was projected from than
   d3's invert is (d3 stops Newton's method at a step under 1e-6 or 1e-12), for latitudes within 0.999 × π/2.
 - **A220** `.dcss-solve.dcss-solve-newton`, with the page's rule setting f's derivative `--dcss-slope` beside
-  `--dcss-fn` on every `<i>`, `--guess` optional, and n nested `<i>` elements (3 to 14), MUST give inside
+  `--dcss-formula` on every `<i>`, `--guess` optional, and n nested `<i>` elements (3 to 14), MUST give inside
   the deepest the result of n − 2 of Newton's steps from the guess (the bracket's middle without one), each step taken
   when it lands in what is left of the bracket and moves x under half its width, the middle of what is left otherwise;
-  `--dcss-solve-interval` the width left; a 0 of f at an end as A216; and refuse as A216, and when f′ is not set or not a
+  `--dcss-solve-width` the width left; a 0 of f at an end as A216; and refuse as A216, and when f′ is not set or not a
   number at an `<i>`.
-- **A221** `.dcss-invert` with a height, `--from`, `--to`, `--top` and
+- **A221** `.dcss-solve-rows` with a height, `--from`, `--to`, `--top` and
   `--bottom`, its first child holding n pairs of nested `<i>` elements, and the page's rule setting
-  `--dcss-fn` from `--dcss-at` on every `<i>`, for an f that rises from top to bottom, MUST start each line box
+  `--dcss-formula` from `--dcss-input` on every `<i>`, for an f that rises from top to bottom, MUST start each line box
   in it within 1 px of the x (from at the box's left edge, to at its right) where f reaches the value at the line's
   bottom edge (`--top` at the box's top, `--bottom` at its bottom), or at a value within its band, when the straight pieces
   between f's n + 1 values at x = from + k (to − from) / n are within 1 px of f's inverse; and again after an input of f
   changes.
-- **A222** `.dcss-ode` on a store.css frame cell (`data-store`), with the page's rule setting `--dcss-ode-a` from
-  `--dcss-ode-x` and `--dcss-ode-v`, MUST step once a frame from `--dcss-ode-x0` and `--dcss-ode-v0` by v + h a, then
-  x + h v (h `--dcss-ode-h`, 1/60 without one), x kept to `--dcss-ode-range` / 500,000 and v to `--dcss-ode-v-range` /
-  500,000, and give the cell's element and everything inside it `--dcss-ode-x` and `--dcss-ode-v` within 0.5 px of what
+- **A222** `.dcss-motion` on a store.css frame cell (`data-store`), with the page's rule setting `--dcss-motion-acceleration` from
+  `--dcss-motion-position` and `--dcss-motion-speed`, MUST step once a frame from `--dcss-motion-start-position` and `--dcss-motion-start-speed` by v + h a, then
+  x + h v (h `--dcss-motion-time-step`, 1/60 without one), x kept to `--dcss-motion-position-range` / 500,000 and v to `--dcss-motion-speed-range` /
+  500,000, and give the cell's element and everything inside it `--dcss-motion-position` and `--dcss-motion-speed` within 0.5 px of what
   the same step in doubles keeps (a spring's amplitude, a pendulum's swing), on a scrolled page and in a cell inside
-  another; `--dcss-err` 1 while x or v is past its range, 0 otherwise; no `--dcss-ode-a` moves x on at v.
+  another; `--dcss-err` 1 while x or v is past its range, 0 otherwise; no `--dcss-motion-acceleration` moves x on at v.
 - **A223** `mathml.mjs` MUST write, for `data-dcss-steps="n"` on a `.dcss-solve` (n 3 to 54; 3 to 14 with
   `.dcss-solve-newton`) or a geo raw invert (3 to 14), n nested `<i>` elements around the element's content, and on a
-  `.dcss-invert` (n 1 to 1,000) a first child `<span>` of n pairs `<i><i></i></i>`, adding no line; leave an element that
+  `.dcss-solve-rows` (n 1 to 1,000) a first child `<span>` of n pairs `<i><i></i></i>`, adding no line; leave an element that
   holds that many already as it is; and refuse, with the line, the attribute on any other element, a count out of
-  range, or one beside a different number of `<i>`s. A `.dcss-solve` or `.dcss-invert` with no `<i>`s MUST give
+  range, or one beside a different number of `<i>`s. A `.dcss-solve` or `.dcss-solve-rows` with no `<i>`s MUST give
   `--dcss-err` 1.
-- **A224** `.dcss-sample` on a list call's figure, with `--from` and `--to` on it and the page's rule setting `--dcss-fn`
-  from `--dcss-at` on its items, MUST give item k of n the `--value` `--dcss-fn` at from + (k − 1/2)(to − from) / n,
-  rounded to 64ths, so the call answers as for those values; and `--dcss-err` 1 when the items have no `--dcss-fn` or
+- **A224** `.dcss-sample` on a list call's figure, with `--from` and `--to` on it and the page's rule setting `--dcss-formula`
+  from `--dcss-input` on its items, MUST give item k of n the `--value` `--dcss-formula` at from + (k − 1/2)(to − from) / n,
+  rounded to 64ths, so the call answers as for those values; and `--dcss-err` 1 when the items have no `--dcss-formula` or
   the figure no `--from` and `--to`. `--from` and `--to` MUST NOT reach inside it.
-- **A225** On a page with an element of class `dcss-solve-newton`, `mathml.mjs` MUST write beside each `--dcss-fn`
+- **A225** On a page with an element of class `dcss-solve-newton`, `mathml.mjs` MUST write beside each `--dcss-formula`
   declaration in its `<style>` elements whose rule has no `--dcss-slope` a `--dcss-slope` declaration, on the same
-  line: the derivative of the formula in `--dcss-at`, as calc() computes it, other `var()`s constant; write it again
+  line: the derivative of the formula in `--dcss-input`, as calc() computes it, other `var()`s constant; write it again
   where the rule's `--dcss-slope` is one it wrote and the formula changed; leave one the page wrote; and write none for a
   formula with a percentage, a function it has no derivative for, mixed types, or a `var()` of a property the page's
-  styles work out from `--dcss-at` directly or through another, naming each with its line while the rest of the page
+  styles work out from `--dcss-input` directly or through another, naming each with its line while the rest of the page
   builds.
 - **A226** `mathml.mjs` MUST write, for `data-dcss-within="t"` on a `.dcss-solve` that halves, whose `--from` and `--to`
   are numbers on its style or in a `<style>` rule on one of its classes, the least n of 3 to 54 nested `<i>` elements
   for which |to − from| / 2^(n − 1) ≤ t, as for `data-dcss-steps="n"`; and refuse, with the line, the attribute on a
   Newton solve or an invert, beside `data-dcss-steps`, with t not above 0, a range that is not two numbers it reads there, or n past 54.
-- **A227** `.dcss-solve-extreme` with `.dcss-solve` MUST answer, as A215 does, where the page's `--dcss-slope` reaches
-  0 instead of where `--dcss-fn` reaches `--target`, so with one peak or dip between `--from` and `--to` its answer is
+- **A227** `.dcss-solve-turning-point` with `.dcss-solve` MUST answer, as A215 does, where the page's `--dcss-slope` reaches
+  0 instead of where `--dcss-formula` reaches `--target`, so with one peak or dip between `--from` and `--to` its answer is
   that point; and `mathml.mjs` MUST write the slope on a page with it (as A225) and refuse it beside
   `.dcss-solve-newton`.
 

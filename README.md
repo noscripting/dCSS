@@ -252,12 +252,12 @@ Each call gives its answer as `--dcss-` and its name to the elements directly in
 
 ### Math: families/math.css
 
-- `.dcss-solve`: where the page's own function reaches `--target` (0 without it): `--from`, `--to` on it, nested `<i>`s (or `data-dcss-steps` and the build writes them), the page's rule setting `--dcss-fn` from `--dcss-at` on each; inside the deepest, `--dcss-solve` and `--dcss-solve-interval`.
+- `.dcss-solve`: where the page's own function reaches `--target` (0 without it): `--from`, `--to` on it, nested `<i>`s (or `data-dcss-steps` and the build writes them), the page's rule setting `--dcss-formula` from `--dcss-input` on each; inside the deepest, `--dcss-solve` and `--dcss-solve-width`.
 - `.dcss-solve-newton`: with `.dcss-solve`, Newton's steps kept in the bracket: `--dcss-slope`, f's slope (its derivative), beside f (the build writes it from f); `--guess` optional.
-- `.dcss-solve-extreme`: with `.dcss-solve`, where the page's own function is highest or lowest between `--from` and `--to`, one hump: where its slope, `--dcss-slope` (the build writes it from f), reaches 0; halving, with `data-dcss-within` or `data-dcss-steps`.
-- `.dcss-invert`: the inverse of the page's own function on every row of the box at once: `--from`, `--to` across it, `--top`, `--bottom` down it, its first child's pairs of `<i>`s (or `data-dcss-steps`), the page's rule setting `--dcss-fn` from `--dcss-at` on each; each line starts where f reaches its value.
-- `.dcss-sample`: with a list call (`.dcss-sum`, `.dcss-max`, `.dcss-mean`…), the page's own function as the list: `--from`, `--to` on it, each item's `--value` the page's `--dcss-fn` at `--dcss-at`, the item's middle, rounded to 64ths.
-- `.dcss-ode`: on store.css's frame cell (`data-store`), the page's own equation of motion, a leapfrog step a frame: `--dcss-ode-a` from `--dcss-ode-x` and `--dcss-ode-v`, `--dcss-ode-x0`, `-v0`, `-range`, `-v-range`, `-h`; on it and inside it, `--dcss-ode-x` and `--dcss-ode-v`.
+- `.dcss-solve-turning-point`: with `.dcss-solve`, where the page's own function is highest or lowest between `--from` and `--to`, one hump: where its slope, `--dcss-slope` (the build writes it from f), reaches 0; halving, with `data-dcss-within` or `data-dcss-steps`.
+- `.dcss-solve-rows`: the inverse of the page's own function on every row of the box at once: `--from`, `--to` across it, `--top`, `--bottom` down it, its first child's pairs of `<i>`s (or `data-dcss-steps`), the page's rule setting `--dcss-formula` from `--dcss-input` on each; each line starts where f reaches its value.
+- `.dcss-sample`: with a list call (`.dcss-sum`, `.dcss-max`, `.dcss-mean`…), the page's own function as the list: `--from`, `--to` on it, each item's `--value` the page's `--dcss-formula` at `--dcss-input`, the item's middle, rounded to 64ths.
+- `.dcss-motion`: on store.css's frame cell (`data-store`), the page's own equation of motion, a leapfrog step a frame: `--dcss-motion-acceleration` from `--dcss-motion-position` and `--dcss-motion-speed`, `--dcss-motion-start-position`, `-start-speed`, `-position-range`, `-speed-range`, `-time-step`; on it and inside it, `--dcss-motion-position` and `--dcss-motion-speed`.
 - [`.dcss-geo-natural-earth1-raw-invert`](https://d3js.org/d3-geo/cylindrical#geoNaturalEarth1), [`.dcss-geo-equal-earth-raw-invert`](https://d3js.org/d3-geo/cylindrical#geoEqualEarth): 12 nested `<i>`s, Newton's steps from `--y` with d3's derivative, `--x`, `--y` on it; inside the deepest, `--dcss-geo-x`, `--dcss-geo-y` in radians.
 
 <!-- /calls -->
@@ -275,7 +275,7 @@ Write your formula once, as an ordinary rule, and `.dcss-solve` (families/math.c
 ```css
 .orbit { --from: 0; --to: 6.283185307179586; --target: var(--m); }
 @scope (.orbit) to (.dcss-solve) {
-  i { --dcss-fn: calc(var(--dcss-at) - var(--e) * sin(var(--dcss-at) * 1rad)); }
+  i { --dcss-formula: calc(var(--dcss-input) - var(--e) * sin(var(--dcss-input) * 1rad)); }
 }
 .planet {
   translate: calc(cos(var(--dcss-solve) * 1rad) * 100px) calc(sin(var(--dcss-solve) * 1rad) * 100px);
@@ -283,9 +283,9 @@ Write your formula once, as an ordinary rule, and `.dcss-solve` (families/math.c
 }
 ```
 
-`--dcss-fn` is your formula and `--dcss-at` the input it is tried at. `data-dcss-within="0.002"` says how close the answer must be, in the same units as `--from` and `--to`, and the build, `node mathml.mjs page.html built.html`, works out how many tries that takes (13 here) and writes them as nested `<i>`s around what is inside (no script on the built page). Your rule runs once on every `<i>`, and each `<i>` is one try: the first at `--from`, the second at `--to`, and each one after halves what is left, so n `<i>`s put the answer within |to − from| / 2ⁿ⁻¹. The build reads `--from` and `--to` when they are plain numbers on the element or in a rule on one of its classes; where they aren't, write `data-dcss-steps="13"`, the count itself, or the `<i>`s by hand, `<i><i><i> … <span class="planet"></span> … </i></i></i>`. A solve or an invert with no `<i>`s (the attribute on a page never built) gives `--dcss-err` 1. Animate `--m` and the planet moves, every frame; each `<i>` costs about as much as any other element restyled, so an animated page keeps its solves to tens and its `<i>`s to the precision it draws.
+`--dcss-formula` is your formula, and `--dcss-input` the number it is tried at: the call writes it, your formula reads it. `data-dcss-within="0.002"` says how close the answer must be, in the same units as `--from` and `--to`, and the build, `node mathml.mjs page.html built.html`, works out how many tries that takes (13 here) and writes them as nested `<i>`s around what is inside (no script on the built page). Your rule runs once on every `<i>`, and each `<i>` is one try: the first at `--from`, the second at `--to`, and each one after halves what is left, so n `<i>`s put the answer within |to − from| / 2ⁿ⁻¹. The build reads `--from` and `--to` when they are plain numbers on the element or in a rule on one of its classes; where they aren't, write `data-dcss-steps="13"`, the count itself, or the `<i>`s by hand, `<i><i><i> … <span class="planet"></span> … </i></i></i>`. A solve or an invert with no `<i>`s (the attribute on a page never built) gives `--dcss-err` 1. Animate `--m` and the planet moves, every frame; each `<i>` costs about as much as any other element restyled, so an animated page keeps its solves to tens and its `<i>`s to the precision it draws.
 
-- Every element inside the deepest `<i>` that isn't an `<i>` gets `--dcss-solve` and `--dcss-solve-interval`, the width left. An `<i>` there would be one more try. The `<i>`s draw no boxes (`display: contents`), so the planet lays out as the solve's own child.
+- Every element inside the deepest `<i>` that isn't an `<i>` gets `--dcss-solve` and `--dcss-solve-width`, the width left. An `<i>` there would be one more try. The `<i>`s draw no boxes (`display: contents`), so the planet lays out as the solve's own child.
 - `--dcss-ready` is 0, `--dcss-err` 1 and `--dcss-solve` NaN when the formula is on the same side of the target at both ends, isn't a number at some `<i>`, or the solve has no formula or no `--from` and `--to` of its own. A NaN `translate` falls back to none, so `opacity: var(--dcss-ready)` hides a refused answer instead of drawing it in the wrong place.
 - `--from`, `--to`, `--target` and `--guess` are the solve's own: they are reset inside it, so nothing inside reads them, and a solve inside another sets its own.
 - The formula must be continuous between the two numbers: a sign change around a pole, like 1/(x − 0.3) on 0 to 1, halves down to the pole. Where it reaches the target more than once, the answer is one of them.
@@ -302,24 +302,24 @@ For a drawing, halving is the one to use: 13 tries put an answer within a pixel 
 
 ```css
 @scope (.orbit) to (.dcss-solve) {
-  i { --dcss-fn: calc(var(--dcss-at) - var(--e) * sin(var(--dcss-at) * 1rad)); }
+  i { --dcss-formula: calc(var(--dcss-input) - var(--e) * sin(var(--dcss-input) * 1rad)); }
 }
 ```
 
-Newton needs the formula's slope, its derivative, as `--dcss-slope`, and the build works it out from your formula's text: on a page with a `.dcss-solve-newton`, `node mathml.mjs page.html built.html` writes `--dcss-slope: calc(1 - var(--e) * cos(var(--dcss-at) * 1rad))` beside each `--dcss-fn` in the page's `<style>`s, on the same line. It takes `+ - * /`, `pow()`, `sqrt()`, `exp()`, `log()`, `sin()` and the other trigonometric functions and their inverses, `hypot()`, `abs()`, `sign()`, `min()`, `max()`, `clamp()`, `round()`, `mod()` and `rem()`, and keeps the formula's units (an angle in `deg` or `rad`). Every `var()` but `--dcss-at` is a number that doesn't change with it. A formula that reads a property the page works out from `--dcss-at` (directly or through another), has a percentage, or a function it has no slope for gets no slope: the build names it on stderr with its line and builds the rest of the page; write `--dcss-slope` yourself there, or to skip the build. A slope you write is left as it is; the build's own says so in a comment and follows the formula when you change it.
+Newton needs the formula's slope, its derivative, as `--dcss-slope`, and the build works it out from your formula's text: on a page with a `.dcss-solve-newton`, `node mathml.mjs page.html built.html` writes `--dcss-slope: calc(1 - var(--e) * cos(var(--dcss-input) * 1rad))` beside each `--dcss-formula` in the page's `<style>`s, on the same line. It takes `+ - * /`, `pow()`, `sqrt()`, `exp()`, `log()`, `sin()` and the other trigonometric functions and their inverses, `hypot()`, `abs()`, `sign()`, `min()`, `max()`, `clamp()`, `round()`, `mod()` and `rem()`, and keeps the formula's units (an angle in `deg` or `rad`). Every `var()` but `--dcss-input` is a number that doesn't change with it. A formula that reads a property the page works out from `--dcss-input` (directly or through another), has a percentage, or a function it has no slope for gets no slope: the build names it on stderr with its line and builds the rest of the page; write `--dcss-slope` yourself there, or to skip the build. A slope you write is left as it is; the build's own says so in a comment and follows the formula when you change it.
 
 After the two ends, each `<i>` is one step from x to x − f/f′, from `--guess` (the middle without one). A step that would leave what is left of the bracket, or move x more than half its width, halves the bracket instead, so it can't cycle or run off the way plain Newton can. For a drawing, a pixel is enough: from a guess, 5 `<i>`s put Kepler's planet within 0.2 px on a 100 px orbit, and 4 put a cubic-bezier's t within 4e-8. A double's last digit takes 8, and 10 from the middle, where halving takes 54; an animated frame costs about half. Up to 14 `<i>`s; `--dcss-ready` is 0 also when the slope is missing or not a number.
 
-Add `.dcss-solve-extreme` and the solve finds where your formula is highest or lowest instead: the top of a bounce, the nearest point of a path, the busiest hour of a curve. Give it `--from` and `--to` around one hump:
+Add `.dcss-solve-turning-point` and the solve finds where your formula is highest or lowest instead: the top of a bounce, the nearest point of a path, the busiest hour of a curve. Give it `--from` and `--to` around one hump:
 
 ```html
-<div class="dcss-solve dcss-solve-extreme peak" data-dcss-within="0.001" style="--from: 0; --to: 4">
+<div class="dcss-solve dcss-solve-turning-point peak" data-dcss-within="0.001" style="--from: 0; --to: 4">
   <span class="marker"></span>
 </div>
 ```
 
 ```css
-.peak i { --dcss-fn: calc(var(--dcss-at) * exp(-1 * var(--dcss-at))); }
+.peak i { --dcss-formula: calc(var(--dcss-input) * exp(-1 * var(--dcss-input))); }
 .marker { translate: calc(var(--dcss-solve) * 100px) 0; opacity: var(--dcss-ready); }
 ```
 
@@ -329,17 +329,17 @@ The inverts of naturalEarth1 and equalEarth above are solves like this one, with
 
 ### Every row at once
 
-When many things need one formula's answer (24 moons on one orbit, the ticks of an eased axis, labels on a curve), `.dcss-invert` answers every row of a box in one layout. The page writes its formula once, as for `.dcss-solve`; 32 straight pieces sample it (the build writes them, a first `<span>` of 32 pairs `<i><i></i></i>`), and each line in the box starts where the formula reaches that line's value:
+When many things need one formula's answer (24 moons on one orbit, the ticks of an eased axis, labels on a curve), `.dcss-solve-rows` answers every row of a box in one layout. The page writes its formula once, as for `.dcss-solve`; 32 straight pieces sample it (the build writes them, a first `<span>` of 32 pairs `<i><i></i></i>`), and each line in the box starts where the formula reaches that line's value:
 
 ```html
-<div class="dcss-invert orbit" data-dcss-steps="32" style="--from: 0; --to: 6.2832; --top: 0; --bottom: 6.2832; height: 240px">
+<div class="dcss-solve-rows orbit" data-dcss-steps="32" style="--from: 0; --to: 6.2832; --top: 0; --bottom: 6.2832; height: 240px">
   <p><b class="moon"></b></p> <p><b class="moon"></b></p> …
 </div>
 ```
 
 ```css
-@scope (.orbit) to (.dcss-invert) {
-  i { --dcss-fn: calc(var(--dcss-at) - 0.6 * sin(var(--dcss-at) * 1rad)); }
+@scope (.orbit) to (.dcss-solve-rows) {
+  i { --dcss-formula: calc(var(--dcss-input) - 0.6 * sin(var(--dcss-input) * 1rad)); }
 }
 .moon { display: inline-block; width: 0; }   /* drawn by its ::before, which may overflow it */
 ```
@@ -352,7 +352,7 @@ Put `.dcss-sample` beside a list call and each item's value is your formula at t
 
 ```html
 <style>
-  .wave li { --dcss-fn: sin(var(--dcss-at) * 1rad); }   /* the same --dcss-fn from --dcss-at as a solve's */
+  .wave li { --dcss-formula: sin(var(--dcss-input) * 1rad); }   /* the same --dcss-formula from --dcss-input as a solve's */
 </style>
 <figure class="dcss-sum dcss-sample wave" style="--from: 0; --to: 3.14159">
   <ul aria-hidden="true"><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li></ul>
@@ -362,23 +362,23 @@ Put `.dcss-sample` beside a list call and each item's value is your formula at t
 
 That prints 2.00, the area under one hump of a sine, from 16 values. Each value is rounded to the list's 64ths, so write the formula in units where 1/64 is close enough (pixels are); `--dcss-err` is 1 when the items have no formula, or the figure no `--from` and `--to`. While the formula moves, a sampled list costs a frame what any list of its length does, so a page keeps to a few (Performance).
 
-One rule can feed every call at once: `.demo :is(i, li) { --dcss-fn: … }` on a wrapper holding a `.dcss-invert`, a `.dcss-solve` and a `.dcss-sample`, and dots on the curve, where it reaches a value and the area under it all follow the one formula (probes/dcss/sample/curve.html, with no script: radio buttons change it).
+One rule can feed every call at once: `.demo :is(i, li) { --dcss-formula: … }` on a wrapper holding a `.dcss-solve-rows`, a `.dcss-solve` and a `.dcss-sample`, and dots on the curve, where it reaches a value and the area under it all follow the one formula (probes/dcss/sample/curve.html, with no script: radio buttons change it).
 
 ### Motion by your own equation
 
-For something that moves by a force (a pendulum, a spring that follows the pointer, a ball pulled by gravity), write its acceleration once and `.dcss-ode` steps it a frame at a time. It runs on store.css's frame cell, so link store.css and put `data-store` on the element:
+For something that moves by a force (a pendulum, a spring that follows the pointer, a ball pulled by gravity), write its acceleration once and `.dcss-motion` steps it a frame at a time. It runs on store.css's frame cell, so link store.css and put `data-store` on the element:
 
 ```html
-<div data-store class="dcss-ode pendulum"><b class="bob"></b></div>
+<div data-store class="dcss-motion pendulum"><b class="bob"></b></div>
 ```
 
 ```css
-.pendulum { --dcss-ode-x0: 1.2; --dcss-ode-range: 4; --dcss-ode-v-range: 20;
-            --dcss-ode-a: calc(-6.5 * sin(var(--dcss-ode-x) * 1rad)); }
-.bob { rotate: calc(var(--dcss-ode-x) * 1rad); }
+.pendulum { --dcss-motion-start-position: 1.2; --dcss-motion-position-range: 4; --dcss-motion-speed-range: 20;
+            --dcss-motion-acceleration: calc(-6.5 * sin(var(--dcss-motion-position) * 1rad)); }
+.bob { rotate: calc(var(--dcss-motion-position) * 1rad); }
 ```
 
-The element and everything inside it get `--dcss-ode-x` and `--dcss-ode-v`, the position and the speed. Each frame the cell takes one leapfrog step: v changes by h × a, then x by h × v. A spring or a pendulum stepped this way keeps its swing for minutes instead of slowly gaining or losing it. `--dcss-ode-a` may read x and v (damping is a term in v), and anything else the page sets, such as the pointer's position. `--dcss-ode-x0` and `--dcss-ode-v0` are where it starts (0); `--dcss-ode-h` is the time a frame (1/60): a screen that draws faster runs it faster. The cell keeps x and v as whole numbers, so each has a range: `--dcss-ode-range` for x (500, kept to 1/1000) and `--dcss-ode-v-range` for v (5,000, kept to 1/100). Pick ranges a little wider than the motion; `--dcss-err` is 1 while either is past its range. `--dcss-ready` is 1 from the frame the cell has its first numbers back. Two numbers a cell: for x and y that move apart, nest two cells and copy the outer's x into a property of your own first, since the inner cell sets its own.
+The element and everything inside it get `--dcss-motion-position` and `--dcss-motion-speed`, the position and the speed. Each frame the cell takes one leapfrog step: the speed changes by the time step times the acceleration, then the position by the time step times the speed. A spring or a pendulum stepped this way keeps its swing for minutes instead of slowly gaining or losing it. `--dcss-motion-acceleration` may read the position and the speed (damping is a term in the speed), and anything else the page sets, such as the pointer's position. `--dcss-motion-start-position` and `--dcss-motion-start-speed` are where it starts (0); `--dcss-motion-time-step` is the time a frame (1/60): a screen that draws faster runs it faster. The cell keeps both as whole numbers, so each has a range: `--dcss-motion-position-range` (500, kept to 1/1000) and `--dcss-motion-speed-range` (5,000, kept to 1/100). Pick ranges a little wider than the motion; `--dcss-err` is 1 while either is past its range. `--dcss-ready` is 1 from the frame the cell has its first numbers back. Two numbers a cell: for x and y that move apart, nest two cells and copy the outer one's position into a property of your own first, since the inner cell sets its own.
 
 ### As CSS functions
 
@@ -425,7 +425,7 @@ Layout does the work, in the frame a number changes. A family is at most 30 KB g
 
 <!-- /performance -->
 
-Twenty `.dcss-solve`s animated, good to a pixel (2026-10-31): 13 tries of halving 3.4 ms a frame in Chrome, 9.6 in WebKit; 5 Newton steps 7.4 and 12.3; the Newton machine halving with no slope, 13 tries, 24.7 and 41.0, so the two stay apart. A page using `.dcss-solve` alone carries no Newton step. `.dcss-invert` with f animated, 32 pairs (2026-10-31): 100 rows 2.3 ms a frame in Chrome, 2.9 in WebKit; 1,000 rows 14.7 and 14.3. Twenty `.dcss-ode` pendulums swinging: 4.7 and 5.2. A `.dcss-sum` of 64 samples with the formula moving: 5.8 ms a frame in Chrome, 5.5 in WebKit; twenty, 110 and 79. All three calls on one page (20 Newton solves, a 100-row invert, 20 pendulums): 14.3 ms a frame in Chrome, 31.6 in WebKit, about half of it from store.css, linked for the pendulums (probes/dcss/model/together.mjs). One formula feeding a 32-pair invert, two 20-`<i>` solves and a 100-item `.dcss-sample`, the formula changing every frame: 13.8 ms a frame in Chrome, 14.1 in WebKit (probes/dcss/sample/curve-check.mjs).
+Twenty `.dcss-solve`s animated, good to a pixel (2026-10-31): 13 tries of halving 3.4 ms a frame in Chrome, 9.6 in WebKit; 5 Newton steps 7.4 and 12.3; the Newton machine halving with no slope, 13 tries, 24.7 and 41.0, so the two stay apart. A page using `.dcss-solve` alone carries no Newton step. `.dcss-solve-rows` with f animated, 32 pairs (2026-10-31): 100 rows 2.3 ms a frame in Chrome, 2.9 in WebKit; 1,000 rows 14.7 and 14.3. Twenty `.dcss-motion` pendulums swinging: 4.7 and 5.2. A `.dcss-sum` of 64 samples with the formula moving: 5.8 ms a frame in Chrome, 5.5 in WebKit; twenty, 110 and 79. All three calls on one page (20 Newton solves, a 100-row invert, 20 pendulums): 14.3 ms a frame in Chrome, 31.6 in WebKit, about half of it from store.css, linked for the pendulums (probes/dcss/model/together.mjs). One formula feeding a 32-pair invert, two 20-`<i>` solves and a 100-item `.dcss-sample`, the formula changing every frame: 13.8 ms a frame in Chrome, 14.1 in WebKit (probes/dcss/sample/curve-check.mjs).
 
 ## License
 
