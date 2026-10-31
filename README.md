@@ -127,17 +127,15 @@ An axis on a nice domain reads `.dcss-nice`'s `--dcss-nice-start` and `--dcss-ni
 </figure>
 ```
 
-A median, quantile, variance or summary reads its list through three nested elements:
+A median or quantile goes to each element after the list, and a format on the figure formats every output in it:
 
 ```html
-<figure class="dcss-median">
+<figure class="dcss-median dcss-format-fixed" style="--precision: 1">
   <ol><li style="--value: 4"></li> <li style="--value: 1"></li> <li style="--value: 3"></li> <li style="--value: 2"></li></ol>
-  <div><div><div>
-    <output class="dcss-format-fixed" style="--value: var(--dcss-median); --precision: 1"></output>   <!-- 2.5 -->
-  </div></div></div>
+  <output style="--value: var(--dcss-median)"></output>   <!-- 2.5 -->
 </figure>
 ```
-One list, every answer. Each element after the list reads the sum, count, length, mean, min, max, median, variance and deviation, on a line of its own, and a format on the figure formats every output in it:
+One list, every answer. Each element after the list reads the sum, count, length, mean, min, max, median, variance and deviation, on a line of its own:
 
 ```html
 <figure class="dcss-summarize dcss-format-fixed" style="--precision: 1">
@@ -259,7 +257,7 @@ Each call gives its answer as `--dcss-` and its name to the elements directly in
 
 <!-- browsers -->
 
-Headless Chrome 155 and WebKit 26.4, Safari's engine, pass all 162 requirements of [SPEC.md](SPEC.md), and the calls match d3 on 3,206 of the 7,049 calls in d3's tests. Firefox 158 computes `calc()` in 32-bit floats, so exact sums, dates and most formatting go wrong there: it passes 71. [QUIRKS.md](QUIRKS.md) has the engine bugs.
+Headless Chrome 155 and WebKit 26.4, Safari's engine, pass all 162 requirements of [SPEC.md](SPEC.md), and the calls match d3 on 3,206 of the 7,049 calls in d3's tests. Firefox 158 computes `calc()` in 32-bit floats, so exact sums, dates and most formatting go wrong there: it passes 70. [QUIRKS.md](QUIRKS.md) has the engine bugs.
 
 <!-- /browsers -->
 
@@ -267,7 +265,7 @@ Headless Chrome 155 and WebKit 26.4, Safari's engine, pass all 162 requirements 
 
 <!-- performance -->
 
-Layout does the work, in the frame a number changes. A family is at most 25 KB gzipped and loads in 15 ms or less in WebKit 26.4 (2026-10-28). Twenty printed medians, a value moving: 6.3 ms a frame in Chrome, 9.6 in WebKit; variance 8.2, 10.3 (2026-10-30).
+Layout does the work, in the frame a number changes. A family is at most 27 KB gzipped and loads in 15 ms or less in WebKit 26.4 (2026-10-28). Twenty printed medians, a value moving: 6.3 ms a frame in Chrome, 9.6 in WebKit; variance 8.2, 10.3 (2026-10-30).
 
 <!-- /performance -->
 

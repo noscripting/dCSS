@@ -3424,7 +3424,7 @@
       },
       "A116": {
         "__compat": {
-          "description": "Median, quantile and quantileSorted MUST take 1/64 steps from −131,072 to 131,071, the quantile scale 1/64 steps within ±131,072, and all four whole numbers from −131,072 to 8,257,535, matching d3. They MUST refuse values past those bounds with error 1.",
+          "description": "Median, quantile, quantileSorted and the quantile scale MUST take 1/64 steps from −65,536 to 65,535, and all four whole numbers from −131,072 to 8,257,535, matching d3. A list with an item whose `--value` is written with a point, a negative exponent or a function (`var()`, `calc()`, `attr()`, `env()`, `if()`) takes the 1/64 steps; a whole-number list holding a fraction MUST give error 1. They MUST refuse values past those bounds with error 1.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -3496,7 +3496,7 @@
       },
       "A122": {
         "__compat": {
-          "description": "`.dcss-median`, `.dcss-quantile` and `.dcss-quantile-sorted` with the list written once and three nested elements after it MUST give d3's answer on the innermost element's children, within A116's bounds and for up to 64 values. The median, and the quantile at p 0, 0.5 and 1, MUST skip an item with no number as d3 does, and quantileSorted MUST pass over one it doesn't read. They MUST refuse an item off the grid or out of range, an item with no number that a quantile at another p or quantileSorted reads, and 65 items with error 1, and an empty list, a median of no numbers or a missing p with error 2.",
+          "description": "`.dcss-median`, `.dcss-quantile` and `.dcss-quantile-sorted` with the list written once MUST give d3's answer to each element after the list (a `<figcaption>` excepted) and every element inside one, within A116's bounds and for up to 64 values. The median, and the quantile at p 0, 0.5 and 1, MUST skip an item with no number as d3 does, and quantileSorted MUST pass over one it doesn't read. They MUST refuse an item off the grid or out of range, an item with no number that a quantile at another p or quantileSorted reads, and 65 items with error 1, and an empty list, a median of no numbers or a missing p with error 2.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -3520,7 +3520,7 @@
       },
       "A123": {
         "__compat": {
-          "description": "`.dcss-scale-quantile` with the list written once and four nested elements after it MUST give d3's answer on the innermost element's children, within A116's bounds, for up to 64 values and 1 to 17 ranges, numbers or text, a query on a threshold or one double either side of it included. It MUST refuse with error 1 an item off the grid, out of range or missing, 65 values and 0, 1.5 or 18 ranges, answer `--unknown` for a missing or NaN query, and give error 2 for a missing one with no `--unknown`.",
+          "description": "`.dcss-scale-quantile` with the list written once MUST give d3's answer to each element after the list (a `<figcaption>` excepted) and every element inside one, within A116's bounds, for up to 64 values and 1 to 17 ranges, numbers or text, a query on a threshold or one double either side of it included. It MUST refuse with error 1 an item off the grid, out of range or missing, 65 values and 0, 1.5 or 18 ranges, answer `--unknown` for a missing or NaN query, and give error 2 for a missing one with no `--unknown`.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -3638,7 +3638,7 @@
       },
       "A128": {
         "__compat": {
-          "description": "`.dcss-median-index` and `.dcss-quantile-index` (`--p`) with the list written once and three nested elements after it MUST give the third's children d3's index of the value at floor((n - 1) p), for 0 to 64 values on the 1/64 grid within ±131,072, with -1 for no values; with ties at that value, the place of the one sorted last when values ascend and equal ones go last place first (first place first at p 0 or less). An item with no `--value` in its style attribute MUST count in n and never be the answer: the index of rank min(k, D - 1) among the D numbers, -1 for none. Another value, a number such an item takes from elsewhere, or a `--p` that isn't a number MUST leave no answer.",
+          "description": "`.dcss-median-index` and `.dcss-quantile-index` (`--p`) with the list written once MUST give each element after the list (a `<figcaption>` excepted), and every element inside one, d3's index of the value at floor((n - 1) p), for 0 to 64 values on the 1/64 grid within ±131,072, with -1 for no values; with ties at that value, the place of the one sorted last when values ascend and equal ones go last place first (first place first at p 0 or less). An item with no `--value` in its style attribute MUST count in n and never be the answer: the index of rank min(k, D - 1) among the D numbers, -1 for none. Another value, a number such an item takes from elsewhere, or a `--p` that isn't a number MUST leave no answer.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -3649,7 +3649,8 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": "≤158"
+              "version_added": false,
+              "notes": "FAIL: 33 of 831 (no view timelines, 2026-10-30)"
             }
           },
           "status": {

@@ -67,6 +67,7 @@ All notable changes to dcss are written here. The format follows [Keep a Changel
 
 ### Changed
 
+- `.dcss-median`, `.dcss-quantile`, `.dcss-quantile-sorted`, `.dcss-median-index`, `.dcss-quantile-index` and `.dcss-scale-quantile` give their answer to each element after the list and everything inside it, as `.dcss-summarize` does, in place of three or four plain `<div>`s. A list with a value written with a point or a function takes 1/64 steps within ±65,536 (was ±131,072); whole-number lists keep -131,072 to 8,257,535.
 - `.dcss-variance` and `.dcss-deviation` are read by the page's own element after the list, in place of three plain `<div>`s. A list with a fraction now takes values whose sum, each 1025 more, is under 132,735 (it was 2^18).
 
 - A call's answers (`--dcss-sum`, `--dcss-count`, `--dcss-length`, `--dcss-mean`, `--dcss-min`, `--dcss-max`, `--dcss-variance`, `--dcss-deviation`) reach the elements directly inside the element that reads them, not their descendants: set `--value: var(--dcss-mean)` on such an element to pass one deeper. A printed summary moving every frame costs 10 ms a frame in Chrome instead of 24.
