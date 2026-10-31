@@ -3568,7 +3568,7 @@
       },
       "A125": {
         "__compat": {
-          "description": "`.dcss-cumsum` with a second, unclassed list after its values MUST give d3's running total to everything inside the matching item of that list, for 0 to 64 values within ±1024 on the 1/64 grid, missing and NaN values adding 0. It MUST refuse a total from a value off the grid or past ±1024 on with error 1, leave a formatter there its own status, and give the same totals compiled.",
+          "description": "`.dcss-cumsum` with a second, unclassed list after its values MUST give d3's running total to everything inside the matching item of that list, for 0 to 1,024 values within ±1024 on the 1/64 grid (a total whose item's running width, the total + 1024 px an item, passes 262,143 px has no answer, error 1), missing and NaN values adding 0. It MUST refuse a total from a value off the grid or past ±1024 on with error 1, leave a formatter there its own status, and give the same totals compiled.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
