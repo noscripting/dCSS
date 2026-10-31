@@ -137,7 +137,7 @@ A median, quantile, variance or summary reads its list through three nested elem
   </div></div></div>
 </figure>
 ```
-One list, several answers. The element after the list is yours, and its children read the sum, count, length, mean and min:
+One list, every answer. The element after the list is yours, and its children read the sum, count, length, mean, min, max, median, variance and deviation:
 
 ```html
 <figure class="dcss-summarize">
@@ -149,16 +149,16 @@ One list, several answers. The element after the list is yours, and its children
 </figure>
 ```
 
-An element of class `dcss-read` around yours adds the max; a second inside it adds the median, variance and deviation. The figure is one line tall, two with a `<figcaption>`, unless you give it a height:
+The figure is one line tall, two with a `<figcaption>`, unless you give it a height:
 
 ```html
 <figure class="dcss-summarize" style="height: 3lh">
   <ul><li style="--value: 72.5"></li> <li style="--value: 88"></li> <li style="--value: 95"></li> <li style="--value: 47"></li></ul>
-  <div class="dcss-read"><div class="dcss-read"><div class="dcss-format-fixed" style="--precision: 1">
+  <div class="dcss-format-fixed" style="--precision: 1">
     <output style="--value: var(--dcss-mean); display: block"></output>       <!-- 75.6 -->
     <output style="--value: var(--dcss-max); display: block"></output>        <!-- 95.0 -->
     <output style="--value: var(--dcss-deviation); display: block"></output>  <!-- 21.3 -->
-  </div></div></div>
+  </div>
 </figure>
 ```
 
@@ -178,10 +178,10 @@ Each call gives its answer as `--dcss-` and its name to the elements directly in
 ### Array: families/array.css
 
 - [`.dcss-sum`](https://d3js.org/d3-array/summarize#sum), [`.dcss-mean`](https://d3js.org/d3-array/summarize#mean), [`.dcss-count`](https://d3js.org/d3-array/summarize#count), `.dcss-length`, [`.dcss-min`](https://d3js.org/d3-array/summarize#min), [`.dcss-max`](https://d3js.org/d3-array/summarize#max), [`.dcss-extent`](https://d3js.org/d3-array/summarize#extent): of the list; length counts its items.
-- `.dcss-summarize`: sum, count, length, mean and min of one list, in the element after it; the max with a `.dcss-read` around that element, the median, variance and deviation with two.
+- `.dcss-summarize`: sum, count, length, mean, min, max, median, variance and deviation of one list, to the children of the element after it.
 - [`.dcss-min-index`](https://d3js.org/d3-array/summarize#minIndex), [`.dcss-max-index`](https://d3js.org/d3-array/summarize#maxIndex), [`.dcss-least-index`](https://d3js.org/d3-array/summarize#leastIndex), [`.dcss-greatest-index`](https://d3js.org/d3-array/summarize#greatestIndex), [`.dcss-least`](https://d3js.org/d3-array/summarize#least), [`.dcss-greatest`](https://d3js.org/d3-array/summarize#greatest): where the least or greatest is, or its value.
 - [`.dcss-median`](https://d3js.org/d3-array/summarize#median), [`.dcss-quantile`](https://d3js.org/d3-array/summarize#quantile), [`.dcss-quantile-sorted`](https://d3js.org/d3-array/summarize#quantileSorted), [`.dcss-median-index`](https://d3js.org/d3-array/summarize#medianIndex), [`.dcss-quantile-index`](https://d3js.org/d3-array/summarize#quantileIndex): read three elements deep; `--p` places a quantile.
-- [`.dcss-variance`](https://d3js.org/d3-array/summarize#variance), [`.dcss-deviation`](https://d3js.org/d3-array/summarize#deviation): read by the element inside two `.dcss-read`, as the summary's.
+- [`.dcss-variance`](https://d3js.org/d3-array/summarize#variance), [`.dcss-deviation`](https://d3js.org/d3-array/summarize#deviation): read by the element after the list, as the summary's.
 - [`.dcss-scale-quantile`](https://d3js.org/d3-scale/quantile#scaleQuantile), [`.dcss-scale-threshold`](https://d3js.org/d3-scale/threshold#scaleThreshold), [`.dcss-scale-quantize`](https://d3js.org/d3-scale/quantize#scaleQuantize): `--value` to `--range-0` to `--range-16` (`--ranges` of them) or `--unknown`, by the list four elements deep or by `--domain-0` to `--domain-15`.
 - [`.dcss-bisect-left`](https://d3js.org/d3-array/bisect#bisectLeft), [`.dcss-bisect-right`](https://d3js.org/d3-array/bisect#bisectRight), [`.dcss-bisect`](https://d3js.org/d3-array/bisect#bisect), [`.dcss-bisector-left`](https://d3js.org/d3-array/bisect#bisector), [`.dcss-bisector-right`](https://d3js.org/d3-array/bisect#bisector), [`.dcss-bisector`](https://d3js.org/d3-array/bisect#bisector): where the figure's `--value` goes in the sorted list.
 - [`.dcss-ascending`](https://d3js.org/d3-array/sort#ascending), [`.dcss-descending`](https://d3js.org/d3-array/sort#descending): comparing `--a` and `--b`.
@@ -258,7 +258,7 @@ Headless Chrome 155 and WebKit 26.4, Safari's engine, pass all 162 requirements 
 
 <!-- performance -->
 
-Layout does the work, in the frame a number changes. A family is at most 23 KB gzipped and loads in 15 ms or less in WebKit 26.4 (2026-10-28). Twenty printed medians, a value moving: 6.3 ms a frame in Chrome, 9.6 in WebKit; variance 8.2, 10.3 (2026-10-30).
+Layout does the work, in the frame a number changes. A family is at most 24 KB gzipped and loads in 15 ms or less in WebKit 26.4 (2026-10-28). Twenty printed medians, a value moving: 6.3 ms a frame in Chrome, 9.6 in WebKit; variance 8.2, 10.3 (2026-10-30).
 
 <!-- /performance -->
 
