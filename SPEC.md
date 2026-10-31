@@ -422,37 +422,39 @@ for selection or computation. Packaging does not expand any function's bounds.
 - **A196** `.dcss-stack-order-reverse` MUST stack the keys in d3-shape's stackOrderReverse, the last key first, and give each its place in that order as `--dcss-stack-index`.
 - **A195** `.dcss-shape-stack`, a `<ul>` (or `<ol>`) a point of d3's data and in it a `<li>` with `--value` a key, up to 64 keys of values in 64ths within ±1024, MUST give everything inside each item's first element `--dcss-y0` and `--dcss-y1`, d3.stack's [y0, y1] for that key at that point under stackOrderNone and stackOffsetNone, exactly, and `--dcss-stack-index`, the key's place in the order (d3's series.index). A key with no `--value`, or one that isn't a number, MUST add nothing to the keys after it and get d3's y0 and no y1, error 2.
 
-### Root
+### Math
 
-- **A215** `.dcss-root` with `--dcss-root-from` and `--dcss-root-to`, n nested `<i>` elements in it (3 to 54) and the
-  page's rule setting `--dcss-root-f` from `--dcss-root-x` on every one, f continuous between from and to, MUST give every element inside the deepest `<i>`
-  that is not an `<i>` a `--dcss-root` within |to − from| / 2^(n − 1) and 4 ulps of a root of f between from and to,
-  and `--dcss-root-interval` |to − from| / 2^(n − 2), with `--dcss-ready` 1 and `--dcss-err` 0. The `<i>`s MUST
+- **A215** `.dcss-solve` with `--from` and `--to`, n nested `<i>` elements in it (3 to 54) and the
+  page's rule setting `--dcss-fn` from `--dcss-at` on every one, f (here and in A216 to A220 the page's `--dcss-fn`
+  less `--target`, 0 without one) continuous between from and to, MUST give every element inside the deepest `<i>`
+  that is not an `<i>` a `--dcss-solve` within |to − from| / 2^(n − 1) and 4 ulps of a root of f between from and to,
+  and `--dcss-solve-interval` |to − from| / 2^(n − 2), with `--dcss-ready` 1 and `--dcss-err` 0. The `<i>`s MUST
   generate no boxes and leave the font as they found it.
-- **A216** `.dcss-root` MUST give `--dcss-ready` 0, `--dcss-err` 1 and `--dcss-root` NaN when f has the same sign, not 0,
-  at both ends, when f is not a number or is not set at an `<i>`, or when `--dcss-root-from` or `--dcss-root-to` is not
-  set on the solve itself (a solve inside another's answer refuses without its own); a 0 of f at an end is a root,
+- **A216** `.dcss-solve` MUST give `--dcss-ready` 0, `--dcss-err` 1 and `--dcss-solve` NaN when f has the same sign, not 0,
+  at both ends, when f is not a number or is not set at an `<i>`, or when `--from` or `--to` is not
+  set on the solve itself (they are reset inside it, so a solve inside another's answer refuses without its own); a 0
+  of f at an end is a root,
   and from above to is a bracket.
-- **A217** A `.dcss-root` inside another's answer MUST give its own root of an equation that reads the outer
-  `--dcss-root`, as A215: the outer answer read on the inner solve itself or on an element between them, the page's
-  rules in `@scope (.X) to (.dcss-root)` in either order, or unscoped with the inner's after the outer's.
+- **A217** A `.dcss-solve` inside another's answer MUST give its own root of an equation that reads the outer
+  `--dcss-solve`, as A215: the outer answer read on the inner solve itself or on an element between them, the page's
+  rules in `@scope (.X) to (.dcss-solve)` in either order, or unscoped with the inner's after the outer's.
 - **A218** `.dcss-geo-natural-earth1-raw` and `.dcss-geo-equal-earth-raw` with `--x` and `--y` (radians) MUST give
   `--dcss-geo-x` and `--dcss-geo-y` within 1e-12 of d3-geo 3.1.1's geoNaturalEarth1Raw and geoEqualEarthRaw.
 - **A219** `.dcss-geo-natural-earth1-raw-invert` and `.dcss-geo-equal-earth-raw-invert`, with `--x` and `--y` and 12
   or more nested `<i>` elements, MUST give everything inside the deepest that is not an `<i>` `--dcss-geo-x` and `--dcss-geo-y`
   within 1e-11 of d3-geo 3.1.1's raw invert, or nearer the longitude and latitude the point was projected from than
   d3's invert is (d3 stops Newton's method at a step under 1e-6 or 1e-12), for latitudes within 0.999 × π/2.
-- **A220** `.dcss-root.dcss-root-newton`, with the page's rule setting f's derivative `--dcss-root-df` beside
-  `--dcss-root-f` on every `<i>`, `--dcss-root-guess` optional, and n nested `<i>` elements (3 to 14), MUST give inside
+- **A220** `.dcss-solve.dcss-solve-newton`, with the page's rule setting f's derivative `--dcss-slope` beside
+  `--dcss-fn` on every `<i>`, `--guess` optional, and n nested `<i>` elements (3 to 14), MUST give inside
   the deepest the result of n − 2 of Newton's steps from the guess (the bracket's middle without one), each step taken
   when it lands in what is left of the bracket and moves x under half its width, the middle of what is left otherwise;
-  `--dcss-root-interval` the width left; a 0 of f at an end as A216; and refuse as A216, and when f′ is not set or not a
+  `--dcss-solve-interval` the width left; a 0 of f at an end as A216; and refuse as A216, and when f′ is not set or not a
   number at an `<i>`.
-- **A221** `.dcss-invert` with a height, `--dcss-invert-from`, `--dcss-invert-to`, `--dcss-invert-min` and
-  `--dcss-invert-max`, its first child holding n pairs of nested `<i>` elements, and the page's rule setting
-  `--dcss-invert-f` from `--dcss-invert-x` on every `<i>`, for an f that rises from min to max, MUST start each line box
+- **A221** `.dcss-invert` with a height, `--from`, `--to`, `--top` and
+  `--bottom`, its first child holding n pairs of nested `<i>` elements, and the page's rule setting
+  `--dcss-fn` from `--dcss-at` on every `<i>`, for an f that rises from top to bottom, MUST start each line box
   in it within 1 px of the x (from at the box's left edge, to at its right) where f reaches the value at the line's
-  bottom edge (min at the box's top, max at its bottom), or at a value within its band, when the straight pieces
+  bottom edge (`--top` at the box's top, `--bottom` at its bottom), or at a value within its band, when the straight pieces
   between f's n + 1 values at x = from + k (to − from) / n are within 1 px of f's inverse; and again after an input of f
   changes.
 - **A222** `.dcss-ode` on a store.css frame cell (`data-store`), with the page's rule setting `--dcss-ode-a` from

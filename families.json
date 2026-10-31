@@ -23,7 +23,7 @@
     "date-format",
     "geo",
     "shape",
-    "root"
+    "math"
   ],
   "families": {
     "ticks": {
@@ -375,20 +375,20 @@
       "gzip9": 3720,
       "sha256": "f552de92ba4e61976f05332ccea8d560a6dd78d3a522afb4ea0dde5a29503204"
     },
-    "root": {
-      "file": "families/root.css",
+    "math": {
+      "file": "families/math.css",
       "dependencies": [],
       "classes": [
         "dcss-geo-equal-earth-raw-invert",
         "dcss-geo-natural-earth1-raw-invert",
         "dcss-invert",
         "dcss-ode",
-        "dcss-root",
-        "dcss-root-newton"
+        "dcss-solve",
+        "dcss-solve-newton"
       ],
-      "raw": 176880,
-      "gzip9": 6059,
-      "sha256": "bbd7a8881b75f0c11aee62c87774eee2d9aa120f85ed5aaf78b064505744be63"
+      "raw": 181779,
+      "gzip9": 6294,
+      "sha256": "649101dcf0ce0233e16d7a5a84007366dd288961ef70d3cfc1ca8d6ec4840394"
     }
   },
   "owners": {
@@ -651,12 +651,12 @@
     "dcss-stack-offset-expand": "shape",
     "dcss-stack-offset-silhouette": "shape",
     "dcss-stack-order-reverse": "shape",
-    "dcss-geo-equal-earth-raw-invert": "root",
-    "dcss-geo-natural-earth1-raw-invert": "root",
-    "dcss-invert": "root",
-    "dcss-ode": "root",
-    "dcss-root": "root",
-    "dcss-root-newton": "root"
+    "dcss-geo-equal-earth-raw-invert": "math",
+    "dcss-geo-natural-earth1-raw-invert": "math",
+    "dcss-invert": "math",
+    "dcss-ode": "math",
+    "dcss-solve": "math",
+    "dcss-solve-newton": "math"
   },
   "functions": {
     "file": "families/functions.css",
@@ -6472,27 +6472,27 @@
         "role": "style-only"
       },
       "dcss-geo-equal-earth-raw-invert": {
-        "family": "root",
+        "family": "math",
         "role": "style-only"
       },
       "dcss-geo-natural-earth1-raw-invert": {
-        "family": "root",
+        "family": "math",
         "role": "style-only"
       },
       "dcss-invert": {
-        "family": "root",
+        "family": "math",
         "role": "style-only"
       },
       "dcss-ode": {
-        "family": "root",
+        "family": "math",
         "role": "style-only"
       },
-      "dcss-root": {
-        "family": "root",
+      "dcss-solve": {
+        "family": "math",
         "role": "style-only"
       },
-      "dcss-root-newton": {
-        "family": "root",
+      "dcss-solve-newton": {
+        "family": "math",
         "role": "style-only"
       }
     },

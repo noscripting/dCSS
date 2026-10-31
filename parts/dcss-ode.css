@@ -4,8 +4,8 @@
 @property --dcss-ready { syntax: '<integer>'; inherits: true; initial-value: 0; }
 @property --dcss-err { syntax: '<integer>'; inherits: true; initial-value: 0; }
 :where([class*="dcss-"]) { writing-mode: horizontal-tb; }
-/* A root of the page's own equation by bisection (root.mjs). */
-/* A root by Newton's method kept inside the bracket (root.mjs). */
+/* Where the page's own function reaches a target, by bisection (root.mjs). */
+/* A solve by Newton's method kept inside the bracket (root.mjs). */
 
 /* The inverse of the page's own function on every row, by layout (invert.mjs). */
 

@@ -250,71 +250,71 @@ Each call gives its answer as `--dcss-` and its name to the elements directly in
 - [`.dcss-line`](https://d3js.org/d3-shape/line#line), [`.dcss-area`](https://d3js.org/d3-shape/area#area): the list drawn in its own box, which the page sizes, each `<li>` a point at `--x`, `--y` and its segment from the one before; an item missing either draws nothing and breaks the line (d3's `defined`); an area runs down to the list's `--y0`; `--stroke-width` (1.5).
 - [`.dcss-curve-step`](https://d3js.org/d3-shape/curve#curveStep), [`.dcss-curve-step-before`](https://d3js.org/d3-shape/curve#curveStepBefore), [`.dcss-curve-step-after`](https://d3js.org/d3-shape/curve#curveStepAfter), [`.dcss-curve-bump-x`](https://d3js.org/d3-shape/curve#curveBumpX), [`.dcss-curve-bump-y`](https://d3js.org/d3-shape/curve#curveBumpY): on the figure, its curve; linear without one.
 
-### Root: families/root.css
+### Math: families/math.css
 
-- `.dcss-root`: a root of the page's own equation: `--dcss-root-from`, `--dcss-root-to` on it, nested `<i>`s, the page's rule setting `--dcss-root-f` from `--dcss-root-x` on each; inside the deepest, `--dcss-root` and `--dcss-root-interval`.
-- `.dcss-root-newton`: with `.dcss-root`, Newton's steps kept in the bracket: `--dcss-root-df`, f's derivative, beside f; `--dcss-root-guess` optional.
-- `.dcss-invert`: the inverse of the page's own function on every row of the box at once: `--dcss-invert-from`, `-to` across it, `--dcss-invert-min`, `-max` down it, its first child's pairs of `<i>`s, the page's rule setting `--dcss-invert-f` from `--dcss-invert-x` on each; each line starts where f reaches its value.
+- `.dcss-solve`: where the page's own function reaches `--target` (0 without it): `--from`, `--to` on it, nested `<i>`s, the page's rule setting `--dcss-fn` from `--dcss-at` on each; inside the deepest, `--dcss-solve` and `--dcss-solve-interval`.
+- `.dcss-solve-newton`: with `.dcss-solve`, Newton's steps kept in the bracket: `--dcss-slope`, f's slope (its derivative), beside f; `--guess` optional.
+- `.dcss-invert`: the inverse of the page's own function on every row of the box at once: `--from`, `--to` across it, `--top`, `--bottom` down it, its first child's pairs of `<i>`s, the page's rule setting `--dcss-fn` from `--dcss-at` on each; each line starts where f reaches its value.
 - `.dcss-ode`: on store.css's frame cell (`data-store`), the page's own equation of motion, a leapfrog step a frame: `--dcss-ode-a` from `--dcss-ode-x` and `--dcss-ode-v`, `--dcss-ode-x0`, `-v0`, `-range`, `-v-range`, `-h`; on it and inside it, `--dcss-ode-x` and `--dcss-ode-v`.
 - [`.dcss-geo-natural-earth1-raw-invert`](https://d3js.org/d3-geo/cylindrical#geoNaturalEarth1), [`.dcss-geo-equal-earth-raw-invert`](https://d3js.org/d3-geo/cylindrical#geoEqualEarth): 12 nested `<i>`s, Newton's steps from `--y` with d3's derivative, `--x`, `--y` on it; inside the deepest, `--dcss-geo-x`, `--dcss-geo-y` in radians.
 
 <!-- /calls -->
 
-### A root of your own equation
+### Which input gives this value
 
-Write the equation as an ordinary rule, and `.dcss-root` (families/root.css) finds where it is 0 between two numbers you give, by halving. Here it solves Kepler's equation for an orbit's eccentric anomaly, E − e sin E = M:
+Write your formula once, as an ordinary rule, and `.dcss-solve` (families/math.css) finds the input where it reaches a value you give, `--target` (0 without one), between two numbers you give, by halving: a spreadsheet's Goal Seek. Here it solves Kepler's equation for an orbit's eccentric anomaly, E − e sin E = M:
 
 ```html
-<div class="dcss-root orbit" style="--e: 0.6">
+<div class="dcss-solve orbit" style="--e: 0.6">
   <i><i><i> ... 13 in all ... <i><span class="planet"></span></i> ... </i></i></i>
 </div>
 ```
 
 ```css
-.orbit { --dcss-root-from: 0; --dcss-root-to: 6.283185307179586; }
-@scope (.orbit) to (.dcss-root) {
-  i { --dcss-root-f: calc(var(--dcss-root-x) - var(--e) * sin(var(--dcss-root-x) * 1rad) - var(--m)); }
+.orbit { --from: 0; --to: 6.283185307179586; --target: var(--m); }
+@scope (.orbit) to (.dcss-solve) {
+  i { --dcss-fn: calc(var(--dcss-at) - var(--e) * sin(var(--dcss-at) * 1rad)); }
 }
 .planet {
-  translate: calc(cos(var(--dcss-root) * 1rad) * 100px) calc(sin(var(--dcss-root) * 1rad) * 100px);
+  translate: calc(cos(var(--dcss-solve) * 1rad) * 100px) calc(sin(var(--dcss-solve) * 1rad) * 100px);
   opacity: var(--dcss-ready);
 }
 ```
 
-Your rule runs once on every `<i>`, and each `<i>` is one guess: the first at `--dcss-root-from`, the second at `--dcss-root-to`, and each one after halves what is left. So 13 `<i>`s are 2 ends and 11 halvings, and the root is within |to − from| / 2¹² (0.0015 here); 26 give |to − from| / 2²⁵, 54 a double's last digit. Animate `--m` and the planet moves, every frame; each `<i>` costs about as much as any other element restyled, so an animated page keeps its solves to tens and its `<i>`s to the precision it draws.
+`--dcss-fn` is your formula and `--dcss-at` the input it is tried at; your rule runs once on every `<i>`, and each `<i>` is one try: the first at `--from`, the second at `--to`, and each one after halves what is left. So 13 `<i>`s are 2 ends and 11 halvings, and the answer is within |to − from| / 2¹² (0.0015 here); 26 give |to − from| / 2²⁵, 54 a double's last digit. Animate `--m` and the planet moves, every frame; each `<i>` costs about as much as any other element restyled, so an animated page keeps its solves to tens and its `<i>`s to the precision it draws.
 
-- Every element inside the deepest `<i>` that isn't an `<i>` gets `--dcss-root` and `--dcss-root-interval`, the width left. An `<i>` there would be one more guess. The `<i>`s draw no boxes (`display: contents`), so the planet lays out as the solve's own child.
-- `--dcss-ready` is 0, `--dcss-err` 1 and `--dcss-root` NaN when the rule has the same sign at both ends, isn't a number at some `<i>`, or the solve has no f or no bracket of its own. A NaN `translate` falls back to none, so `opacity: var(--dcss-ready)` hides a refused answer instead of drawing it in the wrong place.
-- The equation must be continuous between the two numbers: a sign change around a pole, like 1/(x − 0.3) on 0 to 1, halves down to the pole.
-- Register nothing the equation computes: in Safari a registered `<number>` loses digits on the way down, which stops the root short. Do register what a solve takes from its place. An unregistered `--k: sibling-index()` is worked out again on every `<i>`, where it is 1; with `@property --k { syntax: '<integer>'; inherits: true; initial-value: 0 }` each of 40 solves keeps its own index, and 40 dots spaced evenly along a spiral each solve their share of its length.
-- A solve inside another's answer reads the outer `--dcss-root` on itself (`.inner { --E: var(--dcss-root) }`) and needs its own bracket. Write each equation in `@scope (.X) to (.dcss-root)` and the rules can come in any order; unscoped, the inner's must come after the outer's.
+- Every element inside the deepest `<i>` that isn't an `<i>` gets `--dcss-solve` and `--dcss-solve-interval`, the width left. An `<i>` there would be one more try. The `<i>`s draw no boxes (`display: contents`), so the planet lays out as the solve's own child.
+- `--dcss-ready` is 0, `--dcss-err` 1 and `--dcss-solve` NaN when the formula is on the same side of the target at both ends, isn't a number at some `<i>`, or the solve has no formula or no `--from` and `--to` of its own. A NaN `translate` falls back to none, so `opacity: var(--dcss-ready)` hides a refused answer instead of drawing it in the wrong place.
+- `--from`, `--to`, `--target` and `--guess` are the solve's own: they are reset inside it, so nothing inside reads them, and a solve inside another sets its own.
+- The formula must be continuous between the two numbers: a sign change around a pole, like 1/(x − 0.3) on 0 to 1, halves down to the pole. Where it reaches the target more than once, the answer is one of them.
+- Register nothing the formula computes: in Safari a registered `<number>` loses digits on the way down, which stops the answer short. Do register what a solve takes from its place. An unregistered `--k: sibling-index()` is worked out again on every `<i>`, where it is 1; with `@property --k { syntax: '<integer>'; inherits: true; initial-value: 0 }` each of 40 solves keeps its own index, and 40 dots spaced evenly along a spiral each solve their share of its length.
+- A solve inside another's answer reads the outer `--dcss-solve` on itself (`.inner { --E: var(--dcss-solve) }`). Write each formula in `@scope (.X) to (.dcss-solve)` and the rules can come in any order; unscoped, the inner's must come after the outer's.
 
-Give the derivative too and the same solve takes Newton's steps, so far fewer `<i>`s reach the last digit:
+Give the formula's slope (its derivative) too and the same solve takes Newton's steps, so far fewer `<i>`s reach the last digit:
 
 ```html
-<div class="dcss-root dcss-root-newton orbit" style="--e: 0.6; --dcss-root-guess: 1.6">
+<div class="dcss-solve dcss-solve-newton orbit" style="--e: 0.6; --guess: 1.6">
   <i><i><i><i><i><span class="planet"></span></i></i></i></i></i>
 </div>
 ```
 
 ```css
-@scope (.orbit) to (.dcss-root) {
-  i { --dcss-root-f:  calc(var(--dcss-root-x) - var(--e) * sin(var(--dcss-root-x) * 1rad) - var(--m));
-      --dcss-root-df: calc(1 - var(--e) * cos(var(--dcss-root-x) * 1rad)); }
+@scope (.orbit) to (.dcss-solve) {
+  i { --dcss-fn:    calc(var(--dcss-at) - var(--e) * sin(var(--dcss-at) * 1rad));
+      --dcss-slope: calc(1 - var(--e) * cos(var(--dcss-at) * 1rad)); }
 }
 ```
 
-After the two ends, each `<i>` is one step from x to x − f/f′, from `--dcss-root-guess` (the middle without one). A step that would leave what is left of the bracket, or move x more than half its width, halves the bracket instead, so it can't cycle or run off the way plain Newton can. For a drawing, a pixel is enough: from a guess, 5 `<i>`s put Kepler's planet within 0.2 px on a 100 px orbit, and 4 put a cubic-bezier's t within 4e-8. A double's last digit takes 8, and 10 from the middle, where halving takes 54; an animated frame costs about half. Up to 14 `<i>`s; `--dcss-ready` is 0 also when f′ is missing or not a number.
+After the two ends, each `<i>` is one step from x to x − f/f′, from `--guess` (the middle without one). A step that would leave what is left of the bracket, or move x more than half its width, halves the bracket instead, so it can't cycle or run off the way plain Newton can. For a drawing, a pixel is enough: from a guess, 5 `<i>`s put Kepler's planet within 0.2 px on a 100 px orbit, and 4 put a cubic-bezier's t within 4e-8. A double's last digit takes 8, and 10 from the middle, where halving takes 54; an animated frame costs about half. Up to 14 `<i>`s; `--dcss-ready` is 0 also when the slope is missing or not a number.
 
-The inverts of naturalEarth1 and equalEarth above are solves like this one, with d3's equations as the rule.
+The inverts of naturalEarth1 and equalEarth above are solves like this one, with d3's equations as the formula.
 
 ### Every row at once
 
-When many things need one equation's answer (24 moons on one orbit, the ticks of an eased axis, labels on a curve), `.dcss-invert` answers every row of a box in one layout. The page writes f once, as for `.dcss-root`; pairs of `<i>`s sample it, and each line in the box starts where f reaches that line's value:
+When many things need one formula's answer (24 moons on one orbit, the ticks of an eased axis, labels on a curve), `.dcss-invert` answers every row of a box in one layout. The page writes its formula once, as for `.dcss-solve`; pairs of `<i>`s sample it, and each line in the box starts where the formula reaches that line's value:
 
 ```html
-<div class="dcss-invert orbit" style="--dcss-invert-from: 0; --dcss-invert-to: 6.2832;
-     --dcss-invert-min: 0; --dcss-invert-max: 6.2832; height: 240px">
+<div class="dcss-invert orbit" style="--from: 0; --to: 6.2832; --top: 0; --bottom: 6.2832; height: 240px">
   <span><i><i></i></i><i><i></i></i> … 32 pairs … </span>
   <p><b class="moon"></b></p> <p><b class="moon"></b></p> …
 </div>
@@ -322,12 +322,28 @@ When many things need one equation's answer (24 moons on one orbit, the ticks of
 
 ```css
 @scope (.orbit) to (.dcss-invert) {
-  i { --dcss-invert-f: calc(var(--dcss-invert-x) - 0.6 * sin(var(--dcss-invert-x) * 1rad)); }
+  i { --dcss-fn: calc(var(--dcss-at) - 0.6 * sin(var(--dcss-at) * 1rad)); }
 }
 .moon { display: inline-block; width: 0; }   /* drawn by its ::before, which may overflow it */
 ```
 
-x runs across the box, from `--dcss-invert-from` at its left edge to `--dcss-invert-to` at its right; values run down it, from `--dcss-invert-min` at the top to `--dcss-invert-max` at the bottom. A line whose bottom edge is at value v starts at the x where f(x) = v, so whatever starts the line sits on the answer: the answer is a position, not a number. Give the thing at a line's start no width (draw it with a pseudo-element): content wider than the room left beside the curve drops to a line below. f must rise down the box: for a falling f, put the larger value in `--dcss-invert-min`. Where f turns back, a line starts at the last column f has passed its value. The answer follows straight pieces between the n + 1 values: on a 1,000 px box, 32 pairs keep Kepler's inverse at e = 0.6 within 0.42 px and 64 within 0.25 (probes/dcss/invert/check.mjs). Fewer rows cost less: 100 rows with f moving take a few ms a frame, 1,000 rows about 15 (Performance).
+Inputs run across the box, from `--from` at its left edge to `--to` at its right; values run down it, from `--top` at the top to `--bottom` at the bottom. A line whose bottom edge is at value v starts at the input where the formula reaches v, so whatever starts the line sits on the answer: the answer is a position, not a number. Give the thing at a line's start no width (draw it with a pseudo-element): content wider than the room left beside the curve drops to a line below. The formula must rise down the box: for a falling one, put the larger value in `--top`. Where it turns back, a line starts at the last column it has passed its value. The answer follows straight pieces between the n + 1 values: on a 1,000 px box, 32 pairs keep Kepler's inverse at e = 0.6 within 0.42 px and 64 within 0.25 (probes/dcss/invert/check.mjs). Fewer rows cost less: 100 rows with the formula moving take a few ms a frame, 1,000 rows about 15 (Performance).
+
+### The area under a curve, and its highest point
+
+These need no call of their own: sample the formula on a list's items and ask the list. Each item's input is its middle, from a registered `--at` (registered, so each item keeps its own index), and its value is rounded to 64ths, the list's unit: one value off 64ths and the list refuses. The area of sin on 0 to π is the sum times the step:
+
+```html
+<figure class="dcss-sum wave"><ul aria-hidden="true"><li></li> … 64 … </ul><output></output></figure>
+```
+
+```css
+@property --at { syntax: '<number>'; inherits: true; initial-value: 0; }
+.wave li { --at: calc((sibling-index() - 0.5) * 3.14159 / sibling-count());
+           --value: round(calc(64 * sin(var(--at) * 1rad)), 0.015625); }   /* 64 times f, kept to 64ths */
+```
+
+`--dcss-sum` × π / 64 / 64 is 2.0002 (exactly 2); with `.dcss-max` in place of `.dcss-sum`, the highest value. While the formula moves, each such list costs a frame what any list of its length does, so a page keeps to a few (Performance; probes/dcss/sample/probe.mjs).
 
 ### Motion by your own equation
 
@@ -390,7 +406,7 @@ Layout does the work, in the frame a number changes. A family is at most 30 KB g
 
 <!-- /performance -->
 
-`.dcss-invert` with f animated, 32 pairs (2026-10-31): 100 rows 2.3 ms a frame in Chrome, 2.9 in WebKit; 1,000 rows 14.7 and 14.3. Twenty `.dcss-ode` pendulums swinging: 4.7 and 5.2.
+`.dcss-invert` with f animated, 32 pairs (2026-10-31): 100 rows 2.3 ms a frame in Chrome, 2.9 in WebKit; 1,000 rows 14.7 and 14.3. Twenty `.dcss-ode` pendulums swinging: 4.7 and 5.2. The area under a curve, 64 samples on a `.dcss-sum` with the formula moving: 5.8 ms a frame in Chrome, 5.5 in WebKit; twenty, 110 and 79. All three calls on one page (20 Newton solves, a 100-row invert, 20 pendulums): 14.3 ms a frame in Chrome, 31.6 in WebKit, about half of it from store.css, linked for the pendulums (probes/dcss/model/together.mjs).
 
 ## License
 
