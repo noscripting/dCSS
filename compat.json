@@ -1914,6 +1914,29 @@
           }
         }
       },
+      "A181": {
+        "__compat": {
+          "description": "A format class (`.dcss-format-fixed`, `-percent`, `-si`, `-general`, `-locale`) on an element holding `<output>`s MUST format each `<output>` inside it that has no format class of its own, as that class on the output would, and MUST NOT print on the element itself; `--precision` and the other settings, set once on that element, MUST reach each of those outputs.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
+            },
+            "firefox": {
+              "version_added": null
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
       "A180": {
         "__compat": {
           "description": "`.dcss-summarize` with up to 64 items, each a value in 64ths from -1024 to 65535 or none, MUST give each element directly inside the element after the list `--dcss-sum`, `--dcss-count`, `--dcss-length`, `--dcss-mean` and `--dcss-min`; with that element inside one element of class `dcss-read` after the list, `--dcss-max` too; inside a `dcss-read` inside a `dcss-read`, `--dcss-median`, `--dcss-variance` and `--dcss-deviation` too (not their descendants; the median reaches them too, as `.dcss-median`'s): the doubles d3-array's `sum`, `count`, `mean`, `min`, `max` and `median` give for the list (an item with none skipped), its number of items, and the true variance rounded once and its square root (A130's), from the one list. With no number, the mean, min, max and median MUST be no number, error 2; with fewer than two numbers, or one past ±1024, the variance and deviation MUST be no number. More than 64 items, a value outside the range or off the 64ths, or one of a list holding a fraction whose values, each 1024 more, passed 2^18 between them MUST leave no answer, error 1.",

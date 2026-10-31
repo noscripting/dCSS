@@ -142,22 +142,22 @@ One list, several answers. The element after the list is yours, and its children
 ```html
 <figure class="dcss-summarize">
   <ul><li style="--value: 72.5"></li> <li style="--value: 88"></li> <li style="--value: 95"></li> <li style="--value: 47"></li></ul>
-  <p>
-    Mean <output class="dcss-format-fixed" style="--value: var(--dcss-mean); --precision: 1"></output>,   <!-- 75.6 -->
-    least <output class="dcss-format-fixed" style="--value: var(--dcss-min); --precision: 1"></output>    <!-- 47.0 -->
+  <p class="dcss-format-fixed" style="--precision: 1">     <!-- one format for every output inside -->
+    Mean <output style="--value: var(--dcss-mean)"></output>,   <!-- 75.6 -->
+    least <output style="--value: var(--dcss-min)"></output>    <!-- 47.0 -->
   </p>
 </figure>
 ```
 
-An element of class `dcss-read` around yours adds the max; a second inside it adds the median, variance and deviation. The figure is one line tall unless you give it a height:
+An element of class `dcss-read` around yours adds the max; a second inside it adds the median, variance and deviation. The figure is one line tall, two with a `<figcaption>`, unless you give it a height:
 
 ```html
 <figure class="dcss-summarize" style="height: 3lh">
   <ul><li style="--value: 72.5"></li> <li style="--value: 88"></li> <li style="--value: 95"></li> <li style="--value: 47"></li></ul>
-  <div class="dcss-read"><div class="dcss-read"><div>
-    <output class="dcss-format-fixed" style="--value: var(--dcss-mean); --precision: 1; display: block"></output>   <!-- 75.6 -->
-    <output class="dcss-format-fixed" style="--value: var(--dcss-max); --precision: 1; display: block"></output>    <!-- 95.0 -->
-    <output class="dcss-format-fixed" style="--value: var(--dcss-deviation); --precision: 1; display: block"></output>  <!-- 21.3 -->
+  <div class="dcss-read"><div class="dcss-read"><div class="dcss-format-fixed" style="--precision: 1">
+    <output style="--value: var(--dcss-mean); display: block"></output>       <!-- 75.6 -->
+    <output style="--value: var(--dcss-max); display: block"></output>        <!-- 95.0 -->
+    <output style="--value: var(--dcss-deviation); display: block"></output>  <!-- 21.3 -->
   </div></div></div>
 </figure>
 ```
@@ -250,7 +250,7 @@ Each call gives its answer as `--dcss-` and its name to the elements directly in
 
 <!-- browsers -->
 
-Headless Chrome 155 and WebKit 26.4, Safari's engine, pass all 161 requirements of [SPEC.md](SPEC.md), and the calls match d3 on 3,206 of the 7,049 calls in d3's tests. Firefox 158 computes `calc()` in 32-bit floats, so exact sums, dates and most formatting go wrong there: it passes 71. [QUIRKS.md](QUIRKS.md) has the engine bugs.
+Headless Chrome 155 and WebKit 26.4, Safari's engine, pass all 162 requirements of [SPEC.md](SPEC.md), and the calls match d3 on 3,206 of the 7,049 calls in d3's tests. Firefox 158 computes `calc()` in 32-bit floats, so exact sums, dates and most formatting go wrong there: it passes 71. [QUIRKS.md](QUIRKS.md) has the engine bugs.
 
 <!-- /browsers -->
 

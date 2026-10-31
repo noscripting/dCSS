@@ -1,15 +1,9 @@
 /* DCSS array: parts/dcss-locale-arabic.css, the dcss-locale-arabic call alone (parts.mjs)
    SPDX-License-Identifier: MIT
    SPDX-FileCopyrightText: 2026 noscript.ing contributors */
-@property --dcss-ready { syntax: '<integer>'; inherits: true; initial-value: 0; }
-@property --dcss-err { syntax: '<integer>'; inherits: true; initial-value: 0; }
 :where([class*="dcss-"]) { writing-mode: horizontal-tb; }
 /* DCSS d3.format, types f, % and s: toFixed's exact rounding, unround's parts (format.mjs). */
-@property --dcss-fmt-big { syntax: '<number>'; inherits: true; initial-value: 0; }
-@counter-style dcss-fmt-none { system: fixed -1; symbols: "";  }
-@counter-style dcss-fmt-sign { system: fixed -1; symbols: "" "" "\2212" "+"; fallback: dcss-fmt-none; }
 /* white-space: WebKit wraps a shrink-to-fit output after the point otherwise (0.005 as "0." and "005") */
-@property --dcss-fmt-on { syntax: '<integer>'; inherits: true; initial-value: 1; }
 /* fixed and percent do their work on their ::after: an element reading a container (a call's answer printed in place)
    is restyled in each of the call's container passes, its ::after only when what it inherits changes (2026-10-30, the
    summary printed 24.4 to 9.5 ms a frame in Chrome). The element keeps what other sheets read of it: |x|'s parts and big. Nothing on the ::after says inherit:
@@ -25,14 +19,3 @@
 
 /* DCSS d3.scaleLog's ticks, nice and tickFormat's labels (ticks.mjs). */
 /* fixed and percent compute on their ::after (format.mjs), so their precision is set there */
-
-@counter-style dcss-locale-ar-none{system: fixed -1; symbols: "";}
-@counter-style dcss-locale-ar-lead{system: numeric; symbols: "٠" "١" "٢" "٣" "٤" "٥" "٦" "٧" "٨" "٩"; range: 0 infinite; fallback: dcss-locale-ar-none;}
-@counter-style dcss-locale-ar-pad1{system: numeric; symbols: "٠" "١" "٢" "٣" "٤" "٥" "٦" "٧" "٨" "٩"; pad: 1 "٠"; range: 0 infinite; fallback: dcss-locale-ar-none;}
-@counter-style dcss-locale-ar-pad2{system: numeric; symbols: "٠" "١" "٢" "٣" "٤" "٥" "٦" "٧" "٨" "٩"; pad: 2 "٠"; range: 0 infinite; fallback: dcss-locale-ar-none;}
-@counter-style dcss-locale-ar-pad3{system: numeric; symbols: "٠" "١" "٢" "٣" "٤" "٥" "٦" "٧" "٨" "٩"; pad: 3 "٠"; range: 0 infinite; fallback: dcss-locale-ar-none;}
-@counter-style dcss-locale-ar-comma{system: fixed 0; symbols: "" "٬";}
-@counter-style dcss-locale-ar-dot{system: fixed 0; symbols: "" "٫";}
-@property --dcss-locale-input-ready{syntax:'<integer>';inherits:false;initial-value:0}
-.dcss-format-locale.dcss-locale-arabic{--dcss-locale-input-ready:calc(var(--value) * 0 + 1);--dcss-fmt-on:var(--dcss-locale-input-ready);--dcss-ready:var(--dcss-locale-input-ready);--dcss-err:max(calc(1 - var(--dcss-locale-input-ready)),var(--dcss-fmt-big))}
-.dcss-format-locale.dcss-locale-arabic::after{content:counter(dcss-fmt-s, dcss-fmt-sign) attr(data-dcss-locale-prefix) counter(dcss-fmt-l6, dcss-locale-ar-lead) counter(dcss-fmt-p6, dcss-locale-ar-pad3) counter(dcss-fmt-c6, dcss-locale-ar-comma) counter(dcss-fmt-l5, dcss-locale-ar-lead) counter(dcss-fmt-p5, dcss-locale-ar-pad3) counter(dcss-fmt-c5, dcss-locale-ar-comma) counter(dcss-fmt-l4, dcss-locale-ar-lead) counter(dcss-fmt-p4, dcss-locale-ar-pad3) counter(dcss-fmt-c4, dcss-locale-ar-comma) counter(dcss-fmt-l3, dcss-locale-ar-lead) counter(dcss-fmt-p3, dcss-locale-ar-pad3) counter(dcss-fmt-c3, dcss-locale-ar-comma) counter(dcss-fmt-l2, dcss-locale-ar-lead) counter(dcss-fmt-p2, dcss-locale-ar-pad3) counter(dcss-fmt-c2, dcss-locale-ar-comma) counter(dcss-fmt-l1, dcss-locale-ar-lead) counter(dcss-fmt-p1, dcss-locale-ar-pad3) counter(dcss-fmt-c1, dcss-locale-ar-comma) counter(dcss-fmt-l0, dcss-locale-ar-lead) counter(dcss-fmt-p0, dcss-locale-ar-pad3) counter(dcss-fmt-d, dcss-locale-ar-dot) counter(dcss-fmt-fl1, dcss-locale-ar-pad1) counter(dcss-fmt-fl2, dcss-locale-ar-pad2) counter(dcss-fmt-fl3, dcss-locale-ar-pad3) counter(dcss-fmt-fp5, dcss-locale-ar-pad3) counter(dcss-fmt-fp4, dcss-locale-ar-pad3) counter(dcss-fmt-fp3, dcss-locale-ar-pad3) counter(dcss-fmt-fp2, dcss-locale-ar-pad3) counter(dcss-fmt-fp1, dcss-locale-ar-pad3) counter(dcss-fmt-fp0, dcss-locale-ar-pad3) attr(data-dcss-locale-suffix)}

@@ -86,9 +86,9 @@
         "dcss-summarize",
         "dcss-variance"
       ],
-      "raw": 298663,
-      "gzip9": 23326,
-      "sha256": "262f63a5d2315e1841b122a78a9c5a51314ddab3680a7d98bbd6ce293326641a"
+      "raw": 298758,
+      "gzip9": 23359,
+      "sha256": "886dcfeb78e1bc0c85f53112a16e2f591cf16cf8dc8d855bf13beea256c294d6"
     },
     "hierarchy": {
       "file": "families/hierarchy.css",
@@ -132,9 +132,9 @@
         "dcss-ticks-log",
         "dcss-ticks-log-format"
       ],
-      "raw": 164580,
-      "gzip9": 11965,
-      "sha256": "77c45d1cf8d519daeb642c82fd6f0ff911a071cc286326b9d1cc2d4b3288e3a8"
+      "raw": 167439,
+      "gzip9": 12079,
+      "sha256": "28ad44b39719759bec6128a56d06509c46ce0fdcedcd704219d039081475cf67"
     },
     "ease": {
       "file": "families/ease.css",

@@ -6,6 +6,7 @@ All notable changes to dcss are written here. The format follows [Keep a Changel
 
 ### Added
 
+- A format class on an element that holds outputs formats each output inside it that has no class of its own, with `--precision` and the other settings written once on that element.
 - `.dcss-summarize`: one list, written once, gives its sum, count, length, mean, min, max, median, variance and deviation (`--dcss-sum` to `--dcss-deviation`). The element after the list is the page's own (a `<p>`, a `<dl>`), and its children get the sum, count, length, mean and min; one element of class `dcss-read` around it adds the max, and two the median, variance and deviation. Up to 64 items in 64ths from -1024 to 65535 (±1024 for the variance); each answer is to the bit in Chrome and Safari (1,948 of 1,948 on 304 lists). Before, each answer took its own figure and its own copy of the list.
 - MathML's `<factorof/>`, a ∣ b: true where b is a whole multiple of a (0 ∣ 0 included), as JavaScript's `b % a === 0`, on whole numbers within ±2^53; drawn ∣ with the intent `divides`.
 - MathML's `<equivalent/>` of two conditions, ⟺, as JavaScript's `===` of their truths; drawn with the intent `if-and-only-if`.
