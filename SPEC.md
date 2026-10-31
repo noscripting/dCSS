@@ -467,7 +467,8 @@ for selection or computation. Packaging does not expand any function's bounds.
   `.dcss-solve-newton`) or a geo raw invert (3 to 14), n nested `<i>` elements around the element's content, and on a
   `.dcss-invert` (n 1 to 1,000) a first child `<span>` of n pairs `<i><i></i></i>`, adding no line; leave an element that
   holds that many already as it is; and refuse, with the line, the attribute on any other element, a count out of
-  range, or one beside a different number of `<i>`s.
+  range, or one beside a different number of `<i>`s. A `.dcss-solve` or `.dcss-invert` with no `<i>`s MUST give
+  `--dcss-err` 1.
 
 ### On the board
 
@@ -675,7 +676,7 @@ for selection or computation. Packaging does not expand any function's bounds.
 | A220 | probes/dcss/root/check.mjs: Kepler's equation, 40 orbits at 10 `<i>`s from the middle and 8 from a guess, within 1e-14; the cubic-bezier(.42, 0, .58, 1) inverse at 41 progresses, 6 `<i>`s; x³ − 2x + 2 and atan(x − 0.3), where plain Newton cycles and diverges, 10 `<i>`s; a 0 at either end; same sign at both ends and no f′ | PASS: 127 of 127, worst 1.8e-15 (2026-10-31) | PASS: 127 of 127, worst 1.8e-15 (2026-10-31) | NOTRUN |
 | A221 | probes/dcss/invert/check.mjs: Kepler's equation at e 0.6 on 32 and 64 pairs and after e changes to 0.3, x³ on [−1, 1], a falling 1 − x² with top above bottom, 30 pairs in a 999 px box; 1 px rows, each line's start against the inverse in doubles over its band | PASS: 3,900 of 3,900 rows, worst 0.47 px (2026-10-31) | PASS: 3,900 of 3,900 rows, worst 0.47 px (2026-10-31) | NOTRUN |
 | A222 | probes/dcss/ode/check.mjs: a 100 px spring, a pendulum from 1.2 rad, a spring's x read inside a second cell nested in it, the spring with the page scrolled 300 px, a cell run past its range and one started past it, a cell with no acceleration; sampled every 100 ms for 8 s against the same step in doubles | PASS: 7 of 7, worst 0.016 px outside what the step keeps, 59.2 steps a second (2026-10-31) | PASS: 7 of 7, worst 0.016 px, 59.2 steps a second (2026-10-31) | NOTRUN |
-| A223 | probes/dcss/root/steps-check.mjs: the Kepler page's 3 solves written with `data-dcss-steps="5"` against the hand-written page, a built page rebuilt, a solve in another's answer, an invert of 32, a geo invert of 14, five refusals; the built page's planets in the engines | PASS: 13 of 13, the page byte for byte (2026-10-31) | PASS: 13 of 13, the page byte for byte (2026-10-31) | NOTRUN |
+| A223 | probes/dcss/root/steps-check.mjs: the Kepler page's 3 solves written with `data-dcss-steps="5"` against the hand-written page, a built page rebuilt, a solve in another's answer, an invert of 32, a geo invert of 14, five refusals; the built page's planets in the engines, and the page never built | PASS: 14 of 14, the page byte for byte (2026-10-31) | PASS: 14 of 14, the page byte for byte (2026-10-31) | NOTRUN |
 | A51 | coverage/board.mjs: bd-power-12-loop-classes, bd-power-12-loop-table | PASS: 13 of 13 each, against NumPy | PASS: 13 of 13 each, against NumPy | PRECONDITION_FAILED: no view timelines, which store.css's store needs |
 | A52 | sheets/check.mjs: loan | PASS: 50 of 50 cells as written and after 2 changes | PASS: 50 of 50 cells as written and after 2 changes | PRECONDITION_FAILED: no view timelines, which store.css's store needs |
 

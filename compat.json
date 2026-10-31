@@ -4446,7 +4446,7 @@
       },
       "A223": {
         "__compat": {
-          "description": "`mathml.mjs` MUST write, for `data-dcss-steps=\"n\"` on a `.dcss-solve` (n 3 to 54; 3 to 14 with `.dcss-solve-newton`) or a geo raw invert (3 to 14), n nested `<i>` elements around the element's content, and on a `.dcss-invert` (n 1 to 1,000) a first child `<span>` of n pairs `<i><i></i></i>`, adding no line; leave an element that holds that many already as it is; and refuse, with the line, the attribute on any other element, a count out of range, or one beside a different number of `<i>`s.",
+          "description": "`mathml.mjs` MUST write, for `data-dcss-steps=\"n\"` on a `.dcss-solve` (n 3 to 54; 3 to 14 with `.dcss-solve-newton`) or a geo raw invert (3 to 14), n nested `<i>` elements around the element's content, and on a `.dcss-invert` (n 1 to 1,000) a first child `<span>` of n pairs `<i><i></i></i>`, adding no line; leave an element that holds that many already as it is; and refuse, with the line, the attribute on any other element, a count out of range, or one beside a different number of `<i>`s. A `.dcss-solve` or `.dcss-invert` with no `<i>`s MUST give `--dcss-err` 1.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {

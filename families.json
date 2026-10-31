@@ -386,9 +386,9 @@
         "dcss-solve",
         "dcss-solve-newton"
       ],
-      "raw": 181779,
-      "gzip9": 6294,
-      "sha256": "649101dcf0ce0233e16d7a5a84007366dd288961ef70d3cfc1ca8d6ec4840394"
+      "raw": 181977,
+      "gzip9": 6331,
+      "sha256": "d05ec413e1fb59e41eb0f813ee770721fb90a21a760d910edbcc4f8958c7e9d9"
     }
   },
   "owners": {
