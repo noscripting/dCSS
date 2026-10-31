@@ -137,6 +137,8 @@
 @container style(--dcss-tick-n: 64) { .dcss-ticks > li:nth-child(n + 65) { visibility: hidden; position: absolute; inset: 0 auto auto 0; width: 0; height: 0; overflow: clip; } }
 
 /* DCSS reductions: d3.sum, count, mean, min, max, extent and the list's length, in a figure (reduce.mjs). */
+/* the figure reads its own scroll ranges, so it is a scroll container whatever the page sets: overflow: clip (a page's
+   own, the clean-room trial's) makes none, and the reads go inactive; hidden clips the same */
 /* --find: only the rows whose --key equals it count (a spreadsheet's SUMIF, COUNTIF, AVERAGEIF, MINIFS, MAXIFS); the
    others take no room, so length counts the rows found, as d3.rollup's group does, and every answer is the one the
    rows found would give written alone. Set on the figure itself, never handed down */
@@ -156,7 +158,7 @@
 
 /* DCSS bisect, on dcss.css's sort and collection-reader kernel (bisect.mjs, search.mjs). */
 
-/* Bounded drop-in calls: a list read through plain elements after it, or none (static.mjs). */@property --dcss-sum{syntax:'*';inherits:false}@property --dcss-count{syntax:'*';inherits:false}@property --dcss-length{syntax:'*';inherits:false}@property --dcss-mean{syntax:'*';inherits:false}@property --dcss-min{syntax:'*';inherits:false}@property --dcss-max{syntax:'*';inherits:false}@property --dcss-variance{syntax:'*';inherits:false}@property --dcss-deviation{syntax:'*';inherits:false}
+/* Bounded drop-in calls: a list read through plain elements after it, or none (static.mjs). */@property --dcss-sum{syntax:'*';inherits:true}@property --dcss-count{syntax:'*';inherits:true}@property --dcss-length{syntax:'*';inherits:true}@property --dcss-mean{syntax:'*';inherits:true}@property --dcss-min{syntax:'*';inherits:true}@property --dcss-max{syntax:'*';inherits:true}@property --dcss-variance{syntax:'*';inherits:true}@property --dcss-deviation{syntax:'*';inherits:true}
 /* DCSS shares: one list, a hidden sum lane, and one descendant result per item (share.mjs). */
 
 /* DCSS bisect, on dcss.css's sort and collection-reader kernel (bisect.mjs, search.mjs). */

@@ -73,7 +73,16 @@
 @property --dcss-fmt-f6 { syntax: '<integer>'; inherits: true; initial-value: 0; }
 @property --dcss-fmt-q6 { syntax: '<integer>'; inherits: true; initial-value: 0; }
 @counter-style dcss-fmt-none { system: fixed -1; symbols: "";  }
+@counter-style dcss-fmt-blank { system: fixed -1; symbols: "" "" ""; }
+@counter-style dcss-fmt-lead { system: extends decimal; range: 0 infinite; fallback: dcss-fmt-none; }
+@counter-style dcss-fmt-pad1 { system: extends decimal; pad: 1 "0"; range: 0 infinite; fallback: dcss-fmt-none; }
+@counter-style dcss-fmt-pad2 { system: extends decimal; pad: 2 "0"; range: 0 infinite; fallback: dcss-fmt-none; }
+@counter-style dcss-fmt-pad3 { system: extends decimal; pad: 3 "0"; range: 0 infinite; fallback: dcss-fmt-none; }
 @counter-style dcss-fmt-sign { system: fixed -1; symbols: "" "" "\2212" "+"; fallback: dcss-fmt-none; }
+@counter-style dcss-fmt-symbol { system: fixed -1; symbols: "" "" "$"; fallback: dcss-fmt-none; }
+@counter-style dcss-fmt-comma { system: fixed 0; symbols: "" ","; }
+@counter-style dcss-fmt-percent { system: fixed -1; symbols: "" "%" ""; }
+@counter-style dcss-fmt-dot { system: fixed 0; symbols: "" "."; }
 /* white-space: WebKit wraps a shrink-to-fit output after the point otherwise (0.005 as "0." and "005") */
 @property --dcss-fmt-error { syntax: '<integer>'; inherits: false; initial-value: 0; }
 @property --dcss-fmt-on { syntax: '<integer>'; inherits: true; initial-value: 1; }

@@ -7,6 +7,8 @@
 /* DCSS ticks: d3-array's ticks, tickIncrement, tickStep and nice in calc() (ticks.mjs). */
 
 /* DCSS reductions: d3.sum, count, mean, min, max, extent and the list's length, in a figure (reduce.mjs). */
+/* the figure reads its own scroll ranges, so it is a scroll container whatever the page sets: overflow: clip (a page's
+   own, the clean-room trial's) makes none, and the reads go inactive; hidden clips the same */
 /* --find: only the rows whose --key equals it count (a spreadsheet's SUMIF, COUNTIF, AVERAGEIF, MINIFS, MAXIFS); the
    others take no room, so length counts the rows found, as d3.rollup's group does, and every answer is the one the
    rows found would give written alone. Set on the figure itself, never handed down */
@@ -51,7 +53,7 @@
 :is(.dcss-bisect-left) > :is(ul, ol) + output:empty { position: relative; }
 :is(.dcss-bisect-left) > :is(ul, ol) + output:empty::after { position: absolute; left: 0; bottom: 100%; counter-reset: dcss-bisect-result calc((1 - min(1, var(--dcss-bisect-err))) * (var(--dcss-bisect-result) + 1) - 1); content: counter(dcss-bisect-result, dcss-bisect-print); white-space: nowrap; }
 
-/* Bounded drop-in calls: a list read through plain elements after it, or none (static.mjs). */@property --dcss-sum{syntax:'*';inherits:false}@property --dcss-count{syntax:'*';inherits:false}@property --dcss-length{syntax:'*';inherits:false}@property --dcss-mean{syntax:'*';inherits:false}@property --dcss-min{syntax:'*';inherits:false}@property --dcss-max{syntax:'*';inherits:false}@property --dcss-variance{syntax:'*';inherits:false}@property --dcss-deviation{syntax:'*';inherits:false}
+/* Bounded drop-in calls: a list read through plain elements after it, or none (static.mjs). */@property --dcss-sum{syntax:'*';inherits:true}@property --dcss-count{syntax:'*';inherits:true}@property --dcss-length{syntax:'*';inherits:true}@property --dcss-mean{syntax:'*';inherits:true}@property --dcss-min{syntax:'*';inherits:true}@property --dcss-max{syntax:'*';inherits:true}@property --dcss-variance{syntax:'*';inherits:true}@property --dcss-deviation{syntax:'*';inherits:true}
 /* DCSS shares: one list, a hidden sum lane, and one descendant result per item (share.mjs). */
 
 /* DCSS bisect, on dcss.css's sort and collection-reader kernel (bisect.mjs, search.mjs). */
