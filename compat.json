@@ -1939,7 +1939,7 @@
       },
       "A180": {
         "__compat": {
-          "description": "`.dcss-summarize` with up to 64 items, each a value in 64ths from -1024 to 65535 or none, MUST give each element directly inside the element after the list (not their descendants) `--dcss-sum`, `--dcss-count`, `--dcss-length`, `--dcss-mean`, `--dcss-min`, `--dcss-max`, `--dcss-median`, `--dcss-variance` and `--dcss-deviation`: the doubles d3-array's `sum`, `count`, `mean`, `min`, `max` and `median` give for the list (an item with none skipped), its number of items, and the true variance rounded once and its square root (A130's), from the one list. With no number, the mean, min, max and median MUST be no number, error 2; with fewer than two numbers, or one past ±1024, the variance and deviation MUST be no number. More than 64 items, a value outside the range or off the 64ths, or one of a list holding a fraction whose values, each 1025 more, passed 132,735 between them MUST leave no answer, error 1; a page's padding or border on the figure MUST change neither an answer nor its text.",
+          "description": "`.dcss-summarize` with up to 64 items, each a value in 64ths from -1024 to 65535 or none, MUST give each element after the list (a `<figcaption>` excepted), and every element inside one, `--dcss-sum`, `--dcss-count`, `--dcss-length`, `--dcss-mean`, `--dcss-min`, `--dcss-max`, `--dcss-median`, `--dcss-variance` and `--dcss-deviation`: the doubles d3-array's `sum`, `count`, `mean`, `min`, `max` and `median` give for the list (an item with none skipped), its number of items, and the true variance rounded once and its square root (A130's), from the one list. With no number, the mean, min, max and median MUST be no number, error 2; with fewer than two numbers, or one past ±1024, the variance and deviation MUST be no number. More than 64 items, a value outside the range or off the 64ths, or one of a list holding a fraction whose values, each 1025 more, passed 132,735 between them MUST leave no answer, error 1; a page's padding or border on the figure MUST change neither an answer nor its text.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -3684,7 +3684,7 @@
       },
       "A130": {
         "__compat": {
-          "description": "`.dcss-variance` and `.dcss-deviation` with up to 64 values in 64ths from -1024 to 1024 MUST give each element directly inside the element after the list (not their descendants) `--dcss-variance`, the true variance of the numbers rounded once (an item with none skipped), and `--dcss-deviation`, its square root; fewer than two numbers, more than 64 items or a value outside the range MUST leave no answer.",
+          "description": "`.dcss-variance` and `.dcss-deviation` with up to 64 values in 64ths from -1024 to 1024 MUST give each element after the list (a `<figcaption>` excepted), and every element inside one, `--dcss-variance`, the true variance of the numbers rounded once (an item with none skipped), and `--dcss-deviation`, its square root; fewer than two numbers, more than 64 items or a value outside the range MUST leave no answer.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
