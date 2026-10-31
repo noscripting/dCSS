@@ -4513,6 +4513,29 @@
           }
         }
       },
+      "A226": {
+        "__compat": {
+          "description": "`mathml.mjs` MUST write, for `data-dcss-within=\"t\"` on a `.dcss-solve` that halves, whose `--from` and `--to` are numbers on its style or in a `<style>` rule on one of its classes, the least n of 3 to 54 nested `<i>` elements for which |to − from| / 2^(n − 1) ≤ t, as for `data-dcss-steps=\"n\"`; and refuse, with the line, the attribute on a Newton solve or an invert, beside `data-dcss-steps`, with t not above 0, a range that is not two numbers it reads there, or n past 54.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
+            },
+            "firefox": {
+              "version_added": null
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
       "A51": {
         "__compat": {
           "description": "A loop (`.loop`, `.loop-flow`, `.loop-in`, `.loop-cell`, `.loop-core`) MUST have store.css and dcss-extras.css on the page; its cells, read through `[data-store-read]` and `[data-store-read-3]` naming them by `--store-of`, MUST settle on the iteration's fixed point: a 12-cell power iteration's vector and eigenvalue equal NumPy's, as a flow and as a table row.",

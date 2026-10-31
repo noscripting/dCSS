@@ -1813,6 +1813,29 @@ export function toDcss(src, { file = 'page.html' } = {}) {
 // adds a line, so every line number stays the page's; an element that holds its <i>s already is left as it is (the
 // build run on its own output changes nothing), and one holding a different count is refused.
 const NESTED = /(?:^|\s)dcss-(?:solve|geo-natural-earth1-raw-invert|geo-equal-earth-raw-invert)(?=\s|$)/, NEWTONS = /(?:^|\s)dcss-(?:solve-newton|geo-natural-earth1-raw-invert|geo-equal-earth-raw-invert)(?=\s|$)/;
+// data-dcss-within="t" on a halving .dcss-solve: how close the answer must be, in the formula's own input, and the build
+// counts the tries. n <i>s leave the answer within |to - from| / 2^(n - 1) (2 ends, n - 2 halvings, the middle of what
+// is left), so n is the least that reaches t, 3 at least. The build reads --from and --to as numbers from the element's
+// style or a <style> rule on one of its own classes; anything else (a var(), a Newton solve, an invert, whose steps
+// buy no fixed width) is refused with its line.
+function withinSteps(src, a, cls, invert, where) {
+  if ('data-dcss-steps' in a) throw new Error(`${where}: data-dcss-within beside data-dcss-steps: write one, how close or how many`);
+  if (invert || !/(?:^|\s)dcss-solve(?=\s|$)/.test(cls) || NEWTONS.test(cls)) throw new Error(`${where}: data-dcss-within on ${invert ? 'a .dcss-invert' : 'a solve that takes Newton\'s steps'}: how close its answer gets has no fixed count; write data-dcss-steps`);
+  const t = Number((a['data-dcss-within'] ?? '').trim());
+  if (!(t > 0) || !Number.isFinite(t)) throw new Error(`${where}: data-dcss-within="${a['data-dcss-within']}": write how close the answer must be, a number above 0`);
+  const num = '(-?(?:\\d+\\.?\\d*|\\.\\d+)(?:e[+-]?\\d+)?)\\s*(?:;|$|!)';
+  const find = (name) => { const re = new RegExp(`(?:^|[;{\\s])--${name}\\s*:\\s*${num}`, 'i');
+    const own = re.exec(a.style ?? ''); if (own) return Number(own[1]);
+    const css = [...src.matchAll(/<style\b[^>]*>([\s\S]*?)<\/style>/gi)].map((m) => m[1].replace(/\/\*[\s\S]*?\*\//g, '')).join('\n');
+    for (const c of cls.split(/\s+/).filter((c) => c && !c.startsWith('dcss-')))
+      for (const m of css.matchAll(new RegExp(`(?:^|[}\\s,])\\.${c.replace(/[^\w-]/g, '')}\\s*\\{([^}]*)\\}`, 'g'))) { const v = re.exec(m[1]); if (v) return Number(v[1]); }
+    return null; };
+  const from = find('from'), to = find('to');
+  if (from === null || to === null) throw new Error(`${where}: data-dcss-within needs --from and --to as numbers on the element's style or a rule on one of its classes; write data-dcss-steps where they come from elsewhere`);
+  const n = Math.max(3, Math.ceil(Math.log2(Math.abs(to - from) / t) - 1e-12) + 1);
+  if (n > 54) throw new Error(`${where}: data-dcss-within="${a['data-dcss-within']}" on ${from} to ${to} takes ${n} tries, past a double's 54`);
+  return n;
+}
 function stepsPass(src, file) {
   const edits = []; let i = 0;
   while (i < src.length) {
@@ -1821,10 +1844,11 @@ function stepsPass(src, file) {
     const t = tagAt(src, lt); if (!t) { i = lt + 1; continue; }
     if (!t.close && RAW.has(t.name)) { const e = closeAt(src, t.name, lt + t.length); i = e < 0 ? src.length : e; continue; }
     i = lt + t.length;
-    if (t.close || !/(?:^|\s)data-dcss-steps(?=[\s=]|$)/i.test(t.rawAttrs)) continue;
-    const a = readAttrs(t.rawAttrs, lt), cls = a.class ?? '', line = lineOf(src, lt), n = Number((a['data-dcss-steps'] ?? '').trim());
+    if (t.close || !/(?:^|\s)data-dcss-(?:steps|within)(?=[\s=]|$)/i.test(t.rawAttrs)) continue;
+    const a = readAttrs(t.rawAttrs, lt), cls = a.class ?? '', line = lineOf(src, lt);
     const nested = NESTED.test(cls), invert = /(?:^|\s)dcss-invert(?=\s|$)/.test(cls);
-    if (!nested && !invert) throw new Error(`${file}:${line}: data-dcss-steps on an element that is neither a .dcss-solve nor a .dcss-invert`);
+    if (!nested && !invert) throw new Error(`${file}:${line}: data-dcss-${'data-dcss-steps' in a ? 'steps' : 'within'} on an element that is neither a .dcss-solve nor a .dcss-invert`);
+    const n = 'data-dcss-within' in a ? withinSteps(src, a, cls, invert, `${file}:${line}`) : Number((a['data-dcss-steps'] ?? '').trim());
     const [lo, hi] = invert ? [1, 1000] : NEWTONS.test(cls) ? [3, 14] : [3, 54];
     if (!Number.isInteger(n) || n < lo || n > hi) throw new Error(`${file}:${line}: data-dcss-steps="${a['data-dcss-steps']}": ${invert ? 'an invert takes 1 to 1,000 pieces' : `this solve takes ${lo} to ${hi} steps`}`);
     const end = t.self || VOID.has(t.name) ? -1 : endOf(src, lt, t); if (end < 0) throw new Error(`${file}:${line}: the data-dcss-steps <${t.name}> is never closed`);

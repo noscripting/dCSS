@@ -266,7 +266,7 @@ Each call gives its answer as `--dcss-` and its name to the elements directly in
 Write your formula once, as an ordinary rule, and `.dcss-solve` (families/math.css) finds the input where it reaches a value you give, `--target` (0 without one), between two numbers you give, by halving: a spreadsheet's Goal Seek. Here it solves Kepler's equation for an orbit's eccentric anomaly, E − e sin E = M:
 
 ```html
-<div class="dcss-solve orbit" data-dcss-steps="13" style="--e: 0.6">
+<div class="dcss-solve orbit" data-dcss-within="0.002" style="--e: 0.6">
   <span class="planet"></span>
 </div>
 ```
@@ -282,7 +282,7 @@ Write your formula once, as an ordinary rule, and `.dcss-solve` (families/math.c
 }
 ```
 
-`--dcss-fn` is your formula and `--dcss-at` the input it is tried at; your rule runs once on every `<i>`, and each `<i>` is one try: the first at `--from`, the second at `--to`, and each one after halves what is left. So 13 `<i>`s are 2 ends and 11 halvings, and the answer is within |to − from| / 2¹² (0.0015 here); 26 give |to − from| / 2²⁵, 54 a double's last digit. The build, `node mathml.mjs page.html built.html`, writes the 13 `<i>`s around what is inside (no script on the built page); without it, write them yourself, `<i><i><i> … <span class="planet"></span> … </i></i></i>`. A solve or an invert with no `<i>`s (the attribute on a page never built) gives `--dcss-err` 1. Animate `--m` and the planet moves, every frame; each `<i>` costs about as much as any other element restyled, so an animated page keeps its solves to tens and its `<i>`s to the precision it draws.
+`--dcss-fn` is your formula and `--dcss-at` the input it is tried at. `data-dcss-within="0.002"` says how close the answer must be, in the same units as `--from` and `--to`, and the build, `node mathml.mjs page.html built.html`, works out how many tries that takes (13 here) and writes them as nested `<i>`s around what is inside (no script on the built page). Your rule runs once on every `<i>`, and each `<i>` is one try: the first at `--from`, the second at `--to`, and each one after halves what is left, so n `<i>`s put the answer within |to − from| / 2ⁿ⁻¹. The build reads `--from` and `--to` when they are plain numbers on the element or in a rule on one of its classes; where they aren't, write `data-dcss-steps="13"`, the count itself, or the `<i>`s by hand, `<i><i><i> … <span class="planet"></span> … </i></i></i>`. A solve or an invert with no `<i>`s (the attribute on a page never built) gives `--dcss-err` 1. Animate `--m` and the planet moves, every frame; each `<i>` costs about as much as any other element restyled, so an animated page keeps its solves to tens and its `<i>`s to the precision it draws.
 
 - Every element inside the deepest `<i>` that isn't an `<i>` gets `--dcss-solve` and `--dcss-solve-interval`, the width left. An `<i>` there would be one more try. The `<i>`s draw no boxes (`display: contents`), so the planet lays out as the solve's own child.
 - `--dcss-ready` is 0, `--dcss-err` 1 and `--dcss-solve` NaN when the formula is on the same side of the target at both ends, isn't a number at some `<i>`, or the solve has no formula or no `--from` and `--to` of its own. A NaN `translate` falls back to none, so `opacity: var(--dcss-ready)` hides a refused answer instead of drawing it in the wrong place.
@@ -397,7 +397,7 @@ A browser without `@function` drops the declaration, so write a plain value befo
 
 <!-- browsers -->
 
-Headless Chrome 155 and WebKit 26.4, Safari's engine, pass all 196 requirements of [SPEC.md](SPEC.md), and the calls match d3 on 3,206 of the 7,049 calls in d3's tests. Firefox 158 computes `calc()` in 32-bit floats, so exact sums, dates and most formatting go wrong there: it passes 70. [QUIRKS.md](QUIRKS.md) has the engine bugs.
+Headless Chrome 155 and WebKit 26.4, Safari's engine, pass all 197 requirements of [SPEC.md](SPEC.md), and the calls match d3 on 3,206 of the 7,049 calls in d3's tests. Firefox 158 computes `calc()` in 32-bit floats, so exact sums, dates and most formatting go wrong there: it passes 70. [QUIRKS.md](QUIRKS.md) has the engine bugs.
 
 <!-- /browsers -->
 
