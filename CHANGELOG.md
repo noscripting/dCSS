@@ -77,6 +77,7 @@ All notable changes to dcss are written here. The format follows [Keep a Changel
 
 ### Changed
 
+- `.dcss-geo-natural-earth1-raw-invert` and `.dcss-geo-equal-earth-raw-invert` take Newton's steps, as d3 does: 12 nested `<i>`s give the point, where 54 were needed. Pages with 54 still work.
 - `.dcss-cumsum` takes up to 1,024 items (was 64): each running total is d3's, or has no answer (error 1) once its running width passes 262,143 px.
 - `.dcss-summarize`, `.dcss-median`, `.dcss-quantile`, `.dcss-quantile-sorted`, `.dcss-median-index`, `.dcss-quantile-index` and `.dcss-scale-quantile` take lists of up to 1,024 items (was 64); a summary whose columns run past its reads has no answer (error 1) rather than a wrong one, and its variance and deviation stay at 64 items.
 - A variance and a deviation of the same series in one `data-dcss-scope` share their steps: a page of 40 values the page sets with both built to 1,233,959 bytes and 1,258 registered properties, now 639,042 and 778.

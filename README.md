@@ -254,7 +254,7 @@ Each call gives its answer as `--dcss-` and its name to the elements directly in
 
 - `.dcss-root`: a root of the page's own equation: `--dcss-root-from`, `--dcss-root-to` on it, nested `<i>`s, the page's rule setting `--dcss-root-f` from `--dcss-root-x` on each; inside the deepest, `--dcss-root` and `--dcss-root-interval`.
 - `.dcss-root-newton`: with `.dcss-root`, Newton's steps kept in the bracket: `--dcss-root-df`, f's derivative, beside f; `--dcss-root-guess` optional.
-- [`.dcss-geo-natural-earth1-raw-invert`](https://d3js.org/d3-geo/cylindrical#geoNaturalEarth1), [`.dcss-geo-equal-earth-raw-invert`](https://d3js.org/d3-geo/cylindrical#geoEqualEarth): the same nested `<i>`s with `--x`, `--y` on it; inside the deepest, `--dcss-geo-x`, `--dcss-geo-y` in radians.
+- [`.dcss-geo-natural-earth1-raw-invert`](https://d3js.org/d3-geo/cylindrical#geoNaturalEarth1), [`.dcss-geo-equal-earth-raw-invert`](https://d3js.org/d3-geo/cylindrical#geoEqualEarth): 12 nested `<i>`s, Newton's steps from `--y` with d3's derivative, `--x`, `--y` on it; inside the deepest, `--dcss-geo-x`, `--dcss-geo-y` in radians.
 
 <!-- /calls -->
 
@@ -291,7 +291,7 @@ Give the derivative too and the same solve takes Newton's steps, so far fewer `<
 
 ```html
 <div class="dcss-root dcss-root-newton orbit" style="--e: 0.6; --dcss-root-guess: 1.6">
-  <i><i><i><i><i><i><i><i><span class="planet"></span></i></i></i></i></i></i></i></i>
+  <i><i><i><i><i><span class="planet"></span></i></i></i></i></i>
 </div>
 ```
 
@@ -302,7 +302,7 @@ Give the derivative too and the same solve takes Newton's steps, so far fewer `<
 }
 ```
 
-After the two ends, each `<i>` is one step from x to x − f/f′, from `--dcss-root-guess` (the middle without one). A step that would leave what is left of the bracket, or move x more than half its width, halves the bracket instead, so it can't cycle or run off the way plain Newton can. Kepler's E to a double's last digit takes 8 `<i>`s from a guess and 10 from the middle, where halving takes 54, and an animated frame costs about half. Up to 14 `<i>`s; `--dcss-ready` is 0 also when f′ is missing or not a number.
+After the two ends, each `<i>` is one step from x to x − f/f′, from `--dcss-root-guess` (the middle without one). A step that would leave what is left of the bracket, or move x more than half its width, halves the bracket instead, so it can't cycle or run off the way plain Newton can. For a drawing, a pixel is enough: from a guess, 5 `<i>`s put Kepler's planet within 0.2 px on a 100 px orbit, and 4 put a cubic-bezier's t within 4e-8. A double's last digit takes 8, and 10 from the middle, where halving takes 54; an animated frame costs about half. Up to 14 `<i>`s; `--dcss-ready` is 0 also when f′ is missing or not a number.
 
 The inverts of naturalEarth1 and equalEarth above are solves like this one, with d3's equations as the rule.
 

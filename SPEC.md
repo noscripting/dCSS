@@ -438,15 +438,16 @@ for selection or computation. Packaging does not expand any function's bounds.
   rules in `@scope (.X) to (.dcss-root)` in either order, or unscoped with the inner's after the outer's.
 - **A218** `.dcss-geo-natural-earth1-raw` and `.dcss-geo-equal-earth-raw` with `--x` and `--y` (radians) MUST give
   `--dcss-geo-x` and `--dcss-geo-y` within 1e-12 of d3-geo 3.1.1's geoNaturalEarth1Raw and geoEqualEarthRaw.
-- **A219** `.dcss-geo-natural-earth1-raw-invert` and `.dcss-geo-equal-earth-raw-invert`, with `--x` and `--y` and 54
-  nested `<i>` elements, MUST give everything inside the deepest that is not an `<i>` `--dcss-geo-x` and `--dcss-geo-y`
+- **A219** `.dcss-geo-natural-earth1-raw-invert` and `.dcss-geo-equal-earth-raw-invert`, with `--x` and `--y` and 12
+  or more nested `<i>` elements, MUST give everything inside the deepest that is not an `<i>` `--dcss-geo-x` and `--dcss-geo-y`
   within 1e-11 of d3-geo 3.1.1's raw invert, or nearer the longitude and latitude the point was projected from than
   d3's invert is (d3 stops Newton's method at a step under 1e-6 or 1e-12), for latitudes within 0.999 × π/2.
 - **A220** `.dcss-root.dcss-root-newton`, with the page's rule setting f's derivative `--dcss-root-df` beside
   `--dcss-root-f` on every `<i>`, `--dcss-root-guess` optional, and n nested `<i>` elements (3 to 14), MUST give inside
   the deepest the result of n − 2 of Newton's steps from the guess (the bracket's middle without one), each step taken
   when it lands in what is left of the bracket and moves x under half its width, the middle of what is left otherwise;
-  `--dcss-root-interval` the width left; and refuse as A216, and when f′ is not set or not a number at an `<i>`.
+  `--dcss-root-interval` the width left; a 0 of f at an end as A216; and refuse as A216, and when f′ is not set or not a
+  number at an `<i>`.
 
 ### On the board
 
@@ -650,8 +651,8 @@ for selection or computation. Packaging does not expand any function's bounds.
 | A216 | probes/dcss/root/check.mjs: the same sign at both ends, f NaN, no f, no bracket; a 0 at either end; from above to; no f, no bracket on a nested solve | PASS: 9 of 9 (2026-10-31) | PASS: 9 of 9 (2026-10-31) | NOTRUN |
 | A217 | probes/dcss/root/check.mjs: x³ equal to Kepler's E, solved inside the outer solve's answer; again in `@scope`, the inner's rule first, E read on the inner solve | PASS: off 0 and 0 (2026-10-31) | PASS: off 0 and 0 (2026-10-31) | NOTRUN |
 | A218 | probes/dcss/root/check.mjs: 500 seeded points through each raw projection against d3-geo 3.1.1 | PASS: 1,000 of 1,000, worst 8.9e-16 (2026-10-31) | PASS: 1,000 of 1,000, worst 8.9e-16 (2026-10-31) | NOTRUN |
-| A219 | probes/dcss/root/check.mjs: the same points inverted, against d3's invert and the point projected | PASS: 1,000 of 1,000; 1.6e-14 from the point, d3's own 4.2e-11 (2026-10-31) | PASS: 1,000 of 1,000; 3.1e-14 from the point (2026-10-31) | NOTRUN |
-| A220 | probes/dcss/root/check.mjs: Kepler's equation, 40 orbits at 10 `<i>`s from the middle and 8 from a guess, within 1e-14; the cubic-bezier(.42, 0, .58, 1) inverse at 41 progresses, 6 `<i>`s; x³ − 2x + 2 and atan(x − 0.3), where plain Newton cycles and diverges, 10 `<i>`s; same sign at both ends and no f′ | PASS: 125 of 125, worst 1.8e-15 (2026-10-31) | PASS: 125 of 125, worst 1.8e-15 (2026-10-31) | NOTRUN |
+| A219 | probes/dcss/root/check.mjs: the same points inverted at 12 `<i>`s, against d3's invert and the point projected | PASS: 1,000 of 1,000; 9.8e-15 from the point, d3's own 4.2e-11 (2026-10-31) | PASS: 1,000 of 1,000; 3.1e-14 from the point (2026-10-31) | NOTRUN |
+| A220 | probes/dcss/root/check.mjs: Kepler's equation, 40 orbits at 10 `<i>`s from the middle and 8 from a guess, within 1e-14; the cubic-bezier(.42, 0, .58, 1) inverse at 41 progresses, 6 `<i>`s; x³ − 2x + 2 and atan(x − 0.3), where plain Newton cycles and diverges, 10 `<i>`s; a 0 at either end; same sign at both ends and no f′ | PASS: 127 of 127, worst 1.8e-15 (2026-10-31) | PASS: 127 of 127, worst 1.8e-15 (2026-10-31) | NOTRUN |
 | A51 | coverage/board.mjs: bd-power-12-loop-classes, bd-power-12-loop-table | PASS: 13 of 13 each, against NumPy | PASS: 13 of 13 each, against NumPy | PRECONDITION_FAILED: no view timelines, which store.css's store needs |
 | A52 | sheets/check.mjs: loan | PASS: 50 of 50 cells as written and after 2 changes | PASS: 50 of 50 cells as written and after 2 changes | PRECONDITION_FAILED: no view timelines, which store.css's store needs |
 
