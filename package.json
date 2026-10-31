@@ -1,7 +1,7 @@
 {
   "name": "dcss",
   "version": "1.0.0",
-  "description": "d3's data work as CSS: sums, medians, quantiles, extents, scales, ticks, number and UTC date formats, time intervals, treemaps and map projections, computed by the stylesheet in the same frame, with no script.",
+  "description": "Pages that compute with no script: a list's statistics, ticks and nice ranges, scales, number and date formats, UTC dates, and a formula of your own solved, evaluated, sampled or set in motion, each as d3 works it out, in CSS.",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -27,7 +27,7 @@
     "./parts/*.css": "./parts/*.css",
     "./families.json": "./families.json",
     "./package.json": "./package.json",
-    "./mathml.mjs": "./mathml.mjs"
+    "./steps.mjs": "./steps.mjs"
   },
   "files": [
     "dcss.css",
@@ -36,7 +36,7 @@
     "families/",
     "parts/",
     "families.json",
-    "mathml.mjs",
+    "steps.mjs",
     "dcss-preload.html",
     "README.md",
     "TUTORIAL.md",

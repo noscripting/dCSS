@@ -4,39 +4,7 @@ dcss.css computes with no script, in HTML: a list's statistics, ticks and nice r
 
 ## Installation
 
-Write the data once, as a table the reader sees, and each result as a MathML formula over it. Then build the page once with `mathml.mjs` and Node.js:
-
-```html
-<!doctype html>
-<link rel="stylesheet" href="dcss.css">
-<style>.sales { --jan: 120; --feb: 95; }</style>
-
-<section class="sales" data-dcss-scope>
-  <table data-dcss-series="sales">
-    <tr><th>January</th><td data-dcss-value="var(--jan)"></td></tr>
-    <tr><th>February</th><td data-dcss-value="var(--feb)"></td></tr>
-    <tr><th>March</th><td data-dcss-value>140</td></tr>
-  </table>
-  <math class="dcss-format-fixed" style="--precision: 1">
-    <apply><eq/><ci>average</ci><apply><mean/><ci>sales</ci></apply></apply>
-  </math>
-  <p>The average is <output class="dcss-format-fixed" style="--precision: 1" data-dcss-result="average"></output>.</p>
-</section>
-```
-
-```sh
-node mathml.mjs page.html built.html
-```
-
-Add `--watch` to build it again each time you save. The built page shows average = mean(sales) = 118.3, and the sentence the same. It runs no script: set `--jan` in CSS and both follow. A median or a maximum is one more `<math>` on the same table. [TUTORIAL.md](TUTORIAL.md) builds a sales summary step by step; [SPEC.md](SPEC.md) A131 to A155 say what the build takes. From LaTeX, [LaTeXML](https://math.nist.gov/~BMiller/LaTeXML/) writes the `<math>`:
-
-```sh
-latexmlmath --cmml=- 'M = \frac{P r}{1 - (1 + r)^{-n}}'
-```
-
-## Without the build
-
-Each call is a class, and a file in `parts/`. One class per figure; `.dcss-summarize` gives nine at once. A sum is a `<figure>` around a list: the browser lays the list out, and its size is the answer. This page links two parts that come to 8 KB gzipped:
+No build, no script: link a call's part, or `dcss.css` and its family. Each call is a class, and a file in `parts/`. One class per figure; `.dcss-summarize` gives nine at once. A sum is a `<figure>` around a list: the browser lays the list out, and its size is the answer. This page links two parts that come to 8 KB gzipped:
 
 ```html
 <!doctype html>
@@ -59,6 +27,8 @@ Or link `dcss.css` and the families [Reference](#reference) names, or `dcss-all.
 <link rel="stylesheet" href="families/array.css">
 <link rel="stylesheet" href="families/format.css">
 ```
+
+Formulas written as Content MathML over a table the reader sees compile to these calls with [BASICSS](https://github.com/noscripting/basicss)'s MathML format.
 
 ## Writing a call
 
@@ -246,7 +216,7 @@ Write your formula once, as an ordinary rule, and `.dcss-solve` (families/math.c
 }
 ```
 
-`--dcss-formula` is your formula, and `--dcss-input` the number it is tried at: the call writes it, your formula reads it. `data-dcss-within="0.002"` says how close the answer must be, in the same units as `--from` and `--to`, and the build, `node mathml.mjs page.html built.html`, works out how many tries that takes (13 here) and writes them as nested `<i>`s around what is inside (no script on the built page). Your rule runs once on every `<i>`, and each `<i>` is one try: the first at `--from`, the second at `--to`, and each one after halves what is left, so n `<i>`s put the answer within |to − from| / 2ⁿ⁻¹. The build reads `--from` and `--to` when they are plain numbers on the element or in a rule on one of its classes; where they aren't, write `data-dcss-steps="13"`, the count itself, or the `<i>`s by hand, `<i><i><i> … <span class="planet"></span> … </i></i></i>`. A solve or an invert with no `<i>`s (the attribute on a page never built) gives `--dcss-err` 1. Animate `--m` and the planet moves, every frame; each `<i>` costs about as much as any other element restyled, so an animated page keeps its solves to tens and its `<i>`s to the precision it draws.
+`--dcss-formula` is your formula, and `--dcss-input` the number it is tried at: the call writes it, your formula reads it. `data-dcss-within="0.002"` says how close the answer must be, in the same units as `--from` and `--to`, and the build, `node steps.mjs page.html built.html`, works out how many tries that takes (13 here) and writes them as nested `<i>`s around what is inside (no script on the built page). Your rule runs once on every `<i>`, and each `<i>` is one try: the first at `--from`, the second at `--to`, and each one after halves what is left, so n `<i>`s put the answer within |to − from| / 2ⁿ⁻¹. The build reads `--from` and `--to` when they are plain numbers on the element or in a rule on one of its classes; where they aren't, write `data-dcss-steps="13"`, the count itself, or the `<i>`s by hand, `<i><i><i> … <span class="planet"></span> … </i></i></i>`. A solve or an invert with no `<i>`s (the attribute on a page never built) gives `--dcss-err` 1. Animate `--m` and the planet moves, every frame; each `<i>` costs about as much as any other element restyled, so an animated page keeps its solves to tens and its `<i>`s to the precision it draws.
 
 - Every element inside the deepest `<i>` that isn't an `<i>` gets `--dcss-solve` and `--dcss-solve-width`, the width left. An `<i>` there would be one more try. The `<i>`s draw no boxes (`display: contents`), so the planet lays out as the solve's own child.
 - `--dcss-ready` is 0, `--dcss-err` 1 and `--dcss-solve` NaN when the formula is on the same side of the target at both ends, isn't a number at some `<i>`, or the solve has no formula or no `--from` and `--to` of its own. A NaN `translate` falls back to none, so `opacity: var(--dcss-ready)` hides a refused answer instead of drawing it in the wrong place.
@@ -269,7 +239,7 @@ For a drawing, halving is the one to use: 13 tries put an answer within a pixel 
 }
 ```
 
-Newton needs the formula's slope, its derivative, as `--dcss-slope`, and the build works it out from your formula's text: on a page with a `.dcss-solve-newton`, `node mathml.mjs page.html built.html` writes `--dcss-slope: calc(1 - var(--e) * cos(var(--dcss-input) * 1rad))` beside each `--dcss-formula` in the page's `<style>`s, on the same line. It takes `+ - * /`, `pow()`, `sqrt()`, `exp()`, `log()`, `sin()` and the other trigonometric functions and their inverses, `hypot()`, `abs()`, `sign()`, `min()`, `max()`, `clamp()`, `round()`, `mod()` and `rem()`, and keeps the formula's units (an angle in `deg` or `rad`). Every `var()` but `--dcss-input` is a number that doesn't change with it. A formula that reads a property the page works out from `--dcss-input` (directly or through another), has a percentage, or a function it has no slope for gets no slope: the build names it on stderr with its line and builds the rest of the page; write `--dcss-slope` yourself there, or to skip the build. A slope you write is left as it is; the build's own says so in a comment and follows the formula when you change it.
+Newton needs the formula's slope, its derivative, as `--dcss-slope`, and the build works it out from your formula's text: on a page with a `.dcss-solve-newton`, `node steps.mjs page.html built.html` writes `--dcss-slope: calc(1 - var(--e) * cos(var(--dcss-input) * 1rad))` beside each `--dcss-formula` in the page's `<style>`s, on the same line. It takes `+ - * /`, `pow()`, `sqrt()`, `exp()`, `log()`, `sin()` and the other trigonometric functions and their inverses, `hypot()`, `abs()`, `sign()`, `min()`, `max()`, `clamp()`, `round()`, `mod()` and `rem()`, and keeps the formula's units (an angle in `deg` or `rad`). Every `var()` but `--dcss-input` is a number that doesn't change with it. A formula that reads a property the page works out from `--dcss-input` (directly or through another), has a percentage, or a function it has no slope for gets no slope: the build names it on stderr with its line and builds the rest of the page; write `--dcss-slope` yourself there, or to skip the build. A slope you write is left as it is; the build's own says so in a comment and follows the formula when you change it.
 
 After the two ends, each `<i>` is one step from x to x − f/f′, from `--guess` (the middle without one). A step that would leave what is left of the bracket, or move x more than half its width, halves the bracket instead, so it can't cycle or run off the way plain Newton can. For a drawing, a pixel is enough: from a guess, 5 `<i>`s put Kepler's planet within 0.2 px on a 100 px orbit, and 4 put a cubic-bezier's t within 4e-8. A double's last digit takes 8, and 10 from the middle, where halving takes 54; an animated frame costs about half. Up to 14 `<i>`s; `--dcss-ready` is 0 also when the slope is missing or not a number.
 
@@ -423,7 +393,7 @@ A browser without `@function` drops the declaration, so write a plain value befo
 
 <!-- browsers -->
 
-Headless Chrome 155 and WebKit 26.4, Safari's engine, pass all 172 requirements of [SPEC.md](SPEC.md), and the calls match d3 on 2,120 of the 5,783 calls in d3's tests. Firefox 158 computes `calc()` in 32-bit floats, so exact sums, dates and most formatting go wrong there: it passes 67. [QUIRKS.md](QUIRKS.md) has the engine bugs.
+Headless Chrome 155 and WebKit 26.4, Safari's engine, pass all 124 requirements of [SPEC.md](SPEC.md), and the calls match d3 on 2,120 of the 5,783 calls in d3's tests. Firefox 158 computes `calc()` in 32-bit floats, so exact sums, dates and most formatting go wrong there: it passes 67. [QUIRKS.md](QUIRKS.md) has the engine bugs.
 
 <!-- /browsers -->
 

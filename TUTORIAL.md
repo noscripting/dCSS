@@ -1,148 +1,112 @@
 # dcss.css: tutorial
 
-You build a sales summary for six months: a table of the months, their total and monthly average written as formulas, the average in a sentence and as a bar, and a switch between years that updates every number.
+You build a sales summary for six months: a table of the months, their total and monthly average, the average as a bar, and a switch between two years that updates every number. No build and no script: one HTML file and the stylesheets.
 
 ## Before you start
 
-You need Chrome or Safari, Node.js, and from this folder `dcss.css`, the `families` folder and `mathml.mjs`, with a new file, `sales.html`, saved next to them. After each step, build the page and open `built.html`:
-
-```sh
-node mathml.mjs sales.html built.html
-```
-
-With `--watch` at the end, it builds again each time you save `sales.html`. The build works out the stylesheet's part once. The built page has no script: the browser does the arithmetic again each time a number changes. An answer the build can work out from numbers written in the page, in a format the page writes too, is written as text, so it shows with no CSS, in a feed and when copied; one that reads a number the page sets in CSS is printed by CSS.
+You need Chrome or Safari, and from this folder `dcss.css` and the `families` folder, with a new file, `sales.html`, saved next to them. After each step, open `sales.html` in the browser.
 
 ## 1. The months as a table
 
-The months are an ordinary table. `data-dcss-series="sales"` names its rows a series, and each row marks its number's cell with `data-dcss-value`. A cell that says `var(--jan)` takes its number from `--jan`, which the page sets in CSS, and the build makes the cell print it. `data-dcss-count="months"` names the number of rows, which step 2 uses.
-
-`data-dcss-scope` marks the section where the numbers and the formulas live. Everything the formulas work out is read inside it.
+The numbers live in CSS, one custom property a month, on the section that holds everything. A table cell prints one with `.dcss-format-fixed`: `--value` is the number, `--precision` its decimals.
 
 ```html
 <!doctype html>
 <meta charset="utf-8">
 <title>Sales</title>
 <link rel="stylesheet" href="dcss.css">
+<link rel="stylesheet" href="families/format.css">
 <style>
   body { margin: 24px; font: 16px/1.4 system-ui, sans-serif; }
   .sales { --jan: 120; --feb: 95; --mar: 140; --apr: 80; --may: 160; --jun: 110; }
 </style>
 
-<section class="sales" data-dcss-scope>
-  <table data-dcss-series="sales" data-dcss-count="months">
+<section class="sales">
+  <table>
     <thead><tr><th>Month</th><th>Sales</th></tr></thead>
     <tbody>
-      <tr><th>January</th><td data-dcss-value="var(--jan)"></td></tr>
-      <tr><th>February</th><td data-dcss-value="var(--feb)"></td></tr>
-      <tr><th>March</th><td data-dcss-value="var(--mar)"></td></tr>
-      <tr><th>April</th><td data-dcss-value="var(--apr)"></td></tr>
-      <tr><th>May</th><td data-dcss-value="var(--may)"></td></tr>
-      <tr><th>June</th><td data-dcss-value="var(--jun)"></td></tr>
+      <tr><th>January</th><td><span class="dcss-format-fixed" style="--value: var(--jan); --precision: 0"></span></td></tr>
+      <tr><th>February</th><td><span class="dcss-format-fixed" style="--value: var(--feb); --precision: 0"></span></td></tr>
+      <tr><th>March</th><td><span class="dcss-format-fixed" style="--value: var(--mar); --precision: 0"></span></td></tr>
+      <tr><th>April</th><td><span class="dcss-format-fixed" style="--value: var(--apr); --precision: 0"></span></td></tr>
+      <tr><th>May</th><td><span class="dcss-format-fixed" style="--value: var(--may); --precision: 0"></span></td></tr>
+      <tr><th>June</th><td><span class="dcss-format-fixed" style="--value: var(--jun); --precision: 0"></span></td></tr>
     </tbody>
   </table>
 </section>
 ```
 
-You see the table with the six months and their numbers.
+The table shows 120, 95, 140, 80, 160 and 110.
 
-## 2. Total and average
+## 2. The total and the average
 
-A formula is Content MathML, the markup MathML uses for meaning. `<eq/>` with a name alone on its left defines that name. The total adds `sales_i`, month *i*, for *i* from 1 to `months`. The average is `<mean/>` of the series. The build draws each formula and prints its answer after it; `dcss-format-fixed` with `--precision` sets the decimals. Add both after the table, inside the section:
-
-```html
-  <math class="dcss-format-fixed" style="--precision: 0">
-    <apply><eq/><ci>total</ci>
-      <apply><sum/><bvar><ci>i</ci></bvar><lowlimit><cn>1</cn></lowlimit><uplimit><ci>months</ci></uplimit>
-        <apply><csymbol cd="ambiguous">subscript</csymbol><ci>sales</ci><ci>i</ci></apply>
-      </apply>
-    </apply>
-  </math>
-  <math class="dcss-format-fixed" style="--precision: 1">
-    <apply><eq/><ci>average</ci><apply><mean/><ci>sales</ci></apply></apply>
-  </math>
-```
-
-You see total = 705 and average = 117.5, each beside its formula.
-
-## 3. The average in a sentence and a bar
-
-A named answer can be shown anywhere in the section. An empty `<output data-dcss-result="average">` prints it (a dash while there is no answer; words you write inside it, such as `not yet`, show instead, and with no CSS), and your own CSS reads it as `var(--average)`, here a bar's width; `--average-ready` is 1 while there is an answer and 0 when there is none. Add a rule to the `<style>`:
-
-```css
-  .bar { height: 12px; width: calc(var(--average) * 2px); background: teal; }
-```
-
-And these after the formulas:
+A call is a class on a `<figure>` around a list, one `--value` an item. `.dcss-mean` gives the list's sum as `--dcss-sum` and its mean as `--dcss-mean` to each element after the list. The list is drawn at its answer, so the figure clips it to one line and the screen reader skips it (`aria-hidden`). Add `families/array.css` beside the other links, and this after the table:
 
 ```html
-  <p>The monthly average is <output class="dcss-format-fixed" style="--precision: 1" data-dcss-result="average"></output>.</p>
-  <div class="bar"></div>
+<figure class="dcss-mean dcss-format-fixed" style="height: 1lh; overflow: clip; margin: 0">
+  <ul aria-hidden="true">
+    <li style="--value: var(--jan)"></li> <li style="--value: var(--feb)"></li> <li style="--value: var(--mar)"></li>
+    <li style="--value: var(--apr)"></li> <li style="--value: var(--may)"></li> <li style="--value: var(--jun)"></li>
+  </ul>
+  <p>Total <output style="--value: var(--dcss-sum); --precision: 0"></output>,
+     average <output style="--value: var(--dcss-mean); --precision: 1"></output> a month.</p>
+</figure>
 ```
 
-You see "The monthly average is 117.5." and a bar 235 pixels wide.
+It reads "Total 705, average 117.5 a month." Change `--mar` in the `<style>` and reload: the table, the total and the average all follow.
 
-## 4. Switch the year
+## 3. A bar and a switch between years
 
-The numbers are custom properties, so a selector can change them. Radio buttons in a form, a `:has()` rule per year, and a reset button that brings back the first year: every number follows, the table's cells included.
-
-2027 has only January and February so far. Setting the other months to `initial` leaves them empty. The average skips a missing month, as d3's mean does. The total names every month by its number, so it has no answer while one is missing, and an element marked `data-dcss-error="total"` shows in its place. Here is the whole page:
+The average is a number in CSS, so it can size things: a bar `--dcss-mean` pixels wide. Two radio buttons pick the year, and `:has()` sets the months for the one that is checked. The whole page:
 
 ```html
 <!doctype html>
 <meta charset="utf-8">
 <title>Sales</title>
 <link rel="stylesheet" href="dcss.css">
+<link rel="stylesheet" href="families/array.css">
+<link rel="stylesheet" href="families/format.css">
 <style>
   body { margin: 24px; font: 16px/1.4 system-ui, sans-serif; }
   .sales { --jan: 120; --feb: 95; --mar: 140; --apr: 80; --may: 160; --jun: 110; }
   .sales:has(#y2026:checked) { --jan: 130; --feb: 145; --mar: 90; --apr: 175; --may: 160; --jun: 120; }
-  .sales:has(#y2027:checked) { --jan: 150; --feb: 135; --mar: initial; --apr: initial; --may: initial; --jun: initial; }
-  .bar { height: 12px; width: calc(var(--average) * 2px); background: teal; }
+  .summary { height: 3lh; overflow: clip; margin: 0; }
+  .bar { height: 12px; width: calc(var(--dcss-mean) * 1px); background: teal; }
 </style>
 
-<form class="sales" data-dcss-scope>
+<section class="sales">
   <p>
     <label><input type="radio" name="year" id="y2025" checked> 2025</label>
     <label><input type="radio" name="year" id="y2026"> 2026</label>
-    <label><input type="radio" name="year" id="y2027"> 2027</label>
-    <input type="reset" value="Back to 2025">
   </p>
-  <table data-dcss-series="sales" data-dcss-count="months">
+  <table>
     <thead><tr><th>Month</th><th>Sales</th></tr></thead>
     <tbody>
-      <tr><th>January</th><td data-dcss-value="var(--jan)"></td></tr>
-      <tr><th>February</th><td data-dcss-value="var(--feb)"></td></tr>
-      <tr><th>March</th><td data-dcss-value="var(--mar)"></td></tr>
-      <tr><th>April</th><td data-dcss-value="var(--apr)"></td></tr>
-      <tr><th>May</th><td data-dcss-value="var(--may)"></td></tr>
-      <tr><th>June</th><td data-dcss-value="var(--jun)"></td></tr>
+      <tr><th>January</th><td><span class="dcss-format-fixed" style="--value: var(--jan); --precision: 0"></span></td></tr>
+      <tr><th>February</th><td><span class="dcss-format-fixed" style="--value: var(--feb); --precision: 0"></span></td></tr>
+      <tr><th>March</th><td><span class="dcss-format-fixed" style="--value: var(--mar); --precision: 0"></span></td></tr>
+      <tr><th>April</th><td><span class="dcss-format-fixed" style="--value: var(--apr); --precision: 0"></span></td></tr>
+      <tr><th>May</th><td><span class="dcss-format-fixed" style="--value: var(--may); --precision: 0"></span></td></tr>
+      <tr><th>June</th><td><span class="dcss-format-fixed" style="--value: var(--jun); --precision: 0"></span></td></tr>
     </tbody>
   </table>
-  <math class="dcss-format-fixed" style="--precision: 0">
-    <apply><eq/><ci>total</ci>
-      <apply><sum/><bvar><ci>i</ci></bvar><lowlimit><cn>1</cn></lowlimit><uplimit><ci>months</ci></uplimit>
-        <apply><csymbol cd="ambiguous">subscript</csymbol><ci>sales</ci><ci>i</ci></apply>
-      </apply>
-    </apply>
-  </math>
-  <p data-dcss-error="total">The total waits for every month.</p>
-  <math class="dcss-format-fixed" style="--precision: 1">
-    <apply><eq/><ci>average</ci><apply><mean/><ci>sales</ci></apply></apply>
-  </math>
-  <p>The monthly average is <output class="dcss-format-fixed" style="--precision: 1" data-dcss-result="average"></output>.</p>
-  <div class="bar"></div>
-</form>
+  <figure class="summary dcss-mean dcss-format-fixed">
+    <ul aria-hidden="true">
+      <li style="--value: var(--jan)"></li> <li style="--value: var(--feb)"></li> <li style="--value: var(--mar)"></li>
+      <li style="--value: var(--apr)"></li> <li style="--value: var(--may)"></li> <li style="--value: var(--jun)"></li>
+    </ul>
+    <p>Total <output style="--value: var(--dcss-sum); --precision: 0"></output>,
+       average <output style="--value: var(--dcss-mean); --precision: 1"></output> a month.</p>
+    <div class="bar"></div>
+  </figure>
+</section>
 ```
 
-Pick 2026 and the page shows total = 820 and an average of 136.7. Pick 2027: the table shows two months, the average is 142.5, and "The total waits for every month." takes the total's place. The reset button brings back 2025.
-
-A total of the months there are, as d3's `sum` adds, is d3's own symbol applied to the series: `<apply><csymbol definitionURL="https://d3js.org/d3-array/summarize#sum">sum</csymbol><ci>sales</ci></apply>`, 285 for 2027. With `#count` in place of `#sum` it counts them, 2; `#variance` and `#deviation` give d3's variance and standard deviation, `#quantile` with a `<cn>` after the series, `<cn>0.9</cn>`, its 90th percentile, and `#mode` the value it holds most often. A total that skips months should say so beside it: with those two formulas named `sold` and `known`, `<output data-dcss-result="sold"></output> across <output data-dcss-result="known"></output> of <output data-dcss-result="months"></output> months` reads "285 across 2 of 6 months", `months` being the table's `data-dcss-count`.
+In 2025 it reads total 705, average 117.5 and the bar is 117.5 pixels wide; pick 2026 and it reads 820 and 136.7, the bar 136.67 pixels. The page has no script: the browser works the sum out again each time a month changes.
 
 ## Next
 
-- The best month: `best` defined as d3's `maxIndex` of the series (`<csymbol definitionURL="https://d3js.org/d3-array/summarize#maxIndex">maxIndex</csymbol>`), and `<span data-dcss-label="best">no month yet</span>` prints that row's header, May, or its own text while no month is set.
-- A table can hold a series a column, one a year: `<th scope="col" data-dcss-series="y2026">2026</th>` in the header row.
-- Screen readers: the build's answers are no live regions (`aria-live="off"`), so a change of year announces nothing by itself. For one sentence read out when the year changes, put `aria-live="polite" aria-atomic="true"` on it: the answers inside it become its text. VoiceOver and NVDA haven't been tried on it yet.
-- An axis across the range is a call that lays the data out: [README.md](README.md), section Using two calls together, with an example.
-- Reading an answer from a test script: the printed number is generated content (an output's text stays empty) and `--value` is a `calc()`, so register a number and give it the answer, `@property --read { syntax: "<number>"; inherits: false; initial-value: 0; }` and `output { --read: var(--value); }`. `getComputedStyle(output).getPropertyValue('--read')` then gives the answer to six digits, not the whole double.
-- [SPEC.md](SPEC.md): what the build and each call are required to do, and the result in each browser.
+- More calls on the same list: `.dcss-summarize` gives the median, extent, deviation and more at once ([README.md](README.md), Reference).
+- A formula of your own over these numbers, solved or evaluated: [README.md](README.md), Formulas.
+- Formulas written as Content MathML over a table compile to these calls with BASICSS's MathML format.
+- [SPEC.md](SPEC.md): what each call is required to do, and the result in each browser.
