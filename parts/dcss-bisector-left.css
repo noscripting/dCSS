@@ -66,4 +66,6 @@
 :is(.dcss-bisector-left)> :is(ul, ol) + * > *,:is(.dcss-bisector-left)> :is(ul, ol) + *::before,:is(.dcss-bisector-left)> :is(ul, ol) + *::after { --dcss-bisector-bound-error: calc(1 - var(--dcss-bisector-lo-has) * (1 - abs(sign(var(--dcss-bisector-lo) - round(var(--dcss-bisector-lo))))) * (1 - min(1, sign(max(0, -1 * var(--dcss-bisector-lo))))) * (1 - min(1, sign(max(0, var(--dcss-bisector-lo) - var(--dcss-bisector-count))))) * var(--dcss-bisector-hi-has) * (1 - abs(sign(var(--dcss-bisector-hi) - round(var(--dcss-bisector-hi))))) * (1 - min(1, sign(max(0, -1 * var(--dcss-bisector-hi))))) * (1 - min(1, sign(max(0, var(--dcss-bisector-hi) - var(--dcss-bisector-count))))) * (1 - min(1, sign(max(0, var(--dcss-bisector-lo) - var(--dcss-bisector-hi)))))); --dcss-bisector-err: max(round(100cqh / 1px), 2 * (1 - var(--dcss-bisector-query-ok)), var(--dcss-bisector-bound-error), var(--dcss-bisector-overflow)); }
 
 /* DCSS index extrema: numeric d3.minIndex/maxIndex and natural numeric least/greatestIndex (index-extrema.mjs). */
+
+/* DCSS lookup: a spreadsheet's exact lookup, d3.index(rows, key).get(find) (lookup.mjs). */
 @property --dcss-range-ready{syntax:'<integer>';inherits:true;initial-value:0}

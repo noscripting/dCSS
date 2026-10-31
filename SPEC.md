@@ -5,7 +5,7 @@ dcss.css computes with CSS layout: indexed reads, sums, ranks, sorts, keyed maps
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in BCP 14 [RFC2119] [RFC8174] when, and only when, they appear in all capitals, as shown here.
 
 Measured 2026-10-29, headless: Chrome 155.0.8059.86, WebKit 26.4, Firefox 158.0.
-Conformance: Chrome 124/124, WebKit 124/124, Firefox 67/124.
+Conformance: Chrome 125/125, WebKit 125/125, Firefox 67/125.
 Additional paired cases measured 2026-10-26 in Chrome/WebKit; the Firefox report is unchanged.
 The checks, probes and scripts this document names are in the noscript.ing repository ([github.com/noscripting/noscript.ing](https://github.com/noscripting/noscript.ing)), under `libraries/dcss/`; this package carries the sheets and their documents.
 
@@ -487,6 +487,12 @@ for selection or computation. Packaging does not expand any function's bounds.
   between `--from-y` and `--to-y`, each set on the call itself; each item MUST give `--dcss-ready` 0 and
   `--dcss-err` 1 when c is not a positive whole number dividing n, or its value is not a number; without `--columns`
   the items MUST be one row, as A224.
+- **A232** `.dcss-lookup` with `--find` and a list whose items set `--key` and `--value` MUST give each element after the
+  list, and everything inside it, `--dcss-lookup`: the `--value` of the one item whose `--key` equals `--find`, as d3's
+  `index(items, (d) => d.key).get(find).value`, with `--dcss-ready` 1 and `--dcss-err` 0; with no such item, no answer and
+  `--dcss-err` 2; with two or more, or with that item's value missing, off the 1/64 grid or not within ±131,072, no
+  answer and `--dcss-err` 1. A repeat of a key other than `--find` MUST NOT change the answer. The number of items MUST
+  NOT be limited.
 
 ### On the board
 
@@ -625,6 +631,7 @@ for selection or computation. Packaging does not expand any function's bounds.
 | A229 | probes/dcss/evaluate/check.mjs: 5 formulas at an input, the value and the written slope against doubles; `--at` only on an outer element, a NaN value, no formula, no `<i>`, a constant formula with no `--at`, `--at` a length; the build writes the `<i>` | PASS: 11 of 11; the build wrote the `<i>` and 5 slopes (2026-10-31) | PASS: 11 of 11, the build's <i> and its idempotence (2026-10-31) | NOTRUN |
 | A230 | probes/dcss/every/check.mjs: sin on [0.5, 10] in 16 pieces, x³ − 3x with 0 on a shared end, x − 0.5 in 2 pieces, x² reaching 4, x² + 1 (none), the turning points of x³ − 3x, x − 0.6 on [−1, 1] in 5 pieces, `data-dcss-apart` with an `@scope` rule, each answer within 1e-4 of the true one; the copies hidden where a piece finds none, ends only on an outer element, a target changed after load, the page never built | PASS: 12 of 12, within 1e-4 (2026-10-31) | PASS: 12 of 12, within 1e-4 (2026-10-31) | NOTRUN |
 | A231 | probes/dcss/sample/grid-check.mjs: a 3 × 2 grid of x + 10y, each item's value and its list laid out in 3 columns; its sum and mean; a 16 × 16 hill summed exactly against doubles; 7 items in rows of 3, `--columns` 2.5, no `--from-y`, `--from-y` only on an outer element | PASS: 8 of 8, the hill exact (2026-10-31) | PASS: 8 of 8, the hill exact (2026-10-31) | NOTRUN |
+| A232 | probes/dcss/lookup/check.mjs: 400 seeded tables of 1 to 200 rows against d3.index's get (a missing key, a key in two rows); 12 by hand: the first and last of 1,000 rows, a value missing, off the grid, past ±131,072, the least and greatest taken, no `--find`, a row with no key, fractional and negative keys, a repeat of another key; `--find` set by a radio button, changed and reset | PASS: 400 of 400, 12 of 12 (2026-10-31) | PASS: 400 of 400, 12 of 12 (2026-10-31) | NOTRUN |
 | A51 | coverage/board.mjs: bd-power-12-loop-classes, bd-power-12-loop-table | PASS: 13 of 13 each, against NumPy | PASS: 13 of 13 each, against NumPy | PRECONDITION_FAILED: no view timelines, which store.css's store needs |
 | A52 | sheets/check.mjs: loan | PASS: 50 of 50 cells as written and after 2 changes | PASS: 50 of 50 cells as written and after 2 changes | PRECONDITION_FAILED: no view timelines, which store.css's store needs |
 

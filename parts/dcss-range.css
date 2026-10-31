@@ -19,6 +19,8 @@
 
 /* DCSS index extrema: numeric d3.minIndex/maxIndex and natural numeric least/greatestIndex (index-extrema.mjs). */
 
+/* DCSS lookup: a spreadsheet's exact lookup, d3.index(rows, key).get(find) (lookup.mjs). */
+
 @property --dcss-range-count{syntax:'<integer>';inherits:true;initial-value:0}
 @property --dcss-range-error{syntax:'<integer>';inherits:true;initial-value:1}
 @property --dcss-range-start-grid{syntax:'<integer>';inherits:true;initial-value:0}

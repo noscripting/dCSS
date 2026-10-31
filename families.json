@@ -43,6 +43,7 @@
         "dcss-least",
         "dcss-least-index",
         "dcss-length",
+        "dcss-lookup",
         "dcss-max",
         "dcss-max-index",
         "dcss-mean",
@@ -67,9 +68,9 @@
         "dcss-ticks",
         "dcss-variance"
       ],
-      "raw": 480255,
-      "gzip9": 35469,
-      "sha256": "02cc2a001595fc0b371a82cacbb6ed4359b43819f957f462dae2b879159ee0c1"
+      "raw": 483704,
+      "gzip9": 35870,
+      "sha256": "e2a0bc36adb6e8314864bbd6165b62b0fc52a4f14097739fae5301f1531f8ad4"
     },
     "scale": {
       "file": "families/scale.css",
@@ -262,6 +263,7 @@
     "dcss-least": "array",
     "dcss-least-index": "array",
     "dcss-length": "array",
+    "dcss-lookup": "array",
     "dcss-max": "array",
     "dcss-max-index": "array",
     "dcss-mean": "array",
@@ -5173,6 +5175,10 @@
         "role": "style-only"
       },
       "dcss-length": {
+        "family": "array",
+        "role": "style-only"
+      },
+      "dcss-lookup": {
         "family": "array",
         "role": "style-only"
       },

@@ -2853,6 +2853,29 @@
           }
         }
       },
+      "A232": {
+        "__compat": {
+          "description": "`.dcss-lookup` with `--find` and a list whose items set `--key` and `--value` MUST give each element after the list, and everything inside it, `--dcss-lookup`: the `--value` of the one item whose `--key` equals `--find`, as d3's `index(items, (d) => d.key).get(find).value`, with `--dcss-ready` 1 and `--dcss-err` 0; with no such item, no answer and `--dcss-err` 2; with two or more, or with that item's value missing, off the 1/64 grid or not within ±131,072, no answer and `--dcss-err` 1. A repeat of a key other than `--find` MUST NOT change the answer. The number of items MUST NOT be limited.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
+            },
+            "firefox": {
+              "version_added": null
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
       "A51": {
         "__compat": {
           "description": "A loop (`.loop`, `.loop-flow`, `.loop-in`, `.loop-cell`, `.loop-core`) MUST have store.css and dcss-extras.css on the page; its cells, read through `[data-store-read]` and `[data-store-read-3]` naming them by `--store-of`, MUST settle on the iteration's fixed point: a 12-cell power iteration's vector and eigenvalue equal NumPy's, as a flow and as a table row.",

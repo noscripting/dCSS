@@ -54,4 +54,6 @@
   --dcss-index-err: calc(min(1,max(var(--dcss-index-bad),var(--dcss-index-list-error))) + (1 - min(1,max(var(--dcss-index-bad),var(--dcss-index-list-error)))) * var(--dcss-index-empty-error) * (1 - var(--dcss-index-h)));
   --dcss-ready: var(--dcss-index-ready); --dcss-err: var(--dcss-index-err); }
 .dcss-min-index > :is(ol, ul) + * > * { --dcss-min-index: calc((1 - min(1, var(--dcss-index-err))) / (1 - min(1, var(--dcss-index-err))) * var(--dcss-index-result)); }
+
+/* DCSS lookup: a spreadsheet's exact lookup, d3.index(rows, key).get(find) (lookup.mjs). */
 @property --dcss-range-ready{syntax:'<integer>';inherits:true;initial-value:0}

@@ -27,4 +27,6 @@
 .dcss-descending{--dcss-descending:calc(var(--dcss-compare-ok) / var(--dcss-compare-ok) * sign(var(--dcss-compare-b) - var(--dcss-compare-a)));}
 
 /* DCSS index extrema: numeric d3.minIndex/maxIndex and natural numeric least/greatestIndex (index-extrema.mjs). */
+
+/* DCSS lookup: a spreadsheet's exact lookup, d3.index(rows, key).get(find) (lookup.mjs). */
 @property --dcss-range-ready{syntax:'<integer>';inherits:true;initial-value:0}

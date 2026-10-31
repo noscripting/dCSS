@@ -44,4 +44,6 @@
 :is( .dcss-bisector) > :is(ul, ol) + output:empty::after { position: absolute; left: 0; bottom: 100%; counter-reset: dcss-bisector-result calc((1 - min(1, var(--dcss-bisector-err))) * (var(--dcss-bisector-result) + 1) - 1); content: counter(dcss-bisector-result, dcss-bisector-print); white-space: nowrap; }
 
 /* DCSS index extrema: numeric d3.minIndex/maxIndex and natural numeric least/greatestIndex (index-extrema.mjs). */
+
+/* DCSS lookup: a spreadsheet's exact lookup, d3.index(rows, key).get(find) (lookup.mjs). */
 @property --dcss-range-ready{syntax:'<integer>';inherits:true;initial-value:0}
