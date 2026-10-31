@@ -4536,6 +4536,29 @@
           }
         }
       },
+      "A227": {
+        "__compat": {
+          "description": "`.dcss-solve-extreme` with `.dcss-solve` MUST answer, as A215 does, where the page's `--dcss-slope` reaches 0 instead of where `--dcss-fn` reaches `--target`, so with one peak or dip between `--from` and `--to` its answer is that point; and `mathml.mjs` MUST write the slope on a page with it (as A225) and refuse it beside `.dcss-solve-newton`.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
+            },
+            "firefox": {
+              "version_added": null
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
       "A51": {
         "__compat": {
           "description": "A loop (`.loop`, `.loop-flow`, `.loop-in`, `.loop-cell`, `.loop-core`) MUST have store.css and dcss-extras.css on the page; its cells, read through `[data-store-read]` and `[data-store-read-3]` naming them by `--store-of`, MUST settle on the iteration's fixed point: a 12-cell power iteration's vector and eigenvalue equal NumPy's, as a flow and as a table row.",

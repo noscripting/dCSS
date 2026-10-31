@@ -6,6 +6,7 @@ All notable changes to dcss are written here. The format follows [Keep a Changel
 
 ### Added
 
+- `.dcss-solve-extreme` with `.dcss-solve`: where the page's own formula is highest or lowest between `--from` and `--to`, from the slope the build writes.
 - `data-dcss-within="0.002"` on a `.dcss-solve`: say how close the answer must be, in the formula's own units, and the build counts the tries and writes them, the fewest that reach it.
 - The build writes a formula's slope: on a page with a `.dcss-solve-newton`, `node mathml.mjs page.html built.html` writes `--dcss-slope`, the derivative of each `--dcss-fn` in the page's `<style>`s, beside it, so Newton's steps need only the formula. A slope the page writes is left as it is; a formula it can't differentiate gets none and is named with its line, and the rest of the page builds.
 - `.dcss-sample`, beside a list call: each item's value is the page's own formula (`--dcss-fn` from `--dcss-at`, as for `.dcss-solve` and `.dcss-invert`) at the item's middle between `--from` and `--to`, so `.dcss-sum` gives the area under a curve, `.dcss-max` its highest value, `.dcss-mean` its average. One rule can feed a solve, an invert and a sample at once.

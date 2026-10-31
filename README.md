@@ -254,6 +254,7 @@ Each call gives its answer as `--dcss-` and its name to the elements directly in
 
 - `.dcss-solve`: where the page's own function reaches `--target` (0 without it): `--from`, `--to` on it, nested `<i>`s (or `data-dcss-steps` and the build writes them), the page's rule setting `--dcss-fn` from `--dcss-at` on each; inside the deepest, `--dcss-solve` and `--dcss-solve-interval`.
 - `.dcss-solve-newton`: with `.dcss-solve`, Newton's steps kept in the bracket: `--dcss-slope`, f's slope (its derivative), beside f (the build writes it from f); `--guess` optional.
+- `.dcss-solve-extreme`: with `.dcss-solve`, where the page's own function is highest or lowest between `--from` and `--to`, one hump: where its slope, `--dcss-slope` (the build writes it from f), reaches 0; halving, with `data-dcss-within` or `data-dcss-steps`.
 - `.dcss-invert`: the inverse of the page's own function on every row of the box at once: `--from`, `--to` across it, `--top`, `--bottom` down it, its first child's pairs of `<i>`s (or `data-dcss-steps`), the page's rule setting `--dcss-fn` from `--dcss-at` on each; each line starts where f reaches its value.
 - `.dcss-sample`: with a list call (`.dcss-sum`, `.dcss-max`, `.dcss-mean`…), the page's own function as the list: `--from`, `--to` on it, each item's `--value` the page's `--dcss-fn` at `--dcss-at`, the item's middle, rounded to 64ths.
 - `.dcss-ode`: on store.css's frame cell (`data-store`), the page's own equation of motion, a leapfrog step a frame: `--dcss-ode-a` from `--dcss-ode-x` and `--dcss-ode-v`, `--dcss-ode-x0`, `-v0`, `-range`, `-v-range`, `-h`; on it and inside it, `--dcss-ode-x` and `--dcss-ode-v`.
@@ -308,6 +309,21 @@ For a drawing, halving is the one to use: 13 tries put an answer within a pixel 
 Newton needs the formula's slope, its derivative, as `--dcss-slope`, and the build works it out from your formula's text: on a page with a `.dcss-solve-newton`, `node mathml.mjs page.html built.html` writes `--dcss-slope: calc(1 - var(--e) * cos(var(--dcss-at) * 1rad))` beside each `--dcss-fn` in the page's `<style>`s, on the same line. It takes `+ - * /`, `pow()`, `sqrt()`, `exp()`, `log()`, `sin()` and the other trigonometric functions and their inverses, `hypot()`, `abs()`, `sign()`, `min()`, `max()`, `clamp()`, `round()`, `mod()` and `rem()`, and keeps the formula's units (an angle in `deg` or `rad`). Every `var()` but `--dcss-at` is a number that doesn't change with it. A formula that reads a property the page works out from `--dcss-at` (directly or through another), has a percentage, or a function it has no slope for gets no slope: the build names it on stderr with its line and builds the rest of the page; write `--dcss-slope` yourself there, or to skip the build. A slope you write is left as it is; the build's own says so in a comment and follows the formula when you change it.
 
 After the two ends, each `<i>` is one step from x to x − f/f′, from `--guess` (the middle without one). A step that would leave what is left of the bracket, or move x more than half its width, halves the bracket instead, so it can't cycle or run off the way plain Newton can. For a drawing, a pixel is enough: from a guess, 5 `<i>`s put Kepler's planet within 0.2 px on a 100 px orbit, and 4 put a cubic-bezier's t within 4e-8. A double's last digit takes 8, and 10 from the middle, where halving takes 54; an animated frame costs about half. Up to 14 `<i>`s; `--dcss-ready` is 0 also when the slope is missing or not a number.
+
+Add `.dcss-solve-extreme` and the solve finds where your formula is highest or lowest instead: the top of a bounce, the nearest point of a path, the busiest hour of a curve. Give it `--from` and `--to` around one hump:
+
+```html
+<div class="dcss-solve dcss-solve-extreme peak" data-dcss-within="0.001" style="--from: 0; --to: 4">
+  <span class="marker"></span>
+</div>
+```
+
+```css
+.peak i { --dcss-fn: calc(var(--dcss-at) * exp(-1 * var(--dcss-at))); }
+.marker { translate: calc(var(--dcss-solve) * 100px) 0; opacity: var(--dcss-ready); }
+```
+
+The marker sits at 1, where x e⁻ˣ peaks, within 0.001. The build writes the formula's slope beside it, and the solve finds where that slope reaches 0, so a page never built gives `--dcss-err` 1. Between `--from` and `--to` there must be one peak or one dip; at two, the answer is one of them.
 
 The inverts of naturalEarth1 and equalEarth above are solves like this one, with d3's equations as the formula.
 
@@ -397,7 +413,7 @@ A browser without `@function` drops the declaration, so write a plain value befo
 
 <!-- browsers -->
 
-Headless Chrome 155 and WebKit 26.4, Safari's engine, pass all 197 requirements of [SPEC.md](SPEC.md), and the calls match d3 on 3,206 of the 7,049 calls in d3's tests. Firefox 158 computes `calc()` in 32-bit floats, so exact sums, dates and most formatting go wrong there: it passes 70. [QUIRKS.md](QUIRKS.md) has the engine bugs.
+Headless Chrome 155 and WebKit 26.4, Safari's engine, pass all 198 requirements of [SPEC.md](SPEC.md), and the calls match d3 on 3,206 of the 7,049 calls in d3's tests. Firefox 158 computes `calc()` in 32-bit floats, so exact sums, dates and most formatting go wrong there: it passes 70. [QUIRKS.md](QUIRKS.md) has the engine bugs.
 
 <!-- /browsers -->
 

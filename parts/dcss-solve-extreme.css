@@ -1,0 +1,13 @@
+/* DCSS array: parts/dcss-solve-extreme.css, the dcss-solve-extreme call alone (parts.mjs)
+   SPDX-License-Identifier: MIT
+   SPDX-FileCopyrightText: 2026 noscript.ing contributors */
+:where([class*="dcss-"]) { writing-mode: horizontal-tb; }
+/* Where the page's own function reaches a target, by bisection (root.mjs). */
+:where(.dcss-solve-extreme i){--dcss-solve-f:var(--dcss-slope)}
+/* A solve by Newton's method kept inside the bracket (root.mjs). */
+
+/* The inverse of the page's own function on every row, by layout (invert.mjs). */
+
+/* The page's own function sampled as a list (sample.mjs). */
+
+/* The page's own equation of motion, stepped a frame on store.css's frame cell (ode.mjs). */

@@ -8,7 +8,7 @@
 // jan]) to the bit, jan read from --jan on an ancestor (unset: no answer, --dcss-err 1). Only a <math> whose one element
 // child is an <apply> of an operator it takes, or a <piecewise>, is compiled; the rest of the page is copied byte for byte, so the build
 // run on its own output changes nothing. It also writes the <i>s of a .dcss-solve or .dcss-invert with data-dcss-steps,
-// and on a page with a .dcss-solve-newton, --dcss-slope beside each --dcss-fn that has none (one it can't take is said
+// and on a page with a .dcss-solve-newton or .dcss-solve-extreme, --dcss-slope beside each --dcss-fn that has none (one it can't take is said
 // on stderr with its line, and the rest of the page builds).
 import { createHash } from 'node:crypto';
 import { readFileSync, realpathSync, watchFile, writeFileSync } from 'node:fs';
@@ -1847,6 +1847,7 @@ function stepsPass(src, file) {
     if (t.close || !/(?:^|\s)data-dcss-(?:steps|within)(?=[\s=]|$)/i.test(t.rawAttrs)) continue;
     const a = readAttrs(t.rawAttrs, lt), cls = a.class ?? '', line = lineOf(src, lt);
     const nested = NESTED.test(cls), invert = /(?:^|\s)dcss-invert(?=\s|$)/.test(cls);
+    if (/(?:^|\s)dcss-solve-extreme(?=\s|$)/.test(cls) && NEWTONS.test(cls)) throw new Error(`${file}:${line}: .dcss-solve-extreme beside .dcss-solve-newton: a highest or lowest point is found by halving; drop .dcss-solve-newton`);
     if (!nested && !invert) throw new Error(`${file}:${line}: data-dcss-${'data-dcss-steps' in a ? 'steps' : 'within'} on an element that is neither a .dcss-solve nor a .dcss-invert`);
     const n = 'data-dcss-within' in a ? withinSteps(src, a, cls, invert, `${file}:${line}`) : Number((a['data-dcss-steps'] ?? '').trim());
     const [lo, hi] = invert ? [1, 1000] : NEWTONS.test(cls) ? [3, 14] : [3, 54];
@@ -1991,7 +1992,7 @@ function emit(n, outer = 0, right = false) {
   return p < outer || (right && p === outer && p < 3) ? `(${s})` : s;
 }
 function slopeOf(text) { const t = parseCalc(text.replace(/\/\*[\s\S]*?\*\//g, '').trim()); typeOf(t); const d = D(t); return d.k === 'num' ? d.t : `calc(${emit(d)})`; }
-const SOLVE_NEWTON = /\bclass\s*=\s*(?:"[^"]*\bdcss-solve-newton\b[^"]*"|'[^']*\bdcss-solve-newton\b[^']*'|dcss-solve-newton\b)/i;
+const SOLVE_NEWTON = /\bclass\s*=\s*(?:"[^"]*\bdcss-solve-(?:newton|extreme)\b[^"]*"|'[^']*\bdcss-solve-(?:newton|extreme)\b[^']*'|dcss-solve-(?:newton|extreme)\b)/i; // the solves that read a slope
 function slopePass(src, file) {
   if (!SOLVE_NEWTON.test(src)) return { src, skipped: [] };
   const skipped = [], edits = [], styles = [], reStyle = /<style\b[^>]*>/gi;

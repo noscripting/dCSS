@@ -385,11 +385,12 @@
         "dcss-ode",
         "dcss-sample",
         "dcss-solve",
+        "dcss-solve-extreme",
         "dcss-solve-newton"
       ],
-      "raw": 182598,
-      "gzip9": 6471,
-      "sha256": "0291723c7ef6cdd6a3e940d7fead1a4faaa05e12c3b76679aa4dd6bce00daf17"
+      "raw": 182662,
+      "gzip9": 6489,
+      "sha256": "ff4b88eba360c5a5d95b5d70739b3c44dfe2693585fc093f0130cc64f360e738"
     }
   },
   "owners": {
@@ -658,6 +659,7 @@
     "dcss-ode": "math",
     "dcss-sample": "math",
     "dcss-solve": "math",
+    "dcss-solve-extreme": "math",
     "dcss-solve-newton": "math"
   },
   "functions": {
@@ -6494,6 +6496,10 @@
         "role": "style-only"
       },
       "dcss-solve": {
+        "family": "math",
+        "role": "style-only"
+      },
+      "dcss-solve-extreme": {
         "family": "math",
         "role": "style-only"
       },

@@ -5,7 +5,7 @@ dcss.css computes with CSS layout: indexed reads, sums, ranks, sorts, keyed maps
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in BCP 14 [RFC2119] [RFC8174] when, and only when, they appear in all capitals, as shown here.
 
 Measured 2026-10-29, headless: Chrome 155.0.8059.86, WebKit 26.4, Firefox 158.0.
-Conformance: Chrome 197/197, WebKit 197/197, Firefox 70/197.
+Conformance: Chrome 198/198, WebKit 198/198, Firefox 70/198.
 Additional paired cases measured 2026-10-26 in Chrome/WebKit; the Firefox report is unchanged.
 The checks, probes and scripts this document names are in the noscript.ing repository ([github.com/noscripting/noscript.ing](https://github.com/noscripting/noscript.ing)), under `libraries/dcss/`; this package carries the sheets and their documents.
 
@@ -484,6 +484,10 @@ for selection or computation. Packaging does not expand any function's bounds.
   are numbers on its style or in a `<style>` rule on one of its classes, the least n of 3 to 54 nested `<i>` elements
   for which |to − from| / 2^(n − 1) ≤ t, as for `data-dcss-steps="n"`; and refuse, with the line, the attribute on a
   Newton solve or an invert, beside `data-dcss-steps`, with t not above 0, a range that is not two numbers it reads there, or n past 54.
+- **A227** `.dcss-solve-extreme` with `.dcss-solve` MUST answer, as A215 does, where the page's `--dcss-slope` reaches
+  0 instead of where `--dcss-fn` reaches `--target`, so with one peak or dip between `--from` and `--to` its answer is
+  that point; and `mathml.mjs` MUST write the slope on a page with it (as A225) and refuse it beside
+  `.dcss-solve-newton`.
 
 ### On the board
 
@@ -695,6 +699,7 @@ for selection or computation. Packaging does not expand any function's bounds.
 | A224 | probes/dcss/sample/check.mjs: 64 sin on [0, π] summed at 64 and 300 items, 64 x² on [−1, 2] at 30 items its max and mean, exactly against the same samples in doubles; one rule feeding a sample and a solve; no formula, no from and to | PASS: 8 of 8, exact (2026-10-31) | PASS: 8 of 8, exact (2026-10-31) | NOTRUN |
 | A225 | probes/dcss/slope/check.mjs: 26 formulas at 4 points, the written slope against the formula's central difference in doubles; the same text in the engine against doubles; the Kepler page with its slope left out, built: the hand-written slope, no line added, built to itself, its planets where the hand-written page puts them; a slope the page wrote left; the build's own following a changed formula; 5 formulas left without a slope, named with their line, one beside a formula it takes | PASS: 17 of 17, within 3.7e-10 (2026-10-31) | PASS: 17 of 17, within 3.7e-10 (2026-10-31) | NOTRUN |
 | A226 | probes/dcss/root/within-check.mjs: 39 solves of x − r over 8 ranges and 5 closenesses, built and run; the fewest tries; a range read from a class's rule; the built page builds to itself; 6 refusals | PASS: 11 of 11, worst 0.77 of what was asked (2026-10-31) | PASS: 11 of 11, worst 0.77 of what was asked (2026-10-31) | NOTRUN |
+| A227 | probes/dcss/root/extreme-check.mjs: 6 formulas with a known peak or dip, built with `data-dcss-within="1e-6"`; the page never built; beside `.dcss-solve-newton` | PASS: 15 of 15, within 9.5e-7 (2026-10-31) | PASS: 15 of 15, within 9.5e-7 (2026-10-31) | NOTRUN |
 | A51 | coverage/board.mjs: bd-power-12-loop-classes, bd-power-12-loop-table | PASS: 13 of 13 each, against NumPy | PASS: 13 of 13 each, against NumPy | PRECONDITION_FAILED: no view timelines, which store.css's store needs |
 | A52 | sheets/check.mjs: loan | PASS: 50 of 50 cells as written and after 2 changes | PASS: 50 of 50 cells as written and after 2 changes | PRECONDITION_FAILED: no view timelines, which store.css's store needs |
 
