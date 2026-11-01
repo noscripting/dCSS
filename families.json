@@ -2,9 +2,9 @@
   "version": 1,
   "core": {
     "file": "dcss.css",
-    "raw": 285925,
-    "gzip9": 73134,
-    "sha256": "7dc62d8f828572b75963981b70e7824471df8061a65586ddf2c9a4b4c5aa61e3"
+    "raw": 286681,
+    "gzip9": 73415,
+    "sha256": "e1d099747ed7006e29d19e53e58c9797a097d671b017df9668326a2df4b20cf8"
   },
   "extras": {
     "file": "dcss-extras.css",
@@ -69,9 +69,9 @@
         "dcss-ticks",
         "dcss-variance"
       ],
-      "raw": 516076,
-      "gzip9": 38821,
-      "sha256": "1138a9ca3a0ceecd52f9f7f9bd8a9885d56e650829d48ab72be3aa66f37db4bc"
+      "raw": 516535,
+      "gzip9": 38920,
+      "sha256": "c78fb05a8269881a4eb9f05ea1eeffdf479c913faf43b72ca84cbddeae1d05a4"
     },
     "scale": {
       "file": "families/scale.css",

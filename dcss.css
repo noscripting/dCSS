@@ -1181,11 +1181,16 @@
 /* the printed text in its font at its size, so 1ch is the font's 1 px "0" glyph: where it isn't (a minimum font size
    past 128px, the font blocked or not loaded) the text is 2^24 px wide and its readers' --dcss-err 1, not a number a
    fallback font's widths made. The guard is on the ::before, which a page's * { font-family: serif !important } does not
-   reach (probes/dcss/counters/font-size-check.mjs) */
+   reach; and under a zoom below 1.25 in WebKit, by the root's 1rem, below (probes/dcss/counters/font-size-check.mjs) */
 @property --dcss-dcss-glyph { syntax: '<integer>'; inherits: true; initial-value: 0; }
+/* and the root's font size (its 1em: 1rem on the root is the initial 16px), as a length: inside an ancestor's CSS zoom z WebKit's 1rem is 1/z of it (Chrome's is the same at
+   any zoom), and below 1.25 a zoom other than 1 reads off the 1/64 px grid (QUIRKS.md Q14), so there the text is refused
+   too. A sheet without this rule leaves the guard to the glyph (var()'s 0px) */
+@property --dcss-dcss-rem { syntax: '<length>'; inherits: true; initial-value: 0px; }
+:root { --dcss-dcss-rem: 1em; }
 .dcss-text { display: block; width: max-content; height: 0; position: relative; margin: 0; padding: 0; border: 0; writing-mode: horizontal-tb; direction: ltr; font: 128px/0 var(--dcss-font, dcss-text); text-size-adjust: none; -webkit-text-size-adjust: none; }
 .dcss-text::before { content: var(--dcss-text); display: block; font: 128px/0 var(--dcss-font, dcss-text); text-size-adjust: none; -webkit-text-size-adjust: none; white-space: pre; letter-spacing: calc((var(--dcss-each, 1) - 1) * 1px); tab-size: calc(var(--dcss-tab, 2) * 32px); word-spacing: 0; text-indent: 0; text-transform: none; font-kerning: normal; font-synthesis: none; font-variant: normal; font-feature-settings: normal; font-variation-settings: normal; font-size-adjust: none;
-  --dcss-dcss-glyph: calc(1 - sign(abs(round(64 * 1ch / 1px) - 64))); min-width: calc((1 - var(--dcss-dcss-glyph)) * 16777216px); }
+  --dcss-dcss-glyph: calc((1 - sign(abs(round(64 * 1ch / 1px) - 64))) * (1 - sign(var(--dcss-dcss-rem, 0px) / 1px) * sign(max(0, abs((1rem / max(1px, var(--dcss-dcss-rem, 0px))) - 1) - 0.001)) * sign(max(0, (1rem / max(1px, var(--dcss-dcss-rem, 0px))) - 0.801)))); min-width: calc((1 - var(--dcss-dcss-glyph)) * 16777216px); }
 .dcss-text.dcss-sq { --dcss-font: dcss-sq; } .dcss-text.dcss-sqrt { --dcss-font: dcss-sqrt; }
 .dcss-text.dcss-divide > u > u { --dcss-value: calc(round(100cqw / 1px / 32 / var(--dcss-tab, 2)) - 1); }
 .dcss-text.dcss-two > u > u { --dcss-high: round(down, round(100cqw / 1px) / 1000); --dcss-low: mod(round(100cqw / 1px), 1000); }

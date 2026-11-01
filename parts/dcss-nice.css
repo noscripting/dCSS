@@ -250,6 +250,7 @@
 /* each printed line in the lists' font at its size, so 1ch is the 1 px "0" glyph: where it isn't (a minimum font size past
    128px, the font blocked or not loaded) the line is 2^24 px wide, past the reads: error 1, not a wrong number. The guard
    is on the lines, not the list: a page's * { font-family: serif !important } reaches the list and no pseudo-element
+   and WebKit's zoom below 1.25, by dcss.css's root 1rem (build.mjs)
    (probes/dcss/counters/font-size-check.mjs) */
 /* a count and length read their height from the list's top: 1 px of padding, the stair's */
 /* the last item as tall as its ::after, the negatives' line (at 0 px tall WebKit read nothing below it: probe fig.mjs) */

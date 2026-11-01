@@ -2971,7 +2971,7 @@
       },
       "A237": {
         "__compat": {
-          "description": "The answers of a `.dcss-sum`, `.dcss-count`, `.dcss-length` and `.dcss-mean`, and a `.dcss-text`'s width, MUST be A60's and A43's whatever size the reader's browser sets text at (a minimum font size to 128px, a default font size, a phone's text autosizing, browser zoom) and whatever text styles the page sets on its elements, `!important` included (spacing, kerning, OpenType features, a font family or size on every element); where the printed text isn't in its font at 128px (a minimum font size past 128px, the font blocked or missing) they MUST be error 1 (`--dcss-err` on each element after the list, on a text's inner `<u>`), never another number.",
+          "description": "The answers of a `.dcss-sum`, `.dcss-count`, `.dcss-length` and `.dcss-mean`, and a `.dcss-text`'s width, MUST be A60's and A43's whatever size the reader's browser sets text at (a minimum font size to 128px, a default font size, a phone's text autosizing, browser zoom) and whatever text styles the page sets on its elements, `!important` included (spacing, kerning, OpenType features, a font family or size on every element); where the printed text isn't in its font at 128px (a minimum font size past 128px, the font blocked or missing) they MUST be error 1 (`--dcss-err` on each element after the list, on a text's inner `<u>`), never another number; in WebKit, under an ancestor's CSS zoom below 1.25 other than 1 (QUIRKS.md Q14), they MUST be error 1 too.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
