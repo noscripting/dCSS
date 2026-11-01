@@ -2969,6 +2969,30 @@
           }
         }
       },
+      "A237": {
+        "__compat": {
+          "description": "A `.dcss-sum`'s answers and a `.dcss-text`'s width MUST be A60's and A43's whatever size the reader's browser sets text at (a minimum font size to 128px, a default font size, a phone's text autosizing, browser zoom), and where its text isn't in its font at 128px (a minimum font size past 128px, the font blocked or missing) MUST be error 1 (`--dcss-err` on each element after the list, on a text's inner `<u>`), never another number.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
+            },
+            "firefox": {
+              "version_added": null,
+              "notes": "PRECONDITION_FAILED: no view timelines, every sum refused"
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
       "A51": {
         "__compat": {
           "description": "A loop (`.loop`, `.loop-flow`, `.loop-in`, `.loop-cell`, `.loop-core`) MUST have store.css and dcss-extras.css on the page; its cells, read through `[data-store-read]` and `[data-store-read-3]` naming them by `--store-of`, MUST settle on the iteration's fixed point: a 12-cell power iteration's vector and eigenvalue equal NumPy's, as a flow and as a table row.",

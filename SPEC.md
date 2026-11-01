@@ -5,7 +5,7 @@ dcss.css computes with CSS layout: indexed reads, sums, ranks, sorts, keyed maps
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in BCP 14 [RFC2119] [RFC8174] when, and only when, they appear in all capitals, as shown here.
 
 Measured 2026-10-29, headless: Chrome 155.0.8059.86, WebKit 26.4, Firefox 158.0.
-Conformance: Chrome 129/129, WebKit 129/129, Firefox 67/129.
+Conformance: Chrome 130/130, WebKit 130/130, Firefox 67/130.
 Additional paired cases measured 2026-10-26 in Chrome/WebKit; the Firefox report is unchanged.
 The checks, probes and scripts this document names are in the noscript.ing repository ([github.com/noscripting/noscript.ing](https://github.com/noscripting/noscript.ing)), under `libraries/dcss/`; this package carries the sheets and their documents.
 
@@ -503,6 +503,10 @@ for selection or computation. Packaging does not expand any function's bounds.
   A call inside another's answer MUST NOT take that one's `--find`.
 - **A236** `.dcss-summarize` (and `.dcss-variance`, `.dcss-deviation`) with `.dcss-decimals` and `--decimals` d, a whole number from 0 to 6, on the figure MUST take each item's `--value` v as the whole number k = round(v x 10^d), where k / 10^d is v itself and k is from -1024 to 65535, and MUST give the answers A180 names for those k, each divided by 10^d once: the written decimals' exact answer rounded once (the sum of 0.1 and 0.2 is 0.3), not d3's sum in doubles; min, max and extent pick an input, as d3's. A value with more decimals than d, a k outside the range, a d that isn't a whole number from 0 to 6, or more than 1,024 items MUST leave no answer, error 1.
 - **A235** A date-format specifier of one letter, with its pad flag, MUST also be a class of its own that prints as its numbered class does (A107), `.dcss-date-format-Y` as `%Y`, in a document in no-quirks mode.
+- **A237** A `.dcss-sum`'s answers and a `.dcss-text`'s width MUST be A60's and A43's whatever size the reader's browser
+  sets text at (a minimum font size to 128px, a default font size, a phone's text autosizing, browser zoom), and where its
+  text isn't in its font at 128px (a minimum font size past 128px, the font blocked or missing) MUST be error 1
+  (`--dcss-err` on each element after the list, on a text's inner `<u>`), never another number.
 
 ### On the board
 
@@ -646,6 +650,7 @@ for selection or computation. Packaging does not expand any function's bounds.
 | A234 | probes/dcss/find/check.mjs: 300 seeded lists of 1 to 120 items, keys from 1 to 6 (some none, some values none), whole numbers and 64ths, each call against the same call on the items found written alone and against d3 where that answers; 12 by hand (a key in no item, no `--find`); a sum inside a lookup's answer; `--find` set by a radio button, changed and reset | PASS: 300 of 300 (283 as d3, 29 error 1 both ways), 12 of 12 (2026-10-31) | PASS: the same (2026-10-31) | NOTRUN |
 | A236 | probes/dcss/summarize/decimals-check.mjs: 240 seeded lists of 1 to 64 items in 1 to 4 decimals, 12 edge lists (k at -1024 and 65535, 1,024 items, 0.1 + 0.2, 1.005, none), 6 with no answer, a live move; the engine's own value and the published text, against the decimals' exact answer worked out in BigInt | PASS: 2,008 of 2,008 answers to the bit (2026-10-31) | PASS: the same (2026-10-31) | FAIL: 78 of 2,008 (no view timelines in release Firefox 158) (2026-10-31) |
 | A235 | probes/dcss/date-format-wave/check.mjs: every other call of d3-time-format's tests written with its letter class | PASS: 52 of 52 with A107's (2026-10-31) | PASS: 52 of 52 with A107's (2026-10-31) | NOTRUN |
+| A237 | probes/dcss/counters/font-size-check.mjs: 24 sums of 64 seeded values in 64ths and 8 texts to 299,999 under each setting: Chrome's minimum font size 24, 72 and 200, its default font size 32, a phone with no viewport meta at font scale 2, device scale 0.9, 1.5 and 3, a root font size and text-size-adjust of 200%, the text font missing | PASS: 24 of 24 and 8 of 8 right under each, all refused at minimum 200 and with the font missing (2026-11-01) | PASS: the same under the six WebKit takes (device scales, root font size, text-size-adjust, the font missing) (2026-11-01) | PRECONDITION_FAILED: no view timelines, every sum refused |
 | A51 | coverage/board.mjs: bd-power-12-loop-classes, bd-power-12-loop-table | PASS: 13 of 13 each, against NumPy | PASS: 13 of 13 each, against NumPy | PRECONDITION_FAILED: no view timelines, which store.css's store needs |
 | A52 | sheets/check.mjs: loan | PASS: 50 of 50 cells as written and after 2 changes | PASS: 50 of 50 cells as written and after 2 changes | PRECONDITION_FAILED: no view timelines, which store.css's store needs |
 

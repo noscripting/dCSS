@@ -17,6 +17,7 @@
 @property --dcss-dcss-ok { syntax: '<number>'; inherits: false; initial-value: 0; }
 @property --dcss-dcss-out { syntax: '<number>'; inherits: false; initial-value: 0; }
 @property --dcss-dcss-off { syntax: '<number>'; inherits: false; initial-value: 0; }
+@property --dcss-dcss-glyph { syntax: '<integer>'; inherits: true; initial-value: 0; }
 @property --dcss-dcss-vh { syntax: '<integer>'; inherits: false; initial-value: 0; }
 @property --dcss-dcss-vi { syntax: '<integer>'; inherits: false; initial-value: 0; }
 @property --dcss-dcss-vf { syntax: '<integer>'; inherits: false; initial-value: 0; }
@@ -78,6 +79,9 @@
 /* K px more padding each way, as the stair's K x K ::before: what the figure holds past its own height (an <output>
    taller than a 1 px figure) adds to its scroll range, and up to K px of it stays under the list's (a sample's sum of
    64 sines in a 1 px figure read 17 px short with 1 px; probes/dcss/sample/check.mjs) */
+/* the list in the text's font at its size, so 1ch is the 1 px "0" glyph: where it isn't (a minimum font size past 128px,
+   the font blocked or not loaded) the list is 2^24 px wide, past the reads: the sum is error 1, not a wrong number
+   (probes/dcss/counters/font-size-check.mjs) */
 /* the last item as tall as its ::after, the negatives' line (at 0 px tall WebKit read nothing below it: probe fig.mjs) */
 /* each line clips its own overflow: a line of line-height 0 with its glyphs drawn past it added 8 px to the figure's
    scroll height in Chrome (WebKit none) */

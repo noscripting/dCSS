@@ -134,6 +134,16 @@ Measured 2026-10-22, headless: Chrome 155.0.8059.86, WebKit 26.4, Firefox 158.0.
 - Workaround: a reduction's reads animate the elements after its list (`scroll(nearest)`), not the figure, so the items are not restyled with them: 128 sum figures of 1,000 items cost 18.7 ms of render a frame at rest, 48.0 ms read on the figure (`probes/dcss/counters/race.mjs`, one run each beside other checks, 2026-11-01). Every other call still reads its list by its own scroll range: each such figure is restyled every frame with its items (128 figures of 1,000 items, 44 ms of style a frame at rest, 2026-10-31).
 - Affects: every reduction and every call read by scroll timelines, in pages of many calls
 
+### Q14 Chrome, WebKit: under an ancestor's CSS `zoom` below 1 or fractional, reads leave the 1/64 px grid
+
+- Feature: `zoom`
+- Spec: [CSS Viewport 1 §5](https://drafts.csswg.org/css-viewport/#zoom-property)
+- Engines: Chrome FAIL: zoom 0.8 on the body, 9 of 24 sums 1/64 off, zoom 1.5 one of 24; texts right · WebKit FAIL: zoom 0.8, 23 of 24 sums off by up to 2 and every text (299,650.76 for 299,651); 1.5 right · both right at zoom 2 · Firefox NOTRUN
+- Repro: `probes/dcss/counters/font-size-check.mjs` (`--stair`, the sheet from before the counters: 13 and 14 of 24 off at 0.8)
+- Bug: none filed: a value in 64ths times 0.8 is off the 1/64 px layout grid in any engine; WebKit's text at a fractional zoomed size is wider than its glyphs
+- Workaround: none in the sheet: neither engine has `zoom: reset` (an element inside zoom 0.8 lays out at 0.8, 2026-11-01). Browser zoom is not this: device scale 0.9 to 3 reads right in both. A page that zooms keeps its figures outside the zoomed element.
+- Affects: every read under an ancestor's CSS `zoom`
+
 ## Shared
 
 - `calc()` computes in doubles in Chrome and WebKit, in 32-bit floats in Firefox
