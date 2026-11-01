@@ -148,7 +148,9 @@ for selection or computation. Packaging does not expand any function's bounds.
 - **A238** `<b class="dcss-int" style="--dcss-counter: name"><u><u></u></u></b>` MUST give on its inner `<u>`, as
   `--dcss-int`, the value of the page's counter `name` where the reader stands, any signed 32-bit integer, exact, the next
   frame after it changes, and 0 for a counter the page never set; the reader MUST take no room in the page's flow, and
-  where its text isn't in its font at 128px MUST give `--dcss-err` 1.
+  where its text isn't in its font at 128px MUST give `--dcss-err` 1. Inside a page's size container, where an engine
+  reads a counter set outside it as 0 (QUIRKS.md Q15), it MUST give the counter's value or `--dcss-err` 1, never another
+  number.
 - **A44** The text operators MUST give, from pair texts and counter styles, min, max, a sum of products, |a - b|, a > b,
   a × b by `letter-spacing`, floor(a / b) by a tab, sign and relu, exact.
 - **A45** A `.dcss-collapse` of signed margins, `.dcss-zoom` factors in a sum, an `.dcss-baseline` row,
@@ -574,7 +576,7 @@ for selection or computation. Packaging does not expand any function's bounds.
 | A41 | check.mjs: 57; check.mjs: 69 | PASS | PASS | FAIL: `anchor-size()` keeps the anchors' first sizes (QUIRKS Q3); in a container as wide as its content, check 69, it passes |
 | A42 | check.mjs: 60 | PASS | PASS | PASS |
 | A43 | check.mjs: 61 | PASS | PASS | PASS |
-| A238 | probes/dcss/counters/int-check.mjs: 51 counters set by counter-reset (both ends, the 2^24 boundary, 37 seeded), a table of 200 rows summed by counter-increment read in its footer, a counter never set, a change read the next frame, the reader's room in the flow, the font missing | PASS: 54 of 54, every one error 1 with the font missing (2026-11-01) | PASS: 54 of 54, the same (2026-11-01) | FAIL: 8 of 54, values past 2^24 off by Firefox's 32-bit calc() (-16777217 read -16777216); error 1 with the font missing |
+| A238 | probes/dcss/counters/int-check.mjs: 51 counters set by counter-reset (both ends, the 2^24 boundary, 37 seeded), a table of 200 rows summed by counter-increment read in its footer, a counter never set, a change read the next frame, the reader's room in the flow, three inside a container card, the font missing | PASS: 54 of 54, the card's 3 of 3, every one error 1 with the font missing (2026-11-01) | PASS: 54 of 54, the card's 1 right and 2 refused (Q15), every one error 1 with the font missing (2026-11-01) | FAIL: 8 of 54, values past 2^24 off by Firefox's 32-bit calc() (-16777217 read -16777216); error 1 with the font missing |
 | A44 | check.mjs: 62 | PASS | PASS | PASS |
 | A45 | check.mjs: 63 | PASS | PASS | PASS |
 | A46 | check.mjs: 64 | PASS | PASS | PASS |

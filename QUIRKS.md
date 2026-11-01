@@ -132,6 +132,7 @@ Measured 2026-10-22, headless: Chrome 155.0.8059.86, WebKit 26.4, Firefox 158.0.
 - Repro: `facts/scroll/self-scroll-idle.mjs`, at the repository's root
 - Bug: [webkit.org/b/327680](https://bugs.webkit.org/show_bug.cgi?id=327680), fixed in WebKit's trunk 2026-10-22 (de90a27a2d), after 26.4
 - Workaround: a reduction's reads animate the elements after its list (`scroll(nearest)`), not the figure, so the items are not restyled with them: 128 sum figures of 1,000 items cost 18.7 ms of render a frame at rest, 48.0 ms read on the figure (`probes/dcss/counters/race.mjs`, one run each beside other checks, 2026-11-01). Every other call still reads its list by its own scroll range: each such figure is restyled every frame with its items (128 figures of 1,000 items, 44 ms of style a frame at rest, 2026-10-31).
+- Cost: an element's, not its animations': 128 sum figures at rest, 10.3 ms of render a frame with one scroll-driven animation an `<output>`, 10.2 with two, 10.9 with six, 10.3 with one on `view()`, 0.29 with none (`probes/dcss/counters/rest-cost.mjs`, 2026-11-01, one run each); Chrome 0.50 as built, 0.07 with none. A page of many figures pays it until Safari ships the fix.
 - Affects: every reduction and every call read by scroll timelines, in pages of many calls
 
 ### Q14 Chrome, WebKit: under an ancestor's CSS `zoom` below 1.25 other than 1, reads leave the 1/64 px grid
@@ -143,6 +144,16 @@ Measured 2026-10-22, headless: Chrome 155.0.8059.86, WebKit 26.4, Firefox 158.0.
 - Bug: none filed: a value in 64ths times 0.8 is off the 1/64 px layout grid in any engine; WebKit's text at a fractional zoomed size is wider than its glyphs
 - Workaround: WebKit: refused (error 1) below 1.25 other than 1, by the root's font size (its `1em`, a registered length) against the element's `1rem`, which WebKit gives as 1/z of it (font-size-check `ONLY=zoom`: 0 wrong, 2026-11-01). Chrome: none in the sheet: neither engine has `zoom: reset` (an element inside zoom 0.8 lays out at 0.8, 2026-11-01), and Chrome shows the zoom to no value a rule can test (inside zoom 0.8, `100vw`, `100vh`, `1rem` and a container's `100cqw` across the zoom equal the root's; WebKit's are 1.25 times: scratchpad probe, 2026-11-01). Browser zoom is not this: device scale 0.9 to 3 reads right in both. A page that zooms keeps its figures outside the zoomed element.
 - Affects: every read under an ancestor's CSS `zoom`
+
+### Q15 WebKit: `counter()` inside a size container reads 0 for a counter set outside it, or on it
+
+- Feature: `counter()`, `contain: style`, `container-type`
+- Spec: [CSS Containment 2 §3.3](https://drafts.csswg.org/css-contain-2/#containment-style): style containment scopes the counters a subtree changes, not the ones it reads
+- Engines: Chrome PASS · WebKit FAIL: a `.dcss-int` inside a `container-type: inline-size` card read 0 for a counter set to 1,234 outside the card, and 0 for 77 set on the card itself; one set inside the card (a child's `counter-reset`, a table's rows) read right · Firefox PASS
+- Repro: `probes/dcss/counters/int-check.mjs` (the card cases); `facts/counter/counter-read-inside-containment.mjs`, at the repository's root
+- Bug: none filed yet
+- Workaround: in WebKit (where `-apple-pay-button-style` parses) a `.dcss-int` inside any size container (`@container (width >= 0px)`) that reads 0 gives error 1: it can't tell a counter at 0 from one it can't see. `contain: style` alone is not a container a query sees, so a reader under it still reads 0 with no error there. The lists' own counters are set inside the list and are not touched (a sum inside a card reads right in both engines, 2026-11-01)
+- Affects: `.dcss-int` inside a page's container or `contain: style` box whose counter is set outside it
 
 ## Shared
 

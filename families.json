@@ -2,9 +2,9 @@
   "version": 1,
   "core": {
     "file": "dcss.css",
-    "raw": 312931,
-    "gzip9": 74992,
-    "sha256": "19c51f51b28f1a566ff649d13eb29da694397b8c981ba878221c90d21d747397"
+    "raw": 313529,
+    "gzip9": 75229,
+    "sha256": "4ac605c9a4c34c5bbb20a477c4775399036a96cd2c21926a7ba285739d83f16b"
   },
   "extras": {
     "file": "dcss-extras.css",

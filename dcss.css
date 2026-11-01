@@ -1223,7 +1223,12 @@
   --dcss-dcss-im: round(down, (16777216 * (var(--dcss-dcss-ih) - 128 * var(--dcss-dcss-is)) + 1000 * var(--dcss-dcss-iw) + var(--dcss-dcss-iu)) / 1000000, 1);
   --dcss-dcss-ii: calc(16777216 * (var(--dcss-dcss-ih) - 128 * var(--dcss-dcss-is)) + 1000 * var(--dcss-dcss-iw) + var(--dcss-dcss-iu) - 1000000 * var(--dcss-dcss-im));
   --dcss-int: calc((1 - 2 * var(--dcss-dcss-is)) * (var(--dcss-dcss-im) * 1000000 + var(--dcss-dcss-ii)));
-  --dcss-err: max(sign(max(0, round(100cqw / 1px) - 16777215)), sign(max(0, round(100cqh / 1px) - 256))); }
+  --dcss-err: max(sign(max(0, round(100cqw / 1px) - 16777215)), sign(max(0, round(100cqh / 1px) - 256)), var(--dcss-dcss-ic, 0) * (1 - sign(var(--dcss-dcss-iw) + var(--dcss-dcss-iu) + var(--dcss-dcss-ih)))); }
+/* WebKit 26.4 reads 0 for a counter set outside a size container (or on it) from inside it (QUIRKS.md Q15;
+   facts/counter/counter-read-inside-containment.mjs): there a reader inside a page's container that reads 0 can't tell a
+   counter at 0 from one it can't see, so it gives error 1. Only where an Apple-only property parses: Chrome and Firefox
+   read the counter right there */
+@supports (-apple-pay-button-style: black) { @container (width >= 0px) { .dcss-int { --dcss-dcss-ic: 1; } } }
 .dcss-array > i.dcss-text, .dcss-bins.dcss-bin-max > i.dcss-text, .dcss-map > i.dcss-text, .dcss-width-sum > i.dcss-text, .dcss-largest > i.dcss-text, .dcss-scale > i.dcss-text, .dcss-times > i.dcss-text, .dcss-cap > b > i.dcss-text { width: max-content; }
 /* Nested arrays: <div class="dcss-rows"> of <b>, an inner array each, holding its elements <i style="--dcss-n:
    width; --dcss-key: order">: a row is as wide as its elements end to end (its sum; .dcss-bin-max: its largest, every

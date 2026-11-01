@@ -1026,7 +1026,7 @@
       },
       "A238": {
         "__compat": {
-          "description": "`<b class=\"dcss-int\" style=\"--dcss-counter: name\"><u><u></u></u></b>` MUST give on its inner `<u>`, as `--dcss-int`, the value of the page's counter `name` where the reader stands, any signed 32-bit integer, exact, the next frame after it changes, and 0 for a counter the page never set; the reader MUST take no room in the page's flow, and where its text isn't in its font at 128px MUST give `--dcss-err` 1.",
+          "description": "`<b class=\"dcss-int\" style=\"--dcss-counter: name\"><u><u></u></u></b>` MUST give on its inner `<u>`, as `--dcss-int`, the value of the page's counter `name` where the reader stands, any signed 32-bit integer, exact, the next frame after it changes, and 0 for a counter the page never set; the reader MUST take no room in the page's flow, and where its text isn't in its font at 128px MUST give `--dcss-err` 1. Inside a page's size container, where an engine reads a counter set outside it as 0 (QUIRKS.md Q15), it MUST give the counter's value or `--dcss-err` 1, never another number.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
