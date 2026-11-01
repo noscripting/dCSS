@@ -68,9 +68,9 @@
         "dcss-ticks",
         "dcss-variance"
       ],
-      "raw": 469054,
-      "gzip9": 36346,
-      "sha256": "f3bfa7bcf4a8c4c18b58cf62743d4cccc8c2b69d5eedb2c3468b316d4ff2444c"
+      "raw": 469414,
+      "gzip9": 36367,
+      "sha256": "bdca28ceafbb9b17f11e9b2b28fffeba0ba65c3bdc1dd92c95364be9584f569c"
     },
     "scale": {
       "file": "families/scale.css",
