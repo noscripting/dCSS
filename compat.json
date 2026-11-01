@@ -1776,7 +1776,7 @@
       },
       "A180": {
         "__compat": {
-          "description": "`.dcss-summarize` with up to 1,024 items, each a value in 64ths from -1024 to 65535 or none, MUST give each element after the list (a `<figcaption>` excepted), and every element inside one, `--dcss-sum`, `--dcss-count`, `--dcss-length`, `--dcss-mean`, `--dcss-min`, `--dcss-max`, `--dcss-median`, `--dcss-variance` and `--dcss-deviation`: the doubles d3-array's `sum`, `count`, `mean`, `min`, `max` and `median` give for the list (an item with none skipped), its number of items, and the true variance rounded once and its square root (A130's), from the one list. With no number, the mean, min, max and median MUST be no number, error 2; with fewer than two numbers, or one past ±1024, the variance and deviation MUST be no number. More than 64 items, a value outside the range or off the 64ths, or one of a list holding a fraction whose values, each 1025 more, passed 132,735 between them MUST leave no answer, error 1; a page's padding or border on the figure MUST change neither an answer nor its text.",
+          "description": "`.dcss-summarize` with up to 1,024 items, each a value in 64ths from -1024 to 65535 or none, MUST give each element after the list (a `<figcaption>` excepted), and every element inside one, `--dcss-sum`, `--dcss-count`, `--dcss-length`, `--dcss-mean`, `--dcss-min`, `--dcss-max`, `--dcss-median`, `--dcss-variance` and `--dcss-deviation`: the doubles d3-array's `sum`, `count`, `mean`, `min`, `max` and `median` give for the list (an item with none skipped), its number of items, and the true variance rounded once and its square root (A130's), from the one list. With no number, the mean, min, max and median MUST be no number, error 2; with fewer than two numbers, one past ±1024, or more than 64 items, the variance and deviation MUST be no number. More than 1,024 items, a value outside the range or off the 64ths, or one of a list holding a fraction whose values, each 1025 more, passed 132,735 between them MUST leave no answer, error 1; a page's padding or border on the figure MUST change neither an answer nor its text.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -2913,6 +2913,30 @@
             },
             "firefox": {
               "version_added": null
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A236": {
+        "__compat": {
+          "description": "`.dcss-summarize` (and `.dcss-variance`, `.dcss-deviation`) with `.dcss-decimals` and `--decimals` d, a whole number from 0 to 6, on the figure MUST take each item's `--value` v as the whole number k = round(v x 10^d), where k / 10^d is v itself and k is from -1024 to 65535, and MUST give the answers A180 names for those k, each divided by 10^d once: the written decimals' exact answer rounded once (the sum of 0.1 and 0.2 is 0.3), not d3's sum in doubles; min, max and extent pick an input, as d3's. A value with more decimals than d, a k outside the range, a d that isn't a whole number from 0 to 6, or more than 1,024 items MUST leave no answer, error 1.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
+            },
+            "firefox": {
+              "version_added": false,
+              "notes": "FAIL: 78 of 2,008 (no view timelines in release Firefox 158) (2026-10-31)"
             }
           },
           "status": {

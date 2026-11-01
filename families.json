@@ -35,6 +35,7 @@
         "dcss-bisector-right",
         "dcss-count",
         "dcss-cumsum",
+        "dcss-decimals",
         "dcss-descending",
         "dcss-deviation",
         "dcss-extent",
@@ -68,9 +69,9 @@
         "dcss-ticks",
         "dcss-variance"
       ],
-      "raw": 460402,
-      "gzip9": 36301,
-      "sha256": "80b90c3ee13d97a194d08b7501298b50715ebea4ce74ae8dd1890adb054bd13e"
+      "raw": 471538,
+      "gzip9": 36640,
+      "sha256": "23a714ee460a648f6dd0f81ea6339873f34a4766acba66a6b3056faf315df6ca"
     },
     "scale": {
       "file": "families/scale.css",
@@ -288,6 +289,7 @@
     "dcss-bisector-right": "array",
     "dcss-count": "array",
     "dcss-cumsum": "array",
+    "dcss-decimals": "array",
     "dcss-descending": "array",
     "dcss-deviation": "array",
     "dcss-extent": "array",
@@ -6322,6 +6324,10 @@
         "role": "style-only"
       },
       "dcss-bisector": {
+        "family": "array",
+        "role": "style-only"
+      },
+      "dcss-decimals": {
         "family": "array",
         "role": "style-only"
       },

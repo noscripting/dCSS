@@ -42,7 +42,7 @@ The class goes on a `<figure>`: d3.bisectLeft is `.dcss-bisect-left`. Arguments 
 </figure>
 ```
 
-The list is drawn at its answer: hide it with a height and `overflow: clip` on the figure, never on the list. Screen readers don't hear a `--value`: say the numbers in a caption. Numbers are exact in 64ths, halves included; give cents as whole numbers.
+The list is drawn at its answer: hide it with a height and `overflow: clip` on the figure, never on the list. Screen readers don't hear a `--value`: say the numbers in a caption. Numbers are exact in 64ths, halves included; for decimals such as 12.99 or 0.013, add the class `dcss-decimals` and `--decimals: 2` (up to 6) on the figure: each answer is then the decimals' exact one, so 0.1 + 0.2 sums to 0.3. The value times 10^d must be a whole number from -1024 to 65535: with 2 decimals, -10.24 to 655.35.
 
 A call that can't answer prints nothing and sets `--dcss-err`: 1 for an input it can't take, 2 where d3 has no answer. To show a message:
 
@@ -441,7 +441,7 @@ A browser without `@function` drops the declaration, so write a plain value befo
 
 <!-- browsers -->
 
-Headless Chrome 155 and WebKit 26.4, Safari's engine, pass all 128 requirements of [SPEC.md](SPEC.md), and the calls match d3 on 2,120 of the 5,783 calls in d3's tests. Firefox 158 computes `calc()` in 32-bit floats, so exact sums, dates and most formatting go wrong there: it passes 67. [QUIRKS.md](QUIRKS.md) has the engine bugs.
+Headless Chrome 155 and WebKit 26.4, Safari's engine, pass all 129 requirements of [SPEC.md](SPEC.md), and the calls match d3 on 2,120 of the 5,783 calls in d3's tests. Firefox 158 computes `calc()` in 32-bit floats, so exact sums, dates and most formatting go wrong there: it passes 67. [QUIRKS.md](QUIRKS.md) has the engine bugs.
 
 <!-- /browsers -->
 
@@ -449,7 +449,7 @@ Headless Chrome 155 and WebKit 26.4, Safari's engine, pass all 128 requirements 
 
 <!-- performance -->
 
-Layout does the work, in the frame a number changes. A family is at most 36 KB gzipped and loads in 22 ms or less in WebKit 26.4 (2026-10-31). Twenty printed medians, a value moving: 6.3 ms a frame in Chrome, 9.6 in WebKit; variance 8.2, 10.3 (2026-10-30).
+Layout does the work, in the frame a number changes. A family is at most 37 KB gzipped and loads in 22 ms or less in WebKit 26.4 (2026-10-31). Twenty printed medians, a value moving: 6.3 ms a frame in Chrome, 9.6 in WebKit; variance 8.2, 10.3 (2026-10-30).
 
 <!-- /performance -->
 
