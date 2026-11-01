@@ -131,7 +131,7 @@ Measured 2026-10-22, headless: Chrome 155.0.8059.86, WebKit 26.4, Firefox 158.0.
 - Engines: Chrome PASS · WebKit FAIL: 2,000 boxes on `scroll(self x)` cost 3.6 ms of style a frame at rest, 0.0 paused · Firefox PASS
 - Repro: `facts/scroll/self-scroll-idle.mjs`, at the repository's root
 - Bug: [webkit.org/b/327680](https://bugs.webkit.org/show_bug.cgi?id=327680), fixed in WebKit's trunk 2026-10-22 (de90a27a2d), after 26.4
-- Workaround: none in the sheet: every call reads its list by its own scroll range. Each figure on the page is restyled every frame with its items: 128 sum figures of 1,000 items cost 44 ms of style a frame at rest, 17.7 ms with 10 items each; one changed item 258 ms, 2.7 ms when only its figure animates (one run each, 2026-10-31). reduce-check's 826 figures: 89 s to load, 149 s for 60 moving frames.
+- Workaround: a reduction's reads animate the elements after its list (`scroll(nearest)`), not the figure, so the items are not restyled with them: 128 sum figures of 1,000 items cost 18.7 ms of render a frame at rest, 48.0 ms read on the figure (`probes/dcss/counters/race.mjs`, one run each beside other checks, 2026-11-01). Every other call still reads its list by its own scroll range: each such figure is restyled every frame with its items (128 figures of 1,000 items, 44 ms of style a frame at rest, 2026-10-31).
 - Affects: every reduction and every call read by scroll timelines, in pages of many calls
 
 ## Shared
@@ -140,7 +140,7 @@ Measured 2026-10-22, headless: Chrome 155.0.8059.86, WebKit 26.4, Firefox 158.0.
 - A registered `<number>` read through `var()` keeps 6 significant digits in Chrome and Firefox
 - `mod(A, B)` of a negative exact multiple of B is B in WebKit, not 0
 - A registered `<integer>` from 1,000,000 reaches `var()` with 6 significant digits in Chrome, so a reduction's item travels as three integers of 6 digits at most
-- Chrome lays a grid whose tracks add up past 2^25 px out 0 px wide, so a sum's and a mean's list hold a 1 px `::before` to tell
+- Chrome lays a grid whose tracks add up past 2^25 px out 0 px wide, so a mean's list holds a 1 px `::before` to tell
 - WebKit gives `-0 - 0` and `round(up, -0.5, 1)` as 0, and Chrome -0 plus a `clamp()` over a px ratio as 0, so the MathML build writes a - b as a + -1 · b and a ceiling as -floor(-x)
 - Chrome reads a number token from 3.4e38 up as 3.4e38, so the MathML build refuses such a `<cn>` and a name set that large has no answer
 - `tan(atan2(L, 1px))` is wrong in WebKit

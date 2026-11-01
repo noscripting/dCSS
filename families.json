@@ -69,9 +69,9 @@
         "dcss-ticks",
         "dcss-variance"
       ],
-      "raw": 471538,
-      "gzip9": 36640,
-      "sha256": "23a714ee460a648f6dd0f81ea6339873f34a4766acba66a6b3056faf315df6ca"
+      "raw": 475057,
+      "gzip9": 37753,
+      "sha256": "16a8283dc77ebde8479b78ffb1ba20dd12c0f4fe91b6db54db51afdbc57033cd"
     },
     "scale": {
       "file": "families/scale.css",
@@ -502,7 +502,7 @@
         },
         "representations": {
           "input": "item-custom-property",
-          "intermediate": "grid-tracks",
+          "intermediate": "counters",
           "result": "reader-number"
         },
         "contracts": {

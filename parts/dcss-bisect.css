@@ -7,17 +7,16 @@
 /* DCSS ticks: d3-array's ticks, tickIncrement, tickStep and nice in calc() (ticks.mjs). */
 
 /* DCSS reductions: d3.sum, count, mean, min, max, extent and the list's length, in a figure (reduce.mjs). */
-/* the figure reads its own scroll ranges, so it is a scroll container whatever the page sets: overflow: clip (a page's
-   own, the clean-room trial's) makes none, and the reads go inactive; hidden clips the same */
+/* the elements after the list read the figure's scroll ranges, so it is a scroll container whatever the page sets:
+   overflow: clip (a page's own, the clean-room trial's) makes none, and the reads go inactive; hidden clips the same */
 /* --find: only the rows whose --key equals it count (a spreadsheet's SUMIF, COUNTIF, AVERAGEIF, MINIFS, MAXIFS); the
    others take no room, so length counts the rows found, as d3.rollup's group does, and every answer is the one the
    rows found would give written alone. Set on the figure itself, never handed down */
 /* the list at the figure's padding box's far corner, out of flow and hidden, so what follows it is laid out as written and
    the figure's scroll ranges are the list's size: it starts 1 px before the corner, with 1 px of padding there, so it
    always has room (a box of no width or height adds nothing to a scroll range, its other side's included) */
-/* the answers the figure works out, set on it and inherited, held off the list: else each new answer restyled every
-   item and its two boxes (WebKit, one item of 1,000 changed: 15 ms of style, 1.0 with this) */
-/* each element after the list a block of its own (a page's own display wins), the answers handed down to it and what it holds */
+/* each element after the list a block of its own (a page's own display wins), which works the answers out and hands
+   them down to what it holds */
 /* a stair with no item's index: each item two boxes, its ::after in the first row (the widths add up along it) and its
    ::before in the first column (the heights add up down it), the item itself display: contents. Its widths and heights
    are set on it and taken by inherit: width and height what adds up, min-width and min-height a flag (2^24 px, an
@@ -25,6 +24,20 @@
    the first cell, so the boxes start past it both ways. Placed by sibling-index(), every change to one item restyled
    the whole list in WebKit (one item of 1,000: 42 ms of style; 3.0 ms without it). What an item holds takes no room:
    its elements none, its text a box of the list's line height (the grid's anonymous item), 0; the list is hidden */
+/* a sum: each item adds its value (in K-ths) to one of two counters, the positives and the negatives, the list prints
+   the positives as one line as wide as their total and its last item the negatives as one sideways, as tall, so the
+   list is as wide as the positives and as tall as the negatives (the stair's sizes, without a box an item). An item
+   skipped adds nothing (its parts are 0); a value off the grid adds 2^24 px, past the reads (error 1). The counters
+   start on the list, so a page's own of the same name, or a list around it, stays apart; the items are boxes of no
+   size (a display: contents element adds nothing to a counter) and what they hold takes no room. contain: style keeps
+   the counters in the list: without it WebKit keeps one counter tree for the page, and reduce-check's 120 sums of up to
+   3,000 items crashed its page on load (probe crash2.mjs, 2026-10-31) */
+/* K px more padding each way, as the stair's K x K ::before: what the figure holds past its own height (an <output>
+   taller than a 1 px figure) adds to its scroll range, and up to K px of it stays under the list's (a sample's sum of
+   64 sines in a 1 px figure read 17 px short with 1 px; probes/dcss/sample/check.mjs) */
+/* the last item as tall as its ::after, the negatives' line (at 0 px tall WebKit read nothing below it: probe fig.mjs) */
+/* each line clips its own overflow: a line of line-height 0 with its glyphs drawn past it added 8 px to the figure's
+   scroll height in Chrome (WebKit none) */
 
 /* DCSS bisect, on dcss.css's sort and collection-reader kernel (bisect.mjs, search.mjs). */
 @property --dcss-bisect-is-right { syntax: '<integer>'; inherits: true; initial-value: 0; }
