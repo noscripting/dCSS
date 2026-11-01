@@ -233,16 +233,12 @@
    always has room (a box of no width or height adds nothing to a scroll range, its other side's included) */
 /* each element after the list a block of its own (a page's own display wins), which works the answers out and hands
    them down to what it holds */
-/* a stair with no item's index: each item two boxes, its ::after in the first row (the widths add up along it) and its
-   ::before in the first column (the heights add up down it), the item itself display: contents. Its widths and heights
-   are set on it and taken by inherit: width and height what adds up, min-width and min-height a flag (2^24 px, an
-   answer the list can't hold) on the first column and row, where the largest wins. The list's ::before, K x K, takes
-   the first cell, so the boxes start past it both ways. Placed by sibling-index(), every change to one item restyled
-   the whole list in WebKit (one item of 1,000: 42 ms of style; 3.0 ms without it). What an item holds takes no room:
-   its elements none, its text a box of the list's line height (the grid's anonymous item), 0; the list is hidden */
-/* a sum: each item adds its value (in K-ths) to one of two counters, the positives and the negatives, the list prints
-   the positives as one line as wide as their total and its last item the negatives as one sideways, as tall, so the
-   list is as wide as the positives and as tall as the negatives (the stair's sizes, without a box an item). An item
+/* a sum, count, length and mean: each item adds to two counters, the list prints the first as one line as wide as its
+   total and its last item the second as one sideways, as tall, so the list is the size a stair of a box an item had
+   (each item's ::after a row's width, its ::before a column's height) with no box an item. A sum adds its positives
+   (in K-ths) to the first and its negatives to the second; a mean its value (a negative's offset by 1,024) to the first,
+   K a value (4,096 K a negative) to the second, a 1 px mark each item skipped; a count and length 64 a value to the
+   second, 1 a row kept with no number (the reads take n = h / 64 and the rest). An item
    skipped adds nothing (its parts are 0); a value off the grid adds 2^24 px, past the reads (error 1). The counters
    start on the list, so a page's own of the same name, or a list around it, stays apart; the items are boxes of no
    size (a display: contents element adds nothing to a counter) and what they hold takes no room. contain: style keeps
@@ -251,9 +247,11 @@
 /* K px more padding each way, as the stair's K x K ::before: what the figure holds past its own height (an <output>
    taller than a 1 px figure) adds to its scroll range, and up to K px of it stays under the list's (a sample's sum of
    64 sines in a 1 px figure read 17 px short with 1 px; probes/dcss/sample/check.mjs) */
-/* the list in the text's font at its size, so 1ch is the 1 px "0" glyph: where it isn't (a minimum font size past 128px,
-   the font blocked or not loaded) the list is 2^24 px wide, past the reads: the sum is error 1, not a wrong number
+/* each printed line in the lists' font at its size, so 1ch is the 1 px "0" glyph: where it isn't (a minimum font size past
+   128px, the font blocked or not loaded) the line is 2^24 px wide, past the reads: error 1, not a wrong number. The guard
+   is on the lines, not the list: a page's * { font-family: serif !important } reaches the list and no pseudo-element
    (probes/dcss/counters/font-size-check.mjs) */
+/* a count and length read their height from the list's top: 1 px of padding, the stair's */
 /* the last item as tall as its ::after, the negatives' line (at 0 px tall WebKit read nothing below it: probe fig.mjs) */
 /* each line clips its own overflow: a line of line-height 0 with its glyphs drawn past it added 8 px to the figure's
    scroll height in Chrome (WebKit none) */

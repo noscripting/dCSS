@@ -4,7 +4,7 @@ dcss.css computes with no script, in HTML: a list's statistics, ticks and nice r
 
 ## Installation
 
-No build, no script: link a call's part, or `dcss.css` and its family. Each call is a class, and a file in `parts/`. One class per figure; `.dcss-summarize` gives nine at once. A sum is a `<figure>` around a list: the browser lays the list out, and its size is the answer. This page links two parts that come to 11 KB gzipped:
+No build, no script: link a call's part, or `dcss.css` and its family. Each call is a class, and a file in `parts/`. One class per figure; `.dcss-summarize` gives nine at once. A sum is a `<figure>` around a list: the browser lays the list out, and its size is the answer. This page links two parts that come to 12 KB gzipped:
 
 ```html
 <!doctype html>
@@ -449,7 +449,7 @@ Headless Chrome 155 and WebKit 26.4, Safari's engine, pass all 130 requirements 
 
 <!-- performance -->
 
-Layout does the work, in the frame a number changes. A family is at most 38 KB gzipped and loads in 22 ms or less in WebKit 26.4 (2026-10-31). Twenty printed medians, a value moving: 6.3 ms a frame in Chrome, 9.6 in WebKit; variance 8.2, 10.3 (2026-10-30). Twenty sums of 256 items, a value moving: 4.3 ms a frame in Chrome, 9.8 in WebKit (2026-11-01).
+Layout does the work, in the frame a number changes. A family is at most 39 KB gzipped and loads in 22 ms or less in WebKit 26.4 (2026-10-31). Twenty printed medians, a value moving: 6.3 ms a frame in Chrome, 9.6 in WebKit; variance 8.2, 10.3 (2026-10-30). Twenty sums of 256 items, a value moving: 4.3 ms a frame in Chrome, 9.8 in WebKit (2026-11-01).
 
 <!-- /performance -->
 
