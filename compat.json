@@ -1024,6 +1024,30 @@
           }
         }
       },
+      "A238": {
+        "__compat": {
+          "description": "`<b class=\"dcss-int\" style=\"--dcss-counter: name\"><u><u></u></u></b>` MUST give on its inner `<u>`, as `--dcss-int`, the value of the page's counter `name` where the reader stands, any signed 32-bit integer, exact, the next frame after it changes, and 0 for a counter the page never set; the reader MUST take no room in the page's flow, and where its text isn't in its font at 128px MUST give `--dcss-err` 1.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
+            },
+            "firefox": {
+              "version_added": false,
+              "notes": "FAIL: 8 of 54, values past 2^24 off by Firefox's 32-bit calc() (-16777217 read -16777216); error 1 with the font missing"
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
       "A44": {
         "__compat": {
           "description": "The text operators MUST give, from pair texts and counter styles, min, max, a sum of products, |a - b|, a > b, a × b by `letter-spacing`, floor(a / b) by a tab, sign and relu, exact.",

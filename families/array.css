@@ -353,7 +353,6 @@
   --dcss-nice-start: var(--dcss-nice-start-raw); --dcss-nice-stop: var(--dcss-nice-stop-raw); }
 
 /* DCSS reductions: d3.sum, count, mean, min, max, extent and the list's length, in a figure (reduce.mjs). */
-@font-face { font-family: dcss-dcss-bits; src: url(data:font/woff;base64,d09GRgABAAAAAAJYAAoAAAAAArQAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAABPUy8yAAAA9AAAACoAAABgURpQE2NtYXAAAAEgAAAAMgAAADTN7RmdZ2x5ZgAAAVQAAAAfAAAAIgGCAgRoZWFkAAABdAAAACcAAAA2X549/WhoZWEAAAGcAAAAGgAAACQBARAQaG10eAAAAbgAAAAnAAAAPCCAAABsb2NhAAAB4AAAAA0AAAAgAHcAiG1heHAAAAHwAAAAGAAAACAAEQAGbmFtZQAAAggAAABBAAAAVgO8E4Rwb3N0AAACTAAAAAwAAAAgAAMAAHjaY2BhaGCcwMDKQDLw8/dzZXBgUPj/n6EBLNCAJNkA5ikwMAAA+FAGyQAAeNodyjERwCAUBbB8yjFhoA464t9FVSDj0WvmoFwKU/dg6Eqz9kywtiTv3f71OZPMCG0AAHjaY2BkAIEGhgYGZgYGRkZGRjCP4X8DVJwBADFIA4gAeNpjYGRgYGBkYIjc8e9xPL/NVwZuhgYGbKABLM7BwATiAADixAYpAHjaY2BkYGBoAGIGAQYwaGBgZEAF/AAbBwEiAAB42m3JoREAIAgAwJcjGB3BURiN0S1GwqfXWF8gsXFwUei5HzmcAaAAeNpjYGAQxAcBDxEBAAAAAHjaY2BkYGDgZ2BhANEMDEwMaAAAAnEAGHjaLcixCYBAEADBeX0OTIyMLMQqjOzAQD4xEr9/QS5ZhkW1GZU6KYL0YBbpKizpEFa77nW4NN3t9OT7+wGY9gdRAAAAeNpjYGbACwAAfQAE) format('woff'); font-display: block; }
 @property --dcss-dcss-has { syntax: '<number>'; inherits: false; initial-value: 0; }
 @property --dcss-dcss-ok { syntax: '<number>'; inherits: false; initial-value: 0; }
 @property --dcss-dcss-out { syntax: '<number>'; inherits: false; initial-value: 0; }

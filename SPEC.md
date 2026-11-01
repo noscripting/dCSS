@@ -5,7 +5,7 @@ dcss.css computes with CSS layout: indexed reads, sums, ranks, sorts, keyed maps
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in BCP 14 [RFC2119] [RFC8174] when, and only when, they appear in all capitals, as shown here.
 
 Measured 2026-10-29, headless: Chrome 155.0.8059.86, WebKit 26.4, Firefox 158.0.
-Conformance: Chrome 130/130, WebKit 130/130, Firefox 67/130.
+Conformance: Chrome 131/131, WebKit 131/131, Firefox 67/131.
 Additional paired cases measured 2026-10-26 in Chrome/WebKit; the Firefox report is unchanged.
 The checks, probes and scripts this document names are in the noscript.ing repository ([github.com/noscripting/noscript.ing](https://github.com/noscripting/noscript.ing)), under `libraries/dcss/`; this package carries the sheets and their documents.
 
@@ -145,6 +145,10 @@ for selection or computation. Packaging does not expand any function's bounds.
   `<b class="dcss-hop-y">` a column the sum of the rows it spans, read by `.dcss-at-y` and `.dcss-at-x`.
 - **A43** `.dcss-text` MUST give the sum and the largest line of counters in `dcss-tally`, f(k) of the shared tables
   (k, round(k^2 / 1000), round(sqrt(1000 k)) for k 0 to 999), a scan and a table's running totals, exact.
+- **A238** `<b class="dcss-int" style="--dcss-counter: name"><u><u></u></u></b>` MUST give on its inner `<u>`, as
+  `--dcss-int`, the value of the page's counter `name` where the reader stands, any signed 32-bit integer, exact, the next
+  frame after it changes, and 0 for a counter the page never set; the reader MUST take no room in the page's flow, and
+  where its text isn't in its font at 128px MUST give `--dcss-err` 1.
 - **A44** The text operators MUST give, from pair texts and counter styles, min, max, a sum of products, |a - b|, a > b,
   a × b by `letter-spacing`, floor(a / b) by a tab, sign and relu, exact.
 - **A45** A `.dcss-collapse` of signed margins, `.dcss-zoom` factors in a sum, an `.dcss-baseline` row,
@@ -570,6 +574,7 @@ for selection or computation. Packaging does not expand any function's bounds.
 | A41 | check.mjs: 57; check.mjs: 69 | PASS | PASS | FAIL: `anchor-size()` keeps the anchors' first sizes (QUIRKS Q3); in a container as wide as its content, check 69, it passes |
 | A42 | check.mjs: 60 | PASS | PASS | PASS |
 | A43 | check.mjs: 61 | PASS | PASS | PASS |
+| A238 | probes/dcss/counters/int-check.mjs: 51 counters set by counter-reset (both ends, the 2^24 boundary, 37 seeded), a table of 200 rows summed by counter-increment read in its footer, a counter never set, a change read the next frame, the reader's room in the flow, the font missing | PASS: 54 of 54, every one error 1 with the font missing (2026-11-01) | PASS: 54 of 54, the same (2026-11-01) | FAIL: 8 of 54, values past 2^24 off by Firefox's 32-bit calc() (-16777217 read -16777216); error 1 with the font missing |
 | A44 | check.mjs: 62 | PASS | PASS | PASS |
 | A45 | check.mjs: 63 | PASS | PASS | PASS |
 | A46 | check.mjs: 64 | PASS | PASS | PASS |
