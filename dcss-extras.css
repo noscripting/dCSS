@@ -9,14 +9,14 @@
    An item of a .list is a wrapper with no padding, border or margin of its own: it is as big as what is inside it, and
    spacing goes inside (a list's gap would stay for a dropped item). */
 .list { display: flex; flex-wrap: wrap; align-items: flex-start; align-content: flex-start; }
-.list > * { max-width: calc(var(--if, 1) * 100000px); max-height: calc(var(--if, 1) * 100000px); overflow: clip; }
+.list > * { max-width: calc(var(--if, 1) * 100000px) !important; max-height: calc(var(--if, 1) * 100000px); overflow: clip; }
 .pager { overflow: clip; }
-.pager > .list { position: relative; top: calc(var(--page, 0) * -100%); }
+.pager > .list { position: relative !important; top: calc(var(--page, 0) * -100%); }
 /* A list's size as numbers: a <b class="dcss-size"><u></u></b> in it gets --dcss-width and --dcss-height, the
    list's (its rows, when its items are 1 px tall). */
 .list { position: relative; }
-.list > .dcss-size { position: absolute; inset: 0; max-width: none; max-height: none; container-type: size; }
-.list > .dcss-size > u { display: block; --dcss-width: calc(100cqw / 1px); --dcss-height: calc(100cqh / 1px); text-decoration: none; }
+.list > .dcss-size { position: absolute !important; inset: 0; max-width: none !important; max-height: none; container-type: size; }
+.list > .dcss-size > u { display: block !important; --dcss-width: calc(100cqw / 1px); --dcss-height: calc(100cqh / 1px); text-decoration: none; }
 /* Loops (SPEC.md A51): a while loop on store.css's board cells, written by hand. The cells are the
    items of one flow, which is also the loop's one shared reader; one more cell under the flow keeps the clock and the
    total. A page writes its cells, its neighbours' names, and its step as a rule:
@@ -48,7 +48,7 @@
 .loop-flow > * { flex: none; }
 /* a loop can be a table: <table class="loop">, the row <tr class="loop-flow" data-store-read>, a <td> a cell (and one
    for the core cell): a row is as wide as its cells added up and as tall as its tallest, as the flow is */
-table.loop { border-collapse: collapse; border-spacing: 0; } table.loop td { padding: 0; } tr.loop-flow { display: table-row; }
+table.loop { border-collapse: collapse; border-spacing: 0; } table.loop td { padding: 0 !important; } tr.loop-flow { display: table-row; }
 .loop-in { --in-a: var(--store-value); --in-b: var(--store-value-2); --in-c: var(--store-value-3); }
 .loop-in-2 { --in-d: var(--store-value); --in-e: var(--store-value-2); --in-f: var(--store-value-3); }
 .loop-in-3 { --in-g: var(--store-value); --in-h: var(--store-value-2); --in-i: var(--store-value-3); }

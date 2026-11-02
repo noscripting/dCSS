@@ -4,4 +4,4 @@
   --w: calc(var(--t1) - var(--t0)); --z: calc(1 - abs(sign(var(--w))));
   --t: calc(var(--z) * 0.5 + (1 - var(--z)) * (var(--tx) - var(--t0)) / (var(--w) + var(--z)));
   --y: calc(var(--range-0) * (1 - var(--t)) + var(--range-1) * var(--t));
-  result: calc(var(--round) * round(var(--y)) + (1 - var(--round)) * var(--y)); }
+  result: calc(var(--round) * round(var(--y)) + (1 - var(--round)) * var(--y) + 0 * log((1 - 2 * clamp(0, -1 * sign(var(--domain-0, 1)), 1)) * var(--x))); }

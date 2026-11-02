@@ -40,10 +40,10 @@ The table shows 120, 95, 140, 80, 160 and 110.
 
 ## 2. The total and the average
 
-A call is a class on a `<figure>` around a list, one `--value` an item. `.dcss-mean` gives the list's sum as `--dcss-sum` and its mean as `--dcss-mean` to each element after the list. The list is drawn at its answer, so the figure clips it to one line and the screen reader skips it (`aria-hidden`). Add `families/array.css` beside the other links, and this after the table:
+A call is a class on a `<figure>` around a list, one `--value` an item. `.dcss-mean` gives the list's sum as `--dcss-sum` and its mean as `--dcss-mean` to each element after the list. The list is drawn at its answer, a pixel tall and as wide as its total, so the figure clips it (`overflow: clip`, no height: a fixed one would cut the sentence when it wraps on a narrow screen) and the screen reader skips it (`aria-hidden`). Add `families/array.css` beside the other links, and this after the table:
 
 ```html
-<figure class="dcss-mean dcss-format-fixed" style="height: 1lh; overflow: clip; margin: 0">
+<figure class="dcss-mean dcss-format-fixed" style="overflow: clip; margin: 0">
   <ul aria-hidden="true">
     <li style="--value: var(--jan)"></li> <li style="--value: var(--feb)"></li> <li style="--value: var(--mar)"></li>
     <li style="--value: var(--apr)"></li> <li style="--value: var(--may)"></li> <li style="--value: var(--jun)"></li>
@@ -70,7 +70,7 @@ The average is a number in CSS, so it can size things: a bar `--dcss-mean` pixel
   body { margin: 24px; font: 16px/1.4 system-ui, sans-serif; }
   .sales { --jan: 120; --feb: 95; --mar: 140; --apr: 80; --may: 160; --jun: 110; }
   .sales:has(#y2026:checked) { --jan: 130; --feb: 145; --mar: 90; --apr: 175; --may: 160; --jun: 120; }
-  .summary { height: 3lh; overflow: clip; margin: 0; }
+  .summary { overflow: clip; margin: 0; }
   .bar { height: 12px; width: calc(var(--dcss-mean) * 1px); background: teal; }
 </style>
 

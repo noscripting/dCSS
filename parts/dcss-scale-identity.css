@@ -5,10 +5,18 @@
 @property --dcss-err { syntax: '<integer>'; inherits: true; initial-value: 0; }
 :where([class*="dcss-"]) { writing-mode: horizontal-tb; }
 /* DCSS d3.scaleLinear: up to 8 stops, clamp, rangeRound (linear.mjs). */
+@property --dcss-dcss-inexact{syntax:'<number>';inherits:true;initial-value:0}:root{--dcss-dcss-inexact:abs(sign(3 / 10 - 0.3))}
+@property --dcss-dcss-inexact{syntax:'<number>';inherits:true;initial-value:0}:root{--dcss-dcss-inexact:abs(sign(3 / 10 - 0.3))}
 
 /* DCSS d3.scalePow and scaleSqrt (linear.mjs). */
+@property --dcss-dcss-inexact{syntax:'<number>';inherits:true;initial-value:0}:root{--dcss-dcss-inexact:abs(sign(3 / 10 - 0.3))}
+@property --dcss-dcss-inexact{syntax:'<number>';inherits:true;initial-value:0}:root{--dcss-dcss-inexact:abs(sign(3 / 10 - 0.3))}
+@property --dcss-dcss-inexact{syntax:'<number>';inherits:true;initial-value:0}:root{--dcss-dcss-inexact:abs(sign(3 / 10 - 0.3))}
+@property --dcss-dcss-inexact{syntax:'<number>';inherits:true;initial-value:0}:root{--dcss-dcss-inexact:abs(sign(3 / 10 - 0.3))}
 
 /* DCSS d3.scaleLog: map and invert (linear.mjs). */
+@property --dcss-dcss-inexact{syntax:'<number>';inherits:true;initial-value:0}:root{--dcss-dcss-inexact:abs(sign(3 / 10 - 0.3))}
+@property --dcss-dcss-inexact{syntax:'<number>';inherits:true;initial-value:0}:root{--dcss-dcss-inexact:abs(sign(3 / 10 - 0.3))}
 
 @property --dcss-identity-present{syntax:'<integer>';inherits:false;initial-value:0}
 @property --dcss-identity-error{syntax:'<integer>';inherits:false;initial-value:1}

@@ -1,10 +1,10 @@
 # dcss.css
 
-dcss.css computes with no script, in HTML: a list's statistics, ticks and nice ranges, scales, number and date formats, UTC dates, and a formula of your own, solved, evaluated, sampled or set in motion, each as d3 or a spreadsheet works it out. It works in Chrome and Safari, not Firefox ([Browsers](#browsers)).
+dcss.css computes with no script, in HTML: a list's statistics, scales, number and date formats, UTC dates, and a formula of your own, solved, evaluated, sampled or set in motion, each as d3 or a spreadsheet works it out. It works in Chrome and Safari, not Firefox ([Browsers](#browsers)).
 
 ## Installation
 
-No build, no script: link a call's part, or `dcss.css` and its family. Each call is a class, and a file in `parts/`. One class per figure; `.dcss-summarize` gives nine at once. A sum is a `<figure>` around a list: the browser lays the list out, and its size is the answer. This page links two parts that come to 12 KB gzipped:
+No build, no script: link a call's part, or `dcss.css` and its family. Each call is a class, and a file in `parts/`. One class per figure; `.dcss-summarize` gives nine at once. A sum is a `<figure>` around a list: the browser lays the list out, and its size is the answer. This page links two parts that come to 18 KB gzipped:
 
 ```html
 <!doctype html>
@@ -20,6 +20,8 @@ No build, no script: link a call's part, or `dcss.css` and its family. Each call
 
 One `--value` per item; each element after the list reads `--dcss-sum`, `--dcss-mean` and `--dcss-count`, on a line of its own, and follows a changed `--value`.
 
+Under a Content-Security-Policy whose `style-src` leaves out `'unsafe-inline'`, the browser drops every style attribute, the items' and the outputs' alike, and the reductions give error 1, a page that registers `--value` itself too. Set `--value` from a linked sheet (`[data-v="12"] { --value: 12; }`) or from script (`li.style.setProperty('--value', 12)`), which such a policy allows: the sums, counts, means, maxima and lengths answer in Chrome and WebKit. The fonts dcss reads with are `data:` URLs: a `font-src` (or `default-src`) without `data:` makes sums, counts, means and lengths refuse.
+
 Or link `dcss.css` and the families [Reference](#reference) names, or `dcss-all.css`:
 
 ```html
@@ -27,6 +29,23 @@ Or link `dcss.css` and the families [Reference](#reference) names, or `dcss-all.
 <link rel="stylesheet" href="families/array.css">
 <link rel="stylesheet" href="families/format.css">
 ```
+
+Inside a shadow root (a web component), link the same sheets in the document as well: the document holds the
+`@property`, `@font-face` and `@counter-style` rules the calls need. Without them no call answers, and with only some
+of them WebKit and Firefox read wrong (QUIRKS Q21). Write the items in the shadow root's list: items slotted in from
+the light DOM (`<ul><slot></slot></ul>`) take none of the item rules there, so the call has no answer (error 1).
+
+A closed `<details>` doesn't lay out its content, so a call inside it has no answer (error 1) until it is opened. To
+show its answer in the `<summary>` while closed, keep the content laid out and still collapsed:
+
+```css
+details:not([open])::details-content {
+  content-visibility: visible; display: flow-root; block-size: 0; overflow: clip; visibility: hidden;
+}
+```
+
+`visibility: hidden` keeps the closed content out of Tab. Without it a text fragment (`#:~:text=`) opens the box in
+WebKit and Firefox, and Tab reaches inside; Chrome doesn't open it either way.
 
 Formulas written as Content MathML over a table the reader sees compile to these calls with [BASICSS](https://github.com/noscripting/basicss)'s MathML format.
 
@@ -42,7 +61,9 @@ The class goes on a `<figure>`: d3.bisectLeft is `.dcss-bisect-left`. Arguments 
 </figure>
 ```
 
-The list is drawn at its answer: hide it with a height and `overflow: clip` on the figure, never on the list. Screen readers don't hear a `--value`: say the numbers in a caption. Numbers are exact in 64ths, halves included; for decimals such as 12.99 or 0.013, add the class `dcss-decimals` and `--decimals: 2` (up to 6) on the figure: each answer is then the decimals' exact one, so 0.1 + 0.2 sums to 0.3. The value times 10^d must be a whole number from -1024 to 65535: with 2 decimals, -10.24 to 655.35.
+To format the answer, give the output, or the figure, a format class: `<output class="dcss-format-fixed" style="--precision: 2; --symbol: 1"></output>` prints $82.00, the call's answer. An output with a `--value` of its own prints that instead, such as `calc(var(--dcss-sum) / 100)` for cents.
+
+The list is drawn at its answer, a pixel or so tall and as wide as it: hide it with `overflow: clip` on the figure, never on the list, and no height (a fixed `1lh` cuts the answers' line when it wraps on a narrow screen). The figure is a block. For a total inside a sentence, put the sentence in a `<div>` (a `<p>` ends before a `<figure>`) and give the figure `display: inline-block` with a rule that names its class, such as `figure.total { display: inline-block }`. `display: inline` or `contents` leave the figure no box of its own to read, and its answer is then wrong. What the figure shows after its list, and how the page styles the figure (its height, its overflow), never reaches the answers of `.dcss-sum`, `.dcss-mean`, `.dcss-count`, `.dcss-length`, `.dcss-min`, `.dcss-max` and `.dcss-extent`: they are read from the list's own box. A median or quantile figure inline also needs a width of the page's (`figure.total { display: inline-block; width: 6em }`): it is a size container, 0 wide without one. To show an answer outside its figure, publish it to a ctx.css cell (ctx's README, Cells) and read `--ctx-cell` where it is shown. Screen readers don't hear a `--value`: say the numbers in a caption. A printed answer is drawn and heard, but it is generated content: a copy, `innerText` and Reader View leave it out. It is heard: an `<output>` is a status whose text is its digits, and it changes when the list does (in Chrome's accessibility tree; in a `role=status aria-live=polite` output too). A value the page changes by a rule (`:has(#x:checked) li.a { --value: 50 }`) goes in a class rule, not the item's `style`, which would win. `.dcss-sum`, `.dcss-mean`, `.dcss-min`, `.dcss-max` and `.dcss-extent` take whole numbers, one unit a pixel, however they are set (`style`, a class rule, `var()`, `calc()`): a sum is exact up to the limits under Browsers, and a value with a fraction gives no answer, error 1. Prices in cents are whole numbers (`.cart li { --value: calc(var(--qty) * var(--price)) }`). `.dcss-summarize`, `.dcss-variance` and `.dcss-deviation` take whole numbers from -1024 to 65535 the same way. For decimals such as 12.99 or 0.013, `.dcss-summarize`, `.dcss-variance` and `.dcss-deviation` take the class `dcss-decimals` and `--decimals: 2` (up to 6) on the figure: each answer is then the decimals' exact one, so 0.1 + 0.2 sums to 0.3, and the value times 10^d must be a whole number from -1024 to 65535 (with 2 decimals, -10.24 to 655.35). The median, quantile and the other order calls take `--decimals` alone (A247). `.dcss-sum` and `.dcss-mean` take them too (A249): with `dcss-decimals` and `--decimals: 2`, 12.99 + 7.01 sums to 20 exactly (to 167,772.15 each way), and the mean is that sum divided once by the count. So do `.dcss-min`, `.dcss-max` and `.dcss-extent`: a week's lows in tenths, -3.2 among them, give -3.2 with `--decimals: 1` (k from -131,072 to 8,257,535).
 
 A call that can't answer prints nothing and sets `--dcss-err`: 1 for an input it can't take, 2 where d3 has no answer. To show a message:
 
@@ -52,11 +73,20 @@ A call that can't answer prints nothing and sets `--dcss-err`: 1 for an input it
   .bad { display: none; }
   @container style(--dcss-err: 1) { .ok { display: none; } .bad { display: inline; } }
 </style>
-<figure class="dcss-max-index" style="height: 1lh; overflow: clip">
+<figure class="dcss-max-index" style="overflow: clip">
   <ul><li style="--value: 3"></li><li style="--value: 9"></li><li style="--value: 4"></li></ul>
   <div><span><span class="ok">Highest: item <output></output></span><span class="bad">no answer</span></span></div>
 </figure>
 ```
+
+A refused answer counts as 0 in `counter-reset`, so a counter style that prints a word picked by an answer (a grade, a name) prints its first one: give the style a blank first symbol and count from 1 when there is no error, which prints nothing on a refusal in all three engines:
+
+```css
+@counter-style reps { system: fixed 0; symbols: "" "Ana" "Ben" "Caro"; }
+.top output::after { counter-reset: w calc((var(--dcss-max-index) + 1) * (1 - min(1, var(--dcss-err)))); content: counter(w, reps); }
+```
+
+An index prints a name the same way: give the counter a style of the items' names, `@counter-style names { system: fixed 0; symbols: 'Apples' 'Pear' 'Plums'; }` and `content: counter(i, names)`, and the answer above reads "Highest: Pear", and follows the list when it changes.
 
 ## Using two calls together
 
@@ -79,13 +109,18 @@ Put a call inside another's answer. A sum feeding a scale:
 </figure>
 ```
 
-A range made nice reads `.dcss-nice`'s `--dcss-nice-start` and `--dcss-nice-stop`, as d3.nice gives them:
+The scale is arithmetic on the sum and follows it in the same frame. A reduction whose list holds another reduction's answer reads layout again: a chain of them follows a change up to a frame a level later, and until it settles the outer answer may be wrong with `--dcss-err` 0 (chains of up to 40 sums, each right once settled).
+
+A call can't read an answer of its own name from outside: on its element that name is its own answer (a month offset's `--value: var(--dcss-utc-month)` reads itself, and gives nothing). Name the outer answer on an element between, with a name no call reads as an input (not `--value`, `--start`, `--stop`, `--step`), and read that:
 
 ```html
-<figure class="dcss-nice" style="--start: -3.5; --stop: 31.2; --count: 6">
-  <output class="dcss-format-fixed" style="--value: var(--dcss-nice-start); --precision: 0"></output> <!-- −5 -->
-  <output class="dcss-format-fixed" style="--value: var(--dcss-nice-stop); --precision: 0"></output> <!-- 35 -->
-</figure>
+<div class="dcss-utc-month-floor" style="--value: 1769903940000">
+  <div style="--first: var(--dcss-utc-month)">
+    <div class="dcss-utc-month-offset" style="--value: var(--first); --step: 2">
+      <!-- --dcss-utc-month: 1772323200000, 2026-03-01 -->
+    </div>
+  </div>
+</div>
 ```
 
 A median or quantile goes to each element after the list, and a format on the figure formats every output in it:
@@ -99,7 +134,7 @@ A median or quantile goes to each element after the list, and a format on the fi
 One list, every answer. Each element after the list reads the sum, count, length, mean, min, max, median, variance and deviation, on a line of its own:
 
 ```html
-<figure class="dcss-summarize dcss-format-fixed" style="--precision: 1">
+<figure class="dcss-summarize dcss-decimals dcss-format-fixed" style="--decimals: 1; --precision: 1">
   <ul><li style="--value: 72.5"></li> <li style="--value: 88"></li> <li style="--value: 95"></li> <li style="--value: 47"></li></ul>
   <output style="--value: var(--dcss-mean)"></output>  <!-- 75.6 -->
 </figure>
@@ -108,7 +143,7 @@ One list, every answer. Each element after the list reads the sum, count, length
 Everything inside such an element reads them too, so answers sit in a sentence:
 
 ```html
-<figure class="dcss-summarize dcss-format-fixed" style="--precision: 1">
+<figure class="dcss-summarize dcss-decimals dcss-format-fixed" style="--decimals: 1; --precision: 1">
   <ul><li style="--value: 72.5"></li> <li style="--value: 88"></li> <li style="--value: 95"></li> <li style="--value: 47"></li></ul>
   <p>
     Mean <output style="--value: var(--dcss-mean)"></output>,   <!-- 75.6 -->
@@ -120,7 +155,7 @@ Everything inside such an element reads them too, so answers sit in a sentence:
 A caption and any number of outputs lay out in the order written, and the figure grows to hold them:
 
 ```html
-<figure class="dcss-summarize dcss-format-fixed" style="--precision: 1">
+<figure class="dcss-summarize dcss-decimals dcss-format-fixed" style="--decimals: 1; --precision: 1">
   <figcaption>Scores</figcaption>
   <ul><li style="--value: 72.5"></li> <li style="--value: 88"></li> <li style="--value: 95"></li> <li style="--value: 47"></li></ul>
   <output style="--value: var(--dcss-mean)"></output>       <!-- 75.6 -->
@@ -137,7 +172,7 @@ A caption and any number of outputs lay out in the order written, and the figure
 A spreadsheet's exact lookup: `.dcss-lookup` gives the `--value` of the row whose `--key` is the figure's `--find`, as d3.index's get does. Keys are numbers: a product number, a year, a size. Prices go in cents:
 
 ```html
-<figure class="dcss-lookup dcss-format-fixed" style="--find: 102; --precision: 2; height: 1lh; overflow: clip">
+<figure class="dcss-lookup dcss-format-fixed" style="--find: 102; --precision: 2; overflow: clip">
   <ul aria-hidden="true">
     <li style="--key: 101; --value: 1250"></li>
     <li style="--key: 102; --value: 899"></li>
@@ -147,7 +182,7 @@ A spreadsheet's exact lookup: `.dcss-lookup` gives the `--value` of the row whos
 </figure>
 ```
 
-A key in no row prints nothing, error 2; a key in two rows, error 1. A list has no limit on rows. For brackets (a tax band, a shipping tier: the row whose range holds the number), use `.dcss-scale-threshold`.
+A key in no row prints nothing, error 2; a key in two rows, error 1. `--find` goes on the figure itself, never taken from an element around it, so a lookup inside another call's answer sets it there: `style="--find: round(down, var(--dcss-sum) / 500)"`. A discount on a price in cents lands on a half cent (15% off 1250 is 1062.5). Firefox refuses a tie at the last digit printed: round to cents in the page's own calc first, `--value: calc(round(var(--dcss-lookup) * 0.85) / 100)`. A list has no limit on rows. For brackets (a tax band, a shipping tier: the row whose range holds the number), use `.dcss-scale-threshold`.
 
 ## Totals for one key
 
@@ -161,6 +196,20 @@ A key in no row prints nothing, error 2; a key in two rows, error 1. A list has 
     <li style="--key: 3; --value: 30"></li>
   </ul>
   <output></output>   <!-- 150 -->
+</figure>
+```
+
+A count of every value at once, such as a ratings breakdown, is one `.dcss-bin` over the list, not a figure a value:
+bins cut at 2, 3, 4 and 5 count the 1s to the 5s, each in its own `<li>` of a second list, as `--dcss-bin-length`:
+
+```html
+<figure class="dcss-bin" style="--domain-0: 1; --domain-1: 6; --threshold-0: 2; --threshold-1: 3; --threshold-2: 4; --threshold-3: 5; overflow: clip">
+  <ul aria-hidden="true"><li style="--value: 5"></li> <li style="--value: 4"></li> <li style="--value: 5"></li> <li style="--value: 1"></li></ul>
+  <ol>
+    <li>1★ <b style="width: calc(var(--dcss-bin-length) * 20px)"></b></li> <li>2★ <b style="width: calc(var(--dcss-bin-length) * 20px)"></b></li>
+    <li>3★ <b style="width: calc(var(--dcss-bin-length) * 20px)"></b></li> <li>4★ <b style="width: calc(var(--dcss-bin-length) * 20px)"></b></li>
+    <li>5★ <b style="width: calc(var(--dcss-bin-length) * 20px)"></b></li>
+  </ol>   <!-- 1, 0, 0, 1, 2 -->
 </figure>
 ```
 
@@ -187,19 +236,19 @@ Each call gives its answer as `--dcss-` and its name to the elements directly in
 ### Array: families/array.css
 
 - [`.dcss-sum`](https://d3js.org/d3-array/summarize#sum), [`.dcss-mean`](https://d3js.org/d3-array/summarize#mean), [`.dcss-count`](https://d3js.org/d3-array/summarize#count), `.dcss-length`, [`.dcss-min`](https://d3js.org/d3-array/summarize#min), [`.dcss-max`](https://d3js.org/d3-array/summarize#max), [`.dcss-extent`](https://d3js.org/d3-array/summarize#extent): of the list; length counts its items; with `--find`, of the rows whose `--key` equals it.
-- `.dcss-summarize`: sum, count, length, mean, min, max, median, variance and deviation of one list, to each element after it and everything inside.
+- `.dcss-summarize`: sum, count, length, mean, min, max, median, variance and deviation of one list, to each element after it and everything inside. Values are whole numbers or 64ths: for prices such as 19.99, give the figure the class `dcss-decimals` and `--decimals: 2`, or every answer, the count too, is refused.
 - [`.dcss-min-index`](https://d3js.org/d3-array/summarize#minIndex), [`.dcss-max-index`](https://d3js.org/d3-array/summarize#maxIndex), [`.dcss-least-index`](https://d3js.org/d3-array/summarize#leastIndex), [`.dcss-greatest-index`](https://d3js.org/d3-array/summarize#greatestIndex), [`.dcss-least`](https://d3js.org/d3-array/summarize#least), [`.dcss-greatest`](https://d3js.org/d3-array/summarize#greatest): where the least or greatest is, or its value.
 - [`.dcss-lookup`](https://d3js.org/d3-array/group#index): the `--value` of the row whose `--key` is the figure's `--find`, as a spreadsheet's exact lookup.
 - [`.dcss-median`](https://d3js.org/d3-array/summarize#median), [`.dcss-quantile`](https://d3js.org/d3-array/summarize#quantile), [`.dcss-quantile-sorted`](https://d3js.org/d3-array/summarize#quantileSorted), [`.dcss-median-index`](https://d3js.org/d3-array/summarize#medianIndex), [`.dcss-quantile-index`](https://d3js.org/d3-array/summarize#quantileIndex): read three elements deep; `--p` places a quantile.
 - [`.dcss-variance`](https://d3js.org/d3-array/summarize#variance), [`.dcss-deviation`](https://d3js.org/d3-array/summarize#deviation): read by the element after the list, as the summary's.
-- [`.dcss-scale-quantile`](https://d3js.org/d3-scale/quantile#scaleQuantile), [`.dcss-scale-threshold`](https://d3js.org/d3-scale/threshold#scaleThreshold), [`.dcss-scale-quantize`](https://d3js.org/d3-scale/quantize#scaleQuantize): `--value` to `--range-0` to `--range-16` (`--ranges` of them) or `--unknown`, by the list four elements deep or by `--domain-0` to `--domain-15`.
+- [`.dcss-scale-quantile`](https://d3js.org/d3-scale/quantile#scaleQuantile), [`.dcss-scale-threshold`](https://d3js.org/d3-scale/threshold#scaleThreshold), [`.dcss-scale-quantize`](https://d3js.org/d3-scale/quantize#scaleQuantize): `--value` to `--range-0` to `--range-16` (`--ranges` of them) or `--unknown`, a quantile scale by its list four elements deep, a threshold scale by `--domain-0` to `--domain-15` (a list in it is refused, error 1), a quantize scale by `--domain-0` and `--domain-1`.
 - [`.dcss-bisect-left`](https://d3js.org/d3-array/bisect#bisectLeft), [`.dcss-bisect-right`](https://d3js.org/d3-array/bisect#bisectRight), [`.dcss-bisect`](https://d3js.org/d3-array/bisect#bisect), [`.dcss-bisector-left`](https://d3js.org/d3-array/bisect#bisector), [`.dcss-bisector-right`](https://d3js.org/d3-array/bisect#bisector), [`.dcss-bisector`](https://d3js.org/d3-array/bisect#bisector): where the figure's `--value` goes in the sorted list.
 - [`.dcss-ascending`](https://d3js.org/d3-array/sort#ascending), [`.dcss-descending`](https://d3js.org/d3-array/sort#descending): comparing `--a` and `--b`.
-- [`.dcss-cumsum`](https://d3js.org/d3-array/summarize#cumsum), [`.dcss-bin`](https://d3js.org/d3-array/bin#bin): a second list, a `<li>` per total or bin; bins cut `--domain-0` to `--domain-1` at `--threshold-0` to `--threshold-31` or by `--count`.
+- [`.dcss-cumsum`](https://d3js.org/d3-array/summarize#cumsum), [`.dcss-bin`](https://d3js.org/d3-array/bin#bin): a second list, a `<li>` per total or bin; bins cut `--domain-0` to `--domain-1` at `--threshold-0` to `--threshold-31` or by `--count`, up to 1,024 values. d3 picks how many bins `--count` makes, so write enough `<li>`: one past the last bin answers `--dcss-err` 1 and length 0, and `calc(1 - var(--dcss-err))` hides its bar or label.
+- [`.dcss-rollup-sum`](https://d3js.org/d3-array/group#rollup), [`.dcss-rollup-count`](https://d3js.org/d3-array/group#rollup): each item's `--key` names its group, one of the keys the figure declares (`--key-0` to `--key-31`); after the list, an element per key asked, `<output style="--key: 2"></output>`, gets that key's `--dcss-sum`, or its `--dcss-count` and `--dcss-length`. An answer reads with its own `::before` and `::after`, so it prints through an element inside it, `<output class="dcss-format-fixed" style="--value: var(--dcss-sum)">`: a format class on the answer itself prints nothing. Every element after the first list is an answer and costs its reads: put the page's own content in one element (400 loose spans took seconds to load, in one `<div>` 86 ms).
 - `.dcss-share`: each item's fraction, `--dcss-share`, in its `.dcss-share-read > .dcss-share-result`.
 - [`.dcss-precision-fixed`](https://d3js.org/d3-format#precisionFixed), [`.dcss-precision-prefix`](https://d3js.org/d3-format#precisionPrefix), [`.dcss-precision-round`](https://d3js.org/d3-format#precisionRound): for `--step`, with `--value` or `--max`.
 - [`.dcss-range`](https://d3js.org/d3-array/ticks#range): one `<li>` per number, `--start` to `--stop` by `--step`.
-- [`.dcss-ticks`](https://d3js.org/d3-array/ticks#ticks), [`.dcss-nice`](https://d3js.org/d3-array/ticks#nice): a range's ticks, each `<li>` reading `--dcss-tick`, from `--start` to `--stop`, `--count` of them (10); the range made nice, `--dcss-nice-start` and `--dcss-nice-stop`.
 
 ### Scale: families/scale.css
 
@@ -342,7 +391,7 @@ The build writes an `<i>` around what the call holds, and your rule runs on it a
 
 ### Every row at once
 
-When many things need one formula's answer (24 moons on one orbit, the ticks of an eased axis, labels on a curve), `.dcss-solve-rows` answers every row of a box in one layout. The page writes its formula once, as for `.dcss-solve`; 32 straight pieces sample it (the build writes them, a first `<span>` of 32 pairs `<i><i></i></i>`), and each line in the box starts where the formula reaches that line's value:
+When many things need one formula's answer (24 moons on one orbit, a table of an eased value, labels on a curve), `.dcss-solve-rows` answers every row of a box in one layout. The page writes its formula once, as for `.dcss-solve`; 32 straight pieces sample it (the build writes them, a first `<span>` of 32 pairs `<i><i></i></i>`), and each line in the box starts where the formula reaches that line's value:
 
 ```html
 <div class="dcss-solve-rows orbit" data-dcss-steps="32" style="--from: 0; --to: 6.2832; --top: 0; --bottom: 6.2832; height: 240px">
@@ -365,15 +414,15 @@ Put `.dcss-sample` beside a list call and each item's value is your formula at t
 
 ```html
 <style>
-  .wave li { --dcss-formula: sin(var(--dcss-input) * 1rad); }   /* the same --dcss-formula from --dcss-input as a solve's */
+  .wave li { --dcss-formula: calc(1000 * sin(var(--dcss-input) * 1rad)); }   /* the same --dcss-formula from --dcss-input as a solve's */
 </style>
 <figure class="dcss-sum dcss-sample wave" style="--from: 0; --to: 3.14159">
   <ul aria-hidden="true"><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li></ul>
-  <output class="dcss-format-fixed" style="--value: calc(var(--dcss-sum) * 3.14159 / 16); --precision: 2"></output> <!-- 2.00 -->
+  <output class="dcss-format-fixed" style="--value: calc(var(--dcss-sum) / 1000 * 3.14159 / 16); --precision: 2"></output> <!-- 2.00 -->
 </figure>
 ```
 
-That prints 2.00, the area under one hump of a sine, from 16 values. Each value is rounded to the list's 64ths, so write the formula in units where 1/64 is close enough (pixels are); `--dcss-err` is 1 when the items have no formula, or the figure no `--from` and `--to`. While the formula moves, a sampled list costs a frame what any list of its length does, so a page keeps to a few (Performance).
+That prints 2.00, the area under one hump of a sine, from 16 values. Each value is rounded to a whole number, one unit a pixel, so write the formula in units where 1 is close enough (`calc(1000 * sin(…))`, then divide the answer by 1,000); `--dcss-err` is 1 when the items have no formula, or the figure no `--from` and `--to`. While the formula moves, a sampled list costs a frame what any list of its length does, so a page keeps to a few (Performance).
 
 A formula of two inputs samples on a grid: `--columns` lays the items out in rows of that many, `--dcss-input` runs across a row from `--from` to `--to` and `--dcss-input-y` down the rows from `--from-y` to `--to-y`. Alone, without a list call, the items are yours to draw, a heat map; beside `.dcss-sum`, the sum times both cell sizes is the volume under the formula (a list call keeps its list hidden, so draw and sum in two figures):
 
@@ -388,11 +437,11 @@ A formula of two inputs samples on a grid: `--columns` lays the items out in row
 </figure>
 <figure class="dcss-sum dcss-sample hill" style="--from: -1; --to: 1; --from-y: -1; --to-y: 1; --columns: 4">
   <ul aria-hidden="true"><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li></ul>
-  <output class="dcss-format-fixed" style="--value: calc(var(--dcss-sum) / 64 * 0.5 * 0.5); --precision: 2"></output> <!-- 2.28 -->
+  <output class="dcss-format-fixed" style="--value: calc(var(--dcss-sum) / 64 * 0.5 * 0.5); --precision: 2"></output> <!-- 2.27 -->
 </figure>
 ```
 
-That draws a 4 by 4 heat map of a hill and prints 2.28, the space under it from 16 values (2.23 exactly; more items come closer). The ×64 is the 64ths again: a formula from 0 to 1 would band into 64 steps. Each item gets `--dcss-ready` and `--dcss-err` of its own. Items that aren't a whole number of rows, a `--columns` that isn't a whole number, or a missing `--from-y` where the formula reads `--dcss-input-y` give `--dcss-err` 1. A cell is (to − from) / columns wide and (to-y − from-y) / rows high, each taken positive.
+That draws a 4 by 4 heat map of a hill and prints 2.27, the space under it from 16 values (2.23 exactly; more items come closer). The ×64 is the whole numbers again: a formula from 0 to 1 would band into 0 and 1, so this one bands into 64 steps. Each item gets `--dcss-ready` and `--dcss-err` of its own. Items that aren't a whole number of rows, a `--columns` that isn't a whole number, or a missing `--from-y` where the formula reads `--dcss-input-y` give `--dcss-err` 1. A cell is (to − from) / columns wide and (to-y − from-y) / rows high, each taken positive.
 
 One rule can feed every call at once: `.demo :is(i, li) { --dcss-formula: … }` on a wrapper holding a `.dcss-solve-rows`, a `.dcss-solve` and a `.dcss-sample`, and dots on the curve, where it reaches a value and the area under it all follow the one formula (probes/dcss/sample/curve.html, with no script: radio buttons change it).
 
@@ -419,10 +468,13 @@ Where the browser has `@function` (Chrome; Safari Technology Preview), these cal
 - `--dcss-scale-linear(x, d0, d1, r0, r1, clamp, round)`, and `-pow` (the exponent after `r1`), `-sqrt` and `-log`.
 - `--dcss-utc-<interval>-floor(t)`, `-ceil(t)`, `-round(t)`, `-offset(t, step)` and `-count(start, stop)` for `day`, `hour`, `minute`, `second` and `sunday` to `saturday`.
 
-A browser without `@function` drops the declaration, so write a plain value before it:
+A browser without `@function` keeps a declaration that holds `var()` and finds it invalid only when it computes it, so the property goes back to its initial value, not to a plain value written before it (`width: 0` then the call gave a bar the page's full width in WebKit and Firefox). Put the call in `@supports`, true only where the functions work:
 
 ```css
-.bar { width: 0; width: calc(--dcss-scale-linear(var(--sales), 0, 1000, 0, 600) * 1px); }
+.bar { width: 0; }
+@supports (width: calc(--dcss-scale-linear(1, 0, 2, 0, 4) * 1px)) {
+  .bar { width: calc(--dcss-scale-linear(var(--sales), 0, 1000, 0, 600) * 1px); }
+}
 ```
 
 ### Grid primitives: dcss.css
@@ -442,19 +494,23 @@ A browser without `@function` drops the declaration, so write a plain value befo
 
 <!-- browsers -->
 
-Headless Chrome 155 and WebKit 26.4, Safari's engine, pass all 131 requirements of [SPEC.md](SPEC.md), and the calls match d3 on 2,120 of the 5,783 calls in d3's tests. Firefox 158 computes `calc()` in 32-bit floats, so exact sums, dates and most formatting go wrong there: it passes 67. [QUIRKS.md](QUIRKS.md) has the engine bugs.
+Headless Chrome 155 and WebKit 26.4, Safari's engine, pass 141 and 140 of the 141 requirements of [SPEC.md](SPEC.md), and the calls match d3 on 1,687 of the 5,432 calls in d3's tests. Firefox 159 computes `calc()` in 32-bit floats: it answers to that precision where it can and refuses the rest with `--dcss-err: 1`, never a wrong number, and passes 120. [QUIRKS.md](QUIRKS.md) has the engine bugs.
 
 <!-- /browsers -->
+
+A sum is exact to 2^24 in Chrome and WebKit. Firefox 159 reads a sum's or mean's line exactly to about 2.4 million px, a min's, max's or extent's to 999,999 px and the other calls' under 2^19 px (QUIRKS.md Q17 and Q25), so it refuses (error 1, never a wrong number) a value, sum or total past that from its lower bound; it also refuses `.dcss-median-index` and `.dcss-quantile-index` outright, `.dcss-summarize`, `.dcss-variance` and `.dcss-deviation` (their lines read a pixel or two off there: use `.dcss-sum`, `.dcss-mean`, `.dcss-min` and the others instead), a quantile between two values (a median between two answers), and `.dcss-cumsum` from its first value with a fraction. `.dcss-mean` answers there by long division on whole numbers, its printed digits d3's (a tie at the seventh decimal refused). `.dcss-bin`'s counts, `.dcss-rollup-sum` and `.dcss-rollup-count` answer there within those bounds, and so do `.dcss-scale-quantile`, `.dcss-scale-threshold` and `.dcss-scale-quantize` when every range is a number (the answer is then a `calc()` of it, not its text); with text or colour ranges they answer only the first range there and refuse the rest. What works there: one `.dcss-sum` per group, the other groups' items set to 0 by a rule (`.sum-food li:not(.food) { --value: 0 !important }`), for a rollup; a sum of whole numbers to 2^19 (cents, written as whole numbers in each item's `style`, with any product in a class rule) for money.
 
 ## Performance
 
 <!-- performance -->
 
-Layout does the work, in the frame a number changes. A family is at most 37 KB gzipped and loads in 22 ms or less in WebKit 26.4 (2026-10-31). Twenty printed medians, a value moving: 6.3 ms a frame in Chrome, 9.6 in WebKit; variance 8.2, 10.3 (2026-10-30). Twenty sums of 256 items, a value moving: 4.3 ms a frame in Chrome, 9.8 in WebKit (2026-11-01).
+Layout does the work, in the frame a number changes. A family is at most 53 KB gzipped and loads in 22 ms or less in WebKit 26.4 (2026-10-31). Twenty printed medians, a value moving: 6.3 ms a frame in Chrome, 9.6 in WebKit; variance 8.2, 10.3 (2026-10-30). Twenty sums of 256 items, a value moving: 4.3 ms a frame in Chrome, 9.8 in WebKit (2026-11-01).
 
 <!-- /performance -->
 
 Twenty `.dcss-solve`s animated, good to a pixel (2026-10-31): 13 tries of halving 3.4 ms a frame in Chrome, 9.6 in WebKit; 5 Newton steps 7.4 and 12.3; the Newton machine halving with no slope, 13 tries, 24.7 and 41.0, so the two stay apart. A page using `.dcss-solve` alone carries no Newton step. `.dcss-solve-rows` with f animated, 32 pairs (2026-10-31): 100 rows 2.3 ms a frame in Chrome, 2.9 in WebKit; 1,000 rows 14.7 and 14.3. Twenty `.dcss-motion` pendulums swinging: 4.7 and 5.2. A `.dcss-sum` of 64 samples with the formula moving: 5.8 ms a frame in Chrome, 5.5 in WebKit; twenty, 110 and 79. Twenty `.dcss-evaluate`s with `--at` moving (2026-10-31): 1.3 ms a frame in Chrome, 2.1 in WebKit. Five `.dcss-solve-every`s of 13 pieces, the target moving: 8.5 and 25.3. A grid with the formula moving, drawn and summed: 8 by 8, 18.0 and 20.8; 16 by 16, 76 and 77, about 13 frames a second, most of it the 256-item sum (one row of 256 drawn and summed, 59 and 57), so a moving grid keeps to 8 by 8 and a still one can be larger (probes/dcss/math-cost/cost.mjs). All three calls on one page (20 Newton solves, a 100-row invert, 20 pendulums): 14.3 ms a frame in Chrome, 31.6 in WebKit, about half of it from store.css, linked for the pendulums (probes/dcss/model/together.mjs). One formula feeding a 32-pair invert, two 20-`<i>` solves and a 100-item `.dcss-sample`, the formula changing every frame: 13.8 ms a frame in Chrome, 14.1 in WebKit (probes/dcss/sample/curve-check.mjs).
+
+Bins count by counters and are read in each bin's `<li>` (2026-11-01), so they cost a frame even at rest in WebKit 26.4: four histograms of 20 bins 3.2 ms a frame, twenty of 10 bins 7.4, a value put in, taken out or shown after load counted (in WebKit not one put in where another was taken out at once); Chrome 3.0 for 128 of 10. Firefox 159 counts them within its bounds (counters/late-check.mjs 30 of 30, bins-edges-check.mjs 1,233 right and 59 refused past them, 0 wrong; 2026-11-02).
 
 ## License
 

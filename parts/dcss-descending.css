@@ -4,48 +4,94 @@
 @property --dcss-ready { syntax: '<integer>'; inherits: true; initial-value: 0; }
 @property --dcss-err { syntax: '<integer>'; inherits: true; initial-value: 0; }
 :where([class*="dcss-"]) { writing-mode: horizontal-tb; }
-/* DCSS ticks: d3-array's ticks, tickIncrement, tickStep and nice in calc() (ticks.mjs). */
-
 /* DCSS reductions: d3.sum, count, mean, min, max, extent and the list's length, in a figure (reduce.mjs). */
-@property --dcss-dcss-glyph { syntax: '<integer>'; inherits: true; initial-value: 0; }
-/* the elements after the list read the figure's scroll ranges, so it is a scroll container whatever the page sets:
-   overflow: clip (a page's own, the clean-room trial's) makes none, and the reads go inactive; hidden clips the same */
+@property --dcss-dcss-glyph { syntax: '<integer>'; inherits: true; initial-value: 0; }figure[class*="dcss-"]{direction:ltr!important}:where(figure[class*="dcss-"]:dir(rtl))>:not(ol,ul){direction:rtl}figure[class*="dcss-"]{--dcss-dcss-slot:0}figure[class*="dcss-"]:has(>:is(ul,ol)>slot){--dcss-dcss-slot:1}@property --dcss-dcss-print{syntax:'<integer>';inherits:true;initial-value:0}@media print{:root{--dcss-dcss-print:1}}
+/* the reads are the list's own scroll ranges, named and scoped on the figure, so nothing the page puts in the figure or
+   sets on it reaches them: the figure is the page's, the list is the runtime's. Read off the figure's scroll ranges before
+   2026-11-02, a figure with a set height and two nodes after its list read a sum of 4 as -7 in Chrome 155 and -9 in
+   Firefox 159, error 0, the nodes' overflow taken for the list (scratchpad height/h.mjs, own.mjs). Named, the reads cost
+   WebKit 26.4 more at load past a few hundred figures (own.mjs: 60 figures 123 ms against 126 unnamed, 200 557 against
+   132, 400 3.5 s against 175; Chrome the same both ways) */
 /* --find: only the rows whose --key equals it count (a spreadsheet's SUMIF, COUNTIF, AVERAGEIF, MINIFS, MAXIFS); the
    others take no room, so length counts the rows found, as d3.rollup's group does, and every answer is the one the
-   rows found would give written alone. Set on the figure itself, never handed down */
-/* the list at the figure's padding box's far corner, out of flow and hidden, so what follows it is laid out as written and
-   the figure's scroll ranges are the list's size: it starts 1 px before the corner, with 1 px of padding there, so it
-   always has room (a box of no width or height adds nothing to a scroll range, its other side's included) */
+   rows found would give written alone. Set on the figure itself, never handed down. Firefox parses a number to a
+   32-bit float, so there a row whose key is one float with --find past 2^24 is refused as a lost value is (big): the
+   sum by 16777217 took the row 16777216, 500 with error 0 (Firefox 158; probes/dcss/find/check.mjs) */
+/* the list out of flow and hidden, a scroll container of no size at the figure's corner, 1 px of padding as before: its
+   scroll ranges are its content's size, so what follows it is laid out as written
+   and takes no part in the reads */
 /* each element after the list a block of its own (a page's own display wins), which works the answers out and hands
-   them down to what it holds */
-/* a sum, count, length and mean: each item adds to two counters, the list prints the first as one line as wide as its
-   total and its last item the second as one sideways, as tall, so the list is the size a stair of a box an item had
+   them down to what it holds. The reads are the list's, so what it holds, a bar as wide as the sum included, can't move
+   them (read off the figure before 2026-11-02, such a bar widened the range once a read was off, and WebKit's sum of
+   94 climbed to 2,296,234, error 0; scratchpad time/e.mjs) */
+/* a value the style attribute writes and the item doesn't have: the page's Content-Security-Policy dropped its style
+   attributes (style-src 'self'), so a sum read 0 with error 0; now error 1. This sheet gives such an item --value LOST,
+   at no specificity: a style attribute that applies beats it, and so does a page rule. A page that registers --value
+   itself (a number, initial 0) reads LOST too, where the item's own missing value read 0 (sum 0, error 0, before),
+   and an unregistered --value: abc stays a text d3 skips. Firefox empties a dropped style attribute
+   (getAttribute('style') gives ""), so there an empty one counts as dropped too; elsewhere style="" is a row with no
+   value, skipped (probes/dcss/counters/csp-check.mjs, find/check.mjs; facts/where/firefox-csp-style-attribute-emptied.mjs).
+   An item that writes --value: LOST itself is refused as well. */
+/* a sum, count, length and mean: each item adds to two counters, its last item prints the first as one line as wide
+   as its total and the second as one sideways, as tall, so the list is the size a stair of a box an item had
    (each item's ::after a row's width, its ::before a column's height) with no box an item. A sum adds its positives
-   (in K-ths) to the first and its negatives to the second; a mean its value (a negative's offset by 1,024) to the first,
-   K a value (4,096 K a negative) to the second, a 1 px mark each item skipped; a count and length 64 a value to the
+   (in K-ths) to the first and its negatives to the second; a mean its value to the first (which starts at MEAN_OFF),
+   K a value to the second, a 1 px mark each item skipped; a count and length 64 a value to the
    second, 1 a row kept with no number (the reads take n = h / 64 and the rest). An item
-   skipped adds nothing (its parts are 0); a value off the grid adds 2^24 px, past the reads (error 1). The counters
+   skipped adds nothing (its parts are 0); a value off the grid adds 2^24 px, past the reads (error 1): off the 64ths,
+   or a fraction in a list read in whole numbers, chosen from the style attributes' text (a fraction a stylesheet sets:
+   20.5 summed as 21, error 0, before; or a registered --value between two of a transition's steps). The counters
    start on the list, so a page's own of the same name, or a list around it, stays apart; the items are boxes of no
    size (a display: contents element adds nothing to a counter) and what they hold takes no room. contain: style keeps
    the counters in the list: without it WebKit keeps one counter tree for the page, and reduce-check's 120 sums of up to
    3,000 items crashed its page on load (probe crash2.mjs, 2026-10-31) */
-/* K px more padding each way, as the stair's K x K ::before: what the figure holds past its own height (an <output>
-   taller than a 1 px figure) adds to its scroll range, and up to K px of it stays under the list's (a sample's sum of
-   64 sines in a 1 px figure read 17 px short with 1 px; probes/dcss/sample/check.mjs) */
+/* K px of padding each way, as the stair's K x K ::before (the last item's, below) */
 /* each printed line in the lists' font at its size, so 1ch is the 1 px "0" glyph: where it isn't (a minimum font size past
    128px, the font blocked or not loaded) the line is 2^24 px wide, past the reads: error 1, not a wrong number. The guard
    is on the lines, not the list: a page's * { font-family: serif !important } reaches the list and no pseudo-element
    and WebKit's zoom below 1.25, by dcss.css's root 1rem (build.mjs)
    (probes/dcss/counters/font-size-check.mjs) */
-/* a count and length read their height from the list's top: 1 px of padding, the stair's */
+/* an item put in, taken out or shown after load is counted in WebKit: each item adds 2^24 to both lines for 1 ms
+   there, so a reduction is refused until it is counted (static.mjs remakeCss) */
+/* the last item is the box the list was when the reads were the figure's, K px of padding each way inside the list's own
+   1 px (a count and length 1 px down, none across), then its lines, so its ranges are what they were. A
+   line of no height adds nothing to a scroll range, so the box, not the lines, makes the range. An empty list has the
+   same box as an absolute ::before, so its ranges are K px, not 0, which reads as unrendered */
+/* an item is left out by its hidden attribute alone, and every item is a box whatever the page says (remakeCss): the
+   negatives' line is on the last item, and a page's own display: none on it, an inline one too, took the line away (a
+   count of 3 read 0, error 0; scratchpad cnone/a.mjs, 2026-11-01) */
+/* the zoom guard (ZOOMED): the list's font and zc, each item's zf; an item's own text takes no room at its font size 0 */
+/* a sum or mean in decimals: each value v as the whole number k = round(v x 10^d), taken where k / 10^d is v itself (12.99, not
+   12.991 with 2 decimals) and d is a whole number from 0 to 6; any other value adds 2^24, which voids the sum (error 1), and
+   so does any d but 0 in Firefox, whose calc() keeps 32-bit floats. A sum's list holds whole numbers, no 64ths; a mean's
+   values' line too, from MEAN_DOFF units (its sum down to -MEAN_DOFF), its stair as before */
+/* what an item holds is never laid out, whatever the page says (static.mjs UNSEEN) */
 /* the last item as tall as its ::after, the negatives' line (at 0 px tall WebKit read nothing below it: probe fig.mjs) */
 /* each line clips its own overflow: a line of line-height 0 with its glyphs drawn past it added 8 px to the figure's
    scroll height in Chrome (WebKit none) */
+/* a mean's line starts at its offset, added by the list's own ::before, the first box inside it: the list's counter-reset
+   value is outside its contain: style, and an item's increments start from 0 whatever it says (Chrome, scratchpad mean/cr2.mjs) */
+/* a mean's items skipped, to 63: the 64th prints 2^24 px more on the negatives' line, past the reads (error 1) */
+/* the same in decimals: k = round(v x 10^d) laid out where X was, refused as a sum's is (a value with more decimals than d,
+   a d not whole from 0 to 6, any d but 0 in Firefox); the stack's bounds hold for k */
+/* an output after the list formats the call's answer when it names no --value of its own: a format class on it, or on
+   the figure, then prints (it printed nothing, error 1); its own --value, or a page's rule, wins */
 
 /* DCSS bisect, on dcss.css's sort and collection-reader kernel (bisect.mjs, search.mjs). */
 
-/* Bounded drop-in calls: a list read through plain elements after it, or none (static.mjs). */@property --dcss-sum{syntax:'*';inherits:true}@property --dcss-count{syntax:'*';inherits:true}@property --dcss-length{syntax:'*';inherits:true}@property --dcss-mean{syntax:'*';inherits:true}@property --dcss-min{syntax:'*';inherits:true}@property --dcss-max{syntax:'*';inherits:true}@property --dcss-variance{syntax:'*';inherits:true}@property --dcss-deviation{syntax:'*';inherits:true}
+/* Bounded drop-in calls: a list read through plain elements after it, or none (static.mjs). */@property --dcss-sum{syntax:'*';inherits:true}@property --dcss-count{syntax:'*';inherits:true}@property --dcss-length{syntax:'*';inherits:true}@property --dcss-mean{syntax:'*';inherits:true}@property --dcss-min{syntax:'*';inherits:true}@property --dcss-max{syntax:'*';inherits:true}@property --dcss-variance{syntax:'*';inherits:true}@property --dcss-deviation{syntax:'*';inherits:true}figure[class*="dcss-"]{direction:ltr!important}:where(figure[class*="dcss-"]:dir(rtl))>:not(ol,ul){direction:rtl}figure[class*="dcss-"]{--dcss-dcss-slot:0}figure[class*="dcss-"]:has(>:is(ul,ol)>slot){--dcss-dcss-slot:1}@property --dcss-dcss-print{syntax:'<integer>';inherits:true;initial-value:0}@media print{:root{--dcss-dcss-print:1}}
+@property --dcss-dcss-inexact{syntax:'<number>';inherits:true;initial-value:0}:root{--dcss-dcss-inexact:abs(sign(3 / 10 - 0.3))}
+@property --dcss-dcss-inexact{syntax:'<number>';inherits:true;initial-value:0}:root{--dcss-dcss-inexact:abs(sign(3 / 10 - 0.3))}figure[class*="dcss-"]{direction:ltr!important}:where(figure[class*="dcss-"]:dir(rtl))>:not(ol,ul){direction:rtl}figure[class*="dcss-"]{--dcss-dcss-slot:0}figure[class*="dcss-"]:has(>:is(ul,ol)>slot){--dcss-dcss-slot:1}@property --dcss-dcss-print{syntax:'<integer>';inherits:true;initial-value:0}@media print{:root{--dcss-dcss-print:1}}
+@property --dcss-dcss-inexact{syntax:'<number>';inherits:true;initial-value:0}:root{--dcss-dcss-inexact:abs(sign(3 / 10 - 0.3))}
+@property --dcss-dcss-inexact{syntax:'<number>';inherits:true;initial-value:0}:root{--dcss-dcss-inexact:abs(sign(3 / 10 - 0.3))}figure[class*="dcss-"]{direction:ltr!important}:where(figure[class*="dcss-"]:dir(rtl))>:not(ol,ul){direction:rtl}figure[class*="dcss-"]{--dcss-dcss-slot:0}figure[class*="dcss-"]:has(>:is(ul,ol)>slot){--dcss-dcss-slot:1}
+@property --dcss-dcss-inexact{syntax:'<number>';inherits:true;initial-value:0}:root{--dcss-dcss-inexact:abs(sign(3 / 10 - 0.3))}
+@property --dcss-dcss-inexact{syntax:'<number>';inherits:true;initial-value:0}:root{--dcss-dcss-inexact:abs(sign(3 / 10 - 0.3))}figure[class*="dcss-"]{direction:ltr!important}:where(figure[class*="dcss-"]:dir(rtl))>:not(ol,ul){direction:rtl}figure[class*="dcss-"]{--dcss-dcss-slot:0}figure[class*="dcss-"]:has(>:is(ul,ol)>slot){--dcss-dcss-slot:1}@property --dcss-dcss-print{syntax:'<integer>';inherits:true;initial-value:0}@media print{:root{--dcss-dcss-print:1}}figure[class*="dcss-"]{direction:ltr!important}:where(figure[class*="dcss-"]:dir(rtl))>:not(ol,ul){direction:rtl}figure[class*="dcss-"]{--dcss-dcss-slot:0}figure[class*="dcss-"]:has(>:is(ul,ol)>slot){--dcss-dcss-slot:1}@property --dcss-dcss-print{syntax:'<integer>';inherits:true;initial-value:0}@media print{:root{--dcss-dcss-print:1}}figure[class*="dcss-"]{direction:ltr!important}:where(figure[class*="dcss-"]:dir(rtl))>:not(ol,ul){direction:rtl}figure[class*="dcss-"]{--dcss-dcss-slot:0}figure[class*="dcss-"]:has(>:is(ul,ol)>slot){--dcss-dcss-slot:1}
+@property --dcss-dcss-inexact{syntax:'<number>';inherits:true;initial-value:0}:root{--dcss-dcss-inexact:abs(sign(3 / 10 - 0.3))}
+@property --dcss-dcss-inexact{syntax:'<number>';inherits:true;initial-value:0}:root{--dcss-dcss-inexact:abs(sign(3 / 10 - 0.3))}
+@property --dcss-dcss-inexact{syntax:'<number>';inherits:true;initial-value:0}:root{--dcss-dcss-inexact:abs(sign(3 / 10 - 0.3))}
 /* DCSS shares: one list, a hidden sum lane, and one descendant result per item (share.mjs). */
+/* the read is as wide as the 64 columns, whatever the page sets on it: a page's width: 260px read right on load and kept
+   the old shares after a change, error 0, in Chrome, WebKit and Firefox (probes/dcss/share-read-check.mjs) */
 
 /* DCSS bisect, on dcss.css's sort and collection-reader kernel (bisect.mjs, search.mjs). */
 
@@ -55,11 +101,20 @@
 @property --dcss-compare-ok{syntax:'<integer>';inherits:false;initial-value:0}
 @property --dcss-compare-error{syntax:'<integer>';inherits:false;initial-value:0}
 :where( .dcss-descending){--a:initial;--b:initial}
-.dcss-descending{--dcss-compare-a:var(--a,calc(NaN));--dcss-compare-b:var(--b,calc(NaN));--dcss-compare-a-has:calc(var(--dcss-compare-a) * 0 + 1);--dcss-compare-b-has:calc(var(--dcss-compare-b) * 0 + 1);--dcss-compare-bounds:max(0,sign(max(abs(var(--dcss-compare-a)),abs(var(--dcss-compare-b))) - 16777216));--dcss-compare-ok:calc(var(--dcss-compare-a-has) * var(--dcss-compare-b-has) * (1 - var(--dcss-compare-bounds)));--dcss-ready:1;--dcss-compare-error:max(var(--dcss-compare-bounds),2 * (1 - var(--dcss-compare-a-has) * var(--dcss-compare-b-has)));--dcss-err:var(--dcss-compare-error);}
+.dcss-descending{--dcss-compare-a:var(--a,calc(NaN));--dcss-compare-b:var(--b,calc(NaN));--dcss-compare-a-has:calc(var(--dcss-compare-a) * 0 + 1);--dcss-compare-b-has:calc(var(--dcss-compare-b) * 0 + 1);--dcss-compare-bounds:max(0,sign(max(abs(var(--dcss-compare-a)),abs(var(--dcss-compare-b))) - 16777216),(1 - ((16777216 + 1) - 16777216)) * sign(max(0,max(abs(var(--dcss-compare-a)),abs(var(--dcss-compare-b))) - 16777215)),(1 - ((16777216 + 1) - 16777216)) * (1 - abs(sign(var(--dcss-compare-a) - var(--dcss-compare-b)))) * sign(abs(var(--dcss-compare-a) - round(var(--dcss-compare-a)))));--dcss-compare-ok:calc(var(--dcss-compare-a-has) * var(--dcss-compare-b-has) * (1 - var(--dcss-compare-bounds)));--dcss-ready:1;--dcss-compare-error:max(var(--dcss-compare-bounds),2 * (1 - var(--dcss-compare-a-has) * var(--dcss-compare-b-has)));--dcss-err:var(--dcss-compare-error);}
 .dcss-descending{--dcss-descending:calc(var(--dcss-compare-ok) / var(--dcss-compare-ok) * sign(var(--dcss-compare-b) - var(--dcss-compare-a)));}
 
 /* DCSS index extrema: numeric d3.minIndex/maxIndex and natural numeric least/greatestIndex (index-extrema.mjs). */
 
 /* DCSS lookup: a spreadsheet's exact lookup, d3.index(rows, key).get(find) (lookup.mjs). */
 /* --find set on the figure itself, never handed down: a lookup inside another's answer doesn't take that one's */
+/* Firefox parses a number to a 32-bit float, so a key and --find of 2^24 or more that are one float read equal there
+   (16777217 found the row 16777216, 500 with error 0, Firefox 158). There a row's size is its ::before's, and a row
+   whose key and --find are one float past 2^24 matches by their text, the same written number (a style query on the
+   row: an EAN-13 too), else by the whole numbers a registered <integer> keeps exactly under 2^31 (the 8-digit SKU
+   next to it), else is refused, 65,536 px tall: a key written another way (+, a leading 0, an exponent) or past 2^31
+   and one float with --find (probes/dcss/lookup/check.mjs, the big keys) */
 @property --dcss-range-ready{syntax:'<integer>';inherits:true;initial-value:0}
+[class*="dcss-"]:not([data-store], [data-store] *, [data-random], [data-random] *, [data-ctx-row], [class*="ctx-"]),[class*="dcss-"] :not(:is(ul, ol) > li, [data-store], [data-store] *, [data-random], [data-random] *, [data-ctx-row], [class*="ctx-"]) { transition: none !important; }
+[class*="dcss-"]:not([data-store], [data-store] *, [data-random], [data-random] *, [data-ctx-row], [class*="ctx-"])::before,[class*="dcss-"]:not([data-store], [data-store] *, [data-random], [data-random] *, [data-ctx-row], [class*="ctx-"])::after,[class*="dcss-"] :not([data-store], [data-store] *, [data-random], [data-random] *, [data-ctx-row], [class*="ctx-"])::before,[class*="dcss-"] :not([data-store], [data-store] *, [data-random], [data-random] *, [data-ctx-row], [class*="ctx-"])::after { transition: none !important; }
+[class*="dcss-"] > :is(ul, ol) > li:not([data-store], [data-store] *, [data-random], [data-random] *, [data-ctx-row], [class*="ctx-"]) { transition-property: --value !important; }

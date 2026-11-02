@@ -2,12 +2,36 @@
   "noscripting": {
     "dcss.css": {
       "__compat": {
-        "description": "dcss.css, measured 2026-10-29",
+        "description": "dcss.css, measured 2026-11-02",
         "support": {},
         "status": {
           "experimental": true,
           "standard_track": false,
           "deprecated": false
+        }
+      },
+      "A251": {
+        "__compat": {
+          "description": "Every call MUST give its answer wherever d3 has one, at the engine's own `calc()` precision (doubles in Chrome and WebKit, 32-bit floats in Firefox, QUIRKS.md Q16), and an answer off d3's double only by that precision (in Firefox d3's answer rounded to a float, or within the float steps its requirement states) MUST NOT give `--dcss-err` 1. `--dcss-err` 2 MUST mean only that d3 gives no number (undefined or NaN), and `--dcss-err` 1 only an input past the bound the call's requirement states; \"to the bit\" below is a double's bits in Chrome and WebKit and this float in Firefox. A number that isn't the answer MUST NOT be given with `--dcss-err` 0; where a call's own requirement names an answer more exact than d3's double (A130, the variance rounded once; A249, the exact decimal sum: 0.3 for 0.1 + 0.2, where d3 gives 0.30000000000000004), that is the answer.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
+            },
+            "firefox": {
+              "version_added": false,
+              "notes": "FAIL: Firefox 159 refuses where a float answers: reduce-check 124 of 1,008 (27 sums and 25 means past their text's 150 code points, about 2.4M px; 24 each min, max, extent from 999,999 px: QUIRKS.md Q25 and Q17), counters/decimals-check 244 of 291 (the same lines; a decimals mean's own offset passes them from d 2), the summary outright; 0 wrong; decimals answer at the float's 7 digits (2026-11-02)"
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
         }
       },
       "A1": {
@@ -23,7 +47,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": "≤158"
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -46,7 +70,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": "≤158"
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -69,7 +93,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": "≤158"
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -92,7 +116,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": "≤158"
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -115,7 +139,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": "≤158"
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -138,7 +162,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": "≤158"
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -161,7 +185,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": "≤158"
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -184,7 +208,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": "≤158"
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -207,7 +231,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": "≤158"
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -230,7 +254,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": "≤158"
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -253,7 +277,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": "≤158"
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -276,7 +300,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": "≤158"
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -299,7 +323,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": "≤158"
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -322,7 +346,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": "≤158"
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -334,7 +358,7 @@
       },
       "A15": {
         "__compat": {
-          "description": "In `.dcss-bins`, a child with whole `--dcss-bin` MUST give what is inside it `--dcss-rank`, 1 for the first child in its bin in markup order, exact to 32, with a bin changing every frame.",
+          "description": "In `.dcss-bins`, a child with whole `--dcss-bin` of 1 or more MUST give what is inside it `--dcss-rank`, 1 for the first child in its bin in markup order, exact to 32, with a bin changing every frame. A rank past 32, every rank in a grid of more than 1,024 children, and a child whose bin is below 1 or not an `<integer>` (a `calc()` is rounded, as CSS rounds an `<integer>`) MUST give `--dcss-err: 1` and `--dcss-rank` 0; such a child MUST be in no other child's answer.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -345,7 +369,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": "≤158"
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -357,7 +381,7 @@
       },
       "A16": {
         "__compat": {
-          "description": "A `.dcss-track-count` in `.dcss-bins` MUST give `--dcss-track-count`, the number of bins in use, for bins up to the box's width in px.",
+          "description": "A `.dcss-track-count` in `.dcss-bins` MUST give `--dcss-track-count`, the number of bins in use from 1 to the box's width in px; a child with a bin past the width or refused (A15) MUST count in it no more than a value d3.bin ignores outside its domain.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -368,7 +392,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": "≤158"
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -380,7 +404,7 @@
       },
       "A17": {
         "__compat": {
-          "description": "A `<b class=\"dcss-below\">` in a child of `.dcss-bins` MUST give `--dcss-below`, how many distinct bins in use lie below its bin, with or without an author's padding and border on the grid.",
+          "description": "A `<b class=\"dcss-below\">` in a child of `.dcss-bins` MUST give `--dcss-below`, how many distinct bins from 1 to the box's width in use lie below its bin, with or without an author's padding and border on the grid; in a child whose bin is refused (A15) it MUST give `--dcss-err: 1` and 0.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -391,7 +415,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": "≤158"
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -403,7 +427,7 @@
       },
       "A18": {
         "__compat": {
-          "description": "`.dcss-bins.dcss-bin-max` MUST give a reader with `--dcss-i` the largest `--dcss-n` in bin i, and a range the sum of those maxima, with entries at any depth under `.dcss-nest` wrappers.",
+          "description": "`.dcss-bins.dcss-bin-max` MUST give a reader with `--dcss-i` the largest `--dcss-n` in bin i, and a range the sum of those maxima, with entries at any depth under `.dcss-nest` wrappers, for whole `--dcss-n` from 0 and answers under 1,000,000. A reader over a bin holding a number below 0, not whole or past 999,999, a reader whose answer would pass 999,999, and a reader inside a `.dcss-nest` MUST give `--dcss-err: 1` and `--dcss-value` 0; a child whose bin is outside 1 to 32 or refused (A15) MUST be in no answer.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -414,7 +438,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": "≤158"
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -437,7 +461,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": "≤158"
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -460,7 +484,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": "≤158"
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -483,7 +507,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": "≤158"
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -506,7 +530,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": "≤158"
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -529,7 +553,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": "≤158"
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -552,7 +576,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": "≤158"
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -575,7 +599,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": "≤158"
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -598,7 +622,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": "≤158"
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -621,7 +645,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": "≤158"
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -644,7 +668,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": "≤158"
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -667,7 +691,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": "≤158"
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -690,7 +714,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": "≤158"
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -713,7 +737,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": "≤158"
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -736,7 +760,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": "≤158"
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -759,7 +783,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": "≤158"
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -782,7 +806,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": "≤158"
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -805,7 +829,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": "≤158"
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -828,7 +852,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": "≤158"
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -851,7 +875,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": "≤158"
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -874,7 +898,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": "≤158"
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -886,7 +910,7 @@
       },
       "A38": {
         "__compat": {
-          "description": "`.dcss-width-sum` MUST add its children and `.dcss-largest` take the largest, leaves with `--dcss-n` and whole arrays as children, at any depth, read at the root or inside; a negative leaf MUST make every node above it read `--dcss-ok` 0.",
+          "description": "`.dcss-width-sum` MUST add its children and `.dcss-largest` take the largest, leaves with `--dcss-n` and whole arrays as children, at any depth, read at the root or inside; a negative leaf MUST make every node above it read `--dcss-ok` 0, and in Firefox so MUST a leaf off its 1/60 px layout grid (QUIRKS.md Q16).",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -898,7 +922,7 @@
             },
             "firefox": {
               "version_added": false,
-              "notes": "FAIL: Firefox lays out in 1/60 px, so leaves in eighths read up to 0.03 off (ENGINES.md)"
+              "notes": "FAIL: 21 of 25 readers refused (`--dcss-ok` 0, 2026-11-01): Firefox lays out in 1/60 px, so a tree with a leaf in eighths gives no answer there (Q16); none read wrong"
             }
           },
           "status": {
@@ -921,7 +945,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": "≤158"
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -944,7 +968,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": "≤158"
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -967,8 +991,8 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": false,
-              "notes": "FAIL: `anchor-size()` keeps the anchors' first sizes (QUIRKS Q3); in a container as wide as its content, check 69, it passes"
+              "version_added": null,
+              "notes": "PRECONDITION_FAILED: Firefox keeps `anchor-size()` at the anchors' first sizes (QUIRKS Q3), so `.dcss-calc` is refused there, error 1 (checks 57 and 69, 2026-11-01)"
             }
           },
           "status": {
@@ -991,7 +1015,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": "≤158"
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -1003,7 +1027,7 @@
       },
       "A43": {
         "__compat": {
-          "description": "`.dcss-text` MUST give the sum and the largest line of counters in `dcss-tally`, f(k) of the shared tables (k, round(k^2 / 1000), round(sqrt(1000 k)) for k 0 to 999), a scan and a table's running totals, exact.",
+          "description": "`.dcss-text` MUST give the sum and the largest line of counters in `dcss-tally`, f(k) of the shared tables (k, round(k^2 / 1000), round(sqrt(1000 k)) for k 0 to 999), a scan and a table's running totals, exact, or `--dcss-err` 1 where an engine prints the counter style's fallback (QUIRKS.md Q17), never another number.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -1014,7 +1038,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": "≤158"
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -1026,7 +1050,7 @@
       },
       "A238": {
         "__compat": {
-          "description": "`<b class=\"dcss-int\" style=\"--dcss-counter: name\"><u><u></u></u></b>` MUST give on its inner `<u>`, as `--dcss-int`, the value of the page's counter `name` where the reader stands, any signed 32-bit integer, exact, the next frame after it changes, and 0 for a counter the page never set; the reader MUST take no room in the page's flow, and where its text isn't in its font at 128px MUST give `--dcss-err` 1. Inside a page's size container, where an engine reads a counter set outside it as 0 (QUIRKS.md Q15), it MUST give the counter's value or `--dcss-err` 1, never another number.",
+          "description": "`<b class=\"dcss-int\" style=\"--dcss-counter: name\"><u><u></u></u></b>` MUST give on its inner `<u>`, as `--dcss-int`, the value of the page's counter `name` where the reader stands, any signed 32-bit integer, exact, the next frame after it changes, and 0 for a counter the page never set; the reader MUST take no room in the page's flow, and where its text isn't in its font at 128px MUST give `--dcss-err` 1. Inside a page's size container or `contain: style` box, where an engine reads a counter set outside it as 0 (QUIRKS.md Q15), it MUST give the counter's value or `--dcss-err` 1, never another number. Where `calc()` keeps 32-bit floats (Firefox), it MUST give `--dcss-err` 1 for a counter of 2^24 or more in magnitude (QUIRKS.md Q16).",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -1038,7 +1062,218 @@
             },
             "firefox": {
               "version_added": false,
-              "notes": "FAIL: 8 of 54, values past 2^24 off by Firefox's 32-bit calc() (-16777217 read -16777216); error 1 with the font missing"
+              "notes": "FAIL: 20 of 68 right (every one under 2^24 in magnitude), 48 refused (error 1) at or past 2^24, where its 32-bit calc() can't hold them; none wrong (Firefox 159, 2026-11-01); the card's 4 of 4; error 1 with the font missing"
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A239": {
+        "__compat": {
+          "description": "A `.dcss-sum`, `.dcss-count`, `.dcss-length` or `.dcss-mean` MUST count an item whose box is made after load (put in or taken out by script anywhere in the list, or its `hidden` attribute removed) and a changed value within 300 ms, in every engine where it gives an answer; a `.dcss-bin` and a `.dcss-int` MUST do so too, and in WebKit miss an item put in where one was taken out in the same task, and a bin 64 put in at once (QUIRKS.md Q18). An item with the `hidden` attribute MUST be left out, and any other item counted, whatever `display` the page gives it (QUIRKS.md Q18).",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
+            },
+            "firefox": {
+              "version_added": "≤159"
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A240": {
+        "__compat": {
+          "description": "Printed (`@media print`, a PDF), a call MUST print its answer or nothing, never another number; a call that reads a scroll range MUST give `--dcss-err` 1 there (QUIRKS.md Q19).",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": null,
+              "notes": [
+                "Not measured in Safari. Playwright's WebKit 26.4, headless: NOTRUN.",
+                "NOTRUN: Playwright prints only Chrome"
+              ]
+            },
+            "firefox": {
+              "version_added": null,
+              "notes": "NOTRUN: Playwright prints only Chrome"
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A250": {
+        "__compat": {
+          "description": "Under a page's or a layer's override of animations or of text (the reduced-motion reset, `animation: none`, WCAG 1.4.12's text spacing, a forced font) or on a right-to-left page (`dir=rtl`, `direction: rtl`), a call that reads its list MUST give its answer or `--dcss-err` 1, never another number; it MUST do the same where the page leaves its figure unrendered (`content-visibility: auto` off screen, a closed `<details>`, `hidden=until-found`); a list changed while unrendered MUST give, until it is rendered again, its new answer, `--dcss-err` 1 or the answer it last drew, and from the second frame after, its new answer.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
+            },
+            "firefox": {
+              "version_added": "≤159"
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A241": {
+        "__compat": {
+          "description": "An element after the list sized by a call's answer (a bar as wide as the sum) MUST NOT change the answer, and a sum whose items' registered `--value` transitions MUST read right or give `--dcss-err` 1 in every frame, and right once the transition ends. A value with a fraction in a list whose style attributes write whole numbers MUST give `--dcss-err` 1, not the value rounded.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
+            },
+            "firefox": {
+              "version_added": "≤159"
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A242": {
+        "__compat": {
+          "description": "A `.dcss-median`, `.dcss-quantile` or `.dcss-median-index` MUST give its answer or `--dcss-err` 1 when the page registers `--value` itself, inherited or not.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
+            },
+            "firefox": {
+              "version_added": "≤159"
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A246": {
+        "__compat": {
+          "description": "A `.dcss-median`, `-quantile`, `-quantile-sorted`, `-median-index`, `-quantile-index` or `-scale-quantile` whose figure writes `--domain-0` MUST give d3's answer for lists within A116's and A128's bounds above it, and error 1 for a list with an item below it.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
+            },
+            "firefox": {
+              "version_added": "≤159"
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A247": {
+        "__compat": {
+          "description": "A `.dcss-median`, `-quantile`, `-quantile-sorted`, `-median-index`, `-quantile-index` or `-scale-quantile` whose figure writes `--decimals` d, a whole number from 0 to 6, MUST take each item's `--value` v as the whole number k = round(v x 10^d), where k / 10^d is v itself, and its `--domain-0` (on the same grid; by default k = -131,072) as lo's k, |lo's k| at most 67,108,864; for k from lo's k to lo's k + 8,388,607 (the index calls to + 262,143, the quantile scale to + 524,287, QUIRKS.md Q20) and 0 to 1,024 items it MUST give d3's answer on the doubles, to the bit: an interpolated quantile is v0 + (v1 - v0) x f with v0 = k0 / 10^d and v1 = k1 / 10^d, as d3 computes it. A value with more decimals than d, an item below lo or past its range, a `--domain-0` off the grid or past the bound, or a d that isn't a whole number from 0 to 6 MUST give error 1. In Firefox any d but 0 MUST give error 1.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
+            },
+            "firefox": {
+              "version_added": "≤159"
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A249": {
+        "__compat": {
+          "description": "A `.dcss-sum`, `.dcss-mean`, `.dcss-min`, `.dcss-max` or `.dcss-extent` with the class `dcss-decimals` whose figure writes `--decimals` d, a whole number from 0 to 6, MUST take each item's `--value` v as the whole number k = round(v x 10^d), where k / 10^d is v itself, an item with no number skipped, and give the sum of the k divided once by 10^d (0.1 + 0.2 is 0.3), and the mean as that sum divided once by n x 10^d, to the bit, and the min, max and extent as the least and greatest k divided once by 10^d (the input itself), each printed by its `<output>` to 6 decimals. A sum's positive and negative k's each total under 2^24 - 1; a mean's k's total from -min(131,072 x 10^d, 2^23) to under 2^24 - 1 - min(131,072 x 10^d, 2^23), with A60's other bounds; a min's, max's and extent's k from -131,072 to 8,257,535. A value with more decimals than d, a d that isn't a whole number from 0 to 6, a value past the bounds, and in Firefox any d but 0 on a sum, min, max or extent holding a number and any mean MUST give error 1.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
+            },
+            "firefox": {
+              "version_added": "≤159"
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A243": {
+        "__compat": {
+          "description": "A `.dcss-sum`, `-count`, `-mean`, `-max`, `-extent` or `-length` whose items' style attributes a Content-Security-Policy dropped (`style-src 'self'`) MUST give `--dcss-err` 1; an item whose style attribute writes `--value` and that has none counts as dropped, and in Firefox, which empties a dropped style attribute, one whose style attribute is empty The same MUST hold on a page that registers `--value` itself.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
+            },
+            "firefox": {
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -1061,7 +1296,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": "≤158"
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -1084,7 +1319,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": "≤158"
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -1107,7 +1342,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": "≤158"
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -1130,8 +1365,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": false,
-              "notes": "FAIL: the row the second collapse makes is read a frame late (QUIRKS Q5): 20 for 19; the collapse's own reader is on time"
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -1154,7 +1388,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": "≤158"
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -1177,7 +1411,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": "≤158"
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -1200,7 +1434,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": "≤158"
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -1223,7 +1457,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": "≤158"
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -1246,7 +1480,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": "≤158"
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -1258,7 +1492,7 @@
       },
       "A55": {
         "__compat": {
-          "description": "`.dcss-ranked` with `--dcss-bins` G up to 16 (32 with `dcss-wide`) MUST place bar k at its group's total of `--dcss-n` (`.dcss-bin-max`: its largest), as many `--dcss-band`s down as groups beat it, largest or smallest first, ties to the lower bin; an item's `<b>` on its group's bar after the items before it; label k at bar k's top.",
+          "description": "`.dcss-ranked` with `--dcss-bins` G up to 16 (32 with `dcss-wide`) MUST place bar k at its group's total of `--dcss-n` (`.dcss-bin-max`: its largest), as many `--dcss-band`s down as groups beat it, largest or smallest first, ties to the lower bin; an item's `<b>` on its group's bar after the items before it; label k at bar k's top. G is the number of `.dcss-group`s, the figure's first children, with as many `<b>`s in `.dcss-bars`, and MUST equal `--dcss-bins`; an item whose `--dcss-bin` is outside 1 to G (or not an `<integer>`) is in no group; `--dcss-key` an integer, 0 to `--dcss-span` - 1. Past these bounds the answers they reach MUST give `--dcss-err: 1`: every bar, label and segment of a figure whose G is past 16 (32 with `dcss-wide`, 16 with `dcss-copy`) or doesn't match its bars or `--dcss-bins`; a label past G; the segment of an item outside 1 to G, with a key outside its range (the item still counts in its group), or whose own `--dcss-n` is negative or not a whole number; the author keeps the bounds no selector reads: every `--dcss-n` a whole number, 0 or more (whole px: Firefox lays out in 1/60 px, so a 1/64 fraction moves the bars), and every group's total at most the figure's width (a wider group wraps onto a second line).",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -1269,7 +1503,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": "≤158"
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -1292,7 +1526,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": "≤158"
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -1304,7 +1538,7 @@
       },
       "A57": {
         "__compat": {
-          "description": "`.dcss-ranked.dcss-copy` with `--dcss-copy-width` and `.dcss-ranks > b > .dcss-segments` holding G `.dcss-group` and the items again MUST place each segment as A55 does, for up to 16 groups.",
+          "description": "`.dcss-ranked.dcss-copy` with `--dcss-copy-width` and `.dcss-ranks > b > .dcss-segments` holding G `.dcss-group` and the items again MUST place each segment as A55 does, for up to 16 groups, within A55's bounds and refused past them as A55's are.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -1315,30 +1549,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": "≤158"
-            }
-          },
-          "status": {
-            "experimental": true,
-            "standard_track": false,
-            "deprecated": false
-          }
-        }
-      },
-      "A58": {
-        "__compat": {
-          "description": "`.dcss-ticks` with `--start`, `--stop` and `--count` MUST give `--dcss-tick-increment` and `--dcss-tick-step` equal to d3-array 3.2.4's tickIncrement and tickStep, as many `<li>`s shown as its ticks (the rest `visibility: hidden` and out of flow), and its k-th `<li>` `--dcss-tick` the k-th tick; `.dcss-nice` with the same three MUST give `--dcss-nice-start` and `--dcss-nice-stop` equal to nice's; for finite start, stop and count.",
-          "spec_url": "SPEC.md#2-requirements",
-          "support": {
-            "chrome": {
-              "version_added": "≤155"
-            },
-            "safari": {
-              "version_added": null,
-              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
-            },
-            "firefox": {
-              "version_added": "≤158"
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -1350,7 +1561,7 @@
       },
       "A60": {
         "__compat": {
-          "description": "`.dcss-sum`, `-count`, `-mean`, `-min`, `-max` and `-extent` over `<li>`s with `--value` MUST give each element after the list (a `<figcaption>` excepted), every element inside one and their `::before` and `::after` `--dcss-<name>` (extent: `--dcss-min`, `--dcss-max`) equal to d3-array 3.2.4's for signed values on the 1/64 grid (a mean's from -1024, min, max and extent's within ±131,072 or whole to 8,257,535), skipping what isn't a number with `--dcss-err` 0, as d3 skips it, except that in a list whose items all write whole numbers an item with a style attribute but no number MUST leave a min, max, extent or mean no answer with error 1; a value off the grid or out of range MUST leave no answer with error 1, and d3's undefined error 2; a sum's or mean's list reaching 16,777,215 px (2^24 − 1; the list is 1 px more than its values) MUST leave no answer with error 1; a list wider or taller than 2^18 px with an item whose style attribute holds a decimal point, an exponent, `var()` or `calc()`, or no style attribute, MUST leave no answer with error 1; an empty `<output>` MUST print the answer as format(\",\") does, to 6 decimals.",
+          "description": "`.dcss-sum`, `-count`, `-mean`, `-min`, `-max` and `-extent` over `<li>`s with `--value` MUST give each element after the list (a `<figcaption>` excepted), every element inside one and their `::before` and `::after` `--dcss-<name>` (extent: `--dcss-min`, `--dcss-max`) equal to d3-array 3.2.4's for signed whole-number values, one unit one px (a mean's summing from -131,072 to 16,646,141, min, max and extent's from -131,072 to 8,257,535), skipping what isn't a number with `--dcss-err` 0, as d3 skips it, except that a mean's list with 64 or more items with no number, or 262,144 or more values, MUST leave the mean no answer with error 1 (a count and a length count up to 16,777,214 of them); a value with a fraction (fractions take `dcss-decimals`, A249) or out of range MUST leave no answer with error 1, and d3's undefined error 2; a sum's or mean's list reaching 16,777,215 px (2^24 − 1; the list is 1 px more than its values) MUST leave no answer with error 1; an empty `<output>` MUST print the answer as format(\",\") does, to 6 decimals.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -1362,7 +1573,7 @@
             },
             "firefox": {
               "version_added": false,
-              "notes": "FAIL: 160 of 160 d3 calls, but 634 of 812 seeded reads and 120 of 240 moving: layout snaps to 1/60 px, so 64ths and the skipped items' 1/64 px marks are lost (2026-10-28)"
+              "notes": "FAIL: d3-check's 160 of 160 d3 calls right, the mean's 32 by long division on whole numbers (was 24, 8 refused; 2026-11-02); reduce-check 884 of 1,008 right at rest, 124 refused (Q17, Q25), 0 wrong, 0 wrong moving (2026-11-02)"
             }
           },
           "status": {
@@ -1374,7 +1585,7 @@
       },
       "A62": {
         "__compat": {
-          "description": "`.dcss-scale-linear`, `.dcss-scale-pow` (`--exponent`), `.dcss-scale-sqrt` and `.dcss-scale-log` with `--domain-k`, `--range-k` (k 0 and 1; with `.dcss-piecewise`, k 0 to 7, `--stops` of them), `--clamp`, `--round` and `--value` MUST give `--dcss-scale-<name>` and `--dcss-scale-<name>-invert` equal to d3-scale 4.0.2's scale(value) and invert(value) (a log scale within 256 × 2^-52 of it); for the linear, pow and sqrt scales `.dcss-ticks`, `.dcss-nice` and `.dcss-format-*` over the domain's ends MUST give its ticks(count), nice(count) and tickFormat(count, specifier)(x) for specifiers of type f or %; for finite numbers.",
+          "description": "`.dcss-scale-linear`, `.dcss-scale-pow` (`--exponent`), `.dcss-scale-sqrt` and `.dcss-scale-log` with `--domain-k`, `--range-k` (k 0 and 1; with `.dcss-piecewise`, k 0 to 7, `--stops` of them), `--clamp`, `--round` and `--value` MUST give `--dcss-scale-<name>` and `--dcss-scale-<name>-invert` equal to d3-scale 4.0.2's scale(value) and invert(value) (a log scale within 256 × 2^-52 of it); for finite numbers. A log scale's input (clamped first where `--clamp` is 1) of the other sign than `--domain-0`, or 0, MUST give no number (NaN, printing nothing), as d3's NaN. Where `calc()` keeps 32-bit floats (Firefox, QUIRKS.md Q16), a pow, sqrt or log scale MUST give no number.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -1385,8 +1596,8 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": false,
-              "notes": "FAIL: pow 145 of 187 and log 544 of 709; calc() in single precision"
+              "version_added": null,
+              "notes": "PRECONDITION_FAILED: Firefox computes calc() in single precision; held to the pixel (DCSS.md rule 6): linear 47 of 214 as Chrome, seeded two-stop 2,000 and polylinear 1,000 within half a pixel; pow, sqrt and log within a pixel or refused (seeded pow 1,500 of 1,500, log 1,485 of 1,485); 3 of 7 log inputs of the other sign or 0 by hand give no number, the 4 clamped ones also none where d3 clamps to a number (2026-11-02)"
             }
           },
           "status": {
@@ -1398,7 +1609,7 @@
       },
       "A64": {
         "__compat": {
-          "description": "`.dcss-format-fixed` and `.dcss-format-percent` with `--value`, `--precision`, `--comma`, `--sign`, `--symbol` and `--trim` MUST print in their `::after` the text d3-format 3.1.2's format prints for that specifier (type f or %, sign - or +, symbol none or $, `~` for `--trim: 1`), where |value| x 10^precision is under 2^53; past it `--dcss-err` MUST be 1.",
+          "description": "`.dcss-format-fixed` and `.dcss-format-percent` with `--value`, `--precision`, `--comma`, `--sign`, `--symbol` and `--trim` MUST print in their `::after` the text d3-format 3.1.2's format prints for that specifier (type f or %, sign - or +, symbol none or $, `~` for `--trim: 1`), where |value| x 10^precision is under 2^53; past it `--dcss-err` MUST be 1. In Firefox, whose `calc()` keeps 32-bit floats (QUIRKS.md Q16), every format type MUST give `--dcss-err` 1 where its floats might round otherwise than d3, and for an |value| of 10^31 or more, or not 0 and under 2^-100. Bound: there an |value| under 2^-150 (about 7e-46) is read as 0 (or -0) before any rule sees it, so it prints what d3 prints for 0, with `--dcss-err` 0: right for types f and %, and for s and general where d3 prints the value as error 1 (outside A67's range, or exponential) it prints 0. format-check.mjs's 18 values past a float's range hold 3 such calls, expected so; a format given a precision that is no number (a refused precision helper's) MUST print nothing there, after a change too.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -1410,7 +1621,7 @@
             },
             "firefox": {
               "version_added": false,
-              "notes": "FAIL: 2,122 of 2,948, 460 of 600: calc() in single precision (2026-10-29)"
+              "notes": "FAIL: refused where its 32-bit calc() can round otherwise than d3 (Q16), each refusal split by its float's span (probes/dcss/float32.mjs: input not a float32 / a float32 sharing its span with another answer / answerable): of 2,948 seeded 1,522 refused (952 / 420 / 150; 1,521 written as decimals) and the rest right, of 600 ties 445 (324 / 98 / 23), of d3-format's 139 tests 50 (30 / 7 / 13), general 775 of 1,500 (709 / 49 / 17; 774 as decimals); of 18 values past a float's range 5 refused, 10 right and 3 under 2^-150 read as 0 (the bound above); `SPAN=1`'s 15,325 calls at the ends of their floats' spans none wrong; none printed wrong or with error 1, written as decimals or exactly (2026-11-02)"
             }
           },
           "status": {
@@ -1434,7 +1645,7 @@
             },
             "firefox": {
               "version_added": false,
-              "notes": "FAIL: d3-format's tests 121 of 139, seeded 2,011 of 2,939 print d3's text (2026-10-29)"
+              "notes": "FAIL: refused where its 32-bit calc() can round otherwise than d3 (Q16, A64; split as A64's): 1,560 seeded 576 right and 984 refused (810 / 21 / 153; 578 right written as decimals), 944 boundaries 394 right (402 as decimals), the rest refused, 1,175 ties (1,050 / 58 / 67) and 527 near ties (526 / 0 / 1) all refused, 5 rejected inputs error 1; the 5,364 carry cases all refused (5,290 / 66 / 8: each within a double of a decimal tie); none printed wrong or with error 1 (2026-11-02)"
             }
           },
           "status": {
@@ -1446,7 +1657,7 @@
       },
       "A68": {
         "__compat": {
-          "description": "`.dcss-bisect-left/right` (`.dcss-bisect` aliases right) MUST match d3-array's insertion index for up to 1,024 sorted whole-number keys within ±2^24, finite query `--value`, and whole bounds 0 <= lo <= hi <= length. The result MUST reach reader descendants in the same frame. Invalid searched keys or missing query MUST flag an error and suppress the empty output.",
+          "description": "`.dcss-bisect-left/right` (`.dcss-bisect` aliases right) MUST match d3-array's insertion index for up to 1,024 sorted whole-number keys within ±2^24, finite query `--value`, and whole bounds 0 <= lo <= hi <= length. The result MUST reach reader descendants in the same frame. Invalid searched keys or missing query MUST flag an error and suppress the empty output; where `calc()` keeps 32-bit floats (Firefox, QUIRKS.md Q16), a key or a query of 2^24 or more in magnitude MUST give `--dcss-err` 1, since 2^24 + 1 reads there as 2^24.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -1458,7 +1669,7 @@
             },
             "firefox": {
               "version_added": false,
-              "notes": "FAIL: all 50 supported recorded calls; 1,023 of 1,030 seeded and 27 of 28 live/reader checks (single-precision arithmetic)"
+              "notes": "FAIL: 25 of 25 taken recorded calls each side; seeded 507 of 515 each side, the rest refused (error 1, or 2 for -1e300, which Firefox holds as infinity): keys and queries of 2^24 or more are refused there, none of the printed misses read wrong with error 0; live/reader checks pass (Firefox 159, 2026-11-01)"
             }
           },
           "status": {
@@ -1481,7 +1692,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": null
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -1504,7 +1715,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": "≤158"
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -1551,7 +1762,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": "≤158"
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -1574,8 +1785,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": false,
-              "notes": "FAIL: threshold layout seeded 65 of 67 (2026-10-29)"
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -1598,8 +1808,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": false,
-              "notes": "FAIL: discrete/check.mjs stops at the threshold scale's seeded values (2026-10-29)"
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -1611,7 +1820,7 @@
       },
       "A74": {
         "__compat": {
-          "description": "Compiled quantile/median MUST match d3 within declared 1/64-grid bounds and static probability, skipping an item with no number as d3 does (quantileSorted keeping its place and refusing a read of it with error 2). Scalar ranks MUST support 64 values, layout 1,024; indexed reads require cumulative width below 2^18. Lowerings MUST preserve author nodes, output position, exact reuse, formatting and reset, flagging invalid data as error 1 and empty inputs or missing probability as error 2.",
+          "description": "Compiled quantile/median MUST match d3 within declared 1/64-grid bounds and static probability, skipping an item with no number as d3 does (quantileSorted keeping its place and refusing a read of it with error 2). Scalar ranks MUST support 64 values, layout 1,024; indexed reads require cumulative width below 2^18. Lowerings MUST preserve author nodes, output position, exact reuse, formatting and reset, flagging invalid data as error 1 and empty inputs or missing probability as error 2, and in Firefox (QUIRKS.md Q16) a layout read with a fraction or an interpolation not exact in 32-bit floats as error 1 with NaN, no number.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -1622,8 +1831,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": false,
-              "notes": "FAIL: quantile 34/43 and median 25/47 read, their fixed text not d3's (2026-10-29)"
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -1646,8 +1854,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": false,
-              "notes": "FAIL: 4/4 recorded read, the fixed text not d3's (2026-10-29)"
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -1670,8 +1877,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": false,
-              "notes": "FAIL: 39/74 recorded read, then a wrong answer (2026-10-29)"
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -1694,8 +1900,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": false,
-              "notes": "FAIL: 39/74 recorded read, then a wrong answer (QUERY_SCOPE=result) (2026-10-29)"
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -1707,7 +1912,7 @@
       },
       "A78": {
         "__compat": {
-          "description": "Compiled precisionFixed/Prefix/Round MUST match d3 within declared bounds, nonzero step magnitudes 1e-30 to below 1e31, and target magnitudes below 1e31. Integer results MUST support downward reuse and bounded formatter precision. Native controls, reset and errors MUST preserve author elements; undefined answers MUST publish CSS NaN with error 2 and suppress dependent text.",
+          "description": "Compiled precisionFixed/Prefix/Round MUST match d3 within declared bounds, nonzero step magnitudes 1e-30 to below 1e31, and target magnitudes below 1e31. Integer results MUST support downward reuse and bounded formatter precision. Native controls, reset and errors MUST preserve author elements; undefined answers MUST publish CSS NaN with error 2 and suppress dependent text; and where calc() keeps 32-bit floats (Firefox), a step, target or difference within 2^-20 of a power of ten MUST give no answer with error 1 where the answer with its exponent on the power's other side differs (precisionRound with |max| under |step| is 1 on either side), unless the build marks it exact: `--dcss-prec-step-f32`, `--dcss-prec-target-f32` and `--dcss-prec-diff-f32` are 1 on a literal a 32-bit float holds exactly, and `--dcss-prec-s-lit` and `--dcss-prec-t-lit` give a literal's own exponent (its difference's, for precisionRound's two literals).",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -1718,8 +1923,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": false,
-              "notes": "FAIL: precisionFixed seeded 635 of 695 (2026-10-29)"
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -1742,7 +1946,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": "≤158"
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -1754,7 +1958,7 @@
       },
       "A208": {
         "__compat": {
-          "description": "`.dcss-scale-ordinal` with `--value`, up to 16 domain values in `--domain-0` to `--domain-15` (`--domains` of them) and up to 16 range items in `--range-0` to `--range-15` (`--ranges` of them) MUST give everything inside it `--dcss-scale-ordinal`: the range item at the value's place in the domain modulo `--ranges`, as d3's `ordinal(value)`, a place matched as CSS tokens (strings quoted, numbers as they print, a Date as its epoch milliseconds). A value in no slot MUST take `--unknown` where it is set; else, as d3's implicit unknown, the range item at `--domains` modulo `--ranges`; with `--implicit: 0`, or no range, no answer. A nested call MUST NOT match a slot of the call around it.",
+          "description": "`.dcss-scale-ordinal` with `--value`, up to 16 domain values in `--domain-0` to `--domain-15` (`--domains` of them) and up to 16 range items in `--range-0` to `--range-15` (`--ranges` of them) MUST give everything inside it `--dcss-scale-ordinal`: the range item at the value's place in the domain modulo `--ranges`, as d3's `ordinal(value)`, a place matched as CSS tokens (strings quoted, a Date as its epoch milliseconds) or, for a number, by its value (`calc(80 + 2)`, `82.0` and another call's answer written straight inside match 82; the text `'82'` does not), and a NaN, a refused call's answer, MUST give no answer and `--dcss-err` 1, as MUST, in Firefox, a number in no slot (its style queries see a value before its animations: a sum's answer, or one through a page's registered property). A value in no slot MUST take `--unknown` where it is set; else, as d3's implicit unknown, the range item at `--domains` modulo `--ranges`; with `--implicit: 0`, or no range, no answer and `--dcss-err` 2 (d3's undefined), else `--dcss-err` 0. A domain whose first `--domains` slots repeat a value MUST give no answer and `--dcss-err` 1 (d3 numbers a value by its place among the unique values), and a nested call MUST NOT match a slot of the call around it.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -1765,7 +1969,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": null
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -1788,7 +1992,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": null
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -1800,7 +2004,7 @@
       },
       "A180": {
         "__compat": {
-          "description": "`.dcss-summarize` with up to 1,024 items, each a value in 64ths from -1024 to 65535 or none, MUST give each element after the list (a `<figcaption>` excepted), and every element inside one, `--dcss-sum`, `--dcss-count`, `--dcss-length`, `--dcss-mean`, `--dcss-min`, `--dcss-max`, `--dcss-median`, `--dcss-variance` and `--dcss-deviation`: the doubles d3-array's `sum`, `count`, `mean`, `min`, `max` and `median` give for the list (an item with none skipped), its number of items, and the true variance rounded once and its square root (A130's), from the one list. With no number, the mean, min, max and median MUST be no number, error 2; with fewer than two numbers, one past ±1024, or more than 64 items, the variance and deviation MUST be no number. More than 1,024 items, a value outside the range or off the 64ths, or one of a list holding a fraction whose values, each 1025 more, passed 132,735 between them MUST leave no answer, error 1; a page's padding or border on the figure MUST change neither an answer nor its text.",
+          "description": "`.dcss-summarize` with up to 1,024 items, each a whole number from -1024 to 65535 (one unit one px) or none, MUST give each element after the list (a `<figcaption>` excepted), and every element inside one, `--dcss-sum`, `--dcss-count`, `--dcss-length`, `--dcss-mean`, `--dcss-min`, `--dcss-max`, `--dcss-median`, `--dcss-variance` and `--dcss-deviation`: the doubles d3-array's `sum`, `count`, `mean`, `min`, `max` and `median` give for the list (an item with none skipped), its number of items, and the true variance rounded once and its square root (A130's), from the one list. With no number, the mean, min, max and median MUST be no number, error 2; with fewer than two numbers or more than 64 items, the variance and deviation MUST be no number. More than 1,024 items, a value outside the range or with a fraction (fractions take `.dcss-decimals`, A236) MUST leave no answer, error 1; a page's padding or border on the figure MUST change neither an answer nor its text.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -1811,8 +2015,8 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": false,
-              "notes": "FAIL: 365 of 1,836 (no view timelines in release Firefox 158) (2026-10-30)"
+              "version_added": null,
+              "notes": "PRECONDITION_FAILED: refused outright, error 1 (32-bit calc() holds no mean or variance of doubles)"
             }
           },
           "status": {
@@ -1824,7 +2028,7 @@
       },
       "A80": {
         "__compat": {
-          "description": "Compiled cumsum MUST publish 0–128 scoped per-item endpoints with bounds and status in version-two contracts. Within declared 1/64-grid prefix bounds below 2^18, both qualified lowerings MUST match d3, preserve scalar reuse and native reset, and skip missing/NaN values. Invalid inputs MUST invalidate their prefix and later results while preserving earlier results.",
+          "description": "Compiled cumsum MUST publish 0–128 scoped per-item endpoints with bounds and status in version-two contracts. Within declared 1/64-grid prefix bounds below 2^18, both qualified lowerings MUST match d3, preserve scalar reuse and native reset, and skip missing/NaN values. Invalid inputs MUST invalidate their prefix and later results while preserving earlier results; in Firefox, which lays out in 1/60 px (QUIRKS.md Q16), the layout lowering MUST give `--dcss-err` 1 and no number for the prefix from the first value that isn't whole px.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -1835,8 +2039,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": false,
-              "notes": "FAIL: calc 22/42 recorded, 60/60 seeded, 13/13 states; layout's text not d3's (2026-10-29)"
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -1859,8 +2062,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": false,
-              "notes": "FAIL: 8/8 handwritten states, then a threshold boundary (static/check.mjs) (2026-10-29)"
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -1883,8 +2085,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": false,
-              "notes": "FAIL: an authored prefix reads wrong (authored-check.mjs) (2026-10-29)"
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -1907,7 +2108,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": "≤158"
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -1919,7 +2120,7 @@
       },
       "A84": {
         "__compat": {
-          "description": "`.dcss-share` MUST publish totals exactly and per-item fractions within 1e-9 of d3 sum/division on descendant result holders for 1–64 finite nonnegative 1/64-grid values at most 4,095. Invalid data MUST set error 1, zero totals error 2. Formatting, native changes/reset, nested calls, intervening containers and natural row flow MUST preserve results and errors.",
+          "description": "`.dcss-share` MUST publish totals exactly and per-item fractions within 1e-9 of d3 sum/division on descendant result holders for 1–64 whole values from 0 to 4,095, one unit one px (a fraction is error 1). Invalid data MUST set error 1, zero totals error 2. Formatting, native changes/reset, nested calls, intervening containers and natural row flow MUST preserve results and errors.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -1930,7 +2131,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": "≤158"
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -1942,7 +2143,7 @@
       },
       "A85": {
         "__compat": {
-          "description": "`.dcss-ascending` and `.dcss-descending` MUST publish d3's -1/0/1 result for their own finite numeric `--a`/`--b` within ±2^24. Missing/NaN arguments MUST publish CSS NaN with error 2; out-of-bound finite arguments MUST give error 1. Native changes/reset and nested argument isolation MUST preserve results.",
+          "description": "`.dcss-ascending` and `.dcss-descending` MUST publish d3's -1/0/1 result for their own finite numeric `--a`/`--b` within ±2^24. Missing/NaN arguments MUST publish CSS NaN with error 2; out-of-bound finite arguments MUST give error 1; where `calc()` keeps 32-bit floats (Firefox, QUIRKS.md Q16), an argument of 2^24 or more in magnitude, and two equal arguments that are not whole (0.1 and 0.100000001 read equal there), MUST give error 1. Native changes/reset and nested argument isolation MUST preserve results.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -1953,8 +2154,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": false,
-              "notes": "FAIL: ascending 9 of 14 recorded, then a numeric boundary reads wrong (2026-10-28)"
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -1977,7 +2177,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": "≤158"
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -1989,7 +2189,7 @@
       },
       "A87": {
         "__compat": {
-          "description": "Over 0–64 signed 1/64-grid observations within ±1024, numeric minIndex/maxIndex and default leastIndex/greatestIndex MUST return d3's first winning source position; least/greatest MUST return its value. Nullish/NaN MUST be skipped; empty lists MUST return index -1 or CSS NaN/error 2. Invalid grid/bounds/count MUST give error 1; native reset and nested reuse MUST preserve results.",
+          "description": "Over 0–64 whole observations within ±4,095 (one unit one px, each laid out as 64 px with its place in the last 64, under 2^19 px), numeric minIndex/maxIndex and default leastIndex/greatestIndex MUST return d3's first winning source position; least/greatest MUST return its value. Nullish/NaN MUST be skipped; empty lists MUST return index -1 or CSS NaN/error 2. Invalid grid/bounds/count MUST give error 1; native reset and nested reuse MUST preserve results.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -2000,7 +2200,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": "≤158"
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -2023,7 +2223,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": "≤158"
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -2047,7 +2247,7 @@
             },
             "firefox": {
               "version_added": false,
-              "notes": "FAIL: a rendered label's counter text differs (2026-10-28)"
+              "notes": "FAIL: refused where its 32-bit `calc()` can round otherwise than d3 (Q16, A64): 725 of 1,500 print d3's text, 775 refused, 0 wrong (Firefox 159, 2026-11-02)"
             }
           },
           "status": {
@@ -2094,7 +2294,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": "≤158"
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -2106,7 +2306,7 @@
       },
       "A93": {
         "__compat": {
-          "description": "Fixed UTC day, hour, minute and second calls MUST compute floor, ceil, round, offset and count within ±8×10¹² epoch milliseconds, truncating fractional milliseconds toward zero. Offset steps MUST round down and round ties MUST choose the upper interval. Invalid inputs or wider timestamp results MUST hide the number and set error 1.",
+          "description": "Fixed UTC day, hour, minute and second calls MUST compute floor, ceil, round, offset and count within ±8×10¹² epoch milliseconds, truncating fractional milliseconds toward zero, with offset steps rounded down and round ties choosing the upper interval, from a time written whole (`--value`; a count's `--start` and `--stop`) or in parts (`--value-hi` and `--value-lo`; a count's `--start-hi`, `--start-lo`, `--stop-hi` and `--stop-lo`), the time being hi × 10^6 + lo ms, hi a whole number within ±16,777,215 and |lo| under 10^6. Invalid inputs, parts past that range, a step past ±16,777,215 with parts, and wider timestamp results MUST hide the number and set error 1, as MUST, where `calc()` keeps 32-bit floats (Firefox, QUIRKS.md Q16) and parses an authored number to one (1609459260001 less 1609459260000 reads 0 there: `probes/dcss/dates-parse.mjs`), a time or an answer of 2^24 ms or more written whole. A call given parts MUST give the same answer in every engine, a time answer also in parts, `--dcss-utc-<unit>-hi` (floor(t / 10^6)) and `--dcss-utc-<unit>-lo` (0 to 999,999), its whole number being no number in Firefox where |hi| is 16 or more.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -2117,8 +2317,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": false,
-              "notes": "FAIL: utcDay's recorded calls (2026-10-28)"
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -2130,7 +2329,7 @@
       },
       "A94": {
         "__compat": {
-          "description": "UTC weekday intervals MUST compute floor, ceil, round, offset and count within ±8×10¹⁵ epoch milliseconds, aligned to Sunday through Saturday. Negative epochs, midpoint ties, truncation and native reset MUST preserve results in both branches. Invalid inputs or wider timestamp results MUST hide the number and set error 1.",
+          "description": "UTC weekday intervals MUST compute floor, ceil, round, offset and count within ±8×10¹⁵ epoch milliseconds, or from a time in parts within their range as A93 says, aligned to Sunday through Saturday. Negative epochs, midpoint ties, truncation and native reset MUST preserve results in both branches. Invalid inputs or wider timestamp results MUST hide the number and set error 1; where `calc()` keeps 32-bit floats (Firefox, QUIRKS.md Q16), a time or an answer of 2^24 ms or more in magnitude written whole MUST give error 1, the weekday found without its offset of 140,000,000 days, past a 32-bit float's whole numbers (floor(0) read 0 with error 0 for six weekdays before).",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -2141,8 +2340,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": false,
-              "notes": "FAIL: utcSunday's recorded calls (2026-10-28)"
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -2154,7 +2352,7 @@
       },
       "A95": {
         "__compat": {
-          "description": "Gregorian UTC month/year calls MUST compute floor, ceil, round, offset and count within ±8×10¹³ epoch milliseconds. Leap/century rules, first-century dates and Date setter overflow MUST match d3; round ties MUST choose the upper interval. Year periods 1–10,000 MUST support floor/ceil/round/offset; count requires period 1, and unsupported or wider results MUST error.",
+          "description": "Gregorian UTC month/year calls MUST compute floor, ceil, round, offset and count within ±8×10¹³ epoch milliseconds, or from a time in parts within their range as A93 says, each date as whole days, seconds and ms. Leap/century rules, first-century dates and Date setter overflow MUST match d3; round ties MUST choose the upper interval. Year periods 1–10,000 MUST support floor/ceil/round/offset; count requires period 1, and unsupported or wider results MUST error; where `calc()` keeps 32-bit floats (Firefox, QUIRKS.md Q16), every call with its time written whole MUST give error 1: each goes through epochs past 2^24 ms.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -2165,8 +2363,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": false,
-              "notes": "FAIL: utcMonth 51 of 52, then a decade's utcYear floor (2026-10-28)"
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -2189,7 +2386,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": "≤158"
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -2201,7 +2398,7 @@
       },
       "A107": {
         "__compat": {
-          "description": "Qualified English date formatting MUST compute text from live integer epochs within years −9999 through 19999. Every frozen call MUST pass every source-owned configuration, including ISO weeks/years, epoch text, padding and names, in UTC. Numeric fields MUST remain independently addressed and reusable through compilation; invalid inputs MUST hide text and publish an error.",
+          "description": "Qualified English date formatting MUST compute text from live integer epochs within years −9999 through 19999, written whole or in parts within their range as A93 says (hi and lo whole numbers), the same text in every engine. Every frozen call MUST pass every source-owned configuration, including ISO weeks/years, epoch text, padding and names, in UTC. Numeric fields MUST remain independently addressed and reusable through compilation; invalid inputs MUST hide text and publish an error; where `calc()` keeps 32-bit floats (Firefox, QUIRKS.md Q16), an epoch of 2^24 ms or more in magnitude written whole MUST hide its text and publish error 1.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -2212,8 +2409,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": false,
-              "notes": "FAIL: a rendered date's text differs (2026-10-28)"
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -2225,7 +2421,7 @@
       },
       "A116": {
         "__compat": {
-          "description": "Median, quantile, quantileSorted and the quantile scale MUST take 1/64 steps from −65,536 to 65,535, and all four whole numbers from −131,072 to 8,257,535, matching d3. A list with an item whose `--value` is written with a point, a negative exponent or a function (`var()`, `calc()`, `attr()`, `env()`, `if()`) takes the 1/64 steps; a whole-number list holding a fraction MUST give error 1. They MUST refuse values past those bounds with error 1.",
+          "description": "Median, quantile, quantileSorted and the quantile scale MUST take whole numbers, one unit one px, from a lower bound lo to lo + 8,388,607, matching d3, where lo is the figure's `--domain-0` when it is written (a whole number within ±67,108,864) and otherwise −131,072 (whole numbers from −131,072 to 8,257,535); the quantile scale takes them to lo + 524,287 (by default −131,072 to 393,215), its layout under 2^19 px in every engine (QUIRKS.md Q20). An item with a fraction MUST give error 1, as MUST an item below lo, a value past those bounds, and a `--domain-0` off the list's grid or past ±67,108,864; a figure that writes `--decimals` takes its list in decimals instead (A247). In Firefox a value past 2^19 px from lo MUST give error 1; a quantile between two values MUST be d3's answer rounded once to a 32-bit float, worked out as one division of whole numbers each under 2^24, and MUST give error 1 for a `--p` past 6 decimals, a numerator or denominator of 2^24 or more, and an answer of 0 at a whole position from a `--p` that is not a multiple of 1/64.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -2236,8 +2432,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": false,
-              "notes": "FAIL: a 64-value list read 13,799.995 for d3's 13,800 (2026-10-28)"
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -2273,7 +2468,7 @@
       },
       "A119": {
         "__compat": {
-          "description": "Where the browser parses `@function`, the two-stop linear scale and the UTC day, hour, minute, second and weekday intervals MUST also be functions (`--dcss-scale-linear(x, d0, d1, r0, r1, clamp, round)`, `--dcss-utc-day-floor(t)`, `--dcss-utc-day-count(start, stop)`) equal to their classes within 1e-12, the intervals to d3-time to the millisecond, the band to d3 within 1e-12 the projections to d3-geo within 1e-6 and the distance within 1e-12. Elsewhere a declaration calling one MUST fall back to its earlier plain value.",
+          "description": "Where the browser parses `@function`, the two-stop linear scale and the UTC day, hour, minute, second and weekday intervals MUST also be functions (`--dcss-scale-linear(x, d0, d1, r0, r1, clamp, round)`, `--dcss-utc-day-floor(t)`, `--dcss-utc-day-count(start, stop)`) equal to their classes within 1e-12, and the intervals to d3-time to the millisecond. Elsewhere `@supports (width: calc(--dcss-scale-linear(1, 0, 2, 0, 4) * 1px))` MUST be false, so a plain value outside it stands, and a declaration calling one with literal arguments MUST fall back to its earlier plain value (one holding `var()` is invalid at computed-value time and does not).",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -2284,8 +2479,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": false,
-              "notes": "FAIL: no @function; a log scale's class reads wrong (2026-10-29)"
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -2308,8 +2502,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": false,
-              "notes": "FAIL: 77 of 316 calls differ (2026-10-29)"
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -2321,7 +2514,7 @@
       },
       "A123": {
         "__compat": {
-          "description": "`.dcss-scale-quantile` with the list written once MUST give d3's answer to each element after the list (a `<figcaption>` excepted) and every element inside one, within A116's bounds, for up to 1,024 values and 1 to 17 ranges, numbers or text, a query on a threshold or one double either side of it included. It MUST refuse with error 1 an item off the grid, out of range or missing, 65 values and 0, 1.5 or 18 ranges, answer `--unknown` for a missing or NaN query, and give error 2 for a missing one with no `--unknown`.",
+          "description": "`.dcss-scale-quantile` with the list written once MUST give d3's answer to each element after the list (a `<figcaption>` excepted) and every element inside one, within A116's bounds, for up to 1,024 values and 1 to 17 ranges, numbers or text, a query on a threshold or one double either side of it included. It MUST refuse with error 1 an item off the grid, out of range or missing, 65 values and 0, 1.5 or 18 ranges, answer `--unknown` for a missing query, give error 2 for a missing one with no `--unknown`, and refuse with error 1 a NaN query (what a refused call publishes), `--unknown` or not. In Firefox (32-bit `calc()`, QUIRKS.md Q16) it MUST decide the query against the threshold that straddles it exactly, in whole numbers each under 2^24, and refuse with error 1 only a query that parses to the threshold itself where d3's double for it is not known to the ulp (the ranges not dividing 16, a fraction part not 0).",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -2332,8 +2525,8 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": false,
-              "notes": "FAIL: 519 of 1,328 calls differ (2026-10-28)"
+              "version_added": null,
+              "notes": "NOTRUN: the 2,373 scales don't load in 180 s; range-check's 17 of 17 equal d3 (2026-11-02)"
             }
           },
           "status": {
@@ -2345,7 +2538,7 @@
       },
       "A124": {
         "__compat": {
-          "description": "`.dcss-scale-threshold` with its thresholds in `--domain-0` to `--domain-15`, and `.dcss-scale-quantize`, with no list and no wrappers, MUST give d3's answer to everything inside the call, for 1 to 17 ranges, numbers or text, a query on a threshold or one double either side included. They MUST answer `--unknown` for a missing or NaN query (error 2 with none), and MUST refuse with error 1 0, 1.5 or 18 ranges, a threshold that isn't a number, thresholds out of order or with a gap, and a reversed quantize domain. Compiled, the same markup MUST give the same answers.",
+          "description": "`.dcss-scale-threshold` with its thresholds in `--domain-0` to `--domain-15`, and `.dcss-scale-quantize`, with no list and no wrappers, MUST give d3's answer to everything inside the call, for 1 to 17 ranges, numbers or text, a query on a threshold or one double either side included. They MUST answer `--unknown` for a missing query (error 2 with none), MUST refuse with error 1 a NaN query (what a refused call publishes, a sum of 12.5 fed in as `--value`), `--unknown` or not, as the linear scales do, MUST give no answer with error 1 where the range a style query picked is not the one their index names (Firefox 159, whose `style()` doesn't see a query an animation sets, as another call's answer), and MUST refuse with error 1 0, 1.5 or 18 ranges, a threshold that isn't a number, thresholds out of order or with a gap, a reversed quantize domain, and in Firefox (32-bit `calc()`, QUIRKS.md Q16) a query within 2^-20 of a threshold (of 17 times the larger quantize end), which its floats don't tell from it; there, where the range is picked by `calc()`, a refused or unpicked call (as the quantile scale's, A123) MUST give NaN, no number. Compiled, the same markup MUST give the same answers.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -2356,8 +2549,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": false,
-              "notes": "FAIL: 349 of 1,149 calls differ (2026-10-28)"
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -2369,7 +2561,7 @@
       },
       "A125": {
         "__compat": {
-          "description": "`.dcss-cumsum` with a second, unclassed list after its values MUST give d3's running total to everything inside the matching item of that list, for 0 to 1,024 values within ±1024 on the 1/64 grid (a total whose item's running width, the total + 1024 px an item, passes 262,143 px has no answer, error 1), missing and NaN values adding 0. It MUST refuse a total from a value off the grid or past ±1024 on with error 1, leave a formatter there its own status, and give the same totals compiled.",
+          "description": "`.dcss-cumsum` with a second, unclassed list after its values MUST give d3's running total to everything inside the matching item of that list, for 0 to 1,024 whole-number values within ±1024, one unit one px (a total whose item's running width, the total + 1024 px an item, passes 262,143 px has no answer, error 1), missing and NaN values adding 0. It MUST refuse a total from a value with a fraction or past ±1024 on with error 1, leave a formatter there its own status, and give the same totals compiled.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -2380,8 +2572,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": false,
-              "notes": "FAIL: a formatter in each item prints another total than d3's (2026-10-28)"
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -2404,7 +2595,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": "≤158"
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -2427,7 +2618,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": "≤158"
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -2439,7 +2630,7 @@
       },
       "A128": {
         "__compat": {
-          "description": "`.dcss-median-index` and `.dcss-quantile-index` (`--p`) with the list written once MUST give each element after the list (a `<figcaption>` excepted), and every element inside one, d3's index of the value at floor((n - 1) p), for 0 to 1,024 values on the 1/64 grid within ±131,072, with -1 for no values; with ties at that value, the place of the one sorted last when values ascend and equal ones go last place first (first place first at p 0 or less). An item with no `--value` in its style attribute MUST count in n and never be the answer: the index of rank min(k, D - 1) among the D numbers, -1 for none. Another value, a number such an item takes from elsewhere, or a `--p` that isn't a number MUST leave no answer.",
+          "description": "`.dcss-median-index` and `.dcss-quantile-index` (`--p`) with the list written once MUST give each element after the list (a `<figcaption>` excepted), and every element inside one, d3's index of the value at floor((n - 1) p), for 0 to 1,024 values from a lower bound lo, whole numbers, one unit one px, to lo + 262,143, lo the figure's `--domain-0` when it is written (a whole number within ±67,108,864) and otherwise −131,072, with -1 for no values; an item with a fraction, below lo or past its range, or a `--domain-0` off the grid, MUST give error 1 (in Firefox, whose 32-bit order keys keep no tie-break near 2^29, the order is the value alone within 2^23, ties left to source order and a list past p 0 laid out descending and read from its end; a lower bound past ±2^19 or a list in decimals there MUST give error 1) (in decimals, `--decimals` on the figure, whole numbers of its grid to lo + 262,143, A247); with ties at that value, the place of the one sorted last when values ascend and equal ones go last place first (first place first at p 0 or less). An item with no `--value` in its style attribute MUST count in n and never be the answer: the index of rank min(k, D - 1) among the D numbers, -1 for none. Another value, a number such an item takes from elsewhere, or a `--p` that isn't a number MUST leave no answer.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -2450,8 +2641,8 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": false,
-              "notes": "FAIL: 33 of 831 (no view timelines, 2026-10-30)"
+              "version_added": null,
+              "notes": "PRECONDITION_FAILED: every call refused, error 1, none wrong (its order keys go through 32-bit floats, 2026-11-02)"
             }
           },
           "status": {
@@ -2463,7 +2654,7 @@
       },
       "A129": {
         "__compat": {
-          "description": "`.dcss-bin` with `--domain-0`, `--domain-1`, up to 32 ascending thresholds `--threshold-N` or a `--count`, and up to 64 values MUST give everything inside the second list's `<li>` for bin b d3's `bin().domain().thresholds()` bin b: `--dcss-bin-length`, `--dcss-bin-x0` and `--dcss-bin-x1`, thresholds outside the domain dropped as d3 drops them, a count's ticks as d3's `ticks()` gives them. No domain, a domain backwards, more than 64 values or a count giving more than 32 ticks MUST leave no answer.",
+          "description": "`.dcss-bin` with `--domain-0`, `--domain-1`, up to 32 ascending thresholds `--threshold-N` or a `--count`, and up to 1,024 values MUST give everything inside the second list's `<li>` for bin b d3's `bin().domain().thresholds()` bin b: `--dcss-bin-length`, `--dcss-bin-x0` and `--dcss-bin-x1`, thresholds outside the domain dropped as d3 drops them, a count's ticks as d3's `ticks()` gives them. No domain, a domain backwards, more than 1,024 values or a count giving more than 32 ticks MUST leave no answer, and so MUST a bin while an item put in is not yet counted (WebKit, until the next frame); an item replaced in one task leaves the old count less that item for two frames in WebKit, error 0, a bound for the author.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -2474,7 +2665,30 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": "≤158"
+              "version_added": "≤159"
+            }
+          },
+          "status": {
+            "experimental": true,
+            "standard_track": false,
+            "deprecated": false
+          }
+        }
+      },
+      "A244": {
+        "__compat": {
+          "description": "`.dcss-rollup-sum` and `.dcss-rollup-count` with keys `--key-0` to `--key-31` (numbers) on the figure and items with `--key` and `--value` (whole numbers, one unit one px, or none) MUST give each element after the values' list that writes `--key` k (a `<figcaption>` or list excepted), and everything inside it, d3's `rollup(items, reduce, d => d.key).get(k)`: `--dcss-sum` for `sum(group, d => d.value)`; `--dcss-count` for `count(group, d => d.value)` and `--dcss-length` for the group's length; a key no item has MUST give `--dcss-err` 2. A key whose positives or negatives, each with one for each of its items, pass 16,515,007 (262,143 in Firefox, whose layout is exact under 2^19 px), a value with a fraction, or an answer whose key is not declared or written MUST leave no answer (`--dcss-err` 1), and so MUST an answer its author keeps inline (one inline by default, `<output>`, `<span>` and HTML's other inline phrasing elements, MUST be made `inline-block` at no specificity); a key declared twice MUST read as once. A key's answer MUST follow an item's key or value changed, or an item put in, taken out or hidden, by the next frame but one, refused (`--dcss-err` 1) until then.",
+          "spec_url": "SPEC.md#2-requirements",
+          "support": {
+            "chrome": {
+              "version_added": "≤155"
+            },
+            "safari": {
+              "version_added": null,
+              "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
+            },
+            "firefox": {
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -2486,7 +2700,7 @@
       },
       "A130": {
         "__compat": {
-          "description": "`.dcss-variance` and `.dcss-deviation` with up to 64 values in 64ths from -1024 to 1024 MUST give each element after the list (a `<figcaption>` excepted), and every element inside one, `--dcss-variance`, the true variance of the numbers rounded once (an item with none skipped), and `--dcss-deviation`, its square root; fewer than two numbers, more than 64 items or a value outside the range MUST leave no answer.",
+          "description": "`.dcss-variance` and `.dcss-deviation` with up to 64 whole values from -1024 to 65535 MUST give each element after the list (a `<figcaption>` excepted), and every element inside one, `--dcss-variance`, the true variance of the numbers rounded once (an item with none skipped), and `--dcss-deviation`, its square root; fewer than two numbers, more than 64 items or a value outside the range MUST leave no answer.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -2497,8 +2711,8 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": false,
-              "notes": "FAIL: 0 of 632 (no view timelines in release Firefox 158) (2026-10-30)"
+              "version_added": null,
+              "notes": "PRECONDITION_FAILED: refused outright, error 1, as A180"
             }
           },
           "status": {
@@ -2521,8 +2735,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": false,
-              "notes": "FAIL: 478 of 478 at most once; the date chain 81,600,000 ms off (32-bit `calc()`)"
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -2534,7 +2747,7 @@
       },
       "A215": {
         "__compat": {
-          "description": "`.dcss-solve` with `--from` and `--to`, n nested `<i>` elements in it (3 to 54) and the page's rule setting `--dcss-formula` from `--dcss-input` on every one, f (here and in A216 to A220 the page's `--dcss-formula` less `--target`, 0 without one) continuous between from and to, MUST give every element inside the deepest `<i>` that is not an `<i>` a `--dcss-solve` within |to − from| / 2^(n − 1) and 4 ulps of a root of f between from and to, and `--dcss-solve-width` |to − from| / 2^(n − 2), with `--dcss-ready` 1 and `--dcss-err` 0. The `<i>`s MUST generate no boxes and leave the font as they found it.",
+          "description": "`.dcss-solve` with `--from` and `--to`, n nested `<i>` elements in it (3 to 54) and the page's rule setting `--dcss-formula` from `--dcss-input` on every one, f (here and in A216 to A220 the page's `--dcss-formula` less `--target`, 0 without one) continuous between from and to, MUST give every element inside the deepest `<i>` that is not an `<i>` a `--dcss-solve` within |to − from| / 2^(n − 1) and 4 ulps of a root of f between from and to, and `--dcss-solve-width` |to − from| / 2^(n − 2), with `--dcss-ready` 1 and `--dcss-err` 0. The `<i>`s MUST generate no boxes and leave the font as they found it. Where `calc()` keeps 32-bit floats (Firefox, QUIRKS.md Q16), f and x are 32-bit floats: `--dcss-solve-width` MUST be max(|from|, |to|) / 2^21 more (4 float steps at the bracket's larger end) and `--dcss-solve` within it of where f, as the engine works it out, changes sign (the checks compare it with the root in doubles rounded to a 32-bit float, within the width and f's own 32-bit rounding over its slope; d3 and the others work in doubles).",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -2545,7 +2758,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": null
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -2568,7 +2781,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": null
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -2591,7 +2804,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": null
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -2603,7 +2816,7 @@
       },
       "A220": {
         "__compat": {
-          "description": "`.dcss-solve.dcss-solve-newton`, with the page's rule setting f's derivative `--dcss-slope` beside `--dcss-formula` on every `<i>`, `--guess` optional, and n nested `<i>` elements (3 to 14), MUST give inside the deepest the result of n − 2 of Newton's steps from the guess (the bracket's middle without one), each step taken when it lands in what is left of the bracket and moves x under half its width, the middle of what is left otherwise; `--dcss-solve-width` the width left; a 0 of f at an end as A216; and refuse as A216, and when f′ is not set or not a number at an `<i>`.",
+          "description": "`.dcss-solve.dcss-solve-newton`, with the page's rule setting f's derivative `--dcss-slope` beside `--dcss-formula` on every `<i>`, `--guess` optional, and n nested `<i>` elements (3 to 14), MUST give inside the deepest the result of n − 2 of Newton's steps from the guess (the bracket's middle without one), each step taken when it lands in what is left of the bracket and moves x under half its width, the middle of what is left otherwise; `--dcss-solve-width` the width left (in 32-bit floats, Firefox, with A215's float steps added, the answer within it as A215's); a 0 of f at an end as A216; and refuse as A216, and when f′ is not set or not a number at an `<i>`.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -2614,7 +2827,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": null
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -2637,7 +2850,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": null
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -2660,7 +2873,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": null
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -2683,7 +2896,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": null
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -2695,7 +2908,7 @@
       },
       "A224": {
         "__compat": {
-          "description": "`.dcss-sample` on a list call's figure, with `--from` and `--to` on it and the page's rule setting `--dcss-formula` from `--dcss-input` on its items, MUST give item k of n the `--value` `--dcss-formula` at from + (k − 1/2)(to − from) / n, rounded to 64ths, so the call answers as for those values; and `--dcss-err` 1 when the items have no `--dcss-formula` or the figure no `--from` and `--to`. `--from` and `--to` MUST NOT reach inside it.",
+          "description": "`.dcss-sample` on a list call's figure, with `--from` and `--to` on it and the page's rule setting `--dcss-formula` from `--dcss-input` on its items, MUST give item k of n the `--value` `--dcss-formula` at from + (k − 1/2)(to − from) / n, rounded to a whole number, so the call answers as for those values; and `--dcss-err` 1 when the items have no `--dcss-formula` or the figure no `--from` and `--to`. `--from` and `--to` MUST NOT reach inside it.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -2706,7 +2919,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": null
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -2729,7 +2942,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": null
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -2752,7 +2965,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": null
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -2775,7 +2988,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": null
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -2798,7 +3011,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": null
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -2821,7 +3034,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": null
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -2844,7 +3057,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": null
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -2867,7 +3080,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": null
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -2879,7 +3092,7 @@
       },
       "A232": {
         "__compat": {
-          "description": "`.dcss-lookup` with `--find` and a list whose items set `--key` and `--value` MUST give each element after the list, and everything inside it, `--dcss-lookup`: the `--value` of the one item whose `--key` equals `--find`, as d3's `index(items, (d) => d.key).get(find).value`, with `--dcss-ready` 1 and `--dcss-err` 0; with no such item, no answer and `--dcss-err` 2; with two or more, or with that item's value missing, off the 1/64 grid or not within ±131,072, no answer and `--dcss-err` 1. A repeat of a key other than `--find` MUST NOT change the answer. The number of items MUST NOT be limited.",
+          "description": "`.dcss-lookup` with `--find` and a list whose items set `--key` and `--value` MUST give everything inside the element right after the list (its reader: its children and their insides, its `::before` and `::after`) `--dcss-lookup`: the `--value` of the one item whose `--key` equals `--find`, as d3's `index(items, (d) => d.key).get(find).value`, with `--dcss-ready` 1 and `--dcss-err` 0; with no such item, no answer and `--dcss-err` 2; with two or more, or with that item's value missing, with a fraction or not within ±131,071 (one unit one px, under 2^19 px), no answer and `--dcss-err` 1; a repeat of a key other than `--find` MUST NOT change the answer, and the number of items MUST NOT be limited. Where `calc()` keeps 32-bit floats (Firefox, QUIRKS.md Q16), a key and `--find` of 2^24 or more in magnitude that are the same 32-bit float MUST match when written alike, and MUST NOT match when they are different whole numbers under 2^31 in magnitude (an 8-digit SKU and the one after it); otherwise (a key past 2^31, as an EAN-13, one float with a different `--find`, or one number written two ways: a +, a leading 0, an exponent) no answer and `--dcss-err` 1.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -2890,7 +3103,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": null
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -2902,7 +3115,7 @@
       },
       "A233": {
         "__compat": {
-          "description": "A format (`.dcss-format-fixed`, `-percent`, `-si`, `-general`) in an element whose language (HTML's `lang`, matched as `:lang()`) is one of d3-format 3.1.2's locales but `en-IN` MUST print as that locale's `formatLocale(locale).format(spec)`: its decimal and thousands marks, its currency before and after with `--symbol: 1`, its percent sign and its digits; in an element whose nearest `lang` names no such locale, as d3's default `format`.",
+          "description": "A format (`.dcss-format-fixed`, `-percent`, `-si`, `-general`) in an element whose language (HTML's `lang`, matched as `:lang()`, and a tag with a script subtag or an underscore, `zh-Hans-CN` or `de_DE`, as its language and region) is one of d3-format 3.1.2's locales but `en-IN` MUST print as that locale's `formatLocale(locale).format(spec)`: its decimal and thousands marks, its currency before and after with `--symbol: 1`, its percent sign and its digits; in an element whose nearest `lang` names no such locale, as d3's default `format`.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -2913,7 +3126,8 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": null
+              "version_added": false,
+              "notes": "FAIL: refused where its 32-bit calc() can round otherwise than d3 (Q16): 517 of 696 right, 179 refused (error 1, no text: 63 input not a float32, 64 a float32 sharing its span with another answer, 52 answerable, A64's split), none wrong; 10 of 10 (2026-11-02)"
             }
           },
           "status": {
@@ -2925,7 +3139,7 @@
       },
       "A234": {
         "__compat": {
-          "description": "`.dcss-sum`, `.dcss-count`, `.dcss-length`, `.dcss-mean`, `.dcss-min`, `.dcss-max` and `.dcss-extent` with `--find` set on the figure MUST answer as the same call on a list of only the items whose `--key` equals `--find` (d3's `rollup(items, reduce, (d) => d.key).get(find)`), error included; an item with no `--key` MUST NOT be taken. A call inside another's answer MUST NOT take that one's `--find`.",
+          "description": "`.dcss-sum`, `.dcss-count`, `.dcss-length`, `.dcss-mean`, `.dcss-min`, `.dcss-max` and `.dcss-extent` with `--find` set on the figure MUST answer as the same call on a list of only the items whose `--key` equals `--find` (d3's `rollup(items, reduce, (d) => d.key).get(find)`), error included; an item with no `--key` MUST NOT be taken. A call inside another's answer MUST NOT take that one's `--find`. Where `calc()` keeps 32-bit floats (Firefox, QUIRKS.md Q16), an item whose `--key` is the same 32-bit float as a `--find` of 2^24 or more in magnitude MUST give no answer and `--dcss-err` 1.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -2936,7 +3150,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": null
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -2960,7 +3174,7 @@
             },
             "firefox": {
               "version_added": false,
-              "notes": "FAIL: 78 of 2,008 (no view timelines in release Firefox 158) (2026-10-31)"
+              "notes": "FAIL: 252 of 252 lists refused (error 1), 0 wrong: view timelines are in Firefox 159, and the summary's 32-bit `calc()` refuses (A180) (Firefox 159, 2026-11-02)"
             }
           },
           "status": {
@@ -2983,7 +3197,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": null
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -2995,7 +3209,7 @@
       },
       "A237": {
         "__compat": {
-          "description": "The answers of a `.dcss-sum`, `.dcss-count`, `.dcss-length` and `.dcss-mean`, and a `.dcss-text`'s width, MUST be A60's and A43's whatever size the reader's browser sets text at (a minimum font size to 128px, a default font size, a phone's text autosizing, browser zoom) and whatever text styles the page sets on its elements, `!important` included (spacing, kerning, OpenType features, a font family or size on every element); where the printed text isn't in its font at 128px (a minimum font size past 128px, the font blocked or missing) they MUST be error 1 (`--dcss-err` on each element after the list, on a text's inner `<u>`), never another number; in WebKit, under an ancestor's CSS zoom below 1.25 other than 1 (QUIRKS.md Q14), they MUST be error 1 too.",
+          "description": "The answers of a `.dcss-sum`, `.dcss-count`, `.dcss-length` and `.dcss-mean`, and a `.dcss-text`'s width, MUST be A60's and A43's whatever size the reader's browser sets text at (a minimum font size to 128px, a default font size, a phone's text autosizing, browser zoom) and whatever text styles the page sets on its elements, `!important` included (spacing, kerning, OpenType features, a font family or size on every element); where the printed text isn't in its font at 128px (a minimum font size past 128px, the font blocked or missing) they MUST be error 1 (`--dcss-err` on each element after the list, on a text's inner `<u>`), never another number. Under an ancestor's CSS zoom other than 1 (QUIRKS.md Q14), the answers of a `.dcss-sum`, `.dcss-count`, `.dcss-length`, `.dcss-mean`, `.dcss-min`, `.dcss-max` and `.dcss-extent` MUST be error 1 or 2 in every engine, and every other call's in WebKit below 1.25.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -3006,8 +3220,8 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": null,
-              "notes": "PRECONDITION_FAILED: no view timelines, every sum refused"
+              "version_added": false,
+              "notes": "FAIL: 14 right, 10 refused, 0 wrong of 24, as shipped and at minimum font size 72; texts 8 of 8 right (Firefox 159, 2026-11-02)"
             }
           },
           "status": {
@@ -3030,8 +3244,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": null,
-              "notes": "PRECONDITION_FAILED: no view timelines, which store.css's store needs"
+              "version_added": "≤159"
             }
           },
           "status": {
@@ -3054,8 +3267,7 @@
               "notes": "Not measured in Safari. Playwright's WebKit 26.4, headless: PASS."
             },
             "firefox": {
-              "version_added": null,
-              "notes": "PRECONDITION_FAILED: no view timelines, which store.css's store needs"
+              "version_added": "≤159"
             }
           },
           "status": {

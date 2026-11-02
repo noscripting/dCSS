@@ -2,15 +2,15 @@
   "version": 1,
   "core": {
     "file": "dcss.css",
-    "raw": 313529,
-    "gzip9": 75229,
-    "sha256": "4ac605c9a4c34c5bbb20a477c4775399036a96cd2c21926a7ba285739d83f16b"
+    "raw": 311559,
+    "gzip9": 78278,
+    "sha256": "2cac53911ac4b63d92ced5d80ff602ea29fedda0250131b57a1926912eb11a4e"
   },
   "extras": {
     "file": "dcss-extras.css",
-    "raw": 15092,
-    "gzip9": 3741,
-    "sha256": "abd4779f9dc55bfa0fa34500db8df94167402acafa5f3a8ba94256c16ea34afd"
+    "raw": 15158,
+    "gzip9": 3759,
+    "sha256": "946a94a30458fa5877fda24a047f56fd09abbb536ca7ad08266382fe2a961170"
   },
   "order": [
     "array",
@@ -52,7 +52,6 @@
         "dcss-median-index",
         "dcss-min",
         "dcss-min-index",
-        "dcss-nice",
         "dcss-precision-fixed",
         "dcss-precision-prefix",
         "dcss-precision-round",
@@ -60,18 +59,19 @@
         "dcss-quantile-index",
         "dcss-quantile-sorted",
         "dcss-range",
+        "dcss-rollup-count",
+        "dcss-rollup-sum",
         "dcss-scale-quantile",
         "dcss-scale-quantize",
         "dcss-scale-threshold",
         "dcss-share",
         "dcss-sum",
         "dcss-summarize",
-        "dcss-ticks",
         "dcss-variance"
       ],
-      "raw": 492389,
-      "gzip9": 37406,
-      "sha256": "1f521ecaf6774c109bd14d404bdb5be3956f5e2249a251b209bb3c65e5a9068a"
+      "raw": 682279,
+      "gzip9": 50740,
+      "sha256": "939fcbb724de21c52c206e1e1ff630dcf6f0c95b7d926f9ece0ec75cfff39fa5"
     },
     "scale": {
       "file": "families/scale.css",
@@ -84,9 +84,9 @@
         "dcss-scale-pow",
         "dcss-scale-sqrt"
       ],
-      "raw": 147602,
-      "gzip9": 6965,
-      "sha256": "c34af19b6ff615719bcf54c6b7247f481d80c43949501f0c3fc3e94b279ab5f8"
+      "raw": 175738,
+      "gzip9": 7819,
+      "sha256": "d093109b3ba1c3ea8bb6028f8b2913698ae9e59b0b3841ad222fe53f9f11a86f"
     },
     "format": {
       "file": "families/format.css",
@@ -99,9 +99,9 @@
         "dcss-format-si",
         "dcss-locale-arabic"
       ],
-      "raw": 115907,
-      "gzip9": 7832,
-      "sha256": "3e64c2108c402d7ebac51d829927a19e0aa5df43264b332f6da97c7ed2b1d0e8"
+      "raw": 140498,
+      "gzip9": 9212,
+      "sha256": "877c2ddc06e15cc07a09f58380acf661563b33fa0a9ea3caa7c3100cdeb7bba7"
     },
     "dates": {
       "file": "families/dates.css",
@@ -247,9 +247,9 @@
         "dcss-utc-year-offset",
         "dcss-utc-year-round"
       ],
-      "raw": 354130,
-      "gzip9": 18662,
-      "sha256": "13128f2e06e5353c849af9feb87ccf978fac9d71905d4abd919b23ccb309601f"
+      "raw": 883041,
+      "gzip9": 53253,
+      "sha256": "500fae90223a22f821348b7bbc5366c439765b8a7d481ff62f776e2cd938bea5"
     },
     "math": {
       "file": "families/math.css",
@@ -263,9 +263,9 @@
         "dcss-solve-rows",
         "dcss-solve-turning-point"
       ],
-      "raw": 181500,
-      "gzip9": 6378,
-      "sha256": "d6486488659b32e6aa9c2e35ca4f878628f498b47b0e321315f55a92189171bc"
+      "raw": 183270,
+      "gzip9": 6440,
+      "sha256": "e1497178f7653e2247012e876bc1e2eca6475b267ef26197f42d4cfa72362478"
     },
     "motion": {
       "file": "families/motion.css",
@@ -306,7 +306,6 @@
     "dcss-median-index": "array",
     "dcss-min": "array",
     "dcss-min-index": "array",
-    "dcss-nice": "array",
     "dcss-precision-fixed": "array",
     "dcss-precision-prefix": "array",
     "dcss-precision-round": "array",
@@ -314,13 +313,14 @@
     "dcss-quantile-index": "array",
     "dcss-quantile-sorted": "array",
     "dcss-range": "array",
+    "dcss-rollup-count": "array",
+    "dcss-rollup-sum": "array",
     "dcss-scale-quantile": "array",
     "dcss-scale-quantize": "array",
     "dcss-scale-threshold": "array",
     "dcss-share": "array",
     "dcss-sum": "array",
     "dcss-summarize": "array",
-    "dcss-ticks": "array",
     "dcss-variance": "array",
     "dcss-scale-identity": "scale",
     "dcss-scale-linear": "scale",
@@ -485,9 +485,9 @@
   "functions": {
     "file": "families/functions.css",
     "count": 59,
-    "raw": 78150,
-    "gzip9": 2047,
-    "sha256": "1669ee181f0a789037ee5a2bf6ef830776c05d83c898b8110bb1e0f1eeed3643"
+    "raw": 87659,
+    "gzip9": 2182,
+    "sha256": "a71ec15b6ae925dd0f74606f5b2869cd7ddcfaa309427ffe1cd5e4e4f94ebe7b"
   },
   "operations": {
     "owned": {
@@ -6351,15 +6351,15 @@
         "family": "array",
         "role": "style-only"
       },
-      "dcss-nice": {
+      "dcss-rollup-count": {
+        "family": "array",
+        "role": "style-only"
+      },
+      "dcss-rollup-sum": {
         "family": "array",
         "role": "style-only"
       },
       "dcss-summarize": {
-        "family": "array",
-        "role": "style-only"
-      },
-      "dcss-ticks": {
         "family": "array",
         "role": "style-only"
       },
