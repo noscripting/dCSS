@@ -4,8 +4,6 @@ dcss.css does a page's arithmetic in CSS. It sums, averages and ranks a list, ma
 
 It is not a chart library: it computes the numbers, and the page draws them with ordinary CSS. It works in Chrome and Safari, and in part in Firefox ([Browsers](#browsers)).
 
-![Three cards computed by dcss.css: scores of 72.5, 88, 95 and 47 with their mean 75.6, median 80.3, highest 95.0 and deviation 21.3; a bar for each star rating, from eight ratings; and spending in March, 1.244,24 €, from 3 receipts averaging 414,75 €](images/dcss.png)
-
 ## Installation
 
 Each call is a class, with its own file in `parts/`. Put the class on a `<figure>` around a list. The browser lays the list out, and the list's size is the answer. This page links two parts that come to 20 KB gzipped:
@@ -21,8 +19,6 @@ Each call is a class, with its own file in `parts/`. Put the class on a `<figure
   <output style="--value: var(--dcss-mean); --precision: 1"></output>  <!-- 118.3 -->
 </figure>
 ```
-
-![The page prints 355 and 118.3, each on its own line](images/smallest.png)
 
 Each item gives its number as `--value`. The outputs after the list read `--dcss-sum`, `--dcss-mean` and `--dcss-count`, and change when a `--value` does.
 
