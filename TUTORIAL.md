@@ -40,7 +40,7 @@ The table shows 120, 95, 140, 80, 160 and 110.
 
 ## 2. The total and the average
 
-A call is a class on a `<figure>` around a list, one `--value` an item. `.dcss-mean` gives the list's sum as `--dcss-sum` and its mean as `--dcss-mean` to each element after the list. The list is drawn at its answer, a pixel tall and as wide as its total, so the figure clips it (`overflow: clip`, no height: a fixed one would cut the sentence when it wraps on a narrow screen) and the screen reader skips it (`aria-hidden`). Add `families/array.css` beside the other links, and this after the table:
+A call is a class on a `<figure>` around a list, one `--value` an item. `.dcss-mean` gives the list's sum as `--dcss-sum` and its mean as `--dcss-mean` to each element after the list. The list is laid out at its answer, its items reaching past the figure's edges, so the figure clips it (`overflow: clip`, no height: a fixed one would cut the sentence when it wraps on a narrow screen) and the screen reader skips it (`aria-hidden`). Add `families/array.css` beside the other links, and this after the table:
 
 ```html
 <figure class="dcss-mean dcss-format-fixed" style="overflow: clip; margin: 0">

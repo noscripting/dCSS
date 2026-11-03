@@ -11,7 +11,7 @@
 
 /* The page's own function at one input (evaluate.mjs). */
 @property --dcss-evaluate-ok{syntax:'<integer>';inherits:false;initial-value:0}
-:where(.dcss-evaluate){--dcss-formula:initial;--dcss-input:initial;--dcss-slope:initial;--dcss-evaluate-input:initial}.dcss-evaluate{--dcss-evaluate-input:var(--at)}:where(.dcss-evaluate){--at:initial}:where(.dcss-evaluate>i){display:contents;font-style:inherit;--dcss-input:var(--dcss-evaluate-input);--dcss-evaluate-ok:calc(round(sign(abs(var(--dcss-formula)) + 1)) * round(sign(abs(var(--dcss-evaluate-input)) + 1)));--dcss-ready:var(--dcss-evaluate-ok);--dcss-err:calc(1 - var(--dcss-evaluate-ok));--dcss-evaluate:calc(var(--dcss-evaluate-ok) / var(--dcss-evaluate-ok) * (var(--dcss-formula)))}:where(.dcss-evaluate:not(:has(>i))){--dcss-ready:0;--dcss-err:1}
+:where(.dcss-evaluate){--dcss-formula:initial;--dcss-input:initial;--dcss-slope:initial;--dcss-evaluate-input:initial}.dcss-evaluate{--dcss-evaluate-input:var(--at)}:where(.dcss-evaluate){--at:initial}:where(.dcss-evaluate>i){display:contents;font-style:inherit;--dcss-input:var(--dcss-evaluate-input);--dcss-evaluate-ok:calc(round(sign(abs(var(--dcss-formula)) + 1)));--dcss-ready:var(--dcss-evaluate-ok);--dcss-err:calc(2 * (1 - var(--dcss-evaluate-ok)));--dcss-evaluate:calc(var(--dcss-evaluate-ok) / var(--dcss-evaluate-ok) * (var(--dcss-formula)))}:where(.dcss-evaluate:not(:has(>i))){--dcss-ready:0;--dcss-err:1}
 
 /* The inverse of the page's own function on every row, by layout (invert.mjs). */
 

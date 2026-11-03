@@ -18,10 +18,10 @@ const NAMED = { amp: '&', lt: '<', gt: '>', quot: '"', apos: "'", nbsp: ' ', mi
 const decode = (s, where) => s.replace(/&(#x[0-9a-f]+|#[0-9]+|[a-z][a-z0-9]*);?/gi, (m, r) => {
   if (r[0] === '#') return String.fromCodePoint(r[1] === 'x' || r[1] === 'X' ? parseInt(r.slice(2), 16) : +r.slice(1));
   if (r in NAMED) return NAMED[r];
-  throw refusal(where, `the character reference ${m} is one this build doesn't know: write the character itself`);
+  throw buildError(where, `the character reference ${m} is one this build doesn't know: write the character itself`);
 });
-class Refusal extends Error {}
-const refusal = (at, why) => Object.assign(new Refusal(why), { at });
+class BuildError extends Error {}
+const buildError = (at, why) => Object.assign(new BuildError(why), { at });
 const attrRe = /([^\s"'>/=]+)(?:\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'=<>`]+)))?/g;
 const readAttrs = (s, at) => { const out = {}; for (const m of s.matchAll(attrRe)) { const k = m[1].toLowerCase(); if (!(k in out)) out[k] = decode(m[2] ?? m[3] ?? m[4] ?? '', at); } return out; };
 // one tag at i (s[i] === '<'): { name, end, close, self, attrs, length } or null for text
@@ -53,13 +53,13 @@ function endOf(src, lt, t) {
 // data-dcss-steps="n" on a solve or an invert: the build writes its <i>s, so the page never counts them. A solve's
 // content goes inside n nested <i>s; an invert gets a first child of n pairs, <span><i><i></i></i>…</span>. Nothing
 // adds a line, so every line number stays the page's; an element that holds its <i>s already is left as it is (the
-// build run on its own output changes nothing), and one holding a different count is refused.
+// build run on its own output changes nothing), and one holding a different count is an error.
 const NESTED = /(?:^|\s)dcss-solve(?=\s|$)/, NEWTONS = /(?:^|\s)dcss-solve-newton(?=\s|$)/;
 // data-dcss-within="t" on a halving .dcss-solve: how close the answer must be, in the formula's own input, and the build
 // counts the tries. n <i>s leave the answer within |to - from| / 2^(n - 1) (2 ends, n - 2 halvings, the middle of what
 // is left), so n is the least that reaches t, 3 at least. The build reads --from and --to as numbers from the element's
 // style or a <style> rule on one of its own classes; anything else (a var(), a Newton solve, an invert, whose steps
-// buy no fixed width) is refused with its line.
+// buy no fixed width) is an error, reported with its line.
 function withinSteps(src, a, cls, invert, where, parts = 1) {
   if ('data-dcss-steps' in a) throw new Error(`${where}: data-dcss-within beside data-dcss-steps: write one, how close or how many`);
   if (invert || !/(?:^|\s)dcss-solve(?:-every)?(?=\s|$)/.test(cls) || NEWTONS.test(cls)) throw new Error(`${where}: data-dcss-within on ${invert ? 'a .dcss-solve-rows' : 'a solve that takes Newton\'s steps'}: how close its answer gets has no fixed count; write data-dcss-steps`);
@@ -148,7 +148,7 @@ function stepsPass(src, file) {
 // wrote (its comment says so) is written again, so a changed formula gets a new slope and the build stays its own fixed
 // point. Nothing adds a line. Units are kept: a derivative has its formula's type (sin's argument in deg or rad, an
 // angle from asin). A var() other than --dcss-input is a constant, a number unless written with a unit; one that the page
-// works out from --dcss-input is refused, since its own slope isn't in the text.
+// works out from --dcss-input is an error, since its own slope isn't in the text.
 const { slopeOf: slopeOfText, slopePass } = (() => { // its own scope: its small names (add, mul, D) stay inside
 const SLOPE_MARK = '/* the slope, written by steps.mjs */', SLOPE_MARKS = [SLOPE_MARK, '/* the slope, written by mathml.mjs */']; // the second, on a page built before 2026-10-31
 const ANGLE = { deg: Math.PI / 180, rad: 1, grad: Math.PI / 200, turn: 2 * Math.PI };
@@ -308,7 +308,7 @@ function slopePass(src, file) {
 return { slopeOf, slopePass };
 })();
 export const slopeOf = slopeOfText; // for probes/dcss/slope/check.mjs
-export { RAW, NAMED, decode, Refusal, refusal, readAttrs, tagAt, lineOf, closeAt, VOID, OPTIONAL_END, endOf, stepsPass, slopePass };
+export { RAW, NAMED, decode, BuildError, buildError, readAttrs, tagAt, lineOf, closeAt, VOID, OPTIONAL_END, endOf, stepsPass, slopePass };
 
 // the page with its steps and slopes written: { html, noSlope } (noSlope: a line for each formula left without one)
 export function buildSteps(src, { file = 'page.html' } = {}) { const sl = slopePass(src, file); return { html: stepsPass(sl.src, file), noSlope: sl.skipped }; }

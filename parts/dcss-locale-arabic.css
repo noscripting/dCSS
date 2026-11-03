@@ -17,6 +17,7 @@
    WebKit than the SI path it took before (20 outputs a frame: 70 ms to 20; 2026-10-29). Only the non-exponential
    toPrecision range is admitted, 1 to 15 digits; unsupported results print nothing. */
 /* d3: with "$" the suffix is the currency's (none), not "%" */
+@property --dcss-dcss-ff{syntax:'<number>';inherits:true;initial-value:0}:root{--dcss-dcss-ff:calc((1 - ((16777216 + 1) - 16777216)))}
 /* DCSS d3-format's locales by the page's lang (locales.mjs). */
 @counter-style dcss-loc-dot-1 { system: fixed 0; symbols: "" "٫"; }
 @counter-style dcss-loc-comma-1 { system: fixed 0; symbols: "" "٬"; }

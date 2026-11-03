@@ -2,9 +2,9 @@
   "version": 1,
   "core": {
     "file": "dcss.css",
-    "raw": 311559,
-    "gzip9": 78278,
-    "sha256": "2cac53911ac4b63d92ced5d80ff602ea29fedda0250131b57a1926912eb11a4e"
+    "raw": 311829,
+    "gzip9": 78362,
+    "sha256": "ce01129c3070493d9a4aa88d148fe81d20d979ad884a95cffc3f024173a683cc"
   },
   "extras": {
     "file": "dcss-extras.css",
@@ -69,9 +69,9 @@
         "dcss-summarize",
         "dcss-variance"
       ],
-      "raw": 682279,
-      "gzip9": 50740,
-      "sha256": "939fcbb724de21c52c206e1e1ff630dcf6f0c95b7d926f9ece0ec75cfff39fa5"
+      "raw": 777315,
+      "gzip9": 55534,
+      "sha256": "9cb4dfa209eb35b5e8ea1295bacae1daab41863c6533d43ab8eefec1dd123061"
     },
     "scale": {
       "file": "families/scale.css",
@@ -99,9 +99,9 @@
         "dcss-format-si",
         "dcss-locale-arabic"
       ],
-      "raw": 140498,
-      "gzip9": 9212,
-      "sha256": "877c2ddc06e15cc07a09f58380acf661563b33fa0a9ea3caa7c3100cdeb7bba7"
+      "raw": 141544,
+      "gzip9": 9324,
+      "sha256": "cb2b3fec40cc5356e7356e2dab052dea6b34b987fbf08068bbcf63ba95711e9c"
     },
     "dates": {
       "file": "families/dates.css",
@@ -263,9 +263,9 @@
         "dcss-solve-rows",
         "dcss-solve-turning-point"
       ],
-      "raw": 183270,
-      "gzip9": 6440,
-      "sha256": "e1497178f7653e2247012e876bc1e2eca6475b267ef26197f42d4cfa72362478"
+      "raw": 183572,
+      "gzip9": 6428,
+      "sha256": "7a4d3d5b4446e8b8a01e244f898bf9bd99d0f7ade8f86119ac66373200f015ff"
     },
     "motion": {
       "file": "families/motion.css",
