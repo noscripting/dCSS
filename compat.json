@@ -2142,7 +2142,7 @@
       },
       "A81": {
         "__compat": {
-          "description": "The sheet MUST expose bounded discrete scales, quantiles, cumsum and precision helpers without compilation, with plain elements after a list or none and 17 property-based range values. Quantize MUST derive its thresholds from its domain in d3's operation order. A hand-written median → precisionFixed → format-fixed chain MUST match d3 across eight native/reset/viewport states, preserve flow and errors, and remain valid through optional compilation.",
+          "description": "The sheet MUST expose bounded discrete scales, quantiles, cumsum and precision helpers (`--step`, with `--value` or `--max`) without compilation, with plain elements after a list or none and 17 property-based range values. Quantize MUST derive its thresholds from its domain in d3's operation order. A hand-written median → precisionFixed → format-fixed chain MUST match d3 across eight native/reset/viewport states, preserve flow and errors, and remain valid through optional compilation.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -2222,7 +2222,7 @@
       },
       "A84": {
         "__compat": {
-          "description": "`.dcss-share` MUST publish totals exactly and per-item fractions within 1e-9 of d3 sum/division on descendant result holders for 1 to 64 values from 0, whole or in the list's decimals (two by default for a value written with a dot, A247; `--decimals` d up to 6), each and their total within 2^24 - 1 in the list's unit (167,772.15 in two decimals; 2^22 - 1 in Firefox, which reads a container's width exactly below 2^22 px: 41,943.03), one unit one px; a value with more decimals than the list takes gives error 1 today, a gap (A251: a page writes it); a value or a total past the bound, or past 64 items, is not covered (error 1; a total past 2^25 px reads error 2 in Chrome, whose grid lays out 0 px wide past it); an item with no number takes no room, as d3's sum skips it, and its own share is error 2; a zero total MUST give error 2, d3's NaN of 0 / 0. Formatting, native changes/reset, nested calls, intervening containers and natural row flow MUST preserve results and errors.",
+          "description": "`.dcss-share` MUST publish totals exactly and per-item fractions within 1e-9 of d3 sum/division on descendant result holders (`.dcss-share-read > .dcss-share-result`) for 1 to 64 values from 0, whole or in the list's decimals (two by default for a value written with a dot, A247; `--decimals` d up to 6), each and their total within 2^24 - 1 in the list's unit (167,772.15 in two decimals; 2^22 - 1 in Firefox, which reads a container's width exactly below 2^22 px: 41,943.03), one unit one px; a value with more decimals than the list takes gives error 1 today, a gap (A251: a page writes it); a value or a total past the bound, or past 64 items, is not covered (error 1; a total past 2^25 px reads error 2 in Chrome, whose grid lays out 0 px wide past it); an item with no number takes no room, as d3's sum skips it, and its own share is error 2; a zero total MUST give error 2, d3's NaN of 0 / 0. Formatting, native changes/reset, nested calls, intervening containers and natural row flow MUST preserve results and errors.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -2498,7 +2498,7 @@
       },
       "A100": {
         "__compat": {
-          "description": "Qualified Arabic `$,.2f` locale formatting MUST compute changing values in CSS and preserve static currency affixes. Both branches MUST match rendered native text; inputs and magnitudes past those bounds are not covered (error 1). Repeated factory contexts MUST NOT inflate the recorder's frozen raw-call identities.",
+          "description": "Qualified Arabic `$,.2f` locale formatting (`--dcss-locale-precision`, `--dcss-locale-sign`) MUST compute changing values in CSS and preserve static currency affixes. Both branches MUST match rendered native text; inputs and magnitudes past those bounds are not covered (error 1). Repeated factory contexts MUST NOT inflate the recorder's frozen raw-call identities.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -2647,7 +2647,7 @@
       },
       "A123": {
         "__compat": {
-          "description": "`.dcss-scale-quantile` with the list written once MUST give d3's answer to each element after the list (a `<figcaption>` excepted) and every element inside one, within A116's bounds, for up to 1,024 values and 1 to 17 ranges, numbers or text, a query on a threshold or one double either side of it included. An item written with a dot takes the list in decimals (A247: two by default); one with more decimals than that, a fraction a class rule sets, or a missing item (skipped, as d3 skips it) gives error 1 today, a gap (A251); an item out of range, 65 values on the compiled path, and 1.5 or 18 ranges are not covered (error 1); a missing or NaN query (what a call with no answer publishes) MUST answer `--unknown`, and error 2 with no `--unknown`, as d3's unknown does, and 0 ranges MUST give error 2, d3's undefined. In Firefox (32-bit `calc()`, QUIRKS.md Q16) it MUST decide the query against the threshold that straddles it exactly, in whole numbers each under 2^24, and a query that parses to the threshold itself where d3's double for it is not known to the ulp (the ranges not dividing 16, a fraction part not 0) is judged on the float it reads (A251).",
+          "description": "`.dcss-scale-quantile` with the list written once and its ranges in `--range-0` to `--range-16` (`--ranges` of them) MUST give d3's answer to each element after the list (a `<figcaption>` excepted) and every element inside one, within A116's bounds, for up to 1,024 values and 1 to 17 ranges, numbers or text, a query on a threshold or one double either side of it included. An item written with a dot takes the list in decimals (A247: two by default); one with more decimals than that, a fraction a class rule sets, or a missing item (skipped, as d3 skips it) gives error 1 today, a gap (A251); an item out of range, 65 values on the compiled path, and 1.5 or 18 ranges are not covered (error 1); a missing or NaN query (what a call with no answer publishes) MUST answer `--unknown`, and error 2 with no `--unknown`, as d3's unknown does, and 0 ranges MUST give error 2, d3's undefined. In Firefox (32-bit `calc()`, QUIRKS.md Q16) it MUST decide the query against the threshold that straddles it exactly, in whole numbers each under 2^24, and a query that parses to the threshold itself where d3's double for it is not known to the ulp (the ranges not dividing 16, a fraction part not 0) is judged on the float it reads (A251).",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -2810,7 +2810,7 @@
       },
       "A129": {
         "__compat": {
-          "description": "`.dcss-bin` with `--domain-0`, `--domain-1`, up to 32 ascending thresholds `--threshold-N` or a `--count`, and up to 1,024 values MUST give everything inside the second list's `<li>` for bin b d3's `bin().domain().thresholds()` bin b: `--dcss-bin-length`, `--dcss-bin-x0` and `--dcss-bin-x1`, thresholds outside the domain dropped as d3 drops them, a count's ticks as d3's `ticks()` gives them. No domain, a domain backwards, more than 1,024 values or a count giving more than 32 ticks are not covered (error 1 or 2); a bin while an item put in is not yet counted (WebKit, until the next frame) MUST NOT give another number with error 0; an item replaced in one task leaves the old count less that item for two frames in WebKit, error 0: a bug (QUIRKS.md Q18, A251).",
+          "description": "`.dcss-bin` with `--domain-0`, `--domain-1`, up to 32 ascending thresholds `--threshold-0` to `--threshold-31` or a `--count`, and up to 1,024 values MUST give everything inside the second list's `<li>` for bin b d3's `bin().domain().thresholds()` bin b: `--dcss-bin-length`, `--dcss-bin-x0` and `--dcss-bin-x1`, thresholds outside the domain dropped as d3 drops them, a count's ticks as d3's `ticks()` gives them. No domain, a domain backwards, more than 1,024 values or a count giving more than 32 ticks are not covered (error 1 or 2); a bin while an item put in is not yet counted (WebKit, until the next frame) MUST NOT give another number with error 0; an item replaced in one task leaves the old count less that item for two frames in WebKit, error 0: a bug (QUIRKS.md Q18, A251).",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
