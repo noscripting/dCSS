@@ -1,4 +1,4 @@
-# dcss.css
+# dCSS
 
 A CSS arithmetic library. d3's data functions for the DOM: sums, means and medians, scales, number and date formats, lookups, and formulas of your own, worked out by the browser's layout from numbers written in HTML. No JavaScript runs. Works in Chrome and Safari, and in part in Firefox.
 
