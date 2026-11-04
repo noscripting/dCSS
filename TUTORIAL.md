@@ -40,7 +40,7 @@ The table shows 120, 95, 140, 80, 160 and 110.
 
 ## 2. The total and the average
 
-A call is a class on a `<figure>` around a list, one `--value` an item. `.dcss-mean` gives the list's sum as `--dcss-sum` and its mean as `--dcss-mean` to each element after the list. The list is laid out at its answer, its items reaching past the figure's edges, so the figure clips it (`overflow: clip`, no height: a fixed one would cut the sentence when it wraps on a narrow screen) and the screen reader skips it (`aria-hidden`). Add `families/array.css` beside the other links, and this after the table:
+A call is a class on a `<figure>` around a list, one `--value` an item. `.dcss-mean` is in the array family, so add its sheet to the page's head, `<link rel="stylesheet" href="families/array.css">`, under the format one. It gives the list's sum as `--dcss-sum` and its mean as `--dcss-mean` to each element after the list. The list is laid out at its answer, its items reaching past the figure's edges, so the figure clips it (`overflow: clip`, no height: a fixed one would cut the sentence when it wraps on a narrow screen) and the screen reader skips it (`aria-hidden`). Add `families/array.css` beside the other links, and this after the table:
 
 ```html
 <figure class="dcss-mean dcss-format-fixed" style="overflow: clip; margin: 0">
@@ -107,6 +107,5 @@ In 2025 it reads total 705, average 117.5 and the bar is 117.5 pixels wide; pick
 ## Next
 
 - More calls on the same list: `.dcss-summarize` gives the median, extent, deviation and more at once ([README.md](README.md), Reference).
-- A formula of your own over these numbers, solved or evaluated: [README.md](README.md), Formulas.
-- Formulas written as Content MathML over a table compile to these calls with BASICSS's MathML format.
+- A formula of your own over these numbers, solved or evaluated: [README.md](README.md), Solving your own formula.
 - [SPEC.md](SPEC.md): what each call is required to do, and the result in each browser.

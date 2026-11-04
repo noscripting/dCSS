@@ -7,7 +7,7 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 Measured 2026-11-03, headless: Chrome 155.0.8059.86, WebKit 26.4, Firefox 159.0.
 Conformance: Chrome 100/141, WebKit 99/141, Firefox 76/141.
 Rows dated earlier were measured from 2026-10-26, Firefox's in Firefox 158.0.
-The checks, probes and scripts this document names are in the noscript.ing repository ([github.com/noscripting/noscript.ing](https://github.com/noscripting/noscript.ing)), under `libraries/dcss/`; this package carries the sheets and their documents.
+The checks, probes and scripts this document names are in the noscript.ing repository, under `libraries/dcss/`, not published with this package, which carries the sheets and their documents.
 
 Stylesheet packaging: `dcss.css` is the shared core. DCSS calls require their
 family files from `families.json`, in manifest order. `runtime.mjs` computes the

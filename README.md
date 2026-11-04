@@ -263,7 +263,8 @@ A flag is 1 in `--comma`, `--sign`, `--symbol` or `--trim`, d3's `,`, `+`, `$` a
 ### Dates: families/dates.css
 
 - [`.dcss-utc-<interval>-<op>`](https://d3js.org/d3-time#utcDay): epoch milliseconds to a UTC `day`, `hour`, `minute`, `second`, `sunday` to `saturday`, `month` or `year` by `floor`, `ceil`, `round`, `offset` or `count`.
-- [`.dcss-date-format-<specifier>`](https://d3js.org/d3-time-format#utcFormat): epoch milliseconds printed by one of d3's specifiers, one class per letter: `.dcss-date-format-Y` prints `%Y` and `.dcss-date-format-B` `%B` (case matters, so the page needs `<!doctype html>`). A specifier with no letter goes by its number, `.dcss-date-format-N`: 18 `%s.%L`, 19 `%s.%f`, 35 `%%`, 36 `.%L`, 37 `:%S`, 38 `%I:%M`, 39 `%I %p`, 40 `%a %d`.
+- [`.dcss-date-format-<specifier>`](https://d3js.org/d3-time-format#utcFormat): epoch milliseconds printed by one of d3's specifiers, one class per letter: `.dcss-date-format-Y` prints `%Y` and `.dcss-date-format-B` `%B` (case matters, so the page needs `<!doctype html>`). A specifier with no letter goes by its number, `.dcss-date-format-N`:
+- `.dcss-date-format-y`: and the eight other lowercase letters with an uppercase twin (a, b, g, m, q, s, u, x) have their part at `parts/dcss-date-format-y-lower.css`, since a file name on a disk that folds case cannot hold both. 18 `%s.%L`, 19 `%s.%f`, 35 `%%`, 36 `.%L`, 37 `:%S`, 38 `%I:%M`, 39 `%I %p`, 40 `%a %d`.
 
 ### Math: families/math.css
 
