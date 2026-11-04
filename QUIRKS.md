@@ -337,6 +337,16 @@ Measured 2026-10-22, headless: Chrome 155.0.8059.86, WebKit 26.4, Firefox 158.0.
 - Workaround: `.dcss-ranked.dcss-bin-max` takes its column offset from `--dcss-off` on the figure (65,536 unset, the room for a negative value): the compiler sets it to 1 + the magnitude of the data's lowest value (groups.mjs, nested.mjs), so a compiled page's columns stay under 2^20 px at any number of groups (ex-albums-max exact in Firefox since 2026-11-04); a hand-written figure keeps 16 groups exact there (16 × 65,536 = 2^20), and sets `--dcss-off` itself for more
 - Affects: A55
 
+### Q34 Chrome, WebKit: a view timeline's subject taller than its window reads its far edge 1 px off in the second window
+
+- Feature: `scroll-driven-animations`
+- Spec: [Scroll-driven Animations 1 §3.2](https://drafts.csswg.org/scroll-animations-1/#view-timelines) gives the ranges from the subject's edges, nothing of precision
+- Engines: Chrome FAIL: the summary's list ::before, spanning the high halves' rows (5.5M to 8.3M px tall), read its end 1 px high in Chrome in 9 of 136 lists of 65534s and 65535s (its low part landing on a half px, rounded up) and 1 px either way in WebKit in 22, in the second window (from 2^22 px), and in WebKit once in 154 lists in the first window (84 items of 50000, the end at 3,204,348 px); the one-row ::after read its edges exact to 8,495,040 px, and a subject half the columns wide (to 4.2M px) read its far edge exact in Chrome in about 300 lists with sums from 4.2M to 8.5M px, and 1 px off in WebKit in 2 of them, each time (121 items of 65534, short at 8,053,639 px; 154 of 40000, long at 6,317,850) (scratchpad var/p6.mjs, var/p7.mjs, var/p8.mjs, 2026-11-04); affects: the sum, max, median and mean of a list whose columns end past 4,194,303 px in WebKit (64 items averaging past 64,511, 1,024 past 3,071), about 1 list in 150 there; any read of a far edge of a subject wider or taller than about 3M px · WebKit FAIL: as Chrome, its counts in the Chrome result · Firefox NOTRUN: the summary doesn't run there
+- Repro: a `.dcss-summarize` of 127 items at 65535 read `--dcss-variance` 520.12 for 0, error 0, while the high rows' end was read in both windows (a build of 2026-11-04, not merged)
+- Bug: none found
+- Workaround: the high rows' end is read from the last item's ::before, one row (1 px wide, a -1 px margin keeping its column's width; `SM_READS` yh on `3y`, static.mjs); the far edge in x has no one-column subject (the columns are sorted, the items' pseudo-elements are by index), so a sum past 4,194,303 px may read 1 px off in WebKit, error 0
+- Affects: A130, A180
+
 ## Shared
 
 - `calc()` computes in doubles in Chrome and WebKit, in 32-bit floats in Firefox

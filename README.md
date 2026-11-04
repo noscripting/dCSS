@@ -48,7 +48,7 @@ The list is drawn at the answer's size, so hide it with `overflow: clip` on the 
 
 A figure is a block. For a total inside a sentence, put the sentence in a `<div>` (a `<p>` ends before a `<figure>`) and give the figure `display: inline-block` in a rule that names its class, such as `figure.total { display: inline-block }`.
 
-Values are whole numbers or decimals. A value written with a dot, such as 12.99, is taken in two decimals, and the answers are exact decimals: 0.1 + 0.2 is 0.3. Past two decimals, write `--decimals: 3` (to 6) on the figure; a sum and a max take up to 3 decimals as written.
+Values are whole numbers or decimals. A value with decimals, such as 12.99, is taken in two decimals, and the answers are exact decimals: 0.1 + 0.2 is 0.3. Past two decimals, write `--decimals: 3` (to 6) on the figure; a sum and a max take up to 3 decimals as written.
 
 A value the page changes with a rule, such as `:has(#x:checked) li.a { --value: 50 }`, goes in a class rule, since an item's `style` would win. `.dcss-summarize`, `.dcss-variance` and `.dcss-deviation` read each item's `style`, so there point it at the rule's property: `style="--value: var(--price)"`.
 
@@ -105,7 +105,7 @@ The scale follows the sum in the same frame. A list whose items hold another lis
 
 ## Looking up a value
 
-`.dcss-lookup` works like a spreadsheet's exact lookup. It gives the `--value` of the row whose `--key` equals the figure's `--find`. Keys are numbers, such as a product number or a year; a value written with a dot, 8.99, is taken in two decimals:
+`.dcss-lookup` works like a spreadsheet's exact lookup. It gives the `--value` of the row whose `--key` equals the figure's `--find`. Keys are numbers, such as a product number or a year; 8.99 is taken in two decimals:
 
 ```html
 <figure class="dcss-lookup dcss-format-fixed" style="--find: 102; --precision: 2; overflow: clip">
@@ -203,22 +203,6 @@ For something pushed by a force, such as a pendulum or a spring, write its accel
 
 The element and everything inside it get `--dcss-motion-position` and `--dcss-motion-speed`. Set the two ranges a little wider than the motion: `--dcss-err` is 1 while either is past its range.
 
-## As CSS functions
-
-Where the browser has `@function` (Chrome, and Safari Technology Preview), the scales and the UTC date calls are also CSS functions, with no element and no list. They are in `families/functions.css`, or one at a time in `parts/functions/` (`parts/functions/dcss-scale-linear.css`). Their arguments are the class's inputs in order:
-
-- `--dcss-scale-linear(x, d0, d1, r0, r1, clamp, round)`, and `-pow` (the exponent after `r1`), `-sqrt` and `-log`.
-- `--dcss-utc-<interval>-floor(t)`, `-ceil(t)`, `-round(t)`, `-offset(t, step)` and `-count(start, stop)` for `day`, `hour`, `minute`, `second` and `sunday` to `saturday`.
-
-A browser without `@function` sets the property to its initial value, not to the value written before it, so put the call in `@supports`:
-
-```css
-.bar { width: 0; }
-@supports (width: calc(--dcss-scale-linear(1, 0, 2, 0, 4) * 1px)) {
-  .bar { width: calc(--dcss-scale-linear(var(--sales), 0, 1000, 0, 600) * 1px); }
-}
-```
-
 ## Reference
 
 Each call gives its answer as `--dcss-` and its name to the elements directly inside the one it reads into, not deeper; `--dcss-ready` and `--dcss-err` inherit. [SPEC.md](SPEC.md) has each input's range.
@@ -227,46 +211,59 @@ Each call gives its answer as `--dcss-` and its name to the elements directly in
 
 ### Array: families/array.css
 
-- [`.dcss-sum`](https://d3js.org/d3-array/summarize#sum), [`.dcss-mean`](https://d3js.org/d3-array/summarize#mean), [`.dcss-count`](https://d3js.org/d3-array/summarize#count), `.dcss-length`, [`.dcss-min`](https://d3js.org/d3-array/summarize#min), [`.dcss-max`](https://d3js.org/d3-array/summarize#max), [`.dcss-extent`](https://d3js.org/d3-array/summarize#extent): of the list; length counts its items; with `--find`, of the rows whose `--key` equals it. A sum takes prices such as 19.99 as written, to 3 decimals, and gives the exact decimal answer (0.1 + 0.2 is 0.3), and a max takes them too; a mean, min or extent takes a value written with a dot in two decimals, and `--decimals: 3` on the figure takes three (to 6); in Firefox, whole numbers.
-- `.dcss-summarize`: sum, count, length, mean, min, max, median, variance and deviation of one list, to each element after it and everything inside. A value written with a dot, such as 19.99, is taken in two decimals; past two, write `--decimals: 3` (to 6) on the figure, or every answer, the count too, gives error 1.
-- [`.dcss-min-index`](https://d3js.org/d3-array/summarize#minIndex), [`.dcss-max-index`](https://d3js.org/d3-array/summarize#maxIndex), [`.dcss-least-index`](https://d3js.org/d3-array/summarize#leastIndex), [`.dcss-greatest-index`](https://d3js.org/d3-array/summarize#greatestIndex), [`.dcss-least`](https://d3js.org/d3-array/summarize#least), [`.dcss-greatest`](https://d3js.org/d3-array/summarize#greatest): where the least or greatest is, or its value.
-- [`.dcss-lookup`](https://d3js.org/d3-array/group#index): the `--value` of the row whose `--key` is the figure's `--find`, as a spreadsheet's exact lookup; a value written with a dot is taken in two decimals (`--decimals` for more).
-- [`.dcss-median`](https://d3js.org/d3-array/summarize#median), [`.dcss-quantile`](https://d3js.org/d3-array/summarize#quantile), [`.dcss-quantile-sorted`](https://d3js.org/d3-array/summarize#quantileSorted), [`.dcss-median-index`](https://d3js.org/d3-array/summarize#medianIndex), [`.dcss-quantile-index`](https://d3js.org/d3-array/summarize#quantileIndex): read three elements deep; `--p` places a quantile.
-- [`.dcss-variance`](https://d3js.org/d3-array/summarize#variance), [`.dcss-deviation`](https://d3js.org/d3-array/summarize#deviation): read by the element after the list, as the summary's.
-- [`.dcss-scale-quantile`](https://d3js.org/d3-scale/quantile#scaleQuantile), [`.dcss-scale-threshold`](https://d3js.org/d3-scale/threshold#scaleThreshold), [`.dcss-scale-quantize`](https://d3js.org/d3-scale/quantize#scaleQuantize): `--value` to `--range-0` to `--range-16` (`--ranges` of them) or `--unknown`, a quantile scale by its list four elements deep, a threshold scale by `--domain-0` to `--domain-15` (a list in it gives error 1), a quantize scale by `--domain-0` and `--domain-1`.
-- [`.dcss-bisect-left`](https://d3js.org/d3-array/bisect#bisectLeft), [`.dcss-bisect-right`](https://d3js.org/d3-array/bisect#bisectRight), [`.dcss-bisect`](https://d3js.org/d3-array/bisect#bisect), [`.dcss-bisector-left`](https://d3js.org/d3-array/bisect#bisector), [`.dcss-bisector-right`](https://d3js.org/d3-array/bisect#bisector), [`.dcss-bisector`](https://d3js.org/d3-array/bisect#bisector): where the figure's `--value` goes in the sorted list.
-- [`.dcss-ascending`](https://d3js.org/d3-array/sort#ascending), [`.dcss-descending`](https://d3js.org/d3-array/sort#descending): comparing `--a` and `--b`.
-- [`.dcss-cumsum`](https://d3js.org/d3-array/summarize#cumsum), [`.dcss-bin`](https://d3js.org/d3-array/bin#bin): a second list, a `<li>` per total or bin; a cumsum's values, whole or written with a dot (two decimals; `--decimals` for more), run to 8,388,607 in the list's unit; bins cut `--domain-0` to `--domain-1` at `--threshold-0` to `--threshold-31` or by `--count`, up to 1,024 values. d3 picks how many bins `--count` makes, so write enough `<li>`: one past the last bin answers `--dcss-err` 1 and length 0, and `calc(1 - var(--dcss-err))` hides its bar or label.
-- [`.dcss-rollup-sum`](https://d3js.org/d3-array/group#rollup), [`.dcss-rollup-count`](https://d3js.org/d3-array/group#rollup): each item's `--key` names its group, one of the keys the figure declares (`--key-0` to `--key-31`); after the list, an element per key asked, `<output style="--key: 2"></output>`, gets that key's `--dcss-sum`, or its `--dcss-count` and `--dcss-length`; a value written with a dot, 19.99, is summed in two decimals (`--decimals` for more). An answer reads with its own `::before` and `::after`, so it prints through an element inside it, `<output class="dcss-format-fixed" style="--value: var(--dcss-sum)">`: a format class on the answer itself prints nothing. Every element after the first list is an answer and costs its reads: put the page's own content in one element (400 loose spans took seconds to load, in one `<div>` 86 ms).
-- `.dcss-share`: each item's fraction, `--dcss-share`, in its `.dcss-share-read > .dcss-share-result`, and the total, `--dcss-total`; values from 0, a value written with a dot in two decimals (`--decimals` for more), totals to 16,777,215 in the list's unit.
-- [`.dcss-precision-fixed`](https://d3js.org/d3-format#precisionFixed), [`.dcss-precision-prefix`](https://d3js.org/d3-format#precisionPrefix), [`.dcss-precision-round`](https://d3js.org/d3-format#precisionRound): for `--step`, with `--value` or `--max`.
-- [`.dcss-range`](https://d3js.org/d3-array/ticks#range): one `<li>` per number, `--start` to `--stop` by `--step`.
+A list is `<li>` items with `--value` in a `<figure>` of the call's class; the answer is `--dcss-` and the call's name, on the elements after the list. A value with decimals, such as 19.99, is taken in two decimals; `--decimals: 3` on the figure takes three, up to 6. `--find` on a sum, mean, count, length, min, max or extent keeps only the rows whose `--key` equals it. In Firefox the lists take whole numbers ([Browsers](#browsers)).
+
+- [`.dcss-sum`](https://d3js.org/d3-array/summarize#sum): the total. It takes up to 3 decimals as written.
+- [`.dcss-mean`](https://d3js.org/d3-array/summarize#mean): the average.
+- [`.dcss-count`](https://d3js.org/d3-array/summarize#count): how many items have a number.
+- `.dcss-length`: how many items, with or without a number.
+- [`.dcss-min`](https://d3js.org/d3-array/summarize#min): the smallest.
+- [`.dcss-max`](https://d3js.org/d3-array/summarize#max): the largest. It takes up to 3 decimals as written.
+- [`.dcss-extent`](https://d3js.org/d3-array/summarize#extent): the smallest and the largest at once, `--dcss-min` and `--dcss-max`.
+- `.dcss-summarize`: sum, count, length, mean, min, max, median, variance and deviation of one list at once, to every element after it, up to 1,024 items from -1024 to 65535. The variance and deviation need the squares to fit the figure: every list of 64 fits, and 1,024 items fit up to a value of 91; past that those two alone give NaN.
+- [`.dcss-min-index`](https://d3js.org/d3-array/summarize#minIndex), [`.dcss-max-index`](https://d3js.org/d3-array/summarize#maxIndex): where the smallest and the largest are, counted from 0.
+- [`.dcss-least`](https://d3js.org/d3-array/summarize#least), [`.dcss-greatest`](https://d3js.org/d3-array/summarize#greatest): the smallest and the largest, by d3's other names.
+- [`.dcss-least-index`](https://d3js.org/d3-array/summarize#leastIndex), [`.dcss-greatest-index`](https://d3js.org/d3-array/summarize#greatestIndex): where they are, counted from 0.
+- [`.dcss-lookup`](https://d3js.org/d3-array/group#index): the `--value` of the row whose `--key` is the figure's `--find`, a spreadsheet's exact lookup; a key in no row is error 2.
+- [`.dcss-median`](https://d3js.org/d3-array/summarize#median): the middle value. Its answer, like the quantiles', reaches elements up to three deep.
+- [`.dcss-quantile`](https://d3js.org/d3-array/summarize#quantile), [`.dcss-quantile-sorted`](https://d3js.org/d3-array/summarize#quantileSorted): the value at `--p`, 0 to 1, as d3 interpolates it; sorted takes a list already in order.
+- [`.dcss-median-index`](https://d3js.org/d3-array/summarize#medianIndex), [`.dcss-quantile-index`](https://d3js.org/d3-array/summarize#quantileIndex): where the median and the quantile are, counted from 0.
+- [`.dcss-variance`](https://d3js.org/d3-array/summarize#variance), [`.dcss-deviation`](https://d3js.org/d3-array/summarize#deviation): the variance, rounded once, and its square root, by the element after the list; up to 1,024 values from -1024 to 65535, the squares fitting as the summary's do.
+- [`.dcss-scale-quantile`](https://d3js.org/d3-scale/quantile#scaleQuantile): `--value` placed among the list's quantiles into `--range-0` to `--range-16` (`--ranges` of them); its answer reaches four elements deep.
+- [`.dcss-scale-threshold`](https://d3js.org/d3-scale/threshold#scaleThreshold): `--value` placed by the thresholds `--domain-0` to `--domain-15` into the ranges; a value outside takes `--unknown`. No list.
+- [`.dcss-scale-quantize`](https://d3js.org/d3-scale/quantize#scaleQuantize): `--value` cut evenly between `--domain-0` and `--domain-1` into the ranges. No list.
+- [`.dcss-bisect-left`](https://d3js.org/d3-array/bisect#bisectLeft), [`.dcss-bisect-right`](https://d3js.org/d3-array/bisect#bisectRight), [`.dcss-bisect`](https://d3js.org/d3-array/bisect#bisect): where `--value` goes in the sorted list, before equal values (left) or after them (right, and bisect).
+- [`.dcss-bisector-left`](https://d3js.org/d3-array/bisect#bisector), [`.dcss-bisector-right`](https://d3js.org/d3-array/bisect#bisector), [`.dcss-bisector`](https://d3js.org/d3-array/bisect#bisector): d3's bisector over the same list, left, right, and right.
+- [`.dcss-ascending`](https://d3js.org/d3-array/sort#ascending), [`.dcss-descending`](https://d3js.org/d3-array/sort#descending): -1, 0 or 1 comparing `--a` and `--b`.
+- [`.dcss-cumsum`](https://d3js.org/d3-array/summarize#cumsum): running totals, one per `<li>` of a second list after the values, to 8,388,607 (83,886.07 in two decimals).
+- [`.dcss-bin`](https://d3js.org/d3-array/bin#bin): the values counted into bins cut from `--domain-0` to `--domain-1` at `--threshold-0` to `--threshold-31`, or into `--count` of them as d3 picks; each bin a `<li>` of a second list, with `--dcss-bin-length`; up to 1,024 values. Write enough `<li>`s for `--count`: one past the last bin gets error 1 and length 0, and `calc(1 - var(--dcss-err))` hides its bar.
+- [`.dcss-rollup-sum`](https://d3js.org/d3-array/group#rollup), [`.dcss-rollup-count`](https://d3js.org/d3-array/group#rollup): a total, or a count, per key: each item has a `--key`, the figure declares them as `--key-0` to `--key-31`, and each element after the list with `--key: 2` gets that key's `--dcss-sum`, or its `--dcss-count` and `--dcss-length`. An answer prints through an element inside it, `<output class="dcss-format-fixed" style="--value: var(--dcss-sum)">`. Every element after the list is an answer and costs its reads: put the page's own content in one element (400 loose spans took seconds to load, one `<div>` 86 ms).
+- `.dcss-share`: each item's fraction of the total, `--dcss-share`, in its `.dcss-share-read > .dcss-share-result`, and the total, `--dcss-total`; values from 0, totals to 16,777,215.
+- [`.dcss-precision-fixed`](https://d3js.org/d3-format#precisionFixed), [`.dcss-precision-prefix`](https://d3js.org/d3-format#precisionPrefix), [`.dcss-precision-round`](https://d3js.org/d3-format#precisionRound): d3's precision helpers for `--step`, with `--value` or `--max`.
+- [`.dcss-range`](https://d3js.org/d3-array/ticks#range): one `<li>` per number from `--start` to `--stop` by `--step`.
 
 ### Scale: families/scale.css
 
-- [`.dcss-scale-linear`](https://d3js.org/d3-scale/linear#scaleLinear), [`.dcss-scale-pow`](https://d3js.org/d3-scale/pow#scalePow), [`.dcss-scale-sqrt`](https://d3js.org/d3-scale/pow#scaleSqrt), [`.dcss-scale-log`](https://d3js.org/d3-scale/log#scaleLog), [`.dcss-scale-identity`](https://d3js.org/d3-scale/linear#scaleIdentity): `--value` from `--domain-0`, `--domain-1` to `--range-0`, `--range-1`, and back as `-invert`.
-- `.dcss-piecewise`: up to 8 stops, `--stops`.
-- [`.dcss-scale-ordinal`](https://d3js.org/d3-scale/ordinal#scaleOrdinal): `--value`'s place in `--domain-0` to `--domain-15` (`--domains` of them) picks `--range-0` to `--range-15` (`--ranges` of them, cycled), to everything inside: `--dcss-scale-ordinal`; a value in no slot takes `--unknown`, else the range at `--domains`, none with `--implicit: 0`.
+- [`.dcss-scale-linear`](https://d3js.org/d3-scale/linear#scaleLinear): `--value` mapped from `--domain-0`, `--domain-1` onto `--range-0`, `--range-1`; `-invert` maps back.
+- [`.dcss-scale-pow`](https://d3js.org/d3-scale/pow#scalePow), [`.dcss-scale-sqrt`](https://d3js.org/d3-scale/pow#scaleSqrt), [`.dcss-scale-log`](https://d3js.org/d3-scale/log#scaleLog): the same by a power (`--exponent`), a square root or a logarithm.
+- [`.dcss-scale-identity`](https://d3js.org/d3-scale/linear#scaleIdentity): the value itself, d3's identity scale.
+- `.dcss-piecewise`: a linear scale through up to 8 stops, `--stops`.
+- [`.dcss-scale-ordinal`](https://d3js.org/d3-scale/ordinal#scaleOrdinal): `--value`'s place among `--domain-0` to `--domain-15` (`--domains` of them) picks `--range-0` to `--range-15` (`--ranges` of them, cycled), as `--dcss-scale-ordinal`; a value in no slot takes `--unknown`, or the next range unless `--implicit: 0`.
 
 ### Format: families/format.css
 
-- [`.dcss-format-fixed`](https://d3js.org/d3-format#format), [`.dcss-format-percent`](https://d3js.org/d3-format#format), [`.dcss-format-si`](https://d3js.org/d3-format#format), [`.dcss-format-general`](https://d3js.org/d3-format#format): `--value` printed with `--precision`; 1 in `--comma`, `--sign`, `--symbol` or `--trim` for d3's `,`, `+`, `$` or `~`.
-- [`.dcss-format-locale`](https://d3js.org/d3-format#formatLocale), [`.dcss-locale-arabic`](https://d3js.org/d3-format#formatLocale): Arabic `$,.2f`, `--dcss-locale-precision`, `--dcss-locale-sign`.
+A flag is 1 in `--comma`, `--sign`, `--symbol` or `--trim`, d3's `,`, `+`, `$` and `~`. In an element with `lang`, a format prints in that language.
+
+- [`.dcss-format-fixed`](https://d3js.org/d3-format#format): `--value` with `--precision` decimals, d3's `f`.
+- [`.dcss-format-percent`](https://d3js.org/d3-format#format): as a percentage, d3's `%`.
+- [`.dcss-format-si`](https://d3js.org/d3-format#format): with an SI prefix (12.3k), d3's `s`.
+- [`.dcss-format-general`](https://d3js.org/d3-format#format): to `--precision` significant digits, d3's `g`.
+- [`.dcss-format-locale`](https://d3js.org/d3-format#formatLocale), [`.dcss-locale-arabic`](https://d3js.org/d3-format#formatLocale): Arabic `$,.2f`, with `--dcss-locale-precision` and `--dcss-locale-sign`.
 
 ### Dates: families/dates.css
 
 - [`.dcss-utc-<interval>-<op>`](https://d3js.org/d3-time#utcDay): epoch milliseconds to a UTC `day`, `hour`, `minute`, `second`, `sunday` to `saturday`, `month` or `year` by `floor`, `ceil`, `round`, `offset` or `count`.
-- [`.dcss-date-format-<specifier>`](https://d3js.org/d3-time-format#utcFormat): epoch milliseconds printed by one of d3's specifiers, `.dcss-date-format-Y` as `%Y` (a page with `<!doctype html>`: the letters differ by case); `.dcss-date-format-N` takes the specifier numbered N:
-
-```
- 0 %c     c     1 %a     a     2 %A     A     3 %b     b     4 %B     B     5 %d     d
- 6 %e     e     7 %g     g     8 %G     G     9 %H     H    10 %I     I    11 %j     j
-12 %m     m    13 %M     M    14 %p     p    15 %q     q    16 %Q     Q    17 %s     s
-18 %s.%L       19 %s.%f       20 %S     S    21 %0S    0S   22 %_S    _S   23 %-S    -S
-24 %L     L    25 %u     u    26 %f     f    27 %U     U    28 %W     W    29 %V     V
-30 %x     x    31 %X     X    32 %y     y    33 %Y     Y    34 %Z     Z    35 %%
-36 .%L         37 :%S         38 %I:%M       39 %I %p       40 %a %d
-```
+- [`.dcss-date-format-<specifier>`](https://d3js.org/d3-time-format#utcFormat): epoch milliseconds printed by one of d3's specifiers, one class per letter: `.dcss-date-format-Y` prints `%Y` and `.dcss-date-format-B` `%B` (case matters, so the page needs `<!doctype html>`). A specifier with no letter goes by its number, `.dcss-date-format-N`: 18 `%s.%L`, 19 `%s.%f`, 35 `%%`, 36 `.%L`, 37 `:%S`, 38 `%I:%M`, 39 `%I %p`, 40 `%a %d`.
 
 ### Math: families/math.css
 
@@ -283,6 +280,22 @@ Each call gives its answer as `--dcss-` and its name to the elements directly in
 - `.dcss-motion`: on store.css's frame cell (`data-store`), the page's own equation of motion, a leapfrog step a frame: `--dcss-motion-acceleration` from `--dcss-motion-position` and `--dcss-motion-speed`, `--dcss-motion-start-position`, `-start-speed`, `-position-range`, `-speed-range`, `-time-step`; on it and inside it, `--dcss-motion-position` and `--dcss-motion-speed`.
 
 <!-- /calls -->
+
+### Functions: families/functions.css
+
+Where the browser has `@function` (Chrome, and Safari Technology Preview), the scales and the UTC date calls are also CSS functions, with no element and no list; one at a time in `parts/functions/` (`parts/functions/dcss-scale-linear.css`). Their arguments are the class's inputs in order.
+
+- `--dcss-scale-linear(x, d0, d1, r0, r1, clamp, round)`, and `-pow` (the exponent after `r1`), `-sqrt` and `-log`.
+- `--dcss-utc-<interval>-floor(t)`, `-ceil(t)`, `-round(t)`, `-offset(t, step)` and `-count(start, stop)` for `day`, `hour`, `minute`, `second` and `sunday` to `saturday`.
+
+A browser without `@function` sets the property to its initial value, not to the value written before it, so put the call in `@supports`:
+
+```css
+.bar { width: 0; }
+@supports (width: calc(--dcss-scale-linear(1, 0, 2, 0, 4) * 1px)) {
+  .bar { width: calc(--dcss-scale-linear(var(--sales), 0, 1000, 0, 600) * 1px); }
+}
+```
 
 ### Grid primitives: dcss.css
 
@@ -301,11 +314,11 @@ The calls above are built on these. [SPEC.md](SPEC.md) has their markup.
 
 <!-- browsers -->
 
-Headless Chrome 155 and WebKit 26.4, Safari's engine, pass 100 and 99 of the 141 requirements of [SPEC.md](SPEC.md), and the calls match d3 on 1,687 of the 5,432 calls in d3's tests. Firefox 159 computes `calc()` in 32-bit floats: it answers to that precision where it can (judged on the floats it reads) and fails on the rest with `--dcss-err: 1`, and passes 76. [QUIRKS.md](QUIRKS.md) has the engine bugs.
+Headless Chrome 155 and WebKit 26.4, Safari's engine, pass 100 and 99 of the 141 requirements of [SPEC.md](SPEC.md), whose report says per call what is right, a gap and not covered. Firefox 159 computes `calc()` in 32-bit floats: it answers to that precision where it can (judged on the floats it reads) and fails on the rest with `--dcss-err: 1`, and passes 76. [QUIRKS.md](QUIRKS.md) has the engine bugs.
 
 <!-- /browsers -->
 
-Firefox computes `calc()` in 32-bit floats. There a sum is exact to 2^24 for lists of up to 9,990 items, a sum or max takes a value written with a dot in two decimals, to 41,943.03 (as a mean, min or extent does; `--decimals` for more), and `.dcss-summarize`, `.dcss-variance` and `.dcss-deviation` fail; a median, quantile or quantileSorted, the index calls, the quantile scale, rollups, lookups, shares and cumsum take a value written with a dot (two decimals) within their Firefox bounds, which [QUIRKS.md](QUIRKS.md) Q16, Q17, Q20 and Q25 give, and answer within the float's steps of d3's number; a fixed or percent format prints the float Firefox holds, within its step, for values under 2^24 and up to 7 places.
+Firefox computes `calc()` in 32-bit floats. There a sum is exact to 2^24 for lists of up to 9,990 items, a sum or max takes a value with decimals in two, to 41,943.03 (as a mean, min or extent does; `--decimals` for more), and `.dcss-summarize`, `.dcss-variance` and `.dcss-deviation` fail; a median, quantile or quantileSorted, the index calls, the quantile scale, rollups, lookups, shares and cumsum take a value in two decimals within their Firefox bounds, which [QUIRKS.md](QUIRKS.md) Q16, Q17, Q20 and Q25 give, and answer within the float's steps of d3's number; a fixed or percent format prints the float Firefox holds, within its step, for values under 2^24 and up to 7 places.
 
 At a page zoom or screen scale whose product isn't a whole number (90%, 125%, a screen set to 150%), every call that reads layout gives no answer, error 1, where the browser lays the page out in screen pixels ([QUIRKS.md](QUIRKS.md), Q30); at 100% and 200%, and on a Retina screen, the calls answer.
 
@@ -313,7 +326,7 @@ At a page zoom or screen scale whose product isn't a whole number (90%, 125%, a 
 
 <!-- performance -->
 
-Layout does the work, in the frame a number changes. A family is at most 61 KB gzipped and loads in 22 ms or less in WebKit 26.4 (2026-10-31). Twenty printed medians, a value moving: 6.3 ms a frame in Chrome, 9.6 in WebKit; variance 8.2, 10.3 (2026-10-30). Twenty sums of 256 items, a value moving: 4.3 ms a frame in Chrome, 9.8 in WebKit (2026-11-01).
+Layout does the work, in the frame a number changes. A family is at most 62 KB gzipped and loads in 22 ms or less in WebKit 26.4 (2026-10-31). Twenty printed medians, a value moving: 6.3 ms a frame in Chrome, 9.6 in WebKit; variance 8.2, 10.3 (2026-10-30). Twenty sums of 256 items, a value moving: 4.3 ms a frame in Chrome, 9.8 in WebKit (2026-11-01).
 
 <!-- /performance -->
 

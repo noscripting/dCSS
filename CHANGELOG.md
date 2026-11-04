@@ -4,6 +4,13 @@ All notable changes to dcss are written here. The format follows [Keep a Changel
 
 ## [Unreleased]
 
+
+### Changed
+- `.dcss-summarize`, `.dcss-variance` and `.dcss-deviation`: the variance and deviation take every list of up to 1,024 items whose squares, as 16-bit halves 2 px an item below the row the min takes, end within 8,495,040 px (every list of 64, 1,024 values to 91, 127 at 65535; `probes/dcss/summarize/bounds.mjs`); they stopped at 64 items. The high halves' rows end is read from the last item's ::before, one row: the list's ::before spanning them read it 1 px off (QUIRKS.md Q34). Past the reads the two are NaN with the figure's error 0, as before.
+
+### Fixed
+- `.dcss-summarize`: a list whose every value is past 1024 and whose squares' 16-bit halves summed past 4.3M px (64 at 50000) gave every answer error 1 since the range grew to 65535 on 2026-11-02: its last row's end is read in both windows now, to 8,495,040 px.
+
 ## [0.0.1] - 2026-11-04
 
 The first release: d3's modules computed by CSS layout, checked against d3 in Chrome, WebKit and Firefox (SPEC.md's report: what is right, not covered, a gap and wrong, per call).
