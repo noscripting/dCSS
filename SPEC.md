@@ -156,22 +156,25 @@ for selection or computation. Packaging does not expand any function's bounds.
   MUST give a reader the widest entry of column i as `--dcss-value` and the tallest of row r as `--dcss-value-y`.
 - **A37** `.dcss-key-range` of entries with `--dcss-key` and `--dcss-bit` (1 to 19) MUST give a query `.dcss-in` with
   `--dcss-from` and `--dcss-to` the bit mask of the entries whose key is in [from, to] less `--dcss-not`, and
-  `--dcss-top1` to `--dcss-top6`, its six highest bits.
+  `--dcss-top1` to `--dcss-top6`, its six highest bits; `.dcss-key-range.dcss-mask` the mask alone.
 
 ### Formulas
 
 - **A38** `.dcss-width-sum` MUST add its children and `.dcss-largest` take the largest, leaves with `--dcss-n` and whole
-  arrays as children, at any depth, read at the root or inside; a negative leaf MUST make every node above it read
+  arrays as children, at any depth, read at the root or inside, as MUST the family's other nodes, `.dcss-scale` (`--dcss-more`),
+  `.dcss-width-min` (with `.dcss-rest`), `.dcss-stack` and `.dcss-tallest`; a negative leaf MUST make every node above it read
   `--dcss-ok` 0, and in Firefox so MUST a leaf off its 1/60 px layout grid (QUIRKS.md Q16).
-- **A39** `.dcss-cap` MUST give min(E, c) of its formula E with c moving, of a sum or of a leaf; a negative leaf in it
+- **A39** `.dcss-cap` MUST give min(E, c) of its formula E with c (`--dcss-c`) moving, of a sum or of a leaf; a negative leaf in it
   MUST read 0 with `--dcss-ok` 0.
-- **A40** `.dcss-times` MUST give f × E as a height, f written and moving, counted in an `.dcss-shape-stack` and read
+- **A40** `.dcss-times` MUST give f × E as a height, f (`--dcss-f`) written and moving, counted in an `.dcss-shape-stack` and read
   inside it.
 - **A41** `.dcss-calc` boxes MUST give a product, a min and their sum of two named formulas through `anchor-size()`,
   in the same frame.
 - **A42** `<b class="dcss-hop">` MUST give a row the sum of the columns it spans (two hops in one row the larger), and
-  `<b class="dcss-hop-y">` a column the sum of the rows it spans, read by `.dcss-at-y` and `.dcss-at-x`.
-- **A43** `.dcss-text` MUST give the sum and the largest line of counters in `dcss-tally`, f(k) of the shared tables
+  `<b class="dcss-hop-y">` a column the sum of the rows it spans, read by `.dcss-at-y` and `.dcss-at-x`; a hop's `<u>` MUST take
+  `--dcss-put`, any style function of its sum (unset, the sum), as the row's height, and a `<b class="dcss-row">` in the port
+  MUST hold a height node (`.dcss-width-min`, `.dcss-stack`, `.dcss-tallest`) as a row.
+- **A43** `.dcss-text`, with `--dcss-text`, `--dcss-each` and `--dcss-tab`, MUST give the sum and the largest line of counters in `dcss-tally`, f(k) of the shared tables
   (k, round(k^2 / 1000), round(sqrt(1000 k)) for k 0 to 999), a scan and a table's running totals, exact, where an
   engine prints the counter style's fallback (QUIRKS.md Q17) it MUST give error 1, never another number.
 - **A238** `<b class="dcss-int" style="--dcss-counter: name"><u><u></u></u></b>` MUST give on its inner `<u>`, as
@@ -227,20 +230,22 @@ for selection or computation. Packaging does not expand any function's bounds.
   items with no number (A251); an item whose style attribute writes `--value` and that has none counts as dropped, and
   in Firefox, which empties a dropped style attribute, one whose style attribute is empty. The same MUST hold on a page
   that registers `--value` itself.
-- **A44** The text operators MUST give, from pair texts and counter styles, min, max, a sum of products, |a - b|, a > b,
+- **A44** The text operators (`.dcss-divide`, `.dcss-two`, `.dcss-pair-min`, `.dcss-pair-max`, `.dcss-pair-product`, `.dcss-pair-difference`,
+  `.dcss-pair-greater`) MUST give, from pair texts and counter styles, min, max, a sum of products, |a - b|, a > b,
   a × b by `letter-spacing`, floor(a / b) by a tab, sign and relu, exact.
-- **A45** A `.dcss-collapse` of signed margins, `.dcss-zoom` factors in a sum, an `.dcss-baseline` row,
-  `.dcss-columns` with `--dcss-parts` and `.dcss-flex` shares MUST give their laid-out results within 1/64 px.
+- **A45** A `.dcss-collapse` (`--dcss-p`) of signed margins, `.dcss-zoom` factors (`--dcss-zoom`) in a sum, an `.dcss-baseline` row,
+  `.dcss-columns` with `--dcss-parts` (in WebKit two copies in a `.dcss-alternate`) and `.dcss-flex` shares (`--dcss-grow`,
+  `--dcss-shrink`, `--dcss-flex-min`, `--dcss-flex-max`) MUST give their laid-out results within 1/64 px.
 - **A46** Collapses MUST nest: two laid-out widths in one collapse (W1 / 2 - W2), three levels of `.dcss-scope`, the
   results counted in an `.dcss-shape-stack` and an `.dcss-tallest` with no reader between.
 - **A47** A collapse as a row of a grid MUST turn into a column through `.dcss-hop-y`, and a second collapse over that
   column MUST subtract a third width, read by the row, the column and their readers.
 - **A48** `<div class="dcss-minus">A<b>B</b></div>` MUST be max(0, A - B) wide for widths A and B under 2^20 px: alone,
   as min and |a - b|, two deep, and inside a collapse, an `.dcss-width-min` and an `.dcss-scale`.
-- **A49** `.dcss-turn` with `--dcss-turn-tick` changed whenever an input under it changes MUST lay a height on as a width:
+- **A49** `.dcss-turn` with `--dcss-turn-tick` (and `--dcss-turn-tick-2`) changed whenever an input under it changes MUST lay a height on as a width:
   under `.dcss-largest`, in an `.dcss-width-min` slot, as a subtrahend and in a stack, with inputs moving every frame.
 - **A50** `.dcss-rom` with `.dcss-sq` or `.dcss-sqrt` and `--dcss-k` from 0 to 999 MUST give its child
-  `--dcss-value` round(k^2 / 1000) or round(sqrt(1000 k)), and `.dcss-rom2` the five pair tables for a and b from
+  `--dcss-value` round(k^2 / 1000) or round(sqrt(1000 k)), and `.dcss-rom2` the five pair tables for a and b (`--dcss-a`, `--dcss-b`) from
   0 to 31, at style time with no layout.
 
 - **A66** Both compiler entries MUST share one formula operation and layout cover, preserving standalone grammar and
@@ -253,10 +258,11 @@ for selection or computation. Packaging does not expand any function's bounds.
   MUST place their marks in sorted order in the same frame when each mark's `top` sums, over the others,
   `clamp(0, (anchor-size(--other width) - anchor-size(--own width)) / 1px * 2 + t, 1)` (t 1 for an earlier result, else 0),
   for 4 to 32 results.
-- **A55** `.dcss-ranked` MUST place bar k at its group's total of `--dcss-n` (`.dcss-bin-max`: its largest), as many
-  `--dcss-band`s down as groups beat it, largest or smallest first, ties to the lower bin; an item's `<b>` on its group's
+- **A55** `.dcss-ranked` MUST place bar k at its group's total of `--dcss-n` (`.dcss-bin-max`: its largest; its `.dcss-group-total` as
+  wide), as many `--dcss-band`s down as groups beat it, largest or smallest first (`--dcss-desc`), ties to the lower bin; an item's `<b>` on its group's
   bar after the items before it in `--dcss-key` order (d3.sort's; a key any multiple of 1/64 from -131,072 to 131,071,
-  and a negative `--dcss-n` runs left of the items before it, a waterfall); label k at bar k's top; G is the number of
+  and a negative `--dcss-n` runs left of the items before it, a waterfall); label k (in `.dcss-labels` after the bars, `--dcss-gap`,
+  a length, before it) at bar k's top; G is the number of
   `.dcss-group`s, the figure's first children, up to 16 (32 with `dcss-wide`, 16 with `dcss-copy`), with as many `<b>`s
   in `.dcss-bars` (`--dcss-bins` is not read), and an item whose `--dcss-bin` is outside 1 to G (or not an `<integer>`)
   is in no group. Past these bounds, not covered (error 1): a figure whose G is past 16 (32, 16) or doesn't match its
@@ -265,8 +271,8 @@ for selection or computation. Packaging does not expand any function's bounds.
   width (a wider group wraps onto a second line, and its bars and segments read wrong with error 0: ranked-edges-check,
   85 reads).
 - **A56** `.dcss-piles` MUST place each item at the sum of the heights before it in its group; `.dcss-starts`
-  MUST place group k's marker at the sum of `--dcss-n` over earlier groups; with dcss-extras.css, a `.list`'s `.dcss-size`
-  MUST read its width and height.
+  MUST place group k's marker at the sum of `--dcss-n` over earlier groups; with dcss-extras.css, a `.list` (an item's
+  `--if` at 0 drops it) in a `.pager` (`--page`, from 0) MUST read its width and height in its `.dcss-size`.
 - **A57** `.dcss-ranked.dcss-copy` with `--dcss-copy-width` and `.dcss-ranks > b > .dcss-segments` holding G
   `.dcss-group` and the items again MUST place each segment as A55 does, for up to 16 groups, within A55's bounds, and
   past them as A55 says.
@@ -652,9 +658,11 @@ for selection or computation. Packaging does not expand any function's bounds.
 
 - **A51** A loop (`.loop`, `.loop-flow`, `.loop-in`, `.loop-cell`, `.loop-core`) MUST have store.css and dcss-extras.css on the page;
   its cells, read through `[data-store-read]` and `[data-store-read-3]` naming them by `--store-of`, MUST settle on the
-  iteration's fixed point: a 12-cell power iteration's vector and eigenvalue equal NumPy's, as a flow and as a table row.
+  iteration's fixed point (each cell's rule writes `--next`, its next value, and `--measure`): a 12-cell power iteration's
+  vector and eigenvalue equal NumPy's, as a flow and as a table row.
 - **A52** A `<table class="sheet">` on store.css's board, with dcss-extras.css, MUST show every cell and fold equal to the sheet's own
-  model as written and after each change to its inputs.
+  model as written and after each change to its inputs; a mean's output takes `--fold-scale` (10 shows a mean of whole
+  numbers in tenths).
 
 
 

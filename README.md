@@ -140,16 +140,7 @@ A browser without `@function` sets the property to its initial value, not to the
 
 ### Grid primitives: dcss.css
 
-The calls above are built on these; [SPEC.md](SPEC.md) has their markup.
-
-- Arrays of `<i>` entries, read by index, round a cycle, over a window or as a running total: `.dcss-array`, `.dcss-track-count`, `.dcss-out`, `.dcss-at`, `.dcss-packed`, `.dcss-cycle`, `.dcss-xy`, `.dcss-cells`, `.dcss-plain`, `.dcss-window`, `.dcss-slide`, `.dcss-scan`.
-- Entries counted into bins, sorted, found by value or key, and mapped: `.dcss-bins`, `.dcss-bin-max`, `.dcss-below`, `.dcss-nest`, `.dcss-sort`, `.dcss-where`, `.dcss-lo`, `.dcss-hi`, `.dcss-between`, `.dcss-map`, `.dcss-key-range`, `.dcss-in`, `.dcss-mask`.
-- Children packed into rows and columns, pushed apart, piled, or given shares of a width: `.dcss-pack`, `.dcss-tiles`, `.dcss-push`, `.dcss-end`, `.dcss-nested`, `.dcss-overlap`, `.dcss-lines`, `.dcss-groups`, `.dcss-piles`, `.dcss-starts`, `.dcss-shares`, `.dcss-baseline`, `.dcss-columns`, `.dcss-alternate`, `.dcss-flex` (`--dcss-grow`, `--dcss-shrink`, `--dcss-flex-min`, `--dcss-flex-max`).
-- Bars placed by their group's total, with their labels and copies: `.dcss-ranked` (`--dcss-desc`, `--dcss-gap`, `--dcss-off`), `.dcss-wide`, `.dcss-group`, `.dcss-group-total`, `.dcss-bars`, `.dcss-labels`, `.dcss-copy`, `.dcss-ranks`, `.dcss-segments`.
-- Widths summed, capped, scaled and compared: `.dcss-width-sum`, `.dcss-largest`, `.dcss-scale` (`--dcss-more`), `.dcss-cap` (`--dcss-c`), `.dcss-width-min`, `.dcss-rest`, `.dcss-times` (`--dcss-f`), `.dcss-stack`, `.dcss-tallest`, `.dcss-calc`, `.dcss-collapse` (`--dcss-p`), `.dcss-scope`, `.dcss-minus`, `.dcss-turn` (`--dcss-turn-tick-2`), `.dcss-zoom` (`--dcss-zoom`), `.dcss-hop` (`--dcss-put`), `.dcss-hop-y`, `.dcss-at-x`, `.dcss-at-y`, `.dcss-row`.
-- Text read as numbers, in fonts `dcss-preload.html` preloads: `.dcss-text` (`--dcss-text`, `--dcss-each`, `--dcss-tab`), `.dcss-divide`, `.dcss-two`, `.dcss-pair-<table>`, `.dcss-sq`, `.dcss-sqrt`, `.dcss-rom`, `.dcss-rom2` (`--dcss-a`, `--dcss-b`).
-- A page's own counter read as a signed 32-bit number, `--dcss-int`: `.dcss-int` (`--dcss-counter`).
-- In `dcss-extras.css`, with [store.css](https://noscript.ing): `.list` (`--if`), `.pager` (`--page`), `.dcss-size`, `.loop` (`--next`, `--measure`), `.sheet` (`--fold-scale`).
+The calls are built on about 80 lower-level classes in `dcss.css`: arrays of `<i>` entries read by index (`.dcss-array`, `.dcss-at`), entries counted into bins or sorted (`.dcss-bins`, `.dcss-sort`), bars placed by their group's total (`.dcss-ranked`), widths summed and compared (`.dcss-width-sum`), text read as numbers (`.dcss-text`) and a page's own counter read as a number (`.dcss-int`). [SPEC.md](SPEC.md) documents each. `dcss-extras.css` adds the `.list`, `.pager`, `.loop` and `.sheet` helpers, which run on [store.css](https://noscript.ing).
 
 ## Browsers
 

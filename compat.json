@@ -893,7 +893,7 @@
       },
       "A37": {
         "__compat": {
-          "description": "`.dcss-key-range` of entries with `--dcss-key` and `--dcss-bit` (1 to 19) MUST give a query `.dcss-in` with `--dcss-from` and `--dcss-to` the bit mask of the entries whose key is in [from, to] less `--dcss-not`, and `--dcss-top1` to `--dcss-top6`, its six highest bits.",
+          "description": "`.dcss-key-range` of entries with `--dcss-key` and `--dcss-bit` (1 to 19) MUST give a query `.dcss-in` with `--dcss-from` and `--dcss-to` the bit mask of the entries whose key is in [from, to] less `--dcss-not`, and `--dcss-top1` to `--dcss-top6`, its six highest bits; `.dcss-key-range.dcss-mask` the mask alone.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -916,7 +916,7 @@
       },
       "A38": {
         "__compat": {
-          "description": "`.dcss-width-sum` MUST add its children and `.dcss-largest` take the largest, leaves with `--dcss-n` and whole arrays as children, at any depth, read at the root or inside; a negative leaf MUST make every node above it read `--dcss-ok` 0, and in Firefox so MUST a leaf off its 1/60 px layout grid (QUIRKS.md Q16).",
+          "description": "`.dcss-width-sum` MUST add its children and `.dcss-largest` take the largest, leaves with `--dcss-n` and whole arrays as children, at any depth, read at the root or inside, as MUST the family's other nodes, `.dcss-scale` (`--dcss-more`), `.dcss-width-min` (with `.dcss-rest`), `.dcss-stack` and `.dcss-tallest`; a negative leaf MUST make every node above it read `--dcss-ok` 0, and in Firefox so MUST a leaf off its 1/60 px layout grid (QUIRKS.md Q16).",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -940,7 +940,7 @@
       },
       "A39": {
         "__compat": {
-          "description": "`.dcss-cap` MUST give min(E, c) of its formula E with c moving, of a sum or of a leaf; a negative leaf in it MUST read 0 with `--dcss-ok` 0.",
+          "description": "`.dcss-cap` MUST give min(E, c) of its formula E with c (`--dcss-c`) moving, of a sum or of a leaf; a negative leaf in it MUST read 0 with `--dcss-ok` 0.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -963,7 +963,7 @@
       },
       "A40": {
         "__compat": {
-          "description": "`.dcss-times` MUST give f × E as a height, f written and moving, counted in an `.dcss-shape-stack` and read inside it.",
+          "description": "`.dcss-times` MUST give f × E as a height, f (`--dcss-f`) written and moving, counted in an `.dcss-shape-stack` and read inside it.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -1010,7 +1010,7 @@
       },
       "A42": {
         "__compat": {
-          "description": "`<b class=\"dcss-hop\">` MUST give a row the sum of the columns it spans (two hops in one row the larger), and `<b class=\"dcss-hop-y\">` a column the sum of the rows it spans, read by `.dcss-at-y` and `.dcss-at-x`.",
+          "description": "`<b class=\"dcss-hop\">` MUST give a row the sum of the columns it spans (two hops in one row the larger), and `<b class=\"dcss-hop-y\">` a column the sum of the rows it spans, read by `.dcss-at-y` and `.dcss-at-x`; a hop's `<u>` MUST take `--dcss-put`, any style function of its sum (unset, the sum), as the row's height, and a `<b class=\"dcss-row\">` in the port MUST hold a height node (`.dcss-width-min`, `.dcss-stack`, `.dcss-tallest`) as a row.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -1033,7 +1033,7 @@
       },
       "A43": {
         "__compat": {
-          "description": "`.dcss-text` MUST give the sum and the largest line of counters in `dcss-tally`, f(k) of the shared tables (k, round(k^2 / 1000), round(sqrt(1000 k)) for k 0 to 999), a scan and a table's running totals, exact, where an engine prints the counter style's fallback (QUIRKS.md Q17) it MUST give error 1, never another number.",
+          "description": "`.dcss-text`, with `--dcss-text`, `--dcss-each` and `--dcss-tab`, MUST give the sum and the largest line of counters in `dcss-tally`, f(k) of the shared tables (k, round(k^2 / 1000), round(sqrt(1000 k)) for k 0 to 999), a scan and a table's running totals, exact, where an engine prints the counter style's fallback (QUIRKS.md Q17) it MUST give error 1, never another number.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -1325,7 +1325,7 @@
       },
       "A44": {
         "__compat": {
-          "description": "The text operators MUST give, from pair texts and counter styles, min, max, a sum of products, |a - b|, a > b, a × b by `letter-spacing`, floor(a / b) by a tab, sign and relu, exact.",
+          "description": "The text operators (`.dcss-divide`, `.dcss-two`, `.dcss-pair-min`, `.dcss-pair-max`, `.dcss-pair-product`, `.dcss-pair-difference`, `.dcss-pair-greater`) MUST give, from pair texts and counter styles, min, max, a sum of products, |a - b|, a > b, a × b by `letter-spacing`, floor(a / b) by a tab, sign and relu, exact.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -1349,7 +1349,7 @@
       },
       "A45": {
         "__compat": {
-          "description": "A `.dcss-collapse` of signed margins, `.dcss-zoom` factors in a sum, an `.dcss-baseline` row, `.dcss-columns` with `--dcss-parts` and `.dcss-flex` shares MUST give their laid-out results within 1/64 px.",
+          "description": "A `.dcss-collapse` (`--dcss-p`) of signed margins, `.dcss-zoom` factors (`--dcss-zoom`) in a sum, an `.dcss-baseline` row, `.dcss-columns` with `--dcss-parts` (in WebKit two copies in a `.dcss-alternate`) and `.dcss-flex` shares (`--dcss-grow`, `--dcss-shrink`, `--dcss-flex-min`, `--dcss-flex-max`) MUST give their laid-out results within 1/64 px.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -1442,7 +1442,7 @@
       },
       "A49": {
         "__compat": {
-          "description": "`.dcss-turn` with `--dcss-turn-tick` changed whenever an input under it changes MUST lay a height on as a width: under `.dcss-largest`, in an `.dcss-width-min` slot, as a subtrahend and in a stack, with inputs moving every frame.",
+          "description": "`.dcss-turn` with `--dcss-turn-tick` (and `--dcss-turn-tick-2`) changed whenever an input under it changes MUST lay a height on as a width: under `.dcss-largest`, in an `.dcss-width-min` slot, as a subtrahend and in a stack, with inputs moving every frame.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -1465,7 +1465,7 @@
       },
       "A50": {
         "__compat": {
-          "description": "`.dcss-rom` with `.dcss-sq` or `.dcss-sqrt` and `--dcss-k` from 0 to 999 MUST give its child `--dcss-value` round(k^2 / 1000) or round(sqrt(1000 k)), and `.dcss-rom2` the five pair tables for a and b from 0 to 31, at style time with no layout.",
+          "description": "`.dcss-rom` with `.dcss-sq` or `.dcss-sqrt` and `--dcss-k` from 0 to 999 MUST give its child `--dcss-value` round(k^2 / 1000) or round(sqrt(1000 k)), and `.dcss-rom2` the five pair tables for a and b (`--dcss-a`, `--dcss-b`) from 0 to 31, at style time with no layout.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -1534,7 +1534,7 @@
       },
       "A55": {
         "__compat": {
-          "description": "`.dcss-ranked` MUST place bar k at its group's total of `--dcss-n` (`.dcss-bin-max`: its largest), as many `--dcss-band`s down as groups beat it, largest or smallest first, ties to the lower bin; an item's `<b>` on its group's bar after the items before it in `--dcss-key` order (d3.sort's; a key any multiple of 1/64 from -131,072 to 131,071, and a negative `--dcss-n` runs left of the items before it, a waterfall); label k at bar k's top; G is the number of `.dcss-group`s, the figure's first children, up to 16 (32 with `dcss-wide`, 16 with `dcss-copy`), with as many `<b>`s in `.dcss-bars` (`--dcss-bins` is not read), and an item whose `--dcss-bin` is outside 1 to G (or not an `<integer>`) is in no group. Past these bounds, not covered (error 1): a figure whose G is past 16 (32, 16) or doesn't match its bars, an item whose key is off that grid or whose `--dcss-n` is not a whole number (whole px); a bar or label past G and the segment of an item outside 1 to G have no group and MUST give `--dcss-err` 2. The author keeps the bound no selector reads: every group's total at most the figure's width (a wider group wraps onto a second line, and its bars and segments read wrong with error 0: ranked-edges-check, 85 reads).",
+          "description": "`.dcss-ranked` MUST place bar k at its group's total of `--dcss-n` (`.dcss-bin-max`: its largest; its `.dcss-group-total` as wide), as many `--dcss-band`s down as groups beat it, largest or smallest first (`--dcss-desc`), ties to the lower bin; an item's `<b>` on its group's bar after the items before it in `--dcss-key` order (d3.sort's; a key any multiple of 1/64 from -131,072 to 131,071, and a negative `--dcss-n` runs left of the items before it, a waterfall); label k (in `.dcss-labels` after the bars, `--dcss-gap`, a length, before it) at bar k's top; G is the number of `.dcss-group`s, the figure's first children, up to 16 (32 with `dcss-wide`, 16 with `dcss-copy`), with as many `<b>`s in `.dcss-bars` (`--dcss-bins` is not read), and an item whose `--dcss-bin` is outside 1 to G (or not an `<integer>`) is in no group. Past these bounds, not covered (error 1): a figure whose G is past 16 (32, 16) or doesn't match its bars, an item whose key is off that grid or whose `--dcss-n` is not a whole number (whole px); a bar or label past G and the segment of an item outside 1 to G have no group and MUST give `--dcss-err` 2. The author keeps the bound no selector reads: every group's total at most the figure's width (a wider group wraps onto a second line, and its bars and segments read wrong with error 0: ranked-edges-check, 85 reads).",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -1562,7 +1562,7 @@
       },
       "A56": {
         "__compat": {
-          "description": "`.dcss-piles` MUST place each item at the sum of the heights before it in its group; `.dcss-starts` MUST place group k's marker at the sum of `--dcss-n` over earlier groups; with dcss-extras.css, a `.list`'s `.dcss-size` MUST read its width and height.",
+          "description": "`.dcss-piles` MUST place each item at the sum of the heights before it in its group; `.dcss-starts` MUST place group k's marker at the sum of `--dcss-n` over earlier groups; with dcss-extras.css, a `.list` (an item's `--if` at 0 drops it) in a `.pager` (`--page`, from 0) MUST read its width and height in its `.dcss-size`.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -3441,7 +3441,7 @@
       },
       "A51": {
         "__compat": {
-          "description": "A loop (`.loop`, `.loop-flow`, `.loop-in`, `.loop-cell`, `.loop-core`) MUST have store.css and dcss-extras.css on the page; its cells, read through `[data-store-read]` and `[data-store-read-3]` naming them by `--store-of`, MUST settle on the iteration's fixed point: a 12-cell power iteration's vector and eigenvalue equal NumPy's, as a flow and as a table row.",
+          "description": "A loop (`.loop`, `.loop-flow`, `.loop-in`, `.loop-cell`, `.loop-core`) MUST have store.css and dcss-extras.css on the page; its cells, read through `[data-store-read]` and `[data-store-read-3]` naming them by `--store-of`, MUST settle on the iteration's fixed point (each cell's rule writes `--next`, its next value, and `--measure`): a 12-cell power iteration's vector and eigenvalue equal NumPy's, as a flow and as a table row.",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
@@ -3464,7 +3464,7 @@
       },
       "A52": {
         "__compat": {
-          "description": "A `<table class=\"sheet\">` on store.css's board, with dcss-extras.css, MUST show every cell and fold equal to the sheet's own model as written and after each change to its inputs.",
+          "description": "A `<table class=\"sheet\">` on store.css's board, with dcss-extras.css, MUST show every cell and fold equal to the sheet's own model as written and after each change to its inputs; a mean's output takes `--fold-scale` (10 shows a mean of whole numbers in tenths).",
           "spec_url": "SPEC.md#2-requirements",
           "support": {
             "chrome": {
