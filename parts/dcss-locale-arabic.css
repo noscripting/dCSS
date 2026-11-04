@@ -61,21 +61,22 @@
 @counter-style dcss-loc-currency-30 { system: fixed -1; symbols: "" "" " CHF"; fallback: dcss-fmt-none; }
 @counter-style dcss-loc-currency-31 { system: fixed -1; symbols: "" "" "£"; fallback: dcss-fmt-none; }
 @counter-style dcss-loc-currency-32 { system: fixed -1; symbols: "" "" "€"; fallback: dcss-fmt-none; }
-@counter-style dcss-loc-currency-33 { system: fixed -1; symbols: "" "" "Bs "; fallback: dcss-fmt-none; }
+@counter-style dcss-loc-currency-33 { system: fixed -1; symbols: "" "" "₹"; fallback: dcss-fmt-none; }
+@counter-style dcss-loc-currency-34 { system: fixed -1; symbols: "" "" "Bs "; fallback: dcss-fmt-none; }
 @counter-style dcss-loc-percent-1 { system: fixed -1; symbols: "" " %" ""; }
-@counter-style dcss-loc-currency-34 { system: fixed -1; symbols: "" "" "$"; fallback: dcss-fmt-none; }
-@counter-style dcss-loc-currency-35 { system: fixed -1; symbols: "" "" "₪"; fallback: dcss-fmt-none; }
-@counter-style dcss-loc-currency-36 { system: fixed -1; symbols: "" "" " Ft"; fallback: dcss-fmt-none; }
-@counter-style dcss-loc-currency-37 { system: fixed -1; symbols: "" "" "円"; fallback: dcss-fmt-none; }
-@counter-style dcss-loc-currency-38 { system: fixed -1; symbols: "" "" "₩"; fallback: dcss-fmt-none; }
-@counter-style dcss-loc-currency-39 { system: fixed -1; symbols: "" "" " ден."; fallback: dcss-fmt-none; }
-@counter-style dcss-loc-currency-40 { system: fixed -1; symbols: "" "" "€ "; fallback: dcss-fmt-none; }
-@counter-style dcss-loc-currency-41 { system: fixed -1; symbols: "" "" "zł"; fallback: dcss-fmt-none; }
-@counter-style dcss-loc-currency-42 { system: fixed -1; symbols: "" "" "R$"; fallback: dcss-fmt-none; }
-@counter-style dcss-loc-currency-43 { system: fixed -1; symbols: "" "" " ₽"; fallback: dcss-fmt-none; }
-@counter-style dcss-loc-currency-44 { system: fixed -1; symbols: "" "" " ₴."; fallback: dcss-fmt-none; }
-@counter-style dcss-loc-currency-45 { system: fixed -1; symbols: "" "" "¥"; fallback: dcss-fmt-none; }
-[lang] { --dcss-loc-dot: initial; --dcss-loc-comma: initial; --dcss-loc-currency: initial; --dcss-loc-currency-suffix: initial; --dcss-loc-percent: initial; --dcss-loc-lead: initial; --dcss-loc-pad1: initial; --dcss-loc-pad2: initial; --dcss-loc-pad3: initial; }
+@counter-style dcss-loc-currency-35 { system: fixed -1; symbols: "" "" "$"; fallback: dcss-fmt-none; }
+@counter-style dcss-loc-currency-36 { system: fixed -1; symbols: "" "" "₪"; fallback: dcss-fmt-none; }
+@counter-style dcss-loc-currency-37 { system: fixed -1; symbols: "" "" " Ft"; fallback: dcss-fmt-none; }
+@counter-style dcss-loc-currency-38 { system: fixed -1; symbols: "" "" "円"; fallback: dcss-fmt-none; }
+@counter-style dcss-loc-currency-39 { system: fixed -1; symbols: "" "" "₩"; fallback: dcss-fmt-none; }
+@counter-style dcss-loc-currency-40 { system: fixed -1; symbols: "" "" " ден."; fallback: dcss-fmt-none; }
+@counter-style dcss-loc-currency-41 { system: fixed -1; symbols: "" "" "€ "; fallback: dcss-fmt-none; }
+@counter-style dcss-loc-currency-42 { system: fixed -1; symbols: "" "" "zł"; fallback: dcss-fmt-none; }
+@counter-style dcss-loc-currency-43 { system: fixed -1; symbols: "" "" "R$"; fallback: dcss-fmt-none; }
+@counter-style dcss-loc-currency-44 { system: fixed -1; symbols: "" "" " ₽"; fallback: dcss-fmt-none; }
+@counter-style dcss-loc-currency-45 { system: fixed -1; symbols: "" "" " ₴."; fallback: dcss-fmt-none; }
+@counter-style dcss-loc-currency-46 { system: fixed -1; symbols: "" "" "¥"; fallback: dcss-fmt-none; }
+[lang] { --dcss-loc-dot: initial; --dcss-loc-comma: initial; --dcss-loc-currency: initial; --dcss-loc-currency-suffix: initial; --dcss-loc-percent: initial; --dcss-loc-lead: initial; --dcss-loc-pad1: initial; --dcss-loc-pad2: initial; --dcss-loc-pad3: initial; --dcss-loc-indian: initial; }
 [lang]:is(:lang(ar-001), [lang|="ar" i][lang$="-001" i], [lang="ar_001" i]) { --dcss-loc-dot: dcss-loc-dot-1; --dcss-loc-comma: dcss-loc-comma-1; --dcss-loc-currency: dcss-loc-currency-1; --dcss-loc-lead: dcss-loc-ar-lead; --dcss-loc-pad1: dcss-loc-ar-pad1; --dcss-loc-pad2: dcss-loc-ar-pad2; --dcss-loc-pad3: dcss-loc-ar-pad3; }
 [lang]:is(:lang(ar-AE), [lang|="ar" i][lang$="-AE" i], [lang="ar_AE" i]) { --dcss-loc-dot: dcss-loc-dot-1; --dcss-loc-comma: dcss-loc-comma-1; --dcss-loc-currency: dcss-loc-currency-1; --dcss-loc-currency-suffix: dcss-loc-currency-2; --dcss-loc-lead: dcss-loc-ar-lead; --dcss-loc-pad1: dcss-loc-ar-pad1; --dcss-loc-pad2: dcss-loc-ar-pad2; --dcss-loc-pad3: dcss-loc-ar-pad3; }
 [lang]:is(:lang(ar-BH), [lang|="ar" i][lang$="-BH" i], [lang="ar_BH" i]) { --dcss-loc-dot: dcss-loc-dot-1; --dcss-loc-comma: dcss-loc-comma-1; --dcss-loc-currency: dcss-loc-currency-1; --dcss-loc-currency-suffix: dcss-loc-currency-3; --dcss-loc-lead: dcss-loc-ar-lead; --dcss-loc-pad1: dcss-loc-ar-pad1; --dcss-loc-pad2: dcss-loc-ar-pad2; --dcss-loc-pad3: dcss-loc-ar-pad3; }
@@ -111,23 +112,24 @@
 [lang]:is(:lang(de-DE), [lang|="de" i][lang$="-DE" i], [lang="de_DE" i]) { --dcss-loc-dot: dcss-loc-dot-2; --dcss-loc-comma: dcss-loc-comma-2; --dcss-loc-currency: dcss-loc-currency-1; --dcss-loc-currency-suffix: dcss-loc-currency-27; }
 [lang]:is(:lang(en-GB), [lang|="en" i][lang$="-GB" i], [lang="en_GB" i]) { --dcss-loc-currency: dcss-loc-currency-31; }
 [lang]:is(:lang(en-IE), [lang|="en" i][lang$="-IE" i], [lang="en_IE" i]) { --dcss-loc-currency: dcss-loc-currency-32; }
-[lang]:is(:lang(es-BO), [lang|="es" i][lang$="-BO" i], [lang="es_BO" i]) { --dcss-loc-dot: dcss-loc-dot-2; --dcss-loc-comma: dcss-loc-comma-2; --dcss-loc-currency: dcss-loc-currency-33; --dcss-loc-percent: dcss-loc-percent-1; }
+[lang]:is(:lang(en-IN), [lang|="en" i][lang$="-IN" i], [lang="en_IN" i]) { --dcss-loc-currency: dcss-loc-currency-33; --dcss-loc-indian: 1; }
+[lang]:is(:lang(es-BO), [lang|="es" i][lang$="-BO" i], [lang="es_BO" i]) { --dcss-loc-dot: dcss-loc-dot-2; --dcss-loc-comma: dcss-loc-comma-2; --dcss-loc-currency: dcss-loc-currency-34; --dcss-loc-percent: dcss-loc-percent-1; }
 [lang]:is(:lang(es-ES), [lang|="es" i][lang$="-ES" i], [lang="es_ES" i]) { --dcss-loc-dot: dcss-loc-dot-2; --dcss-loc-comma: dcss-loc-comma-2; --dcss-loc-currency: dcss-loc-currency-1; --dcss-loc-currency-suffix: dcss-loc-currency-27; }
 [lang]:is(:lang(fi-FI), [lang|="fi" i][lang$="-FI" i], [lang="fi_FI" i]) { --dcss-loc-dot: dcss-loc-dot-2; --dcss-loc-comma: dcss-loc-comma-3; --dcss-loc-currency: dcss-loc-currency-1; --dcss-loc-currency-suffix: dcss-loc-currency-27; }
-[lang]:is(:lang(fr-CA), [lang|="fr" i][lang$="-CA" i], [lang="fr_CA" i]) { --dcss-loc-dot: dcss-loc-dot-2; --dcss-loc-comma: dcss-loc-comma-3; --dcss-loc-currency: dcss-loc-currency-1; --dcss-loc-currency-suffix: dcss-loc-currency-34; }
+[lang]:is(:lang(fr-CA), [lang|="fr" i][lang$="-CA" i], [lang="fr_CA" i]) { --dcss-loc-dot: dcss-loc-dot-2; --dcss-loc-comma: dcss-loc-comma-3; --dcss-loc-currency: dcss-loc-currency-1; --dcss-loc-currency-suffix: dcss-loc-currency-35; }
 [lang]:is(:lang(fr-FR), [lang|="fr" i][lang$="-FR" i], [lang="fr_FR" i]) { --dcss-loc-dot: dcss-loc-dot-2; --dcss-loc-comma: dcss-loc-comma-3; --dcss-loc-currency: dcss-loc-currency-1; --dcss-loc-currency-suffix: dcss-loc-currency-27; --dcss-loc-percent: dcss-loc-percent-1; }
-[lang]:is(:lang(he-IL), [lang|="he" i][lang$="-IL" i], [lang="he_IL" i]) { --dcss-loc-currency: dcss-loc-currency-35; }
-[lang]:is(:lang(hu-HU), [lang|="hu" i][lang$="-HU" i], [lang="hu_HU" i]) { --dcss-loc-dot: dcss-loc-dot-2; --dcss-loc-comma: dcss-loc-comma-3; --dcss-loc-currency: dcss-loc-currency-1; --dcss-loc-currency-suffix: dcss-loc-currency-36; }
+[lang]:is(:lang(he-IL), [lang|="he" i][lang$="-IL" i], [lang="he_IL" i]) { --dcss-loc-currency: dcss-loc-currency-36; }
+[lang]:is(:lang(hu-HU), [lang|="hu" i][lang$="-HU" i], [lang="hu_HU" i]) { --dcss-loc-dot: dcss-loc-dot-2; --dcss-loc-comma: dcss-loc-comma-3; --dcss-loc-currency: dcss-loc-currency-1; --dcss-loc-currency-suffix: dcss-loc-currency-37; }
 [lang]:is(:lang(it-IT), [lang|="it" i][lang$="-IT" i], [lang="it_IT" i]) { --dcss-loc-dot: dcss-loc-dot-2; --dcss-loc-comma: dcss-loc-comma-2; --dcss-loc-currency: dcss-loc-currency-32; }
-[lang]:is(:lang(ja-JP), [lang|="ja" i][lang$="-JP" i], [lang="ja_JP" i]) { --dcss-loc-currency: dcss-loc-currency-1; --dcss-loc-currency-suffix: dcss-loc-currency-37; }
-[lang]:is(:lang(ko-KR), [lang|="ko" i][lang$="-KR" i], [lang="ko_KR" i]) { --dcss-loc-currency: dcss-loc-currency-38; }
-[lang]:is(:lang(mk-MK), [lang|="mk" i][lang$="-MK" i], [lang="mk_MK" i]) { --dcss-loc-dot: dcss-loc-dot-2; --dcss-loc-comma: dcss-loc-comma-2; --dcss-loc-currency: dcss-loc-currency-1; --dcss-loc-currency-suffix: dcss-loc-currency-39; }
-[lang]:is(:lang(nl-NL), [lang|="nl" i][lang$="-NL" i], [lang="nl_NL" i]) { --dcss-loc-dot: dcss-loc-dot-2; --dcss-loc-comma: dcss-loc-comma-2; --dcss-loc-currency: dcss-loc-currency-40; }
-[lang]:is(:lang(pl-PL), [lang|="pl" i][lang$="-PL" i], [lang="pl_PL" i]) { --dcss-loc-dot: dcss-loc-dot-2; --dcss-loc-comma: dcss-loc-comma-2; --dcss-loc-currency: dcss-loc-currency-1; --dcss-loc-currency-suffix: dcss-loc-currency-41; }
-[lang]:is(:lang(pt-BR), [lang|="pt" i][lang$="-BR" i], [lang="pt_BR" i]) { --dcss-loc-dot: dcss-loc-dot-2; --dcss-loc-comma: dcss-loc-comma-2; --dcss-loc-currency: dcss-loc-currency-42; }
+[lang]:is(:lang(ja-JP), [lang|="ja" i][lang$="-JP" i], [lang="ja_JP" i]) { --dcss-loc-currency: dcss-loc-currency-1; --dcss-loc-currency-suffix: dcss-loc-currency-38; }
+[lang]:is(:lang(ko-KR), [lang|="ko" i][lang$="-KR" i], [lang="ko_KR" i]) { --dcss-loc-currency: dcss-loc-currency-39; }
+[lang]:is(:lang(mk-MK), [lang|="mk" i][lang$="-MK" i], [lang="mk_MK" i]) { --dcss-loc-dot: dcss-loc-dot-2; --dcss-loc-comma: dcss-loc-comma-2; --dcss-loc-currency: dcss-loc-currency-1; --dcss-loc-currency-suffix: dcss-loc-currency-40; }
+[lang]:is(:lang(nl-NL), [lang|="nl" i][lang$="-NL" i], [lang="nl_NL" i]) { --dcss-loc-dot: dcss-loc-dot-2; --dcss-loc-comma: dcss-loc-comma-2; --dcss-loc-currency: dcss-loc-currency-41; }
+[lang]:is(:lang(pl-PL), [lang|="pl" i][lang$="-PL" i], [lang="pl_PL" i]) { --dcss-loc-dot: dcss-loc-dot-2; --dcss-loc-comma: dcss-loc-comma-2; --dcss-loc-currency: dcss-loc-currency-1; --dcss-loc-currency-suffix: dcss-loc-currency-42; }
+[lang]:is(:lang(pt-BR), [lang|="pt" i][lang$="-BR" i], [lang="pt_BR" i]) { --dcss-loc-dot: dcss-loc-dot-2; --dcss-loc-comma: dcss-loc-comma-2; --dcss-loc-currency: dcss-loc-currency-43; }
 [lang]:is(:lang(pt-PT), [lang|="pt" i][lang$="-PT" i], [lang="pt_PT" i]) { --dcss-loc-dot: dcss-loc-dot-2; --dcss-loc-comma: dcss-loc-comma-3; --dcss-loc-currency: dcss-loc-currency-1; --dcss-loc-currency-suffix: dcss-loc-currency-27; }
-[lang]:is(:lang(ru-RU), [lang|="ru" i][lang$="-RU" i], [lang="ru_RU" i]) { --dcss-loc-dot: dcss-loc-dot-2; --dcss-loc-comma: dcss-loc-comma-3; --dcss-loc-currency: dcss-loc-currency-1; --dcss-loc-currency-suffix: dcss-loc-currency-43; }
+[lang]:is(:lang(ru-RU), [lang|="ru" i][lang$="-RU" i], [lang="ru_RU" i]) { --dcss-loc-dot: dcss-loc-dot-2; --dcss-loc-comma: dcss-loc-comma-3; --dcss-loc-currency: dcss-loc-currency-1; --dcss-loc-currency-suffix: dcss-loc-currency-44; }
 [lang]:is(:lang(sl-SI), [lang|="sl" i][lang$="-SI" i], [lang="sl_SI" i]) { --dcss-loc-dot: dcss-loc-dot-2; --dcss-loc-comma: dcss-loc-comma-2; --dcss-loc-currency: dcss-loc-currency-1; --dcss-loc-currency-suffix: dcss-loc-currency-27; }
 [lang]:is(:lang(sv-SE), [lang|="sv" i][lang$="-SE" i], [lang="sv_SE" i]) { --dcss-loc-dot: dcss-loc-dot-2; --dcss-loc-comma: dcss-loc-comma-3; --dcss-loc-currency: dcss-loc-currency-1; --dcss-loc-currency-suffix: dcss-loc-currency-29; }
-[lang]:is(:lang(uk-UA), [lang|="uk" i][lang$="-UA" i], [lang="uk_UA" i]) { --dcss-loc-dot: dcss-loc-dot-2; --dcss-loc-comma: dcss-loc-comma-3; --dcss-loc-currency: dcss-loc-currency-1; --dcss-loc-currency-suffix: dcss-loc-currency-44; }
-[lang]:is(:lang(zh-CN), [lang|="zh" i][lang$="-CN" i], [lang="zh_CN" i]) { --dcss-loc-currency: dcss-loc-currency-45; }
+[lang]:is(:lang(uk-UA), [lang|="uk" i][lang$="-UA" i], [lang="uk_UA" i]) { --dcss-loc-dot: dcss-loc-dot-2; --dcss-loc-comma: dcss-loc-comma-3; --dcss-loc-currency: dcss-loc-currency-1; --dcss-loc-currency-suffix: dcss-loc-currency-45; }
+[lang]:is(:lang(zh-CN), [lang|="zh" i][lang$="-CN" i], [lang="zh_CN" i]) { --dcss-loc-currency: dcss-loc-currency-46; }

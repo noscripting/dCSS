@@ -6,7 +6,7 @@ It is not a chart library: it computes the numbers, and the page draws them with
 
 ## Installation
 
-Each call is a class, with its own file in `parts/`. Put the class on a `<figure>` around a list. The browser lays the list out, and the list's size is the answer. This page links two parts that come to 20 KB gzipped:
+Each call is a class, with its own file in `parts/`. Put the class on a `<figure>` around a list. The browser lays the list out, and the list's size is the answer. This page links two parts that come to 23 KB gzipped:
 
 ```html
 <!doctype html>
@@ -48,7 +48,7 @@ The list is drawn at the answer's size, so hide it with `overflow: clip` on the 
 
 A figure is a block. For a total inside a sentence, put the sentence in a `<div>` (a `<p>` ends before a `<figure>`) and give the figure `display: inline-block` in a rule that names its class, such as `figure.total { display: inline-block }`.
 
-Values are whole numbers, or up to 3 decimals in a sum. For prices such as 12.99 in any other call, add the class `dcss-decimals` and `--decimals: 2` to the figure; a median or a quantile needs only `--decimals`. The answers are then exact decimals, and 0.1 + 0.2 is 0.3.
+Values are whole numbers or decimals. A value written with a dot, such as 12.99, is taken in two decimals, and the answers are exact decimals: 0.1 + 0.2 is 0.3. Past two decimals, write `--decimals: 3` (to 6) on the figure; a sum and a max take up to 3 decimals as written.
 
 A value the page changes with a rule, such as `:has(#x:checked) li.a { --value: 50 }`, goes in a class rule, since an item's `style` would win. `.dcss-summarize`, `.dcss-variance` and `.dcss-deviation` read each item's `style`, so there point it at the rule's property: `style="--value: var(--price)"`.
 
@@ -105,16 +105,16 @@ The scale follows the sum in the same frame. A list whose items hold another lis
 
 ## Looking up a value
 
-`.dcss-lookup` works like a spreadsheet's exact lookup. It gives the `--value` of the row whose `--key` equals the figure's `--find`. Keys are numbers, such as a product number or a year, and prices go in cents:
+`.dcss-lookup` works like a spreadsheet's exact lookup. It gives the `--value` of the row whose `--key` equals the figure's `--find`. Keys are numbers, such as a product number or a year; a value written with a dot, 8.99, is taken in two decimals:
 
 ```html
 <figure class="dcss-lookup dcss-format-fixed" style="--find: 102; --precision: 2; overflow: clip">
   <ul aria-hidden="true">
-    <li style="--key: 101; --value: 1250"></li>
-    <li style="--key: 102; --value: 899"></li>
-    <li style="--key: 205; --value: 4500"></li>
+    <li style="--key: 101; --value: 12.50"></li>
+    <li style="--key: 102; --value: 8.99"></li>
+    <li style="--key: 205; --value: 45"></li>
   </ul>
-  <div><output style="--value: calc(var(--dcss-lookup) / 100)"></output></div>  <!-- 8.99 -->
+  <div><output style="--value: var(--dcss-lookup)"></output></div>  <!-- 8.99 -->
 </figure>
 ```
 
@@ -227,18 +227,18 @@ Each call gives its answer as `--dcss-` and its name to the elements directly in
 
 ### Array: families/array.css
 
-- [`.dcss-sum`](https://d3js.org/d3-array/summarize#sum), [`.dcss-mean`](https://d3js.org/d3-array/summarize#mean), [`.dcss-count`](https://d3js.org/d3-array/summarize#count), `.dcss-length`, [`.dcss-min`](https://d3js.org/d3-array/summarize#min), [`.dcss-max`](https://d3js.org/d3-array/summarize#max), [`.dcss-extent`](https://d3js.org/d3-array/summarize#extent): of the list; length counts its items; with `--find`, of the rows whose `--key` equals it. A sum takes prices such as 19.99 as written, to 3 decimals, and gives the exact decimal answer (0.1 + 0.2 is 0.3); in Firefox, whole numbers.
-- `.dcss-summarize`: sum, count, length, mean, min, max, median, variance and deviation of one list, to each element after it and everything inside. Values are whole numbers or 64ths: for prices such as 19.99, give the figure the class `dcss-decimals` and `--decimals: 2`, or every answer, the count too, gives error 1.
+- [`.dcss-sum`](https://d3js.org/d3-array/summarize#sum), [`.dcss-mean`](https://d3js.org/d3-array/summarize#mean), [`.dcss-count`](https://d3js.org/d3-array/summarize#count), `.dcss-length`, [`.dcss-min`](https://d3js.org/d3-array/summarize#min), [`.dcss-max`](https://d3js.org/d3-array/summarize#max), [`.dcss-extent`](https://d3js.org/d3-array/summarize#extent): of the list; length counts its items; with `--find`, of the rows whose `--key` equals it. A sum takes prices such as 19.99 as written, to 3 decimals, and gives the exact decimal answer (0.1 + 0.2 is 0.3), and a max takes them too; a mean, min or extent takes a value written with a dot in two decimals, and `--decimals: 3` on the figure takes three (to 6); in Firefox, whole numbers.
+- `.dcss-summarize`: sum, count, length, mean, min, max, median, variance and deviation of one list, to each element after it and everything inside. A value written with a dot, such as 19.99, is taken in two decimals; past two, write `--decimals: 3` (to 6) on the figure, or every answer, the count too, gives error 1.
 - [`.dcss-min-index`](https://d3js.org/d3-array/summarize#minIndex), [`.dcss-max-index`](https://d3js.org/d3-array/summarize#maxIndex), [`.dcss-least-index`](https://d3js.org/d3-array/summarize#leastIndex), [`.dcss-greatest-index`](https://d3js.org/d3-array/summarize#greatestIndex), [`.dcss-least`](https://d3js.org/d3-array/summarize#least), [`.dcss-greatest`](https://d3js.org/d3-array/summarize#greatest): where the least or greatest is, or its value.
-- [`.dcss-lookup`](https://d3js.org/d3-array/group#index): the `--value` of the row whose `--key` is the figure's `--find`, as a spreadsheet's exact lookup.
+- [`.dcss-lookup`](https://d3js.org/d3-array/group#index): the `--value` of the row whose `--key` is the figure's `--find`, as a spreadsheet's exact lookup; a value written with a dot is taken in two decimals (`--decimals` for more).
 - [`.dcss-median`](https://d3js.org/d3-array/summarize#median), [`.dcss-quantile`](https://d3js.org/d3-array/summarize#quantile), [`.dcss-quantile-sorted`](https://d3js.org/d3-array/summarize#quantileSorted), [`.dcss-median-index`](https://d3js.org/d3-array/summarize#medianIndex), [`.dcss-quantile-index`](https://d3js.org/d3-array/summarize#quantileIndex): read three elements deep; `--p` places a quantile.
 - [`.dcss-variance`](https://d3js.org/d3-array/summarize#variance), [`.dcss-deviation`](https://d3js.org/d3-array/summarize#deviation): read by the element after the list, as the summary's.
 - [`.dcss-scale-quantile`](https://d3js.org/d3-scale/quantile#scaleQuantile), [`.dcss-scale-threshold`](https://d3js.org/d3-scale/threshold#scaleThreshold), [`.dcss-scale-quantize`](https://d3js.org/d3-scale/quantize#scaleQuantize): `--value` to `--range-0` to `--range-16` (`--ranges` of them) or `--unknown`, a quantile scale by its list four elements deep, a threshold scale by `--domain-0` to `--domain-15` (a list in it gives error 1), a quantize scale by `--domain-0` and `--domain-1`.
 - [`.dcss-bisect-left`](https://d3js.org/d3-array/bisect#bisectLeft), [`.dcss-bisect-right`](https://d3js.org/d3-array/bisect#bisectRight), [`.dcss-bisect`](https://d3js.org/d3-array/bisect#bisect), [`.dcss-bisector-left`](https://d3js.org/d3-array/bisect#bisector), [`.dcss-bisector-right`](https://d3js.org/d3-array/bisect#bisector), [`.dcss-bisector`](https://d3js.org/d3-array/bisect#bisector): where the figure's `--value` goes in the sorted list.
 - [`.dcss-ascending`](https://d3js.org/d3-array/sort#ascending), [`.dcss-descending`](https://d3js.org/d3-array/sort#descending): comparing `--a` and `--b`.
-- [`.dcss-cumsum`](https://d3js.org/d3-array/summarize#cumsum), [`.dcss-bin`](https://d3js.org/d3-array/bin#bin): a second list, a `<li>` per total or bin; bins cut `--domain-0` to `--domain-1` at `--threshold-0` to `--threshold-31` or by `--count`, up to 1,024 values. d3 picks how many bins `--count` makes, so write enough `<li>`: one past the last bin answers `--dcss-err` 1 and length 0, and `calc(1 - var(--dcss-err))` hides its bar or label.
-- [`.dcss-rollup-sum`](https://d3js.org/d3-array/group#rollup), [`.dcss-rollup-count`](https://d3js.org/d3-array/group#rollup): each item's `--key` names its group, one of the keys the figure declares (`--key-0` to `--key-31`); after the list, an element per key asked, `<output style="--key: 2"></output>`, gets that key's `--dcss-sum`, or its `--dcss-count` and `--dcss-length`. An answer reads with its own `::before` and `::after`, so it prints through an element inside it, `<output class="dcss-format-fixed" style="--value: var(--dcss-sum)">`: a format class on the answer itself prints nothing. Every element after the first list is an answer and costs its reads: put the page's own content in one element (400 loose spans took seconds to load, in one `<div>` 86 ms).
-- `.dcss-share`: each item's fraction, `--dcss-share`, in its `.dcss-share-read > .dcss-share-result`.
+- [`.dcss-cumsum`](https://d3js.org/d3-array/summarize#cumsum), [`.dcss-bin`](https://d3js.org/d3-array/bin#bin): a second list, a `<li>` per total or bin; a cumsum's values, whole or written with a dot (two decimals; `--decimals` for more), run to 8,388,607 in the list's unit; bins cut `--domain-0` to `--domain-1` at `--threshold-0` to `--threshold-31` or by `--count`, up to 1,024 values. d3 picks how many bins `--count` makes, so write enough `<li>`: one past the last bin answers `--dcss-err` 1 and length 0, and `calc(1 - var(--dcss-err))` hides its bar or label.
+- [`.dcss-rollup-sum`](https://d3js.org/d3-array/group#rollup), [`.dcss-rollup-count`](https://d3js.org/d3-array/group#rollup): each item's `--key` names its group, one of the keys the figure declares (`--key-0` to `--key-31`); after the list, an element per key asked, `<output style="--key: 2"></output>`, gets that key's `--dcss-sum`, or its `--dcss-count` and `--dcss-length`; a value written with a dot, 19.99, is summed in two decimals (`--decimals` for more). An answer reads with its own `::before` and `::after`, so it prints through an element inside it, `<output class="dcss-format-fixed" style="--value: var(--dcss-sum)">`: a format class on the answer itself prints nothing. Every element after the first list is an answer and costs its reads: put the page's own content in one element (400 loose spans took seconds to load, in one `<div>` 86 ms).
+- `.dcss-share`: each item's fraction, `--dcss-share`, in its `.dcss-share-read > .dcss-share-result`, and the total, `--dcss-total`; values from 0, a value written with a dot in two decimals (`--decimals` for more), totals to 16,777,215 in the list's unit.
 - [`.dcss-precision-fixed`](https://d3js.org/d3-format#precisionFixed), [`.dcss-precision-prefix`](https://d3js.org/d3-format#precisionPrefix), [`.dcss-precision-round`](https://d3js.org/d3-format#precisionRound): for `--step`, with `--value` or `--max`.
 - [`.dcss-range`](https://d3js.org/d3-array/ticks#range): one `<li>` per number, `--start` to `--stop` by `--step`.
 
@@ -291,7 +291,7 @@ The calls above are built on these. [SPEC.md](SPEC.md) has their markup.
 - `.dcss-array`, `.dcss-track-count`, `.dcss-out`, `.dcss-at`, `.dcss-packed`, `.dcss-cycle`, `.dcss-xy`, `.dcss-cells`, `.dcss-plain`, `.dcss-window`, `.dcss-slide`, `.dcss-scan`: an array of `<i>` entries, read by index, round a cycle, over a window or as a running total.
 - `.dcss-bins`, `.dcss-bin-max`, `.dcss-below`, `.dcss-nest`, `.dcss-sort`, `.dcss-where`, `.dcss-lo`, `.dcss-hi`, `.dcss-between`, `.dcss-map`, `.dcss-key-range`, `.dcss-in`, `.dcss-mask`: entries counted into bins, sorted, found by value or key, and mapped.
 - `.dcss-pack`, `.dcss-tiles`, `.dcss-push`, `.dcss-end`, `.dcss-nested`, `.dcss-overlap`, `.dcss-lines`, `.dcss-groups`, `.dcss-piles`, `.dcss-starts`, `.dcss-shares`, `.dcss-baseline`, `.dcss-columns`, `.dcss-alternate`, `.dcss-flex` (`--dcss-grow`, `--dcss-shrink`, `--dcss-flex-min`, `--dcss-flex-max`): children packed into rows and columns, pushed apart, piled, or given shares of a width.
-- `.dcss-ranked` (`--dcss-desc`, `--dcss-gap`), `.dcss-wide`, `.dcss-group`, `.dcss-group-total`, `.dcss-bars`, `.dcss-labels`, `.dcss-copy`, `.dcss-ranks`, `.dcss-segments`: bars placed by their group's total, with their labels.
+- `.dcss-ranked` (`--dcss-desc`, `--dcss-gap`, `--dcss-off`: the room left of each group for a negative value, 65,536 unset; a bin-max figure of more than 16 groups sets it to 1 + the magnitude of its lowest value, QUIRKS.md Q33), `.dcss-wide`, `.dcss-group`, `.dcss-group-total`, `.dcss-bars`, `.dcss-labels`, `.dcss-copy`, `.dcss-ranks`, `.dcss-segments`: bars placed by their group's total, with their labels.
 - `.dcss-width-sum`, `.dcss-largest`, `.dcss-scale` (`--dcss-more`), `.dcss-cap` (`--dcss-c`), `.dcss-width-min`, `.dcss-rest`, `.dcss-times` (`--dcss-f`), `.dcss-stack`, `.dcss-tallest`, `.dcss-calc`, `.dcss-collapse` (`--dcss-p`), `.dcss-scope`, `.dcss-minus`, `.dcss-turn` (`--dcss-turn-tick-2`), `.dcss-zoom` (`--dcss-zoom`), `.dcss-hop` (`--dcss-put`), `.dcss-hop-y`, `.dcss-at-x`, `.dcss-at-y`, `.dcss-row`: a formula's value as a width or a height, such as a sum of widths, the largest, a cap or a product.
 - `.dcss-text` (`--dcss-text`, `--dcss-each`, `--dcss-tab`), `.dcss-divide`, `.dcss-two`, `.dcss-pair-<table>`, `.dcss-sq`, `.dcss-sqrt`, `.dcss-rom`, `.dcss-rom2` (`--dcss-a`, `--dcss-b`): text read as numbers, in fonts `dcss-preload.html` preloads.
 - `.dcss-int` (`--dcss-counter`): a page's own counter (a table's `counter-increment`, say) read as a signed 32-bit number, `--dcss-int`.
@@ -301,19 +301,19 @@ The calls above are built on these. [SPEC.md](SPEC.md) has their markup.
 
 <!-- browsers -->
 
-Headless Chrome 155 and WebKit 26.4, Safari's engine, pass 115 and 115 of the 141 requirements of [SPEC.md](SPEC.md), and the calls match d3 on 1,687 of the 5,432 calls in d3's tests. Firefox 159 computes `calc()` in 32-bit floats: it answers to that precision where it can and fails on the rest with `--dcss-err: 1`, never a wrong number, and passes 82. [QUIRKS.md](QUIRKS.md) has the engine bugs.
+Headless Chrome 155 and WebKit 26.4, Safari's engine, pass 100 and 99 of the 141 requirements of [SPEC.md](SPEC.md), and the calls match d3 on 1,687 of the 5,432 calls in d3's tests. Firefox 159 computes `calc()` in 32-bit floats: it answers to that precision where it can (judged on the floats it reads) and fails on the rest with `--dcss-err: 1`, and passes 76. [QUIRKS.md](QUIRKS.md) has the engine bugs.
 
 <!-- /browsers -->
 
-Firefox computes `calc()` in 32-bit floats. There a sum is exact to 2^24 for lists of up to 9,990 items, a sum takes whole numbers only, and `.dcss-median-index`, `.dcss-quantile-index`, `.dcss-summarize`, `.dcss-variance` and `.dcss-deviation` fail; [QUIRKS.md](QUIRKS.md) Q16, Q17 and Q25 give the bounds. For money there, write cents as whole numbers.
+Firefox computes `calc()` in 32-bit floats. There a sum is exact to 2^24 for lists of up to 9,990 items, a sum or max takes a value written with a dot in two decimals, to 41,943.03 (as a mean, min or extent does; `--decimals` for more), and `.dcss-summarize`, `.dcss-variance` and `.dcss-deviation` fail; a median, quantile or quantileSorted, the index calls, the quantile scale, rollups, lookups, shares and cumsum take a value written with a dot (two decimals) within their Firefox bounds, which [QUIRKS.md](QUIRKS.md) Q16, Q17, Q20 and Q25 give, and answer within the float's steps of d3's number; a fixed or percent format prints the float Firefox holds, within its step, for values under 2^24 and up to 7 places.
 
-At a page zoom other than 100%, sum, count, length, mean, min, max and extent give no answer in Chrome and WebKit ([SPEC.md](SPEC.md), A237).
+At a page zoom or screen scale whose product isn't a whole number (90%, 125%, a screen set to 150%), every call that reads layout gives no answer, error 1, where the browser lays the page out in screen pixels ([QUIRKS.md](QUIRKS.md), Q30); at 100% and 200%, and on a Retina screen, the calls answer.
 
 ## Performance
 
 <!-- performance -->
 
-Layout does the work, in the frame a number changes. A family is at most 56 KB gzipped and loads in 22 ms or less in WebKit 26.4 (2026-10-31). Twenty printed medians, a value moving: 6.3 ms a frame in Chrome, 9.6 in WebKit; variance 8.2, 10.3 (2026-10-30). Twenty sums of 256 items, a value moving: 4.3 ms a frame in Chrome, 9.8 in WebKit (2026-11-01).
+Layout does the work, in the frame a number changes. A family is at most 61 KB gzipped and loads in 22 ms or less in WebKit 26.4 (2026-10-31). Twenty printed medians, a value moving: 6.3 ms a frame in Chrome, 9.6 in WebKit; variance 8.2, 10.3 (2026-10-30). Twenty sums of 256 items, a value moving: 4.3 ms a frame in Chrome, 9.8 in WebKit (2026-11-01).
 
 <!-- /performance -->
 
