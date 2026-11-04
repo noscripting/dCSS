@@ -1,6 +1,6 @@
 # dCSS
 
-A CSS arithmetic library. d3's data functions for the DOM: sums, means and medians, scales, number and date formats, lookups, and formulas of your own, worked out by the browser's layout from numbers written in HTML. No JavaScript runs. Works in Chrome and Safari, and in part in Firefox.
+A CSS arithmetic library. d3's data functions for the DOM: sums, means and medians, scales, number and date formats, lookups, and formulas of your own, worked out by the browser's layout from numbers written in HTML. No JavaScript runs. Works in Chrome and Safari. Firefox computes CSS in single precision, so there the lists take whole numbers and `.dcss-summarize`, `.dcss-variance` and `.dcss-deviation` give no answer.
 
 It is not a chart library. It computes the numbers; your CSS draws them.
 
@@ -146,7 +146,7 @@ The calls are built on about 80 lower-level classes in `dcss.css`: arrays of `<i
 
 <!-- browsers -->
 
-Chrome 155 and WebKit 26.4 (Safari's engine) pass 100 and 99 of the 141 requirements in [SPEC.md](SPEC.md), whose report says per call what is right and what is not. Firefox 159 passes 76: its `calc()` keeps 32-bit floats, so lists there take whole numbers, and what it can't hold fails with `--dcss-err: 1` rather than printing a wrong number. [QUIRKS.md](QUIRKS.md) has the engine bugs.
+Chrome 155 and WebKit 26.4 (Safari's engine) pass 100 and 99 of the 141 requirements in [SPEC.md](SPEC.md), whose report says per call what is right and what is not. Firefox 159 passes 76: its `calc()` keeps 32-bit floats, so every call but `.dcss-summarize`, `.dcss-variance` and `.dcss-deviation` answers there, over lists of whole numbers (two decimals for a sum, max, median, lookup or rollup within the bounds SPEC.md gives each) and with a format of up to 7 digits; past that it gives `--dcss-err: 1`, never a wrong number. [QUIRKS.md](QUIRKS.md) has the engine bugs.
 
 <!-- /browsers -->
 
