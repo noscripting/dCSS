@@ -37,7 +37,7 @@ Put the class on a `<figure>`. The numbers go in a `<ul>`, one `--value` per `<l
 - Each call is named after its d3 function (`d3.bisectLeft` is `.dcss-bisect-left`) and takes d3's arguments as custom properties, like `--p` for a quantile. The Reference below names each one's inputs.
 - A value like `12.99` is read in two decimals, and the answers are exact decimals. For up to six, add the `dcss-decimals` class to the figure and set `--decimals`. Values passed in through `var()` need the class too, since the figure can't see their dot.
 - Each item takes up room in proportion to its number, so a list of big numbers is a big box. Hide it with `overflow: clip` on the figure, and give screen readers the numbers in a `<figcaption>`.
-- A figure takes one call on its list, plus a format class like `.dcss-format-fixed`. For several answers from one list, `.dcss-summarize` gives nine at once; otherwise write the list again in a second figure. Any other `<ul>` or `<ol>` inside the figure is read as items too, so keep it outside.
+- A figure takes one call on its list, plus a format class like `.dcss-format-fixed`. For several answers from one list of whole numbers, `.dcss-summarize` gives nine at once; otherwise write the list again in a second figure. Any other `<ul>` or `<ol>` inside the figure is read as items too, so keep it outside.
 - When there is no answer, nothing prints and `--dcss-err` says why: 2 where d3 has no answer either, like the mean of an empty list, and 1 where the call failed.
 - A call written straight inside another takes the outer one's answer as its input, in the same frame.
 
