@@ -174,7 +174,7 @@
 @property --dcss-index-empty-error { syntax: '<integer>'; inherits: true; initial-value: 0; }
 @property --dcss-index-ready { syntax: '<integer>'; inherits: true; initial-value: 0; }
 @property --dcss-index-err { syntax: '<integer>'; inherits: true; initial-value: 0; }
-:is( .dcss-max-index) { --dcss-index-list-error: 0; --dcss-index-empty-error: 0; display: grid; grid-template-columns: max-content minmax(0, 1fr); align-content: start; align-items: stretch; justify-items: stretch; overflow-x: clip; contain: inline-size; contain-intrinsic-inline-size: 12em; }
+:is( .dcss-max-index) { --dcss-index-list-error: 0; --dcss-index-empty-error: 0; padding-block-end: 1lh !important; display: grid; grid-template-columns: max-content minmax(0, 1fr); align-content: start; align-items: stretch; justify-items: stretch; overflow-x: clip; contain: inline-size; contain-intrinsic-inline-size: 12em; }
 :is( .dcss-max-index) > * { grid-column: 1 / -1; }
 :is( .dcss-max-index) > :is(ol, ul) { grid-area: 1 / 1; display: grid !important; justify-content: start; align-content: start; gap: 0; margin: 0; padding: 0 !important; border: 0; list-style: none; }
 :is( .dcss-max-index) > :is(ol, ul) + * { grid-area: 1 / 1; display: block !important; container-type: size; min-width: 0 !important; min-height: 0; margin: 0; padding: 0 !important; border: 0; }

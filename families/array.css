@@ -874,7 +874,7 @@ figure.dcss-share > :is(ol, ul) > li > .dcss-share-read > .dcss-share-result { d
 @property --dcss-index-empty-error { syntax: '<integer>'; inherits: true; initial-value: 0; }
 @property --dcss-index-ready { syntax: '<integer>'; inherits: true; initial-value: 0; }
 @property --dcss-index-err { syntax: '<integer>'; inherits: true; initial-value: 0; }
-:is(.dcss-min-index, .dcss-max-index, .dcss-least-index, .dcss-greatest-index, .dcss-least, .dcss-greatest) { --dcss-index-list-error: 0; --dcss-index-empty-error: 0; display: grid; grid-template-columns: max-content minmax(0, 1fr); align-content: start; align-items: stretch; justify-items: stretch; overflow-x: clip; contain: inline-size; contain-intrinsic-inline-size: 12em; }
+:is(.dcss-min-index, .dcss-max-index, .dcss-least-index, .dcss-greatest-index, .dcss-least, .dcss-greatest) { --dcss-index-list-error: 0; --dcss-index-empty-error: 0; padding-block-end: 1lh !important; display: grid; grid-template-columns: max-content minmax(0, 1fr); align-content: start; align-items: stretch; justify-items: stretch; overflow-x: clip; contain: inline-size; contain-intrinsic-inline-size: 12em; }
 :is(.dcss-least, .dcss-greatest) { --dcss-index-empty-error: 2; }
 :is(.dcss-min-index, .dcss-max-index, .dcss-least-index, .dcss-greatest-index, .dcss-least, .dcss-greatest) > * { grid-column: 1 / -1; }
 :is(.dcss-min-index, .dcss-max-index, .dcss-least-index, .dcss-greatest-index, .dcss-least, .dcss-greatest) > :is(ol, ul) { grid-area: 1 / 1; display: grid !important; justify-content: start; align-content: start; gap: 0; margin: 0; padding: 0 !important; border: 0; list-style: none; }
@@ -931,7 +931,7 @@ figure.dcss-share > :is(ol, ul) > li > .dcss-share-read > .dcss-share-result { d
 @property --dcss-lookup-m { syntax: '<number>'; inherits: false; initial-value: 0; }
 /* --find set on the figure itself, never handed down: a lookup inside another's answer doesn't take that one's */
 :where(.dcss-lookup) { --find: initial; }
-.dcss-lookup { display: grid; grid-template-columns: max-content minmax(0, 1fr); align-content: start; align-items: stretch; justify-items: stretch; overflow-x: clip; contain: inline-size; contain-intrinsic-inline-size: 12em; }
+.dcss-lookup { padding-block-end: 1lh !important; display: grid; grid-template-columns: max-content minmax(0, 1fr); align-content: start; align-items: stretch; justify-items: stretch; overflow-x: clip; contain: inline-size; contain-intrinsic-inline-size: 12em; }
 .dcss-lookup > * { grid-column: 1 / -1; }
 .dcss-lookup > :is(ol, ul) { grid-area: 1 / 1; display: grid !important; justify-content: start; align-content: start; gap: 0; margin: 0; padding: 0 !important; border: 0; list-style: none; }
 .dcss-lookup > :is(ol, ul) + * { grid-area: 1 / 1; display: block !important; container-type: size; min-width: 0 !important; min-height: 0; margin: 0; padding: 0 !important; border: 0; }
