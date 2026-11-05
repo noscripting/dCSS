@@ -6,7 +6,7 @@ It is not a chart library. It gives you the numbers, and your CSS draws them.
 
 ## Installation
 
-Each function has its own file in `parts/`, so a page links only the ones it uses. This page links two:
+Download or clone this repository and save your page in its folder. Each function has its own file in `parts/`, so a page links only the ones it uses. This page links two, and `.dcss-mean` gives the sum too:
 
 ```html
 <!doctype html>
@@ -34,7 +34,7 @@ Put the class on a `<figure>`. The numbers go in a `<ul>`, one `--value` per `<l
 </figure>
 ```
 
-- Each call is named after its d3 function (`d3.bisectLeft` is `.dcss-bisect-left`) and takes d3's arguments as custom properties, like `--p` for a quantile. SPEC.md gives each one's inputs and limits.
+- Each call is named after its d3 function (`d3.bisectLeft` is `.dcss-bisect-left`) and takes d3's arguments as custom properties, like `--p` for a quantile. The Reference below names each one's inputs.
 - A value like `12.99` is read in two decimals, and the answers are exact decimals. For up to six, add the `dcss-decimals` class to the figure and set `--decimals`.
 - Each item takes up room in proportion to its number, so a list of big numbers is a big box. Hide it with `overflow: clip` on the figure, and give screen readers the numbers in a `<figcaption>`.
 - When there is no answer, nothing prints and `--dcss-err` says why: 2 where d3 has no answer either, like the mean of an empty list, and 1 where the call failed.
@@ -44,7 +44,7 @@ Put the class on a `<figure>`. The numbers go in a `<ul>`, one `--value` per `<l
 
 <!-- calls -->
 
-Every call has its own page, with a live example, in [the API](https://noscript.ing/examples/layoutcompute/primitives/#dcss).
+Every call has its own page, with a live example, on [noscript.ing](https://noscript.ing/examples/layoutcompute/primitives/#dcss).
 
 ### Array
 
@@ -103,7 +103,7 @@ From `families/format.css`. Set `--comma`, `--sign`, `--symbol` or `--trim` to 1
 | [`.dcss-format-percent`](https://noscript.ing/examples/layoutcompute/primitives/dcss-format-percent) | Prints `--value` as a percentage. |
 | [`.dcss-format-si`](https://noscript.ing/examples/layoutcompute/primitives/dcss-format-si) | Prints `--value` with an SI prefix, like 12.3k. |
 | [`.dcss-format-general`](https://noscript.ing/examples/layoutcompute/primitives/dcss-format-general) | Prints `--value` to `--precision` significant digits. |
-| [`.dcss-format-locale`](https://noscript.ing/examples/layoutcompute/primitives/dcss-format-locale), [`.dcss-locale-arabic`](https://noscript.ing/examples/layoutcompute/primitives/dcss-locale-arabic) | Print `--value` in the Arabic locale as `$,.2f`, set by `--dcss-locale-precision` and `--dcss-locale-sign`. |
+| [`.dcss-format-locale`](https://noscript.ing/examples/layoutcompute/primitives/dcss-format-locale), [`.dcss-locale-arabic`](https://noscript.ing/examples/layoutcompute/primitives/dcss-locale-arabic) | Print `--value` as money in Arabic, with Arabic digits and separators, as d3's Arabic locale does with `$,.2f`. `--dcss-locale-precision` sets the decimals and `--dcss-locale-sign` the sign. |
 
 ### Dates
 
@@ -113,11 +113,11 @@ From `families/dates.css`. A format with no letter of its own is a class by numb
 |---|---|
 | [`.dcss-utc-<interval>-<op>`](https://noscript.ing/examples/layoutcompute/primitives/dcss-utc-interval-op) | Takes epoch milliseconds to a UTC `day`, `hour`, `minute`, `second`, `sunday` to `saturday`, `month` or `year`, by `floor`, `ceil`, `round`, `offset` or `count`. |
 | [`.dcss-date-format-<specifier>`](https://noscript.ing/examples/layoutcompute/primitives/dcss-date-format-specifier) | Prints epoch milliseconds by one of d3's specifiers. Each letter has its own class, so `.dcss-date-format-Y` is `%Y`. Case matters, so the page needs `<!doctype html>`. A format with no letter of its own goes by number, as listed above. |
-| [`.dcss-date-format-y`](https://noscript.ing/examples/layoutcompute/primitives/dcss-date-format-year) | Prints `%y`, the year's last two digits. It and the eight other lowercase letters with an uppercase twin (a, b, g, m, q, s, u, x) keep their part at `parts/dcss-date-format-<letter>-lower.css`, since a disk that ignores case can't hold both names. |
+| [`.dcss-date-format-y`](https://noscript.ing/examples/layoutcompute/primitives/dcss-date-format-year) | Prints `%y`, the year's last two digits. It and the eight other lowercase letters with an uppercase twin (a, b, g, m, q, s, u, x) have their part at `parts/dcss-date-format-<letter>-lower.css`. |
 
 ### Math
 
-From `families/math.css`. Each call takes your own formula, written once as `--dcss-formula` in terms of `--dcss-input`. `node steps.mjs page.html built.html` writes the `<i>` elements a `data-dcss-steps` asks for.
+From `families/math.css`. Each call takes your own formula, written once as `--dcss-formula` in terms of `--dcss-input`. A `.dcss-solve` with `data-dcss-steps="n"` halves the range n times, one nested element a step, and `node steps.mjs page.html built.html` writes those elements for you.
 
 | Call | What it does |
 |---|---|
@@ -135,15 +135,17 @@ From `families/motion.css`.
 
 | Call | What it does |
 |---|---|
-| [`.dcss-motion`](https://noscript.ing/examples/layoutcompute/primitives/dcss-motion) | Moves an element every frame by the acceleration you write as `--dcss-motion-acceleration`, from `--dcss-motion-position` and `--dcss-motion-speed`. It runs on a store.css frame cell. |
+| [`.dcss-motion`](https://noscript.ing/examples/layoutcompute/primitives/dcss-motion) | Moves an element every frame by the acceleration you write as `--dcss-motion-acceleration`, from `--dcss-motion-position` and `--dcss-motion-speed`. The page needs [store.css](https://github.com/noscripting/store) too, for its clock. |
 
 <!-- /calls -->
 
-In browsers with `@function` (Chrome, Safari Technology Preview), the scales and the UTC date calls are also CSS functions, in `families/functions.css`: `--dcss-scale-linear(x, d0, d1, r0, r1)`, `--dcss-utc-day-floor(t)` and the rest, with the class's inputs as arguments. Wrap them in `@supports`, since a browser without `@function` leaves the property at its initial value.
+In browsers with `@function` (Chrome), the scales and the UTC date calls are also CSS functions, in `families/functions.css`: `--dcss-scale-linear(x, d0, d1, r0, r1)`, `--dcss-utc-day-floor(t)` and the rest, with the class's inputs as arguments. Wrap them in `@supports`, since a browser without `@function` leaves the property at its initial value.
 
-Under the calls are about 80 grid classes in `dcss.css` (`.dcss-array`, `.dcss-bins`, `.dcss-ranked`, `.dcss-text`, `.dcss-int`…), each one in SPEC.md. `dcss-extras.css` adds `.list`, `.pager`, `.loop` and `.sheet`, helpers that run on [store.css](https://noscript.ing).
+Under the calls are about 80 grid classes in `dcss.css` (`.dcss-array`, `.dcss-bins`, `.dcss-ranked`, `.dcss-text`, `.dcss-int`…). `dcss-extras.css` adds `.list`, `.pager`, `.loop` and `.sheet`, helpers that need [store.css](https://github.com/noscripting/store) too. Their names have no prefix, so they can clash with a page's own classes.
 
 ## Browsers
+
+At a page zoom or screen scale that isn't a whole number (90%, 125%, a Windows laptop set to 150%), the calls that read layout give no answer, error 1. At 100% and 200%, and on a Retina screen, they answer.
 
 <!-- browsers -->
 
@@ -151,13 +153,11 @@ Under the calls are about 80 grid classes in `dcss.css` (`.dcss-array`, `.dcss-b
 |---|---|
 | Chrome 155 | Yes |
 | Safari (WebKit 26.4) | Yes |
-| Firefox 159 | Every call but `.dcss-summarize`, `.dcss-variance` and `.dcss-deviation`, over lists of whole numbers (two decimals for some calls) and formats of up to 7 digits. Firefox's `calc()` keeps 32-bit floats, and past what they hold a call gives no answer, `--dcss-err: 1`, never a wrong one. |
+| Firefox 159 | Every call but `.dcss-summarize`, `.dcss-variance` and `.dcss-deviation`, over lists of whole numbers (two decimals for some calls) and formats of up to 7 digits. Firefox's `calc()` keeps 32-bit floats, and past what they hold a call gives no answer, `--dcss-err: 1`. |
 
-SPEC.md's report has the results case by case, and QUIRKS.md the engine bugs.
+A few cases past a call's bounds still print a wrong number instead of none, in all three browsers.
 
 <!-- /browsers -->
-
-At a page zoom or screen scale whose product isn't a whole number (90%, 125%, a laptop set to 150%), the calls that read layout give no answer, error 1 (QUIRKS.md, Q30). At 100% and 200%, and on a Retina screen, they answer.
 
 ## Performance
 
