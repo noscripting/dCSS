@@ -44,12 +44,98 @@ Put the class on a `<figure>`. The numbers go in a `<ul>`, one `--value` per `<l
 
 <!-- calls -->
 
-- **Array** (`families/array.css`): [`.dcss-sum`](https://d3js.org/d3-array/summarize#sum), [`.dcss-mean`](https://d3js.org/d3-array/summarize#mean), [`.dcss-count`](https://d3js.org/d3-array/summarize#count), `.dcss-length`, [`.dcss-min`](https://d3js.org/d3-array/summarize#min), [`.dcss-max`](https://d3js.org/d3-array/summarize#max), [`.dcss-extent`](https://d3js.org/d3-array/summarize#extent), `.dcss-summarize`, [`.dcss-min-index`](https://d3js.org/d3-array/summarize#minIndex), [`.dcss-max-index`](https://d3js.org/d3-array/summarize#maxIndex), [`.dcss-least`](https://d3js.org/d3-array/summarize#least), [`.dcss-greatest`](https://d3js.org/d3-array/summarize#greatest), [`.dcss-least-index`](https://d3js.org/d3-array/summarize#leastIndex), [`.dcss-greatest-index`](https://d3js.org/d3-array/summarize#greatestIndex), [`.dcss-lookup`](https://d3js.org/d3-array/group#index), [`.dcss-median`](https://d3js.org/d3-array/summarize#median), [`.dcss-quantile`](https://d3js.org/d3-array/summarize#quantile), [`.dcss-quantile-sorted`](https://d3js.org/d3-array/summarize#quantileSorted), [`.dcss-median-index`](https://d3js.org/d3-array/summarize#medianIndex), [`.dcss-quantile-index`](https://d3js.org/d3-array/summarize#quantileIndex), [`.dcss-variance`](https://d3js.org/d3-array/summarize#variance), [`.dcss-deviation`](https://d3js.org/d3-array/summarize#deviation), [`.dcss-scale-quantile`](https://d3js.org/d3-scale/quantile#scaleQuantile), [`.dcss-scale-threshold`](https://d3js.org/d3-scale/threshold#scaleThreshold), [`.dcss-scale-quantize`](https://d3js.org/d3-scale/quantize#scaleQuantize), [`.dcss-bisect-left`](https://d3js.org/d3-array/bisect#bisectLeft), [`.dcss-bisect-right`](https://d3js.org/d3-array/bisect#bisectRight), [`.dcss-bisect`](https://d3js.org/d3-array/bisect#bisect), [`.dcss-bisector-left`](https://d3js.org/d3-array/bisect#bisector), [`.dcss-bisector-right`](https://d3js.org/d3-array/bisect#bisector), [`.dcss-bisector`](https://d3js.org/d3-array/bisect#bisector), [`.dcss-ascending`](https://d3js.org/d3-array/sort#ascending), [`.dcss-descending`](https://d3js.org/d3-array/sort#descending), [`.dcss-cumsum`](https://d3js.org/d3-array/summarize#cumsum), [`.dcss-bin`](https://d3js.org/d3-array/bin#bin), [`.dcss-rollup-sum`](https://d3js.org/d3-array/group#rollup), [`.dcss-rollup-count`](https://d3js.org/d3-array/group#rollup), `.dcss-share`, [`.dcss-precision-fixed`](https://d3js.org/d3-format#precisionFixed), [`.dcss-precision-prefix`](https://d3js.org/d3-format#precisionPrefix), [`.dcss-precision-round`](https://d3js.org/d3-format#precisionRound), [`.dcss-range`](https://d3js.org/d3-array/ticks#range).
-- **Scale** (`families/scale.css`): [`.dcss-scale-linear`](https://d3js.org/d3-scale/linear#scaleLinear), [`.dcss-scale-pow`](https://d3js.org/d3-scale/pow#scalePow), [`.dcss-scale-sqrt`](https://d3js.org/d3-scale/pow#scaleSqrt), [`.dcss-scale-log`](https://d3js.org/d3-scale/log#scaleLog), [`.dcss-scale-identity`](https://d3js.org/d3-scale/linear#scaleIdentity), `.dcss-piecewise`, [`.dcss-scale-ordinal`](https://d3js.org/d3-scale/ordinal#scaleOrdinal).
-- **Format** (`families/format.css`): [`.dcss-format-fixed`](https://d3js.org/d3-format#format), [`.dcss-format-percent`](https://d3js.org/d3-format#format), [`.dcss-format-si`](https://d3js.org/d3-format#format), [`.dcss-format-general`](https://d3js.org/d3-format#format), [`.dcss-format-locale`](https://d3js.org/d3-format#formatLocale), [`.dcss-locale-arabic`](https://d3js.org/d3-format#formatLocale). Flags are 1 in `--comma`, `--sign`, `--symbol` or `--trim`; in an element with `lang`, a format prints in that language.
-- **Dates** (`families/dates.css`): [`.dcss-utc-<interval>-<op>`](https://d3js.org/d3-time#utcDay), [`.dcss-date-format-<specifier>`](https://d3js.org/d3-time-format#utcFormat), `.dcss-date-format-y`. One class per letter, `.dcss-date-format-Y` for `%Y` (case matters: the page needs `<!doctype html>`; a lowercase letter with an uppercase twin keeps its part at `parts/dcss-date-format-y-lower.css`); a composite by number, `.dcss-date-format-N`: 18 `%s.%L`, 19 `%s.%f`, 35 `%%`, 36 `.%L`, 37 `:%S`, 38 `%I:%M`, 39 `%I %p`, 40 `%a %d`.
-- **Math** (`families/math.css`): `.dcss-solve`, `.dcss-solve-newton`, `.dcss-solve-turning-point`, `.dcss-solve-every`, `.dcss-evaluate`, `.dcss-solve-rows`, `.dcss-sample`. Your own formula, written once as `--dcss-formula` in terms of `--dcss-input`, solved for an input (`.dcss-solve` is a spreadsheet's Goal Seek), its peaks, its value, or sampled as a list; `node steps.mjs page.html built.html` writes the `<i>`s a `data-dcss-steps` asks for.
-- **Motion** (`families/motion.css`): `.dcss-motion`. An element stepped every frame by the acceleration you write, on a store.css frame cell.
+Every call has its own page, with a live example, in [the API](https://noscript.ing/examples/layoutcompute/primitives/#dcss).
+
+### Array
+
+From `families/array.css`.
+
+| Call | What it does |
+|---|---|
+| [`.dcss-sum`](https://noscript.ing/examples/layoutcompute/primitives/dcss-sum) | Gives the total. Values with up to 3 decimals, like prices, are taken as written. |
+| [`.dcss-mean`](https://noscript.ing/examples/layoutcompute/primitives/dcss-mean) | Gives the average. |
+| [`.dcss-count`](https://noscript.ing/examples/layoutcompute/primitives/dcss-count) | Counts the items with a number. |
+| [`.dcss-length`](https://noscript.ing/examples/layoutcompute/primitives/dcss-length) | Counts every item. |
+| [`.dcss-min`](https://noscript.ing/examples/layoutcompute/primitives/dcss-min) | Gives the smallest. |
+| [`.dcss-max`](https://noscript.ing/examples/layoutcompute/primitives/dcss-max) | Gives the largest. Values with up to 3 decimals are taken as written. |
+| [`.dcss-extent`](https://noscript.ing/examples/layoutcompute/primitives/dcss-extent) | Gives the smallest and the largest, as `--dcss-min` and `--dcss-max`. |
+| [`.dcss-summarize`](https://noscript.ing/examples/layoutcompute/primitives/dcss-summarize) | Gives sum, count, length, mean, min, max, median, variance and deviation at once, for up to 1,024 items from -1024 to 65535. |
+| [`.dcss-min-index`](https://noscript.ing/examples/layoutcompute/primitives/dcss-min-index), [`.dcss-max-index`](https://noscript.ing/examples/layoutcompute/primitives/dcss-max-index) | Give where the smallest and the largest are, from 0. |
+| [`.dcss-least`](https://noscript.ing/examples/layoutcompute/primitives/dcss-least), [`.dcss-greatest`](https://noscript.ing/examples/layoutcompute/primitives/dcss-greatest) | Give the smallest and the largest, as min and max do. They are d3's other names for them. |
+| [`.dcss-least-index`](https://noscript.ing/examples/layoutcompute/primitives/dcss-least-index), [`.dcss-greatest-index`](https://noscript.ing/examples/layoutcompute/primitives/dcss-greatest-index) | Give where the least and the greatest are, from 0. |
+| [`.dcss-lookup`](https://noscript.ing/examples/layoutcompute/primitives/dcss-lookup) | Gives the `--value` of the row whose `--key` is the figure's `--find`; a key in no row is error 2. |
+| [`.dcss-median`](https://noscript.ing/examples/layoutcompute/primitives/dcss-median) | Gives the middle value. |
+| [`.dcss-quantile`](https://noscript.ing/examples/layoutcompute/primitives/dcss-quantile), [`.dcss-quantile-sorted`](https://noscript.ing/examples/layoutcompute/primitives/dcss-quantile-sorted) | Give the value at `--p`, 0 to 1, interpolated as d3 does; sorted takes a list already in order. |
+| [`.dcss-median-index`](https://noscript.ing/examples/layoutcompute/primitives/dcss-median-index), [`.dcss-quantile-index`](https://noscript.ing/examples/layoutcompute/primitives/dcss-quantile-index) | Give where those are, from 0. |
+| [`.dcss-variance`](https://noscript.ing/examples/layoutcompute/primitives/dcss-variance), [`.dcss-deviation`](https://noscript.ing/examples/layoutcompute/primitives/dcss-deviation) | Give the variance and its square root for up to 1,024 values from -1024 to 65535. |
+| [`.dcss-scale-quantile`](https://noscript.ing/examples/layoutcompute/primitives/dcss-scale-quantile) | Places `--value` among the list's quantiles into `--range-0` to `--range-16`. |
+| [`.dcss-scale-threshold`](https://noscript.ing/examples/layoutcompute/primitives/dcss-scale-threshold) | Places `--value` by the thresholds `--domain-0` to `--domain-15` into the ranges; outside them, `--unknown`. |
+| [`.dcss-scale-quantize`](https://noscript.ing/examples/layoutcompute/primitives/dcss-scale-quantize) | Cuts `--domain-0` to `--domain-1` evenly into the ranges. |
+| [`.dcss-bisect-left`](https://noscript.ing/examples/layoutcompute/primitives/dcss-bisect-left), [`.dcss-bisect-right`](https://noscript.ing/examples/layoutcompute/primitives/dcss-bisect-right), [`.dcss-bisect`](https://noscript.ing/examples/layoutcompute/primitives/dcss-bisect) | Give where `--value` goes in the sorted list, before equal values (left) or after them. |
+| [`.dcss-bisector-left`](https://noscript.ing/examples/layoutcompute/primitives/dcss-bisector-left), [`.dcss-bisector-right`](https://noscript.ing/examples/layoutcompute/primitives/dcss-bisector-right), [`.dcss-bisector`](https://noscript.ing/examples/layoutcompute/primitives/dcss-bisector) | Give the same places through d3's bisector. |
+| [`.dcss-ascending`](https://noscript.ing/examples/layoutcompute/primitives/dcss-ascending), [`.dcss-descending`](https://noscript.ing/examples/layoutcompute/primitives/dcss-descending) | Give -1, 0 or 1 for `--a` against `--b`. |
+| [`.dcss-cumsum`](https://noscript.ing/examples/layoutcompute/primitives/dcss-cumsum) | Gives running totals, one per `<li>` of a second list, to 8,388,607. |
+| [`.dcss-bin`](https://noscript.ing/examples/layoutcompute/primitives/dcss-bin) | Counts the values into bins cut from `--domain-0` to `--domain-1` at `--threshold-0` to `--threshold-31`, or `--count` of them; each bin is a `<li>` of a second list with `--dcss-bin-length`. |
+| [`.dcss-rollup-sum`](https://noscript.ing/examples/layoutcompute/primitives/dcss-rollup-sum), [`.dcss-rollup-count`](https://noscript.ing/examples/layoutcompute/primitives/dcss-rollup-count) | Give the total or the count for each key. Items carry `--key`, the figure declares `--key-0` to `--key-31`, and an element after the list with `--key: 2` gets that key's answer. |
+| [`.dcss-share`](https://noscript.ing/examples/layoutcompute/primitives/dcss-share) | Gives each item's fraction of the total, `--dcss-share`, to its `.dcss-share-read > .dcss-share-result`, and the total, `--dcss-total`. |
+| [`.dcss-precision-fixed`](https://noscript.ing/examples/layoutcompute/primitives/dcss-precision-fixed), [`.dcss-precision-prefix`](https://noscript.ing/examples/layoutcompute/primitives/dcss-precision-prefix), [`.dcss-precision-round`](https://noscript.ing/examples/layoutcompute/primitives/dcss-precision-round) | Give the precision a format needs for steps of `--step`, with `--value` or `--max`. |
+| [`.dcss-range`](https://noscript.ing/examples/layoutcompute/primitives/dcss-range) | Gives one `<li>` per number from `--start` to `--stop` by `--step`. |
+
+### Scale
+
+From `families/scale.css`.
+
+| Call | What it does |
+|---|---|
+| [`.dcss-scale-linear`](https://noscript.ing/examples/layoutcompute/primitives/dcss-scale-linear) | Maps `--value` from `--domain-0`, `--domain-1` onto `--range-0`, `--range-1`; `-invert` maps back. |
+| [`.dcss-scale-pow`](https://noscript.ing/examples/layoutcompute/primitives/dcss-scale-pow), [`.dcss-scale-sqrt`](https://noscript.ing/examples/layoutcompute/primitives/dcss-scale-sqrt), [`.dcss-scale-log`](https://noscript.ing/examples/layoutcompute/primitives/dcss-scale-log) | Map the same way through a power (`--exponent`), a square root or a logarithm. |
+| [`.dcss-scale-identity`](https://noscript.ing/examples/layoutcompute/primitives/dcss-scale-identity) | Gives `--value` back unchanged. |
+| [`.dcss-piecewise`](https://noscript.ing/examples/layoutcompute/primitives/dcss-piecewise) | Maps `--value` linearly through up to 8 `--stops`. |
+| [`.dcss-scale-ordinal`](https://noscript.ing/examples/layoutcompute/primitives/dcss-scale-ordinal) | Picks `--range-0` to `--range-15` by `--value`'s place in `--domain-0` to `--domain-15`; a value in no slot takes `--unknown`. |
+
+### Format
+
+From `families/format.css`. Set `--comma`, `--sign`, `--symbol` or `--trim` to 1 to turn that flag on. Inside an element with `lang`, a format prints in that language.
+
+| Call | What it does |
+|---|---|
+| [`.dcss-format-fixed`](https://noscript.ing/examples/layoutcompute/primitives/dcss-format-fixed) | Prints `--value` with `--precision` decimals. |
+| [`.dcss-format-percent`](https://noscript.ing/examples/layoutcompute/primitives/dcss-format-percent) | Prints `--value` as a percentage. |
+| [`.dcss-format-si`](https://noscript.ing/examples/layoutcompute/primitives/dcss-format-si) | Prints `--value` with an SI prefix, like 12.3k. |
+| [`.dcss-format-general`](https://noscript.ing/examples/layoutcompute/primitives/dcss-format-general) | Prints `--value` to `--precision` significant digits. |
+| [`.dcss-format-locale`](https://noscript.ing/examples/layoutcompute/primitives/dcss-format-locale), [`.dcss-locale-arabic`](https://noscript.ing/examples/layoutcompute/primitives/dcss-locale-arabic) | Print `--value` in the Arabic locale as `$,.2f`, set by `--dcss-locale-precision` and `--dcss-locale-sign`. |
+
+### Dates
+
+From `families/dates.css`. A format with no letter of its own is a class by number, `.dcss-date-format-N`: 18 `%s.%L`, 19 `%s.%f`, 35 `%%`, 36 `.%L`, 37 `:%S`, 38 `%I:%M`, 39 `%I %p`, 40 `%a %d`.
+
+| Call | What it does |
+|---|---|
+| [`.dcss-utc-<interval>-<op>`](https://noscript.ing/examples/layoutcompute/primitives/dcss-utc-interval-op) | Takes epoch milliseconds to a UTC `day`, `hour`, `minute`, `second`, `sunday` to `saturday`, `month` or `year`, by `floor`, `ceil`, `round`, `offset` or `count`. |
+| [`.dcss-date-format-<specifier>`](https://noscript.ing/examples/layoutcompute/primitives/dcss-date-format-specifier) | Prints epoch milliseconds by one of d3's specifiers. Each letter has its own class, so `.dcss-date-format-Y` is `%Y`. Case matters, so the page needs `<!doctype html>`. A format with no letter of its own goes by number, as listed above. |
+| [`.dcss-date-format-y`](https://noscript.ing/examples/layoutcompute/primitives/dcss-date-format-year) | Prints `%y`, the year's last two digits. It and the eight other lowercase letters with an uppercase twin (a, b, g, m, q, s, u, x) keep their part at `parts/dcss-date-format-<letter>-lower.css`, since a disk that ignores case can't hold both names. |
+
+### Math
+
+From `families/math.css`. Each call takes your own formula, written once as `--dcss-formula` in terms of `--dcss-input`. `node steps.mjs page.html built.html` writes the `<i>` elements a `data-dcss-steps` asks for.
+
+| Call | What it does |
+|---|---|
+| [`.dcss-solve`](https://noscript.ing/examples/layoutcompute/primitives/dcss-solve) | Finds the input where the formula reaches `--target`, halving between `--from` and `--to`, as a spreadsheet's Goal Seek does. |
+| [`.dcss-solve-newton`](https://noscript.ing/examples/layoutcompute/primitives/dcss-solve-newton) | Adds Newton's steps, with the slope you write as `--dcss-slope`, for many digits in few steps. |
+| [`.dcss-solve-turning-point`](https://noscript.ing/examples/layoutcompute/primitives/dcss-solve-turning-point) | Finds the formula's peak or dip between `--from` and `--to`. |
+| [`.dcss-solve-every`](https://noscript.ing/examples/layoutcompute/primitives/dcss-solve-every) | Finds every input that reaches `--target`, the range cut into `data-dcss-pieces`. |
+| [`.dcss-evaluate`](https://noscript.ing/examples/layoutcompute/primitives/dcss-evaluate) | Gives the formula's value at `--at`. |
+| [`.dcss-solve-rows`](https://noscript.ing/examples/layoutcompute/primitives/dcss-solve-rows) | Solves the formula on every row of a box at once, each line starting where it reaches its value. |
+| [`.dcss-sample`](https://noscript.ing/examples/layoutcompute/primitives/dcss-sample) | Samples the formula from `--from` to `--to` and hands the samples to a list call as its list. On its own, it draws them. |
+
+### Motion
+
+From `families/motion.css`.
+
+| Call | What it does |
+|---|---|
+| [`.dcss-motion`](https://noscript.ing/examples/layoutcompute/primitives/dcss-motion) | Moves an element every frame by the acceleration you write as `--dcss-motion-acceleration`, from `--dcss-motion-position` and `--dcss-motion-speed`. It runs on a store.css frame cell. |
 
 <!-- /calls -->
 
