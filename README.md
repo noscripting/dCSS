@@ -34,7 +34,7 @@ Put the class on a `<figure>`. The numbers go in a `<ul>`, one `--value` per `<l
 </figure>
 ```
 
-- Each call is named after its d3 function (`d3.bisectLeft` is `.dcss-bisect-left`) and takes d3's arguments as custom properties, like `--p` for a quantile. [SPEC.md](SPEC.md) gives each one's inputs and limits.
+- Each call is named after its d3 function (`d3.bisectLeft` is `.dcss-bisect-left`) and takes d3's arguments as custom properties, like `--p` for a quantile. SPEC.md gives each one's inputs and limits.
 - A value like `12.99` is read in two decimals, and the answers are exact decimals. For up to six, add the `dcss-decimals` class to the figure and set `--decimals`.
 - Each item takes up room in proportion to its number, so a list of big numbers is a big box. Hide it with `overflow: clip` on the figure, and give screen readers the numbers in a `<figcaption>`.
 - When there is no answer, nothing prints and `--dcss-err` says why: 2 where d3 has no answer either, like the mean of an empty list, and 1 where the call failed.
@@ -141,7 +141,7 @@ From `families/motion.css`.
 
 In browsers with `@function` (Chrome, Safari Technology Preview), the scales and the UTC date calls are also CSS functions, in `families/functions.css`: `--dcss-scale-linear(x, d0, d1, r0, r1)`, `--dcss-utc-day-floor(t)` and the rest, with the class's inputs as arguments. Wrap them in `@supports`, since a browser without `@function` leaves the property at its initial value.
 
-Under the calls are about 80 grid classes in `dcss.css` (`.dcss-array`, `.dcss-bins`, `.dcss-ranked`, `.dcss-text`, `.dcss-int`…), each one in [SPEC.md](SPEC.md). `dcss-extras.css` adds `.list`, `.pager`, `.loop` and `.sheet`, helpers that run on [store.css](https://noscript.ing).
+Under the calls are about 80 grid classes in `dcss.css` (`.dcss-array`, `.dcss-bins`, `.dcss-ranked`, `.dcss-text`, `.dcss-int`…), each one in SPEC.md. `dcss-extras.css` adds `.list`, `.pager`, `.loop` and `.sheet`, helpers that run on [store.css](https://noscript.ing).
 
 ## Browsers
 
@@ -153,11 +153,11 @@ Under the calls are about 80 grid classes in `dcss.css` (`.dcss-array`, `.dcss-b
 | Safari (WebKit 26.4) | Yes |
 | Firefox 159 | Every call but `.dcss-summarize`, `.dcss-variance` and `.dcss-deviation`, over lists of whole numbers (two decimals for some calls) and formats of up to 7 digits. Firefox's `calc()` keeps 32-bit floats, and past what they hold a call gives no answer, `--dcss-err: 1`, never a wrong one. |
 
-[SPEC.md](SPEC.md)'s report has the results case by case, and [QUIRKS.md](QUIRKS.md) the engine bugs.
+SPEC.md's report has the results case by case, and QUIRKS.md the engine bugs.
 
 <!-- /browsers -->
 
-At a page zoom or screen scale whose product isn't a whole number (90%, 125%, a laptop set to 150%), the calls that read layout give no answer, error 1 ([QUIRKS.md](QUIRKS.md), Q30). At 100% and 200%, and on a Retina screen, they answer.
+At a page zoom or screen scale whose product isn't a whole number (90%, 125%, a laptop set to 150%), the calls that read layout give no answer, error 1 (QUIRKS.md, Q30). At 100% and 200%, and on a Retina screen, they answer.
 
 ## Performance
 
