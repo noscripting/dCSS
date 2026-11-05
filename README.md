@@ -26,7 +26,7 @@ To use many, link `dcss.css` and a family's sheet from `families/`, or all of th
 
 ## Writing a call
 
-Put the class on a `<figure>`. The numbers go in a `<ul>`, one `--value` per `<li>`, and every element after the list reads the answer as a custom property named after the call, `--dcss-sum` for `.dcss-sum`. An empty `<output>` prints it. Change a `--value` and every answer updates in the same frame.
+Put the class on a `<figure>`. The numbers go in a `<ul>`, one `--value` per `<li>`, and every element after the list reads the answer as a custom property named after the call, `--dcss-sum` for `.dcss-sum`. An empty `<output>` prints it. Change a `--value` and every answer updates in the same frame. The printed number is drawn by CSS, as the output's `::after` content, so it isn't in the page's text: script, find in page and copy don't see it.
 
 ```html
 <figure class="dcss-sum">
@@ -37,7 +37,7 @@ Put the class on a `<figure>`. The numbers go in a `<ul>`, one `--value` per `<l
 ```
 
 - Each class copies one d3 function and is named after it, so `d3.bisectLeft` becomes `.dcss-bisect-left`. Extra arguments are custom properties, like `--p` for a quantile. The Reference below lists them.
-- Whole numbers and prices like `12.99` work as they are. Numbers with decimals that come in through `var()`, or with more than two decimals, need the `dcss-decimals` class too, and `--decimals: 3` for three.
+- Whole numbers and prices like `12.99` work as they are. Numbers with decimals that come in through `var()`, or with more than two decimals, need the `dcss-decimals` class too, and `--decimals: 3` for three. In decimals the list is counted in hundredths (or thousandths), so its range shrinks: a min, max or extent takes values from −1,310.72 to 82,575.35 with two decimals, and a larger value prints nothing (error 1).
 - The list is drawn as wide as its numbers, so put `overflow: clip` on the figure, and the numbers in a `<figcaption>` for screen readers.
 - One figure does one calculation, plus a format class to print it. For the mean and the median of the same numbers, use two figures. Keep any other list outside the figure, or it gets counted too.
 - When there's no answer, nothing prints. `--dcss-err` is 2 when there's nothing to work out, like the mean of an empty list, and 1 when the call couldn't do it.
@@ -98,7 +98,7 @@ From `families/scale.css`.
 
 ### Format
 
-From `families/format.css`. Set `--comma`, `--sign`, `--symbol` or `--trim` to 1 to turn that flag on. Inside an element with `lang`, a format prints in that language.
+From `families/format.css`. Set `--comma`, `--sign`, `--symbol` or `--trim` to 1 to turn that flag on. Inside an element with `lang`, a format prints in that language and region, from d3-format's locale table: `lang="de-DE"` prints 1.234,50, and `--symbol: 1` adds its currency, € there. A language alone (`de`) or a region the table doesn't have (`de-AT`) prints as `en-US`. The table's locales are ar-AE to ar-YE, ca-ES, cs-CZ, da-DK, de-CH, de-DE, en-GB, en-IE, en-IN, es-BO, es-ES, fi-FI, fr-CA, fr-FR, he-IL, hu-HU, it-IT, ja-JP, ko-KR, mk-MK, nl-NL, pl-PL, pt-BR, pt-PT, ru-RU, sl-SI, sv-SE, uk-UA and zh-CN.
 
 | Call | What it does |
 |---|---|
