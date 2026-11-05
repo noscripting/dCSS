@@ -1,6 +1,6 @@
 # dCSS
 
-dCSS is a library of data functions for HTML, 66 of them in six families: arrays (sums, means, medians, sorting), scales, number and date formats, math and motion. Each one is a class. You write the numbers in a list, and the browser's layout works out the answer. No JavaScript runs. Every function follows one of d3's, by its name, and d3's own tests check that it gives the same answer.
+dCSS is a CSS library of data functions, 66 of them in six families: arrays (sums, means, medians, sorting), scales, number and date formats, math and motion. Each one is a class. You write the numbers in a list, and the browser's layout works out the answer. No JavaScript runs. Every function follows one of d3's, by its name, and d3's own tests check that it gives the same answer.
 
 It is not a chart library. It gives you the numbers, and your CSS draws them.
 
