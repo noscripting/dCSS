@@ -1,12 +1,14 @@
 # dCSS
 
-dCSS is a CSS library of data functions, 66 of them in six families: arrays (sums, means, medians, sorting), scales, number and date formats, math and motion. Each one is a class. You write the numbers in a list, and the browser's layout works out the answer. No JavaScript runs. Each function is named after the d3 function it follows, and d3's own tests check that it gives the same answer.
+dCSS is a CSS library of data functions, 63 of them in five families: arrays (sums, means, medians, sorting), scales, number formats, math and motion. Each one is a class. You write the numbers in a list, and the browser's layout works out the answer. No JavaScript runs. Each function is named after the d3 function it follows, and d3's own tests check that it gives the same answer.
 
 It is not a chart library. It gives you the numbers, and your CSS draws them.
 
 ## Installation
 
-Download or clone this repository and save your page in its folder. Each function has its own file in `parts/`, so a page links only the ones it uses. This page links two, and `.dcss-mean` gives the sum too:
+Install it from npm with `npm install @noscripting/dcss`, which puts the sheets in `node_modules/@noscripting/dcss/`, or download this repository. A CDN serves the same files, as in `https://cdn.jsdelivr.net/npm/@noscripting/dcss@0.0.1/parts/dcss-mean.css`.
+
+Each function has its own file in `parts/`, so a page links only the ones it uses. This page, saved in the package's folder, links two, and `.dcss-mean` gives the sum too:
 
 ```html
 <!doctype html>
@@ -35,7 +37,7 @@ Put the class on a `<figure>`. The numbers go in a `<ul>`, one `--value` per `<l
 ```
 
 - Each class copies one d3 function and is named after it, so `d3.bisectLeft` becomes `.dcss-bisect-left`. Extra arguments are custom properties, like `--p` for a quantile. The Reference below lists them.
-- Prices like `12.99` work as they are. If the numbers come in through `var()`, or have more than two decimals, add the `dcss-decimals` class, and `--decimals: 3` for three.
+- Whole numbers and prices like `12.99` work as they are. Numbers with decimals that come in through `var()`, or with more than two decimals, need the `dcss-decimals` class too, and `--decimals: 3` for three.
 - The list is drawn as wide as its numbers, so put `overflow: clip` on the figure, and the numbers in a `<figcaption>` for screen readers.
 - One figure does one calculation, plus a format class to print it. For the mean and the median of the same numbers, use two figures. Keep any other list outside the figure, or it gets counted too.
 - When there's no answer, nothing prints. `--dcss-err` is 2 when there's nothing to work out, like the mean of an empty list, and 1 when the call couldn't do it.
@@ -106,16 +108,6 @@ From `families/format.css`. Set `--comma`, `--sign`, `--symbol` or `--trim` to 1
 | [`.dcss-format-general`](https://noscript.ing/api/dcss-format-general) | Prints `--value` to `--precision` significant digits. |
 | [`.dcss-format-locale`](https://noscript.ing/api/dcss-format-locale), [`.dcss-locale-arabic`](https://noscript.ing/api/dcss-locale-arabic) | Print `--value` as money in Arabic, with Arabic digits and separators, as d3's Arabic locale does with `$,.2f`. `--dcss-locale-precision` sets the decimals and `--dcss-locale-sign` the sign. |
 
-### Dates
-
-From `families/dates.css`. A format with no letter of its own is a class by number, `.dcss-date-format-N`: 18 `%s.%L`, 19 `%s.%f`, 35 `%%`, 36 `.%L`, 37 `:%S`, 38 `%I:%M`, 39 `%I %p`, 40 `%a %d`.
-
-| Call | What it does |
-|---|---|
-| [`.dcss-utc-<interval>-<op>`](https://noscript.ing/api/dcss-utc-interval-op) | Takes epoch milliseconds to a UTC `day`, `hour`, `minute`, `second`, `sunday` to `saturday`, `month` or `year`, by `floor`, `ceil`, `round`, `offset` or `count`. |
-| [`.dcss-date-format-<specifier>`](https://noscript.ing/api/dcss-date-format-specifier) | Prints epoch milliseconds by one of d3's specifiers. Each letter has its own class, so `.dcss-date-format-Y` is `%Y`. Case matters, so the page needs `<!doctype html>`. A format with no letter of its own goes by number, as listed above. |
-| [`.dcss-date-format-y`](https://noscript.ing/api/dcss-date-format-year) | Prints `%y`, the year's last two digits. It and the eight other lowercase letters with an uppercase twin (a, b, g, m, q, s, u, x) have their part at `parts/dcss-date-format-<letter>-lower.css`. |
-
 ### Math
 
 From `families/math.css`. Each call takes your own formula, written once as `--dcss-formula` in terms of `--dcss-input`. A `.dcss-solve` with `data-dcss-steps="n"` halves the range n times, one nested element a step, and [BASICSS](https://github.com/noscripting/basicss) writes those elements for you: `npx basicss page.html -o built.html`.
@@ -140,7 +132,7 @@ From `families/motion.css`.
 
 <!-- /calls -->
 
-In browsers with `@function` (Chrome), the scales and the UTC date calls are also CSS functions, in `families/functions.css`: `--dcss-scale-linear(x, d0, d1, r0, r1)`, `--dcss-utc-day-floor(t)` and the rest, with the class's inputs as arguments. Wrap them in `@supports`, since a browser without `@function` leaves the property at its initial value.
+In browsers with `@function` (Chrome), the scales are also CSS functions, in `families/functions.css`: `--dcss-scale-linear(x, d0, d1, r0, r1)` and the rest, with the class's inputs as arguments. Wrap them in `@supports`, since a browser without `@function` leaves the property at its initial value.
 
 Under the calls are about 80 grid classes in `dcss.css` (`.dcss-array`, `.dcss-bins`, `.dcss-ranked`, `.dcss-text`, `.dcss-int`…). `dcss-extras.css` adds `.list`, `.pager`, `.loop` and `.sheet`, helpers that need [store.css](https://github.com/noscripting/store) too. Their names have no prefix, so they can clash with a page's own classes.
 

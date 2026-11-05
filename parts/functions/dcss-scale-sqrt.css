@@ -1,7 +1,0 @@
-@function --dcss-scale-sqrt(--value, --domain-0, --domain-1, --range-0, --range-1, --clamp: 0, --round: 0) {
-  --x: calc(var(--clamp) * clamp(min(var(--domain-0), var(--domain-1)), var(--value), max(var(--domain-0), var(--domain-1))) + (1 - var(--clamp)) * var(--value));
-  --tx: calc(((1 - abs(sign(0.5 - 1))) * var(--x) + (1 - (1 - abs(sign(0.5 - 1)))) * (sign(var(--x)) * ((1 - abs(sign(0.5 - 0.5))) * sqrt(abs(var(--x))) + (1 - (1 - abs(sign(0.5 - 0.5)))) * pow(abs(var(--x)), 0.5))))); --t0: calc(((1 - abs(sign(0.5 - 1))) * var(--domain-0) + (1 - (1 - abs(sign(0.5 - 1)))) * (sign(var(--domain-0)) * ((1 - abs(sign(0.5 - 0.5))) * sqrt(abs(var(--domain-0))) + (1 - (1 - abs(sign(0.5 - 0.5)))) * pow(abs(var(--domain-0)), 0.5))))); --t1: calc(((1 - abs(sign(0.5 - 1))) * var(--domain-1) + (1 - (1 - abs(sign(0.5 - 1)))) * (sign(var(--domain-1)) * ((1 - abs(sign(0.5 - 0.5))) * sqrt(abs(var(--domain-1))) + (1 - (1 - abs(sign(0.5 - 0.5)))) * pow(abs(var(--domain-1)), 0.5)))));
-  --w: calc(var(--t1) - var(--t0)); --z: calc(1 - abs(sign(var(--w))));
-  --t: calc(var(--z) * 0.5 + (1 - var(--z)) * (var(--tx) - var(--t0)) / (var(--w) + var(--z)));
-  --y: calc(var(--range-0) * (1 - var(--t)) + var(--range-1) * var(--t));
-  result: calc(var(--round) * round(var(--y)) + (1 - var(--round)) * var(--y)); }

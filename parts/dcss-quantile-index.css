@@ -30,8 +30,10 @@
    attribute or a page's own rule beats this :where(), at no specificity): prices answer with no setting, and past two
    decimals the author writes --decimals, to 6 (the user, 2026-11-03: a page's fractions are not a refusal). The
    dcss-decimals class takes the same two: values passed through var() show no dot (a mean of var()s holding 950.5 was
-   error 1 with the class and no --decimals, a clean room, 2026-11-05) */
-:where(:is( .dcss-quantile-index):is( :has(> :is(ul, ol) > li[style*="."]))) { --decimals: 2; }
+   error 1 with the class and no --decimals, a clean room, 2026-11-05), a sum's and a max's too (a max of var()s was error 1).
+   The class leads its alternative: parts.mjs cuts each :is() to the part's own class, and two side by side lost the
+   class's half in every part (min and extent of var()s error 1 from parts, a clean room, 2026-11-05) */
+:where(.dcss-decimals:is(.dcss-mean, .dcss-min, .dcss-extent, .dcss-median, .dcss-quantile, .dcss-quantile-sorted, .dcss-median-index, .dcss-quantile-index, .dcss-scale-quantile, .dcss-summarize, .dcss-variance, .dcss-deviation, .dcss-rollup-sum, .dcss-lookup, .dcss-share, .dcss-cumsum, .dcss-sum, .dcss-max), :is( .dcss-quantile-index):has(> :is(ul, ol) > li[style*="."])) { --decimals: 2; }
 /* the list out of flow and hidden, a scroll container of no size at the figure's corner, 1 px of padding as before: its
    scroll ranges are its content's size, so what follows it is laid out as written
    and takes no part in the reads */
