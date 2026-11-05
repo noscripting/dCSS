@@ -1,6 +1,6 @@
 {
   "name": "@noscripting/dcss",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Pages that compute with no script: a list's statistics, ticks and nice ranges, scales, number formats, and a formula of your own solved, evaluated, sampled or set in motion, each as d3 works it out, in CSS.",
   "license": "MIT",
   "repository": {

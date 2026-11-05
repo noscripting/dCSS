@@ -6,7 +6,7 @@ It is not a chart library. It gives you the numbers, and your CSS draws them.
 
 ## Installation
 
-Install it from npm with `npm install @noscripting/dcss`, which puts the sheets in `node_modules/@noscripting/dcss/`, or download this repository. A CDN serves the same files, as in `https://cdn.jsdelivr.net/npm/@noscripting/dcss@0.0.1/parts/dcss-mean.css`.
+Install it from npm with `npm install @noscripting/dcss`, which puts the sheets in `node_modules/@noscripting/dcss/`, or download this repository. A CDN serves the same files, as in `https://cdn.jsdelivr.net/npm/@noscripting/dcss/parts/dcss-mean.css`.
 
 Each function has its own file in `parts/`, so a page links only the ones it uses. This page, saved in the package's folder, links two, and `.dcss-mean` gives the sum too:
 
