@@ -184,4 +184,4 @@ MIT.
 
 ## Credits
 
-[d3](https://d3js.org), by Mike Bostock and its contributors: the calls follow its functions, and its tests check them.
+[d3](https://d3js.org), by Mike Bostock and its contributors: the calls follow its functions, and its tests check them. The number formats' locales are d3-format's own table, under d3's ISC license; [LICENSE-THIRD-PARTY](LICENSE-THIRD-PARTY) has its notice.
