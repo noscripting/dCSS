@@ -1,12 +1,12 @@
 # dCSS
 
-A CSS arithmetic library. d3's data functions for the DOM: sums, means and medians, scales, number and date formats, lookups, and formulas of your own, worked out by the browser's layout from numbers written in HTML. No JavaScript runs. Works in Chrome and Safari. Firefox computes CSS in single precision, so there the lists take whole numbers and `.dcss-summarize`, `.dcss-variance` and `.dcss-deviation` give no answer.
+dCSS is a library of data functions for HTML, 66 of them in six families: arrays (sums, means, medians, sorting), scales, number and date formats, math and motion. Each one is a class. You write the numbers in a list, and the browser's layout works out the answer. No JavaScript runs. Every function follows one of d3's, by its name, and d3's own tests check that it gives the same answer.
 
-It is not a chart library. It computes the numbers; your CSS draws them.
+It is not a chart library. It gives you the numbers, and your CSS draws them.
 
 ## Installation
 
-Each call is a class with its own file in `parts/`. Link the ones you use (this page links two parts that come to 23 KB gzipped):
+Each function has its own file in `parts/`, so a page links only the ones it uses. This page links two:
 
 ```html
 <!doctype html>
@@ -20,11 +20,11 @@ Each call is a class with its own file in `parts/`. Link the ones you use (this 
 </figure>
 ```
 
-For many calls, link `dcss.css` and a family sheet, or everything with `dcss-all.css`.
+To use many, link `dcss.css` and a family's sheet from `families/`, or all of them at once with `dcss-all.css`.
 
 ## Writing a call
 
-The call is a class on a `<figure>`. The list holds the numbers, one `--value` an item, and the elements after it read the answers as `--dcss-` plus the call's name. Change a `--value` and every answer follows in the same frame.
+Put the class on a `<figure>`. The numbers go in a `<ul>`, one `--value` per `<li>`, and every element after the list reads the answer as a custom property named after the call, `--dcss-sum` for `.dcss-sum`. An empty `<output>` prints it. Change a `--value` and every answer updates in the same frame.
 
 ```html
 <figure class="dcss-sum">
@@ -34,11 +34,11 @@ The call is a class on a `<figure>`. The list holds the numbers, one `--value` a
 </figure>
 ```
 
-- A call is named after d3's function (`d3.bisectLeft` is `.dcss-bisect-left`) and takes d3's arguments as custom properties (`--p`). [SPEC.md](SPEC.md) has each one's inputs and limits.
-- `12.99` is taken in two decimals and the answers are exact decimals. For more, `class="dcss-decimals"` and `--decimals: 3` on the figure, up to 6.
-- The list is drawn at the answer's size: hide it with `overflow: clip` on the figure, and say the numbers in a caption for screen readers.
-- No answer prints nothing and sets `--dcss-err`: 2 where d3 has none either, 1 where the call failed.
-- A call reads another's answer written straight inside it, in the same frame.
+- Each call is named after its d3 function (`d3.bisectLeft` is `.dcss-bisect-left`) and takes d3's arguments as custom properties, like `--p` for a quantile. [SPEC.md](SPEC.md) gives each one's inputs and limits.
+- A value like `12.99` is read in two decimals, and the answers are exact decimals. For up to six, add the `dcss-decimals` class to the figure and set `--decimals`.
+- The list is laid out at the size of its numbers. Hide it with `overflow: clip` on the figure, and give screen readers the numbers in a `<figcaption>`.
+- When there is no answer, nothing prints and `--dcss-err` says why: 2 where d3 has no answer either, like the mean of an empty list, and 1 where the call failed.
+- A call written straight inside another takes the outer one's answer as its input, in the same frame.
 
 ## Reference
 
@@ -53,9 +53,9 @@ The call is a class on a `<figure>`. The list holds the numbers, one `--value` a
 
 <!-- /calls -->
 
-Where the browser has `@function` (Chrome, Safari Technology Preview), the scales and the UTC date calls are also CSS functions in `families/functions.css`: `--dcss-scale-linear(x, d0, d1, r0, r1)`, `--dcss-utc-day-floor(t)` and the rest, with the class's inputs as arguments; wrap a call in `@supports`, since a browser without `@function` leaves the property at its initial value.
+In browsers with `@function` (Chrome, Safari Technology Preview), the scales and the UTC date calls are also CSS functions, in `families/functions.css`: `--dcss-scale-linear(x, d0, d1, r0, r1)`, `--dcss-utc-day-floor(t)` and the rest, with the class's inputs as arguments. Wrap them in `@supports`, since a browser without `@function` leaves the property at its initial value.
 
-The calls are built on about 80 lower-level grid classes in `dcss.css` (`.dcss-array`, `.dcss-bins`, `.dcss-ranked`, `.dcss-text`, `.dcss-int`…), each in [SPEC.md](SPEC.md); `dcss-extras.css` adds the `.list`, `.pager`, `.loop` and `.sheet` helpers that run on [store.css](https://noscript.ing).
+Under the calls are about 80 grid classes in `dcss.css` (`.dcss-array`, `.dcss-bins`, `.dcss-ranked`, `.dcss-text`, `.dcss-int`…), each one in [SPEC.md](SPEC.md). `dcss-extras.css` adds `.list`, `.pager`, `.loop` and `.sheet`, helpers that run on [store.css](https://noscript.ing).
 
 ## Browsers
 
@@ -65,7 +65,7 @@ Chrome 155 and WebKit 26.4 (Safari's engine) pass 100 and 99 of the 141 requirem
 
 <!-- /browsers -->
 
-At a page zoom or screen scale whose product isn't a whole number (90%, 125%, a laptop set to 150%), every call that reads layout gives no answer, error 1 ([QUIRKS.md](QUIRKS.md), Q30); at 100% and 200%, and on a Retina screen, the calls answer.
+At a page zoom or screen scale whose product isn't a whole number (90%, 125%, a laptop set to 150%), the calls that read layout give no answer, error 1 ([QUIRKS.md](QUIRKS.md), Q30). At 100% and 200%, and on a Retina screen, they answer.
 
 ## Performance
 
@@ -81,4 +81,4 @@ MIT.
 
 ## Credits
 
-- [d3](https://d3js.org), whose functions the calls follow and whose tests check them.
+[d3](https://d3js.org), by Mike Bostock and its contributors: the calls follow its functions, and its tests check them.
