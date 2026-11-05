@@ -117,7 +117,7 @@ From `families/dates.css`. A format with no letter of its own is a class by numb
 
 ### Math
 
-From `families/math.css`. Each call takes your own formula, written once as `--dcss-formula` in terms of `--dcss-input`. A `.dcss-solve` with `data-dcss-steps="n"` halves the range n times, one nested element a step, and `node steps.mjs page.html built.html` writes those elements for you.
+From `families/math.css`. Each call takes your own formula, written once as `--dcss-formula` in terms of `--dcss-input`. A `.dcss-solve` with `data-dcss-steps="n"` halves the range n times, one nested element a step, and [BASICSS](https://github.com/noscripting/basicss) writes those elements for you: `npx basicss page.html -o built.html`.
 
 | Call | What it does |
 |---|---|
