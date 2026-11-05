@@ -38,10 +38,6 @@
     "dcss-preload.html",
     "README.md",
     "TUTORIAL.md",
-    "SPEC.md",
-    "QUIRKS.md",
-    "CHANGELOG.md",
-    "LICENSE",
-    "compat.json"
+    "LICENSE"
   ]
 }
