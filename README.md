@@ -1,6 +1,6 @@
 # dCSS
 
-dCSS is a CSS library of data functions, 66 of them in six families: arrays (sums, means, medians, sorting), scales, number and date formats, math and motion. Each one is a class. You write the numbers in a list, and the browser's layout works out the answer. No JavaScript runs. Every function follows one of d3's, by its name, and d3's own tests check that it gives the same answer.
+dCSS is a CSS library of data functions, 66 of them in six families: arrays (sums, means, medians, sorting), scales, number and date formats, math and motion. Each one is a class. You write the numbers in a list, and the browser's layout works out the answer. No JavaScript runs. Each function is named after the d3 function it follows, and d3's own tests check that it gives the same answer.
 
 It is not a chart library. It gives you the numbers, and your CSS draws them.
 
@@ -36,7 +36,7 @@ Put the class on a `<figure>`. The numbers go in a `<ul>`, one `--value` per `<l
 
 - Each call is named after its d3 function (`d3.bisectLeft` is `.dcss-bisect-left`) and takes d3's arguments as custom properties, like `--p` for a quantile. [SPEC.md](SPEC.md) gives each one's inputs and limits.
 - A value like `12.99` is read in two decimals, and the answers are exact decimals. For up to six, add the `dcss-decimals` class to the figure and set `--decimals`.
-- The list is laid out at the size of its numbers. Hide it with `overflow: clip` on the figure, and give screen readers the numbers in a `<figcaption>`.
+- Each item takes up room in proportion to its number, so a list of big numbers is a big box. Hide it with `overflow: clip` on the figure, and give screen readers the numbers in a `<figcaption>`.
 - When there is no answer, nothing prints and `--dcss-err` says why: 2 where d3 has no answer either, like the mean of an empty list, and 1 where the call failed.
 - A call written straight inside another takes the outer one's answer as its input, in the same frame.
 
@@ -147,7 +147,13 @@ Under the calls are about 80 grid classes in `dcss.css` (`.dcss-array`, `.dcss-b
 
 <!-- browsers -->
 
-Chrome 155 and WebKit 26.4 (Safari's engine) pass 100 and 99 of the 141 requirements in [SPEC.md](SPEC.md), whose report says per call what is right and what is not. Firefox 159 passes 76: its `calc()` keeps 32-bit floats, so every call but `.dcss-summarize`, `.dcss-variance` and `.dcss-deviation` answers there, over lists of whole numbers (two decimals for a sum, max, median, lookup or rollup within the bounds SPEC.md gives each) and with a format of up to 7 digits; past that it gives `--dcss-err: 1`, never a wrong number. [QUIRKS.md](QUIRKS.md) has the engine bugs.
+| Browser | Support |
+|---|---|
+| Chrome 155 | Yes |
+| Safari (WebKit 26.4) | Yes |
+| Firefox 159 | Every call but `.dcss-summarize`, `.dcss-variance` and `.dcss-deviation`, over lists of whole numbers (two decimals for some calls) and formats of up to 7 digits. Firefox's `calc()` keeps 32-bit floats, and past what they hold a call gives no answer, `--dcss-err: 1`, never a wrong one. |
+
+[SPEC.md](SPEC.md)'s report has the results case by case, and [QUIRKS.md](QUIRKS.md) the engine bugs.
 
 <!-- /browsers -->
 
@@ -157,7 +163,17 @@ At a page zoom or screen scale whose product isn't a whole number (90%, 125%, a 
 
 <!-- performance -->
 
-Layout does the work, in the frame a number changes. A family is at most 62 KB gzipped and loads in 22 ms or less in WebKit 26.4 (2026-10-31). Twenty printed medians, a value moving: 6.3 ms a frame in Chrome, 9.6 in WebKit; variance 8.2, 10.3 (2026-10-30). Twenty sums of 256 items, a value moving: 4.3 ms a frame in Chrome, 9.8 in WebKit (2026-11-01).
+Layout does the work, in the same frame a number changes. Each family is at most 62 KB gzipped and loads in 22 ms or less in WebKit 26.4 (2026-10-31).
+
+The time a frame takes, with one value changing every frame:
+
+| Page | Chrome | WebKit |
+|---|---|---|
+| 20 medians of 8 items, printed | 6.3 ms | 9.6 ms |
+| 20 variances of 8 items, printed | 8.2 ms | 10.3 ms |
+| 20 sums of 256 items | 4.3 ms | 9.8 ms |
+
+Measured 2026-10-30 and 2026-11-01.
 
 <!-- /performance -->
 
