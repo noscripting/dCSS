@@ -70,7 +70,9 @@
 :where(:is(.dcss-sum)) { --find: initial; }
 /* a value written with a dot takes its list in decimals, two of them, where the figure writes no --decimals (a style
    attribute or a page's own rule beats this :where(), at no specificity): prices answer with no setting, and past two
-   decimals the author writes --decimals, to 6 (the user, 2026-11-03: a page's fractions are not a refusal) */
+   decimals the author writes --decimals, to 6 (the user, 2026-11-03: a page's fractions are not a refusal). The
+   dcss-decimals class takes the same two: values passed through var() show no dot (a mean of var()s holding 950.5 was
+   error 1 with the class and no --decimals, a clean room, 2026-11-05) */
 :is(.dcss-sum) { --dcss-dcss-find-has: calc(var(--find, calc(NaN)) * 0 + 1); }
 /* the list out of flow and hidden, a scroll container of no size at the figure's corner, 1 px of padding as before: its
    scroll ranges are its content's size, so what follows it is laid out as written

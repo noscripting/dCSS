@@ -40,10 +40,10 @@ The table shows 120, 95, 140, 80, 160 and 110.
 
 ## 2. The total and the average
 
-A call is a class on a `<figure>` around a list, one `--value` an item. `.dcss-mean` is in the array family, so add its sheet to the page's head, `<link rel="stylesheet" href="families/array.css">`, under the format one. It gives the list's sum as `--dcss-sum` and its mean as `--dcss-mean` to each element after the list. The list is laid out at its answer, its items reaching past the figure's edges, so the figure clips it (`overflow: clip`, no height: a fixed one would cut the sentence when it wraps on a narrow screen) and the screen reader skips it (`aria-hidden`). Add `families/array.css` beside the other links, and this after the table:
+A call is a class on a `<figure>` around a list, one `--value` an item. `.dcss-mean` is in the array family, so add its sheet to the page's head, `<link rel="stylesheet" href="families/array.css">`, under the format one. It gives the list's sum as `--dcss-sum` and its mean as `--dcss-mean` to each element after the list. The list is laid out at its answer, its items reaching past the figure's edges, so the figure clips it (`overflow: clip`, no height: a fixed one would cut the sentence when it wraps on a narrow screen) and the screen reader skips it (`aria-hidden`). `dcss-decimals` lets a month hold cents, like 95.50: the numbers come in through `var()`, where the figure can't see their dot. Add `families/array.css` beside the other links, and this after the table:
 
 ```html
-<figure class="dcss-mean dcss-format-fixed" style="overflow: clip; margin: 0">
+<figure class="dcss-mean dcss-decimals dcss-format-fixed" style="overflow: clip; margin: 0">
   <ul aria-hidden="true">
     <li style="--value: var(--jan)"></li> <li style="--value: var(--feb)"></li> <li style="--value: var(--mar)"></li>
     <li style="--value: var(--apr)"></li> <li style="--value: var(--may)"></li> <li style="--value: var(--jun)"></li>
@@ -90,7 +90,7 @@ The average is a number in CSS, so it can size things: a bar `--dcss-mean` pixel
       <tr><th>June</th><td><span class="dcss-format-fixed" style="--value: var(--jun); --precision: 0"></span></td></tr>
     </tbody>
   </table>
-  <figure class="summary dcss-mean dcss-format-fixed">
+  <figure class="summary dcss-mean dcss-decimals dcss-format-fixed">
     <ul aria-hidden="true">
       <li style="--value: var(--jan)"></li> <li style="--value: var(--feb)"></li> <li style="--value: var(--mar)"></li>
       <li style="--value: var(--apr)"></li> <li style="--value: var(--may)"></li> <li style="--value: var(--jun)"></li>

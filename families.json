@@ -69,9 +69,9 @@
         "dcss-summarize",
         "dcss-variance"
       ],
-      "raw": 1075330,
-      "gzip9": 61595,
-      "sha256": "0860d2ca62463f7cd5db753670627c72961419e9740409e02c3b82cfe9047deb"
+      "raw": 1075538,
+      "gzip9": 61683,
+      "sha256": "259f35c106fec7f819b57b053f67758e4eb8c336308653e163d7e578c46a9a19"
     },
     "scale": {
       "file": "families/scale.css",
